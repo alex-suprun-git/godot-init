@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://vv5jamr48hrb"]
+
+[ext_resource type="PackedScene" path="res://player.tscn" id="1_player"]
+[ext_resource type="Script" path="res://showcase.gd" id="2_showcase"]
+
+[node name="Main" type="Node2D" unique_id=2001113897]
+
+[node name="SpaceBackdrop" type="Node2D" parent="."]
+z_index = -10
+script = ExtResource("2_showcase")
+
+[node name="Player" parent="." unique_id=1772690930 instance=ExtResource("1_player")]
+position = Vector2(245, 425)

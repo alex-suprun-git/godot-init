@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://player.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]
+size = Vector2(28, 36)
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_script")
+
+[node name="Body" type="Polygon2D" parent="."]
+color = Color(0.3, 0.86, 1, 1)
+polygon = PackedVector2Array(-17, -8, -3, -8, 8, -13, 4, -3, 17, 0, 4, 3, 8, 13, -3, 8, -17, 8, -10, 0)
+
+[node name="Cockpit" type="Polygon2D" parent="."]
+color = Color(0.82, 0.97, 1, 1)
+polygon = PackedVector2Array(-7, -3, 3, -4, 10, 0, 3, 4, -7, 3)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_player")
