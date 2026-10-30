@@ -17,7 +17,7 @@ Prompts for the art needed by the first playable week (the heating-season openin
 | Test batch for the 3D map (T1–T3) | Generated; awaiting review |
 | W1 pipe burst (early October) | Done |
 | W2 office | Next |
-| Map kit (K1–K12) | After the test batch passes |
+| Map kit (K1–K12) | Generated; awaiting review |
 | Later window art (W3–W7) | After W2 |
 
 ## Established looks
@@ -160,6 +160,88 @@ Same rules as the test batch. Facades are tileable horizontally unless noted.
 | K10 | `init/assets/sprites/van_uaz_police.png` | A police UAZ van in grey-blue with a light bar. |
 | K11 | `init/assets/sprites/scaffolding.png` | A section of wooden construction scaffolding with planks and a tarp. |
 | K12 | `init/assets/sprites/tree_poplar_august.png` | A tall poplar tree in late August, green with the first yellow leaves. |
+
+## G: Ground textures (grass, asphalt and the rest of the flat surfaces)
+
+The map is a 3D scene, but the ground itself needs no 3D: these are flat tiles laid on the ground planes, so grass, roads, and paving get painted detail instead of one flat color. Same style as the facades.
+
+Ground rules (all G items):
+
+- Seen straight from above, orthographic, no perspective, no horizon.
+- Seamless in both directions: left edge continues into the right edge, top into bottom.
+- Flat, even, shadowless light, no directional sun, no objects casting shadows. The engine adds light.
+- Fine, evenly distributed detail; no single large feature (a puddle, a manhole) that would visibly repeat. Tiny details are fine.
+- Square canvas, as high resolution as possible. Map style block applies, late August.
+
+| Id | Path | Content |
+|---|---|---|
+| G1 | `init/assets/textures/ground_grass.png` | Late-August lawn and weeds: tired green grass with yellowing patches, dry stalks, clover, small bare earth spots, a few fallen leaves. |
+| G2 | `init/assets/textures/ground_grass_dry.png` | The same grass but drier and patchier with more bare earth and gravel, for wasteland edges and under trees. |
+| G3 | `init/assets/textures/ground_asphalt.png` | Worn 1990s asphalt: grey-black, a network of fine cracks, patched repairs of darker tar, a few potholes' edges, sand and dust at the margins. No road markings. |
+| G4 | `init/assets/textures/ground_paving.png` | Concrete slab paving of a square or sidewalk: big grey slabs with seams, weeds growing in the joints, stains. |
+| G5 | `init/assets/textures/ground_dirt.png` | Packed dirt and gravel with sparse weeds, tyre tracks: wasteland and courtyards. |
+| G6 | `init/assets/textures/ground_water.png` | River water seen from above: dark grey-blue, slow ripples, faint reflections, no foam, no boats. |
+| G7 | `init/assets/textures/ground_rail.png` | Railway bed, tileable along one axis only: ballast gravel, wooden sleepers, two steel rails, rusty and weedy. |
+| G8 | `init/assets/textures/ground_courtyard.png` | A residential courtyard: patchy lawn mixed with trodden paths and dirt, a few cigarette-butt-sized details, no large objects. |
+
+Road markings are separate transparent decals, standing sprites rules do not apply (seen from above, transparent background, one item per image):
+
+| Id | Path | Content |
+|---|---|---|
+| D1 | `init/assets/sprites/decal_center_line.png` | A worn white dashed center line, 5 dashes, horizontal. |
+| D2 | `init/assets/sprites/decal_crosswalk.png` | A worn zebra crossing, horizontal. |
+
+## M: Missing map sprites
+
+What the map still builds from plain boxes or leaves empty. Sprite rules apply; set each in late August unless the note says otherwise. Priority first.
+
+### P1: visible in the first week right now
+
+| Id | Path | Content |
+|---|---|---|
+| M1 | `init/assets/sprites/person_walk_man.png` | A man in a grey jacket walking with a bag. |
+| M2 | `init/assets/sprites/person_walk_woman.png` | A woman in a coat with a shopping bag. |
+| M3 | `init/assets/sprites/person_pensioner.png` | An elderly woman in a headscarf with a cane. |
+| M4 | `init/assets/sprites/person_worker.png` | A worker in a padded jacket carrying a pipe. |
+| M5 | `init/assets/sprites/person_kid.png` | A schoolchild with a backpack. |
+| M6 | `init/assets/sprites/picket_group.png` | A group of eight residents in coats holding hand-painted placards (shapes only, no readable text), seen as one sprite. Used for the picket at Block 5. |
+| M7 | `init/assets/sprites/truck_zil_plain.png` | A ZIL truck with a green tarpaulin, no license plates, loaded with coal. Used for the coal theft. |
+| M8 | `init/assets/sprites/church.png` | The whole small church with a green dome and gilded cross, whitewashed, seen at the map camera angle. |
+| M9 | `init/assets/sprites/fuel_tanks.png` | Three white cylindrical fuel tanks with a pipe manifold and ladders. |
+| M10 | `init/assets/sprites/boiler_chimney.png` | A tall brick boiler chimney with a metal ladder, no smoke. |
+| M11 | `init/assets/sprites/coal_heap.png` | A heap of black coal with a front loader's tracks. |
+| M12 | `init/assets/sprites/crane_truck.png` | A repair crane truck with an orange cab. For the boiler house under repair. |
+
+### P2: soon
+
+| Id | Path | Content |
+|---|---|---|
+| M13 | `init/assets/sprites/private_house.png` | A private house with a pitched slate roof, a wooden fence and a vegetable garden. |
+| M14 | `init/assets/sprites/garages_row.png` | A row of eight metal garages in different faded colors. |
+| M15 | `init/assets/sprites/lamp_post.png` | A concrete street lamp with a cobra head. |
+| M16 | `init/assets/sprites/power_pole.png` | A concrete power pole with crossbars and wires. |
+| M17 | `init/assets/sprites/bench_playground.png` | A bench with a rusty playground (swing and slide) behind it. |
+| M18 | `init/assets/sprites/bus_stop.png` | A concrete bus stop shelter with a bench. |
+| M19 | `init/assets/sprites/bus_liaz.png` | A cream-and-red LiAZ city bus. |
+| M20 | `init/assets/sprites/tram.png` | A cream-and-red tram car. |
+| M21 | `init/assets/sprites/fence_chainlink.png` | A section of chain-link fence with concrete posts. |
+| M22 | `init/assets/sprites/monument.png` | A statue of a figure on a stepped granite pedestal. |
+| M23 | `init/assets/sprites/border_post.png` | A border checkpoint booth with a red-and-white barrier and a watchtower. |
+| M24 | `init/assets/sprites/train_wagons.png` | Three freight wagons in rust brown on a siding. |
+| M25 | `init/assets/sprites/station.png` | A small provincial railway station building in pale yellow with a clock. |
+| M26 | `init/assets/sprites/barge.png` | A river barge with a crane, moored at a pier. |
+| M27 | `init/assets/sprites/garbage_pile.png` | A pile of garbage and an overturned container. |
+| M28 | `init/assets/sprites/bush.png` | A shrub in late August. |
+| M29 | `init/assets/sprites/water_tower.png` | A brick water tower in the distance. |
+
+### Seasonal variants (when the story reaches them)
+
+| Id | Path | Content |
+|---|---|---|
+| S1 | `init/assets/sprites/tree_birch_september.png` and `tree_poplar_september.png` | The same trees in September: mostly yellow. |
+| S2 | `init/assets/sprites/tree_birch_october.png` and `tree_poplar_october.png` | October: half bare, orange and brown leaves. |
+| S3 | `init/assets/sprites/tree_birch_winter.png` and `tree_poplar_winter.png` | Winter: bare, snow on the branches. |
+| S4 | `init/assets/textures/ground_snow_*.png` | Snow versions of the ground tiles G1 to G5. |
 
 ## Not generated here
 

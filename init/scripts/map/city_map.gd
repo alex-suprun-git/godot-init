@@ -22,7 +22,18 @@ const WINDOW := Color(0.16, 0.18, 0.2)
 # straight-on elevation; the panel tile shows one five-storey section.
 const FACADE_PANEL := preload("res://assets/textures/facade_panel_5storey.png")
 const FACADE_BRICK := preload("res://assets/textures/facade_boiler_brick.png")
+const FACADE_ADMIN := preload("res://assets/textures/facade_admin_stalinist.png")
+const FACADE_WAREHOUSE := preload("res://assets/textures/facade_warehouse.png")
+const FACADE_MERCHANT := preload("res://assets/textures/facade_merchant_house.png")
+const ROOF_TAR := preload("res://assets/textures/roof_tar.png")
 const TREE_BIRCH := preload("res://assets/sprites/tree_birch_august.png")
+const TREE_POPLAR := preload("res://assets/sprites/tree_poplar_august.png")
+const KIOSK := preload("res://assets/sprites/kiosk.png")
+const MARKET_TENT := preload("res://assets/sprites/market_tent.png")
+const CAR_LADA := preload("res://assets/sprites/car_lada.png")
+const CAR_VOLGA := preload("res://assets/sprites/car_volga_black.png")
+const VAN_UAZ := preload("res://assets/sprites/van_uaz_police.png")
+const SCAFFOLDING := preload("res://assets/sprites/scaffolding.png")
 
 # Schematic coordinates: 1 SVG px = 0.25 map units, SVG (800, 530) is the origin.
 const SVG_SCALE := 0.25
@@ -61,6 +72,7 @@ func setup(week_sim) -> void:
 	_build_old_center()
 	_build_depot()
 	_build_south()
+	_build_traffic()
 	_build_overlays()
 	_build_trees()
 	_build_tokens()
@@ -240,7 +252,7 @@ func _build_microdistrict() -> void:
 
 	# Kiosks along the main street.
 	for y in [520, 560, 640, 800, 840]:
-		_svg_building(Rect2(855, y, 18, 14), 2.6, Color(0.82, 0.8, 0.74), Color(0.7, 0.3, 0.22))
+		_sprite(KIOSK, _ground(_svg_point(Vector2(865, y))), 5.0, null, y % 80 == 0)
 
 
 func _build_boiler() -> void:
@@ -271,10 +283,8 @@ func _build_boiler() -> void:
 	var repairing := Node3D.new()
 	add_child(repairing)
 	var front := size.z / 2.0 + 1.2
-	for i in 7:
-		_box(Vector3(0.3, 11, 0.3), base + Vector3(-size.x / 2.0 + 1 + i * (size.x - 2) / 6.0, 5.5, front), Color(0.55, 0.42, 0.25), repairing)
-	for level in 3:
-		_box(Vector3(size.x, 0.3, 1.4), base + Vector3(0, 3 + level * 3.5, front), Color(0.6, 0.47, 0.28), repairing)
+	for i in 3:
+		_sprite(SCAFFOLDING, base + Vector3(-size.x / 3.0 + i * size.x / 3.0, 0, front + 0.5), 9.0, repairing)
 	_box(Vector3(size.x + 8, 2, 0.2), base + Vector3(0, 1, front + 5), Color(0.85, 0.5, 0.2), repairing)
 	_box(Vector3(5, 2.2, 2.2), base + Vector3(size.x / 2.0 + 4, 1.1, front + 2), Color(0.85, 0.65, 0.15), repairing)
 	repairing.visible = false
@@ -314,18 +324,17 @@ func _build_center() -> void:
 	var rect := Rect2(975, 324, 130, 44)
 	var center := _svg_center(rect)
 	var base := Vector3(center.x, 0, center.y)
-	var size := Vector3(rect.size.x * SVG_SCALE, 11, rect.size.y * SVG_SCALE)
+	# Tall enough that the 2:1 facade (columns, steps, emblem) keeps its proportions.
+	var size := Vector3(rect.size.x * SVG_SCALE, 15, rect.size.y * SVG_SCALE)
 	_box(size, base + Vector3(0, size.y / 2.0, 0), PLASTER)
 	_box(Vector3(size.x + 1, 0.8, size.z + 1), base + Vector3(0, size.y + 0.4, 0), Color(0.5, 0.48, 0.44))
-	_windows(base, Vector2(size.x, size.z), 3, 10, 3.4)
-	_box(Vector3(12, 8, 3), base + Vector3(0, 4, size.z / 2.0 + 1.5), PLASTER)
-	for i in 6:
-		_cylinder(0.5, 8, base + Vector3(-5 + i * 2, 4, size.z / 2.0 + 3.4), Color(0.9, 0.87, 0.8))
-	_cylinder(0.15, 14, base + Vector3(size.x / 2.0 - 2, 7, size.z / 2.0 + 4), Color(0.3, 0.3, 0.3))
-	_box(Vector3(2.4, 1.4, 0.1), base + Vector3(size.x / 2.0 - 0.8, 13, size.z / 2.0 + 4), Color(0.7, 0.2, 0.18))
+	_roof(Vector2(size.x + 1, size.z + 1), base + Vector3(0, size.y + 0.82, 0), 14.0)
+	var front := Vector2(size.x, size.y)
+	_facade(front, base + Vector3(0, size.y / 2.0, size.z / 2.0 + 0.01), 0.0, FACADE_ADMIN, Vector2(1, 1))
+	_facade(front, base + Vector3(0, size.y / 2.0, -size.z / 2.0 - 0.01), PI, FACADE_ADMIN, Vector2(1, 1))
+	_cylinder(0.15, 19, base + Vector3(size.x / 2.0 - 2, 9.5, size.z / 2.0 + 4), Color(0.3, 0.3, 0.3))
+	_box(Vector3(2.4, 1.4, 0.1), base + Vector3(size.x / 2.0 - 0.8, 18, size.z / 2.0 + 4), Color(0.7, 0.2, 0.18))
 	_occupy(center, Vector2(size.x, size.z + 8))
-	# The administration's black Volga.
-	_box(Vector3(4.6, 1.4, 1.9), base + Vector3(-12, 0.9, size.z / 2.0 + 6), Color(0.08, 0.08, 0.09))
 
 
 # --- East: old center with the church ----------------------------------------
@@ -345,7 +354,7 @@ func _build_old_center() -> void:
 	_occupy(center, Vector2(14, 22))
 	# Merchant houses.
 	for house in [Rect2(960, 520, 80, 44), Rect2(1060, 520, 90, 44), Rect2(960, 590, 190, 44), Rect2(1220, 610, 110, 40)]:
-		_svg_building(house, 7, OCHRE, ROOF_RED, true)
+		_svg_building(house, 7, OCHRE, ROOF_RED, true, FACADE_MERCHANT)
 
 
 # --- North-east: fuel depot on the embankment --------------------------------
@@ -355,7 +364,7 @@ func _build_depot() -> void:
 		var at := _svg_point(spot)
 		_cylinder(5.5, 8, Vector3(at.x, 4, at.y), Color(0.72, 0.73, 0.72))
 		_occupy(at, Vector2(12, 12))
-	_svg_building(Rect2(1180, 330, 120, 44), 6, BRICK, Color(0.4, 0.33, 0.28))
+	_svg_building(Rect2(1180, 330, 120, 44), 6, BRICK, Color(0.4, 0.33, 0.28), false, FACADE_WAREHOUSE)
 	_svg_box(Rect2(1300, 160, 160, 20), 0.8, Color(0.5, 0.48, 0.45))
 	var fence := _svg_point(Vector2(1300, 285))
 	_box(Vector3(46, 2.2, 0.2), Vector3(fence.x, 1.1, fence.y), Color(0.4, 0.42, 0.4))
@@ -368,12 +377,10 @@ func _build_south() -> void:
 	_svg_building(Rect2(840, 885, 120, 45), 8, Color(0.85, 0.8, 0.68), Color(0.4, 0.42, 0.4))
 	# Station market: out of reach at the aide stage, but busy.
 	_svg_ground(Rect2(560, 790, 260, 130), PAVING, 0.04, true)
-	var colors := [Color(0.25, 0.4, 0.65), Color(0.7, 0.25, 0.2), Color(0.3, 0.5, 0.35), Color(0.85, 0.82, 0.72)]
 	for row in 3:
 		for col in 7:
-			var at := _svg_point(Vector2(585 + col * 34, 810 + row * 34))
-			_box(Vector3(5, 0.4, 4.2), Vector3(at.x, 2.6, at.y), colors[(row * 7 + col) % colors.size()])
-			_box(Vector3(4.6, 2.4, 3.8), Vector3(at.x, 1.2, at.y), Color(0.45, 0.38, 0.32))
+			var at := _svg_point(Vector2(590 + col * 34, 818 + row * 34))
+			_sprite(MARKET_TENT, _ground(at), 8.0, null, (row + col) % 2 == 0)
 	# Private houses with pitched roofs.
 	for row in 3:
 		for col in 4:
@@ -388,6 +395,20 @@ func _build_south() -> void:
 		_box(Vector3(1.2, 0.6, 0.9), Vector3(center.x + _rng.randf_range(-30, 30), 0.3, center.y + _rng.randf_range(-8, 8)), Color(0.35, 0.33, 0.3))
 	for i in 14:
 		_tree(Vector3(center.x + _rng.randf_range(-34, 34), 0, center.y + _rng.randf_range(-9, 9)))
+
+
+# Parked and standing cars: the administration's Volga, a police UAZ, and
+# Ladas along the streets. Sprites are fixed in place; people move, cars do not (yet).
+func _build_traffic() -> void:
+	var admin := _svg_point(Vector2(1040, 346))
+	_sprite(CAR_VOLGA, _ground(admin + Vector2(-16, 14)), 8.5)
+	_sprite(VAN_UAZ, _ground(_svg_point(Vector2(1110, 380))), 8.5, null, true)
+	var lada_spots := [
+		Vector2(900, 600), Vector2(900, 340), Vector2(900, 760), Vector2(400, 242), Vector2(640, 726),
+		Vector2(1000, 706), Vector2(1100, 306), Vector2(300, 478), Vector2(1190, 640), Vector2(700, 484),
+	]
+	for i in lada_spots.size():
+		_sprite(CAR_LADA, _ground(_svg_point(lada_spots[i])), 7.5, null, i % 2 == 1)
 
 
 func _build_overlays() -> void:
@@ -520,8 +541,8 @@ func _svg_box(rect: Rect2, height: float, color: Color) -> void:
 	_occupy(center, size)
 
 
-# A simple building: walls, a flat or pitched roof, and windows.
-func _svg_building(rect: Rect2, height: float, wall: Color, roof: Color, pitched: bool = false) -> void:
+# A simple building: walls, a flat or pitched roof, and windows or a painted facade.
+func _svg_building(rect: Rect2, height: float, wall: Color, roof: Color, pitched: bool = false, facade: Texture2D = null) -> void:
 	var center := _svg_center(rect)
 	var size := rect.size * SVG_SCALE
 	var base := Vector3(center.x, 0, center.y)
@@ -532,7 +553,9 @@ func _svg_building(rect: Rect2, height: float, wall: Color, roof: Color, pitched
 		_box(Vector3(size.x + 0.6, 1.2, size.y * 0.4), base + Vector3(0, height + 2.6, 0), roof)
 	else:
 		_box(Vector3(size.x + 0.5, 0.5, size.y + 0.5), base + Vector3(0, height + 0.25, 0), roof)
-	if height >= 5.0:
+	if facade != null:
+		_facades(base, Vector3(size.x, height, size.y), facade, 1.0)
+	elif height >= 5.0:
 		_windows(base, size, int(height / 3.2), max(2, int(size.x / 3.5)), 3.2)
 	_occupy(center, size)
 
@@ -542,6 +565,7 @@ func _panel_block(center: Vector2, length: float, floors: int) -> void:
 	var height := floors * 3.0
 	_box(Vector3(length, height, 11), base + Vector3(0, height / 2.0, 0), PANEL)
 	_box(Vector3(length + 0.6, 0.6, 11.6), base + Vector3(0, height + 0.3, 0), PANEL_ROOF)
+	_roof(Vector2(length + 0.6, 11.6), base + Vector3(0, height + 0.62, 0), 18.0)
 	# Long sides get the painted facade; taller blocks repeat it vertically.
 	var tiles_x := length / (height * 2.0 * 5.0 / floors)
 	_facade(Vector2(length, height), base + Vector3(0, height / 2.0, 5.51), 0.0, FACADE_PANEL, Vector2(tiles_x, floors / 5.0))
@@ -591,17 +615,55 @@ func _windows(base: Vector3, footprint: Vector2, floors: int, per_row: int, floo
 
 
 func _tree(at: Vector3) -> void:
-	# Painted birch sprite standing upright and turning toward the camera.
-	var height := _rng.randf_range(9.0, 13.0)
+	# Painted tree sprite standing upright and turning toward the camera:
+	# mostly birches, with taller poplars for variety.
+	var poplar := _rng.randf() < 0.25
+	var height := _rng.randf_range(13.0, 18.0) if poplar else _rng.randf_range(9.0, 13.0)
 	var sprite := Sprite3D.new()
-	sprite.texture = TREE_BIRCH
-	sprite.pixel_size = height / TREE_BIRCH.get_height()
+	sprite.texture = TREE_POPLAR if poplar else TREE_BIRCH
+	sprite.pixel_size = height / sprite.texture.get_height()
 	sprite.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
 	sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
 	sprite.shaded = true
 	sprite.modulate = Color(1, 1, 1).lerp(Color(0.92, 0.95, 0.8), _rng.randf())
 	sprite.position = at + Vector3(0, height / 2.0, 0)
 	add_child(sprite)
+
+
+func _ground(at: Vector2) -> Vector3:
+	return Vector3(at.x, 0.0, at.y)
+
+
+# A painted prop standing on the ground: cars, kiosks, tents, scaffolding. It
+# faces the camera and is drawn at the map camera's angle, so it needs no
+# 3D model. `width` is in map units; `flip` mirrors it for variety.
+func _sprite(texture: Texture2D, at: Vector3, width: float, parent: Node = null, flip: bool = false) -> Sprite3D:
+	var sprite := Sprite3D.new()
+	sprite.texture = texture
+	sprite.pixel_size = width / texture.get_width()
+	sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+	sprite.shaded = true
+	sprite.flip_h = flip
+	sprite.position = at + Vector3(0, texture.get_height() * sprite.pixel_size / 2.0, 0)
+	(parent if parent != null else self).add_child(sprite)
+	return sprite
+
+
+# A textured flat roof: a quad facing up, tiled so the roof detail stays small.
+func _roof(size: Vector2, at: Vector3, tile: float) -> void:
+	var quad := QuadMesh.new()
+	quad.size = size
+	var material := StandardMaterial3D.new()
+	material.albedo_texture = ROOF_TAR
+	material.uv1_scale = Vector3(size.x / tile, size.y / tile, 1.0)
+	material.roughness = 0.95
+	var instance := MeshInstance3D.new()
+	instance.mesh = quad
+	instance.material_override = material
+	instance.position = at
+	instance.rotation.x = -PI / 2.0
+	add_child(instance)
 
 
 # Painted facades on the four sides of a box-shaped building.

@@ -33,4 +33,6 @@
 - Project files are under `init/`; the main scene is `init/main.tscn`. The project uses Godot 4.7.1.
 - Run the game locally with F5. Running Godot and local game builds does not incur usage fees.
 - Do not add or run automated tests unless the user asks. For visual changes, launch and inspect the game where practical.
+- To check a visual or gameplay change without clicking, run the dev autoplay, which plays the first week and saves screenshots of each phase: `Godot --path init -- --autoplay --shots=<absolute output dir>` (Godot is at `/Users/oleksiisuprun/Desktop/Godot.app/Contents/MacOS/Godot`). Read the PNGs it writes. Run `Godot --headless --path init --import` first when new assets were added.
+- Generated art is described in `art/PROMPTS.md`; game-ready images live under `init/assets/`, concepts under `art/concepts/`.
 - Do not commit or push unless explicitly asked.
