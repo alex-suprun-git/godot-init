@@ -60,16 +60,12 @@ const BOSS := {
 	"portrait": "res://assets/portraits/boss.png", "face": Rect2(330, 160, 540, 540),
 }
 
-# The boss's order for the week. "flag" objectives are met when the flag is set;
-# the report objective is checked at its hour.
+# The boss's order for the week. An objective is met when its flag is set and
+# failed when the request with the same id closes without it.
 const OBJECTIVES := [
 	{"id": "contractor", "text": "Выбрать подрядчика для котельной (до Чт)", "flag": "contractor"},
-	{"id": "report", "text": "Пт 16:00 — отчёт боссу лично, быть в кабинете"},
+	{"id": "boss_report", "text": "Пт: явиться к боссу на отчёт (он вызовет, будет метка в кабинете)", "flag": "report"},
 ]
-
-const REPORT_TIME := {"day": 4, "hour": 16}
-const REPORT_OK := {"boss": 10, "log": "Отчёт принят. Пётр Петрович кивнул и попросил «не шуметь»."}
-const REPORT_MISSED := {"boss": -15, "log": "Вы не пришли на отчёт. Пётр Петрович отчитывался за вас сам и это запомнит."}
 
 # Request types: plea, conflict, crisis, offer.
 # Times are {day, hour} within the week; day 0 is Monday.
@@ -206,13 +202,140 @@ const REQUESTS := [
 			},
 		],
 	},
+	{
+		"id": "wasteland_stalls", "type": "offer", "lot": "wasteland", "asker": "",
+		"title": "Гусев хочет ларьки на пустыре",
+		"text": "«Всё равно там одни берёзы и бутылки. Я даже забор поставлю». Нужно решить на месте.",
+		"appear": {"day": 1, "hour": 14}, "expire": {"day": 3, "hour": 20},
+		"expire_effects": {"business": -4, "log": "Гусев не дождался ответа и поставил ларьки сам. Никто не заметил, как."},
+		"options": [
+			{
+				"id": "allow", "actor": "me", "hours": 2,
+				"label": "Разрешить ларьки",
+				"hint": "Деньги и бизнес довольны. Жители не любят ларьки у дома.",
+				"success": {"money": 500_000, "business": 8, "residents": -5, "trace": 1, "log": "Вы разрешили ларьки на пустыре. Берёзы остались, пока."},
+			},
+			{
+				"id": "deny", "actor": "me", "hours": 2,
+				"label": "Отказать",
+				"hint": "Жители оценят. Бизнес запомнит.",
+				"success": {"business": -5, "residents": 4, "log": "Вы отказали Гусеву. Он поблагодарил так, что слышно было в соседнем районе."},
+			},
+		],
+	},
+	{
+		"id": "market_cops", "type": "conflict", "lot": "market", "asker": "",
+		"title": "Ларёчники и милиция делят рынок",
+		"text": "Участковый хочет «порядка», торговцы хотят торговать. Обе стороны ждут вас у вокзала.",
+		"appear": {"day": 2, "hour": 9}, "expire": {"day": 4, "hour": 12},
+		"expire_effects": {"police": -4, "business": -4, "log": "Рынок разобрался сам. Участковый ходит довольный, торговцы нет."},
+		"options": [
+			{
+				"id": "go_myself", "actor": "me", "hours": 3,
+				"label": "Поехать самому",
+				"hint": "Обе стороны выслушаны. Никто не уйдёт полностью довольным.",
+				"success": {"police": -3, "business": 8, "log": "Вы развели милицию и торговцев по углам рынка. Обе стороны остались при своём."},
+			},
+			{
+				"id": "send_tolik", "actor": "tolik", "hours": 2, "chance": 0.6,
+				"label": "Отправить Толика",
+				"hint": "Он знает, с кем и как говорить. Но не всегда успевает.",
+				"success": {"police": 6, "business": -3, "log": "Толик пошептался с участковым, торговцы заплатили. Порядок восстановлен."},
+				"fail": {"police": -4, "business": -6, "log": "Толик пообещал лишнего обеим сторонам. Рынок гудит."},
+			},
+		],
+	},
+	{
+		"id": "fuel_offer", "type": "offer", "lot": "depot", "asker": "",
+		"title": "Кладовщик предлагает мазут «мимо кассы»",
+		"text": "«Часть пойдёт на котельную, часть никто не считал. Вы же хотите, чтобы зимой было тепло».",
+		"appear": {"day": 2, "hour": 13}, "expire": {"day": 4, "hour": 10},
+		"expire_effects": {"business": -2, "log": "Кладовщик пожал плечами и продал мазут кому-то другому."},
+		"options": [
+			{
+				"id": "take", "actor": "me", "hours": 2,
+				"label": "Взять мазут и деньги",
+				"hint": "Котельной хватит топлива. Следов больше.",
+				"success": {"money": 800_000, "business": 5, "police": -3, "trace": 1, "flags": {"fuel_off_books": true}, "log": "Мазут отгрузили без накладных. Кладовщик сказал, что вы понятливый."},
+			},
+			{
+				"id": "refuse", "actor": "me", "hours": 2,
+				"label": "Отказаться",
+				"hint": "Чисто, но тепла может не хватить.",
+				"success": {"business": -4, "residents": 3, "log": "Вы отказались от левого мазута. Кладовщик буркнул, что чистоплюи зимой мёрзнут."},
+			},
+		],
+	},
+	{
+		"id": "residents_meeting", "type": "plea", "lot": "block5", "asker": "nina",
+		"title": "Жильцы просят собрание",
+		"text": "Баба Нина: «Пусть кто-нибудь придёт и скажет людям, что будет. Мы же не слепые».",
+		"appear": {"day": 3, "hour": 8}, "expire": {"day": 4, "hour": 20},
+		"expire_effects": {"residents": -6, "log": "Собрание в доме 5 прошло без вас. Баба Нина записала всё, что вы не сказали."},
+		"options": [
+			{
+				"id": "send_nina", "actor": "nina", "hours": 2,
+				"label": "Попросить бабу Нину",
+				"hint": "Она соберёт людей и скажет, как есть. Но от вашего имени.",
+				"success": {"residents": 8, "log": "Баба Нина провела собрание и записала в тетрадь, кто что сказал."},
+			},
+			{
+				"id": "go_myself", "actor": "me", "hours": 3,
+				"label": "Поехать самому",
+				"hint": "Люди увидят, что вы приехали. Вы потеряете полдня.",
+				"success": {"residents": 12, "log": "Вы пришли на собрание сами. Люди запомнили, кто пришёл."},
+			},
+		],
+	},
+	{
+		"id": "journalist", "type": "plea", "lot": "office", "asker": "",
+		"title": "Журналистка просит комментарий",
+		"text": "Звонок из районной газеты: «Что с горячей водой в доме 5? Люди интересуются».",
+		"appear": {"day": 4, "hour": 9}, "expire": {"day": 4, "hour": 15},
+		"expire_effects": {"residents": -3, "boss": -3, "log": "В газету ушло «от власти не поступило комментариев». Читать будут все."},
+		"options": [
+			{
+				"id": "talk", "actor": "me", "hours": 1,
+				"label": "Дать комментарий лично",
+				"hint": "Вы в кабинете, час времени. Босс не любит, когда говорят без него.",
+				"success": {"residents": 6, "boss": -3, "log": "Вы дали комментарий. Пётр Петрович читал газету и молчал."},
+			},
+			{
+				"id": "phone", "actor": "phone",
+				"label": "Ответить по телефону",
+				"hint": "Только из кабинета. Коротко, но без возможности объяснить.",
+				"success": {"residents": 2, "log": "Вы коротко ответили журналистке. Ничего особенного не сказали."},
+			},
+		],
+	},
+	{
+		"id": "boss_report", "type": "crisis", "lot": "office", "asker": "",
+		"title": "Босс вызывает на ковёр",
+		"text": "Пётр Петрович: «Через четыре часа в мэрии отчёт. Приходите и расскажите, что сделали».",
+		"appear": {"day": 4, "hour": 12}, "expire": {"day": 4, "hour": 16},
+		"expire_effects": {"boss": -15, "log": "Вы не пришли на отчёт. Пётр Петрович отчитывался за вас сам и это запомнит."},
+		"options": [
+			{
+				"id": "go_boss", "actor": "me", "hours": 1,
+				"label": "Пойти к боссу лично",
+				"hint": "Вы в кабинете, час времени. Отчёт засчитан.",
+				"success": {"boss": 10, "flags": {"report": true}, "log": "Отчёт принят. Пётр Петрович кивнул и попросил «не шуметь»."},
+			},
+			{
+				"id": "phone_excuse", "actor": "phone",
+				"label": "Позвонить и сослаться на дела",
+				"hint": "Только из кабинета. Босс отчёт не примет и обидится.",
+				"success": {"boss": -8, "log": "Вы сослались на дела. Пётр Петрович отчёт не принял и положил трубку."},
+			},
+		],
+	},
 ]
 
 # Faction words, from worst to best.
 const STANDING_WORDS := [
-	{"max": -40, "word": "Враждебны"},
-	{"max": -15, "word": "Недовольны"},
-	{"max": 5, "word": "Настороженны"},
-	{"max": 25, "word": "Благосклонны"},
-	{"max": 1000, "word": "Лояльны"},
+	{"max": -40, "word": "Вражда"},
+	{"max": -15, "word": "Недовольство"},
+	{"max": 5, "word": "Недоверие"},
+	{"max": 25, "word": "Расположение"},
+	{"max": 1000, "word": "Лояльность"},
 ]

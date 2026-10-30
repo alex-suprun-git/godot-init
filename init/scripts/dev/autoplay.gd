@@ -47,10 +47,12 @@ func _run() -> void:
 			await _shot("8_audio_panel")
 			main.audio_debug.visible = false
 			main.set_speed(4.0)
-		if main.speed == 0.0 and not _crisis_handled:
-			_crisis_handled = true
-			await _shot("5_crisis")
-			main.sim.choose("coal_theft", "send_mikhalych")
+		if main.speed == 0.0:
+			# A crisis paused the game: shoot the first one, then answer it.
+			if not _crisis_handled:
+				_crisis_handled = true
+				await _shot("5_crisis")
+			_answer_crises()
 			main.hud._close_card()
 			main.set_speed(4.0)
 
@@ -62,14 +64,33 @@ func _run() -> void:
 	get_tree().quit()
 
 
-# Simple player: takes the envelope and sends Baba Nina to the church
-# whenever those become possible.
+# Simple player: takes the first option that is possible for every open
+# request except promises and crises, which get their own handling.
 func _play_turn() -> void:
 	var sim = main.sim
-	if sim.requests["envelope"]["status"] == "open":
-		sim.choose("envelope", "take")
-	if sim.requests["church_heat"]["status"] == "open":
-		sim.choose("church_heat", "send_nina")
+	for id in sim.request_order:
+		var request: Dictionary = sim.requests[id]
+		if request["status"] != "open" or request["data"]["type"] == "crisis":
+			continue
+		_choose_first_possible(id)
+
+
+# Answer every open crisis with the first option that can be chosen.
+func _answer_crises() -> void:
+	for id in main.sim.request_order:
+		var request: Dictionary = main.sim.requests[id]
+		if request["status"] == "open" and request["data"]["type"] == "crisis":
+			_choose_first_possible(id)
+
+
+func _choose_first_possible(id: String) -> void:
+	var request: Dictionary = main.sim.requests[id]
+	for option in request["data"]["options"]:
+		if option["actor"] == "promise":
+			continue
+		if main.sim.option_block_reason(id, option) == "":
+			main.sim.choose(id, option["id"])
+			return
 
 
 func _wait(seconds: float) -> void:

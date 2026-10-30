@@ -4,6 +4,9 @@
 extends CanvasLayer
 
 const Week1 = preload("res://scripts/data/week1.gd")
+const RequestMarker = preload("res://scripts/ui/request_marker.gd")
+const PersonToken = preload("res://scripts/ui/person_token.gd")
+const PathLayer = preload("res://scripts/ui/path_layer.gd")
 
 signal start_week_pressed
 signal speed_selected(speed: float)
@@ -38,11 +41,15 @@ var _promises_box: VBoxContainer
 var _standing_box: VBoxContainer
 var _wire_box: VBoxContainer
 var _contacts := {} # actor id -> status label
+var _path_layer: Control
+var _tokens_layer: Control
+var _tokens := {} # actor id -> PersonToken
 var _markers_layer: Control
-var _markers := {} # request id -> Button
+var _markers := {} # request id -> RequestMarker
 var _card: PanelContainer
 var _card_request := ""
 var _overlay_panel: PanelContainer
+var _toast_box: VBoxContainer
 
 
 func setup(week_sim, city_map, audio_manager = null) -> void:
@@ -55,20 +62,38 @@ func setup(week_sim, city_map, audio_manager = null) -> void:
 	_root.theme = _make_theme()
 	add_child(_root)
 
+	# Map overlays, bottom to top: travel paths, people, request markers.
+	_path_layer = PathLayer.new()
+	_path_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_root.add_child(_path_layer)
+	_tokens_layer = Control.new()
+	_tokens_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_tokens_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_root.add_child(_tokens_layer)
 	_markers_layer = Control.new()
 	_markers_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_markers_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.add_child(_markers_layer)
+	for id in Week1.ACTORS:
+		var info: Dictionary = Week1.ACTORS[id]
+		var token := PersonToken.new()
+		token.texture = load(info["portrait"])
+		token.region = info["face"]
+		token.display_name = info["name"]
+		token.is_player = id == "me"
+		_tokens_layer.add_child(token)
+		_tokens[id] = token
 
 	_build_top_bar()
 	_build_right_panel()
 	_build_contacts_bar()
 	_build_card()
+	_build_toasts()
 
 	sim.request_opened.connect(func(_id): _refresh_markers())
 	sim.request_changed.connect(_on_request_changed)
 	sim.state_changed.connect(_refresh_panels)
-	sim.entry_added.connect(func(_entry): _refresh_wire())
+	sim.entry_added.connect(_on_entry_added)
 	sim.crisis_started.connect(open_card.bind(true))
 	sim.time_changed.connect(_refresh_clock)
 	_refresh_all()
@@ -118,27 +143,63 @@ func open_card(request_id: String, focus: bool = false) -> void:
 
 
 func _process(_delta: float) -> void:
-	# Markers float above their lot; when the lot is off-screen they stick to
-	# the edge of the free map area with an arrow pointing toward it.
-	var area := _map_area()
+	_update_tokens()
+	_update_markers(_map_area())
+	# Toasts step aside while a card or the summary needs the player's attention;
+	# everything they said is also in the wire on the right.
+	var overlay_open: bool = _overlay_panel != null and is_instance_valid(_overlay_panel)
+	_toast_box.visible = not _card.visible and not overlay_open
+
+
+# People stand where the map says; the token's feet are the spot on the ground.
+func _update_tokens() -> void:
+	var paths: Array[Dictionary] = []
+	for id in _tokens:
+		var token: Control = _tokens[id]
+		var actor: Dictionary = sim.actors[id]
+		var feet: Vector2 = map.token_screen_position(id)
+		token.position = feet - Vector2(32, 80)
+		token.state = actor["state"]
+		token.work_fraction = sim.actor_work_fraction(id)
+		token.eta_text = ""
+		if actor["state"] in ["travel", "driving"]:
+			token.eta_text = _eta_text(sim.actor_eta_hours(id))
+			var lot: String = sim.actor_target_lot(id)
+			# Tolik rides with you, so only your path is drawn.
+			if lot != "" and id != "tolik":
+				paths.append({"from": feet - Vector2(0, 50), "to": map.lot_screen_position(lot, 0.0)})
+	_path_layer.paths = paths
+	_path_layer.queue_redraw()
+
+
+# Markers float above their lot; when the lot is off-screen they stick to the
+# edge of the free map area with an arrow pointing toward it.
+func _update_markers(area: Rect2) -> void:
 	for id in _markers:
-		var marker: Button = _markers[id]
-		var data: Dictionary = sim.requests[id]["data"]
-		var lot: String = data["lot"]
+		var marker: Control = _markers[id]
+		var lot: String = sim.requests[id]["data"]["lot"]
 		var index: int = _markers_at_lot(lot).find(id)
-		var screen: Vector2 = map.lot_screen_position(lot)
-		var offscreen := not area.has_point(screen)
-		var label := _marker_text(id)
+		var tip: Vector2 = map.lot_screen_position(lot, 14.0)
+		var pos := tip - Vector2(32, 71) - Vector2(0, index * 76)
+		var center := pos + Vector2(32, 32)
+		var offscreen := not area.has_point(center)
+		marker.edge_direction = Vector2.ZERO
 		if offscreen:
-			label = _edge_arrow(screen, area) + " " + label
-		if marker.text != label:
-			marker.text = label
-			marker.reset_size()
-		var pos := screen - Vector2(marker.size.x / 2.0, marker.size.y + index * (marker.size.y + 4))
-		if offscreen:
-			pos = pos.clamp(area.position, area.end - marker.size)
+			var inside := center.clamp(area.position + Vector2(40, 40), area.end - Vector2(40, 40))
+			marker.edge_direction = (center - inside).normalized()
+			pos = inside - Vector2(32, 32)
 		marker.position = pos
 		marker.set_meta("offscreen", offscreen)
+		marker.time_left = sim.request_time_left(id)
+		var worker: String = sim.request_worker(id)
+		marker.work_fraction = sim.actor_work_fraction(worker) if worker != "" else 0.0
+
+
+func _eta_text(hours: float) -> String:
+	var minutes := int(ceil(hours * 60.0))
+	if minutes < 60:
+		return "%d мин" % max(minutes, 1)
+	return ("%.1f ч" % (minutes / 60.0)).replace(".", ",")
 
 
 # --- Layout ------------------------------------------------------------------
@@ -331,14 +392,63 @@ func _refresh_panels() -> void:
 	_refresh_clock()
 
 
+func _on_entry_added(entry: Dictionary) -> void:
+	_refresh_wire()
+	# Consequences pop up over the map where the player is looking; new
+	# requests already have their own marker.
+	if entry["tone"] != "request":
+		_show_toast(entry)
+
+
 func _refresh_wire() -> void:
 	_clear(_wire_box)
-	var recent: Array = sim.entries.slice(max(0, sim.entries.size() - 7))
+	var recent: Array = sim.entries.slice(max(0, sim.entries.size() - 6))
 	recent.reverse()
 	for entry in recent:
-		var line := _label("%s  %s" % [entry["time"], entry["text"]], 13, PAPER)
+		var line := _label("%s  %s" % [entry["time"], entry["text"]], 15, PAPER if entry["tone"] != "request" else MUTED)
 		line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		_wire_box.add_child(line)
+
+
+# Big, readable notifications at the top of the map: the colored edge says
+# whether it went well, they fade on their own, and a click dismisses them.
+func _build_toasts() -> void:
+	_toast_box = VBoxContainer.new()
+	_toast_box.anchor_left = 0.5
+	_toast_box.anchor_right = 0.5
+	_toast_box.offset_left = -470
+	_toast_box.offset_right = 90
+	_toast_box.offset_top = 76
+	_toast_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_toast_box.add_theme_constant_override("separation", 8)
+	_root.add_child(_toast_box)
+
+
+func _show_toast(entry: Dictionary) -> void:
+	while _toast_box.get_child_count() >= 2:
+		var oldest := _toast_box.get_child(0)
+		_toast_box.remove_child(oldest)
+		oldest.queue_free()
+	var tone_color: Color = {"good": STEEL, "bad": RUST, "neutral": AMBER}.get(entry["tone"], AMBER)
+	var panel := PanelContainer.new()
+	var style := _style(Color(0.1, 0.11, 0.11, 0.96), tone_color)
+	style.set_border_width_all(0)
+	style.border_width_left = 8
+	style.set_content_margin_all(14)
+	panel.add_theme_stylebox_override("panel", style)
+	var label := _label(entry["text"], 19, PAPER)
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.custom_minimum_size = Vector2(520, 0)
+	panel.add_child(label)
+	panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	panel.gui_input.connect(func(event: InputEvent):
+		if event is InputEventMouseButton and event.pressed:
+			panel.queue_free())
+	_toast_box.add_child(panel)
+	var tween := panel.create_tween()
+	tween.tween_interval(7.0)
+	tween.tween_property(panel, "modulate:a", 0.0, 0.6)
+	tween.tween_callback(panel.queue_free)
 
 
 func _refresh_markers() -> void:
@@ -350,22 +460,25 @@ func _refresh_markers() -> void:
 			_markers[id].queue_free()
 			_markers.erase(id)
 	for id in visible_ids:
-		if not _markers.has(id):
-			var marker := Button.new()
-			marker.pressed.connect(_on_marker_pressed.bind(id))
-			_markers_layer.add_child(marker)
-			_markers[id] = marker
 		var data: Dictionary = sim.requests[id]["data"]
-		var marker: Button = _markers[id]
-		var assigned: bool = sim.requests[id]["status"] == "assigned"
-		marker.text = _marker_text(id)
-		var color: Color = TYPE_COLORS[data["type"]]
-		if assigned:
-			color = color.darkened(0.4)
-		marker.add_theme_stylebox_override("normal", _style(color, PAPER))
-		marker.add_theme_stylebox_override("hover", _style(color.lightened(0.15), PAPER))
-		marker.add_theme_stylebox_override("pressed", _style(color, PAPER))
-		marker.reset_size()
+		if not _markers.has(id):
+			var created := RequestMarker.new()
+			created.pressed.connect(_on_marker_pressed.bind(id))
+			created.kind = data["type"]
+			if data["asker"] != "":
+				var asker: Dictionary = Week1.ACTORS[data["asker"]]
+				created.asker_texture = load(asker["portrait"])
+				created.asker_region = asker["face"]
+			created.tooltip_text = "%s\nдо %s" % [data["title"], sim.when_text(data["expire"])]
+			_markers_layer.add_child(created)
+			_markers[id] = created
+		var marker: Control = _markers[id]
+		marker.assigned = sim.requests[id]["status"] == "assigned"
+		var worker: String = sim.request_worker(id)
+		if worker != "":
+			var worker_info: Dictionary = Week1.ACTORS[worker]
+			marker.worker_texture = load(worker_info["portrait"])
+			marker.worker_region = worker_info["face"]
 
 
 func _refresh_card() -> void:
@@ -527,23 +640,10 @@ func _on_marker_pressed(id: String) -> void:
 	open_card(id, _markers[id].get_meta("offscreen", false))
 
 
-func _marker_text(id: String) -> String:
-	var request: Dictionary = sim.requests[id]
-	return TYPE_NAMES[request["data"]["type"]] + (" · в работе" if request["status"] == "assigned" else "")
-
-
 # The part of the screen where the map is visible, between the panels.
 func _map_area() -> Rect2:
 	var size := _root.get_viewport_rect().size
 	return Rect2(Vector2(12, 68), Vector2(size.x - 400 - 12, size.y - 68 - 116))
-
-
-func _edge_arrow(screen: Vector2, area: Rect2) -> String:
-	if screen.x < area.position.x:
-		return "←"
-	if screen.x > area.end.x:
-		return "→"
-	return "↑" if screen.y < area.position.y else "↓"
 
 
 func _markers_at_lot(lot: String) -> Array:

@@ -33,7 +33,6 @@ var entries: Array[Dictionary] = [] # Wire: {time, text}
 var outcomes: Array[String] = [] # Notable results for the week summary.
 var next_week := {}
 var lot_states := {"boiler": "broken"}
-var report_checked := false
 var ended := false
 var rng := RandomNumberGenerator.new()
 
@@ -120,9 +119,7 @@ func objective_status(objective: Dictionary) -> String:
 		if flags.has(objective["flag"]):
 			return "done"
 		return "failed" if requests[objective["id"]]["status"] == "closed" else "pending"
-	if not report_checked:
-		return "pending"
-	return "done" if flags.get("report", false) else "failed"
+	return "pending"
 
 
 func actor_status_text(id: String) -> String:
@@ -136,6 +133,57 @@ func actor_status_text(id: String) -> String:
 		"driving":
 			return "Везёт вас"
 	return "Свободен · " + lot_name
+
+
+# Where an actor is heading or working right now ("" when idle). Tolik follows
+# whoever he is driving.
+func actor_target_lot(id: String) -> String:
+	var actor: Dictionary = actors[id]
+	if actor["state"] == "driving":
+		return actor_target_lot("me")
+	if actor["state"] in ["travel", "work"]:
+		return _request_lot(actor["request"])
+	return ""
+
+
+# Game hours until an actor arrives (travelling) or finishes (working).
+func actor_eta_hours(id: String) -> float:
+	var actor: Dictionary = actors[id]
+	match actor["state"]:
+		"driving":
+			return actor_eta_hours("me")
+		"travel":
+			var target: Vector2 = Week1.LOTS[_request_lot(actor["request"])]["pos"]
+			var speed: float = Week1.ACTORS["tolik" if actor["driver"] else id]["speed"]
+			var pos: Vector2 = actor["pos"]
+			return pos.distance_to(target) / speed
+		"work":
+			return actor["work_left"]
+	return 0.0
+
+
+# 0..1 of the work already done, for the progress ring.
+func actor_work_fraction(id: String) -> float:
+	var actor: Dictionary = actors[id]
+	if actor["state"] != "work":
+		return 0.0
+	return 1.0 - actor["work_left"] / max(actor.get("work_total", 1.0), 0.01)
+
+
+# Which actor is dealing with a request right now ("" when nobody is).
+func request_worker(request_id: String) -> String:
+	for id in actors:
+		if actors[id]["request"] == request_id and actors[id]["state"] in ["travel", "work"]:
+			return id
+	return ""
+
+
+# 1 when the request just appeared, 0 when its deadline is reached.
+func request_time_left(request_id: String) -> float:
+	var data: Dictionary = requests[request_id]["data"]
+	var start := to_hours(data["appear"])
+	var end := to_hours(data["expire"])
+	return clamp((end - t) / max(end - start, 0.01), 0.0, 1.0)
 
 
 # Empty string when the option can be chosen, otherwise the reason it cannot.
@@ -175,6 +223,7 @@ func choose(request_id: String, option_id: String) -> void:
 			actor["request"] = request_id
 			actor["option"] = option
 			actor["work_left"] = float(option.get("hours", 1))
+			actor["work_total"] = actor["work_left"]
 			if option["actor"] == "me" and actors["tolik"]["state"] == "idle":
 				actor["driver"] = true
 				actors["tolik"]["state"] = "driving"
@@ -218,7 +267,6 @@ func _tick(step: float) -> void:
 	_move_actors(step)
 	_expire_requests()
 	_check_promises()
-	_check_report()
 	if t >= WEEK_HOURS:
 		ended = true
 		week_ended.emit()
@@ -316,16 +364,6 @@ func _check_promises() -> void:
 			promise_resolved.emit("broken")
 
 
-func _check_report() -> void:
-	if report_checked or to_hours(Week1.REPORT_TIME) > t:
-		return
-	report_checked = true
-	var me: Dictionary = actors["me"]
-	var present: bool = me["lot"] == "office" and me["state"] == "idle"
-	flags["report"] = present
-	_apply(Week1.REPORT_OK if present else Week1.REPORT_MISSED)
-
-
 func _apply(effects: Dictionary) -> void:
 	for id in factions:
 		if effects.has(id):
@@ -340,7 +378,11 @@ func _apply(effects: Dictionary) -> void:
 	if effects.has("overlay"):
 		_set_overlay(effects["overlay"]["lot"], effects["overlay"]["name"], true)
 	if effects.has("log"):
-		_add_entry(effects["log"])
+		# Tone follows how the factions took it: it colors the toast on screen.
+		var mood := 0
+		for id in factions:
+			mood += effects.get(id, 0)
+		_add_entry(effects["log"], "bad" if mood < 0 else ("good" if mood > 0 else "neutral"))
 		outcomes.append(effects["log"])
 	state_changed.emit()
 
@@ -350,8 +392,10 @@ func _set_overlay(lot: String, overlay: String, visible: bool) -> void:
 	overlay_changed.emit(lot, overlay, visible)
 
 
-func _add_entry(text: String) -> void:
-	var entry := {"time": clock_text(), "text": text}
+# `kind`: "request" for a new request, "news" for consequences; `tone` is the
+# mood of a news item (good, bad or neutral).
+func _add_entry(text: String, tone: String = "request") -> void:
+	var entry := {"time": clock_text(), "text": text, "tone": tone}
 	entries.append(entry)
 	entry_added.emit(entry)
 

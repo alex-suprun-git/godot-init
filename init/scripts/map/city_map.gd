@@ -8,6 +8,7 @@ const Week1 = preload("res://scripts/data/week1.gd")
 
 const GRASS := Color(0.42, 0.47, 0.29)
 const FOREIGN_GRASS := Color(0.5, 0.5, 0.36)
+const GRASS_TINT := Color(0.66, 0.78, 0.56)
 const ASPHALT := Color(0.24, 0.25, 0.26)
 const PAVING := Color(0.55, 0.53, 0.49)
 const PANEL := Color(0.66, 0.65, 0.61)
@@ -34,6 +35,32 @@ const CAR_LADA := preload("res://assets/sprites/car_lada.png")
 const CAR_VOLGA := preload("res://assets/sprites/car_volga_black.png")
 const VAN_UAZ := preload("res://assets/sprites/van_uaz_police.png")
 const SCAFFOLDING := preload("res://assets/sprites/scaffolding.png")
+const PEOPLE := [
+	{"texture": preload("res://assets/sprites/person_walk_man.png"), "width": 2.1},
+	{"texture": preload("res://assets/sprites/person_walk_woman.png"), "width": 2.1},
+	{"texture": preload("res://assets/sprites/person_pensioner.png"), "width": 2.1},
+	{"texture": preload("res://assets/sprites/person_worker.png"), "width": 2.7},
+	{"texture": preload("res://assets/sprites/person_kid.png"), "width": 3.9},
+]
+const PICKET_GROUP := preload("res://assets/sprites/picket_group.png")
+const TRUCK_ZIL := preload("res://assets/sprites/truck_zil_plain.png")
+const CHURCH := preload("res://assets/sprites/church.png")
+const FUEL_TANKS := preload("res://assets/sprites/fuel_tanks.png")
+const BOILER_CHIMNEY := preload("res://assets/sprites/boiler_chimney.png")
+const COAL_HEAP := preload("res://assets/sprites/coal_heap.png")
+const CRANE_TRUCK := preload("res://assets/sprites/crane_truck.png")
+
+# Painted ground tiles, seen from above and seamless; laid on flat patches.
+const GROUND_GRASS := preload("res://assets/textures/ground_grass.png")
+const GROUND_GRASS_DRY := preload("res://assets/textures/ground_grass_dry.png")
+const GROUND_ASPHALT := preload("res://assets/textures/ground_asphalt.png")
+const GROUND_PAVING := preload("res://assets/textures/ground_paving.png")
+const GROUND_DIRT := preload("res://assets/textures/ground_dirt.png")
+const GROUND_WATER := preload("res://assets/textures/ground_water.png")
+const GROUND_RAIL := preload("res://assets/textures/ground_rail.png")
+const GROUND_COURTYARD := preload("res://assets/textures/ground_courtyard.png")
+const DECAL_CENTER_LINE := preload("res://assets/sprites/decal_center_line.png")
+const DECAL_CROSSWALK := preload("res://assets/sprites/decal_crosswalk.png")
 
 # Schematic coordinates: 1 SVG px = 0.25 map units, SVG (800, 530) is the origin.
 const SVG_SCALE := 0.25
@@ -57,6 +84,8 @@ var _tokens := {} # actor id -> Node3D
 var _overlays := {} # "lot:name" -> Node3D
 var _lot_states := {} # lot -> {state -> Node3D}
 var _occupied: Array[Rect2] = [] # Ground taken by buildings and roads; trees avoid it.
+var _ground_layer := 0 # Each ground tile sits a hair above the last so overlaps never flicker.
+var _walkers: Array[Dictionary] = [] # Pedestrians walking back and forth along a street.
 var _materials := {}
 var _rng := RandomNumberGenerator.new()
 
@@ -73,6 +102,7 @@ func setup(week_sim) -> void:
 	_build_depot()
 	_build_south()
 	_build_traffic()
+	_build_pedestrians()
 	_build_overlays()
 	_build_trees()
 	_build_tokens()
@@ -88,6 +118,7 @@ func _process(delta: float) -> void:
 	_camera_target = _camera_target.lerp(_camera_goal, min(1.0, delta * 8.0))
 	_update_camera()
 	_move_tokens()
+	_move_walkers(delta)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -109,6 +140,11 @@ func _unhandled_input(event: InputEvent) -> void:
 func lot_screen_position(lot: String, height: float = 16.0) -> Vector2:
 	var pos: Vector2 = Week1.LOTS[lot]["pos"]
 	return camera.unproject_position(Vector3(pos.x, height, pos.y))
+
+
+# Where a person stands on screen (their feet), for the HUD to draw the token.
+func token_screen_position(actor_id: String) -> Vector2:
+	return camera.unproject_position(_tokens[actor_id].position)
 
 
 # Smoothly moves the camera to a lot, e.g. when a crisis starts off-screen.
@@ -162,26 +198,29 @@ func _build_environment() -> void:
 	environment.background_mode = Environment.BG_SKY
 	environment.sky = sky
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	environment.ambient_light_energy = 0.45
+	environment.ambient_light_energy = 0.6
 	environment.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	environment.ssao_enabled = true
 	environment.ssao_radius = 2.0
 	environment.ssao_intensity = 2.5
+	# The map is a calm backdrop, so game elements on top can stand out: neutral
+	# daylight, almost no haze, and slightly muted colors.
 	environment.fog_enabled = true
-	environment.fog_light_color = Color(0.82, 0.76, 0.66)
-	environment.fog_density = 0.0005
+	environment.fog_light_color = Color(0.78, 0.82, 0.86)
+	environment.fog_density = 0.00008
 	environment.adjustment_enabled = true
-	environment.adjustment_contrast = 1.1
+	environment.adjustment_contrast = 1.12
+	environment.adjustment_saturation = 0.82
 
 	var world := WorldEnvironment.new()
 	world.environment = environment
 	add_child(world)
 
-	# Late August afternoon: warm sun from the south-west.
+	# Late August midday: neutral white sun, high enough for short shadows.
 	var sun := DirectionalLight3D.new()
-	sun.rotation_degrees = Vector3(-38.0, -35.0, 0.0)
-	sun.light_color = Color(1.0, 0.88, 0.72)
-	sun.light_energy = 1.5
+	sun.rotation_degrees = Vector3(-55.0, -30.0, 0.0)
+	sun.light_color = Color(1.0, 0.97, 0.92)
+	sun.light_energy = 1.3
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 900.0
 	add_child(sun)
@@ -194,10 +233,13 @@ func _build_environment() -> void:
 
 func _build_ground_and_roads() -> void:
 	_box(Vector3(900, 1, 700), Vector3(0, -0.5, 60), GRASS)
+	# The painted grass is bright and busy at map scale: tint it greener and use a
+	# large tile so it reads as calm lawn.
+	_ground_quad(Vector2(0, 60), Vector2(900, 700), 0.005, GROUND_GRASS, 44.0, false, GRASS_TINT)
 	# Neighbor state, river, embankment.
-	_svg_ground(Rect2(-400, -400, 2400, 470), FOREIGN_GRASS, 0.01)
-	_svg_ground(Rect2(-400, 70, 2400, 80), Color(0.24, 0.36, 0.42), 0.02)
-	_svg_ground(Rect2(-400, 150, 2400, 10), Color(0.5, 0.5, 0.48), 0.05)
+	_svg_ground(Rect2(-400, -400, 2400, 470), FOREIGN_GRASS, 0.01, false, GROUND_GRASS_DRY, 44.0, false, GRASS_TINT)
+	_svg_ground(Rect2(-400, 70, 2400, 80), Color(0.24, 0.36, 0.42), 0.02, false, GROUND_WATER, 40.0)
+	_svg_ground(Rect2(-400, 150, 2400, 10), Color(0.5, 0.5, 0.48), 0.05, false, GROUND_PAVING, 10.0)
 
 	# Roads from the schematic.
 	var roads := [
@@ -206,11 +248,12 @@ func _build_ground_and_roads() -> void:
 		Rect2(920, 300, 560, 18), Rect2(1180, 496, 18, 444), Rect2(920, 700, 560, 18),
 	]
 	for road in roads:
-		_svg_ground(road, ASPHALT, 0.06, true)
+		_svg_ground(road, ASPHALT, 0.06, true, GROUND_ASPHALT, 14.0)
+	_build_road_markings()
 
-	# Railway along the south edge and the spur to the depot.
-	_svg_ground(Rect2(-400, 940, 2400, 12), Color(0.36, 0.33, 0.3), 0.08, true)
-	_svg_ground(Rect2(1480, 200, 12, 740), Color(0.36, 0.33, 0.3), 0.08, true)
+	# Railway along the south edge and the spur to the depot (one tile spans the track).
+	_svg_ground(Rect2(-400, 940, 2400, 12), Color(0.36, 0.33, 0.3), 0.08, true, GROUND_RAIL, 3.0)
+	_svg_ground(Rect2(1480, 200, 12, 740), Color(0.36, 0.33, 0.3), 0.08, true, GROUND_RAIL, 3.0, true)
 
 	# Bridge and the border checkpoint on the far bank.
 	_svg_box(Rect2(880, 40, 40, 120), 1.2, Color(0.55, 0.55, 0.53))
@@ -244,7 +287,7 @@ func _build_microdistrict() -> void:
 
 	# Courtyards, school, kindergarten, garages.
 	for rect in [Rect2(215, 320, 250, 70), Rect2(565, 320, 270, 70), Rect2(215, 580, 250, 60), Rect2(565, 580, 270, 60)]:
-		_svg_ground(rect, Color(0.5, 0.56, 0.33), 0.03)
+		_svg_ground(rect, Color(0.5, 0.56, 0.33), 0.03, false, GROUND_COURTYARD, 22.0)
 	_svg_building(Rect2(740, 390, 100, 60), 9, Color(0.86, 0.76, 0.52), Color(0.45, 0.4, 0.35))
 	_svg_building(Rect2(380, 530, 90, 40), 6, Color(0.86, 0.76, 0.52), Color(0.45, 0.4, 0.35))
 	for i in 8:
@@ -265,10 +308,10 @@ func _build_boiler() -> void:
 	_facades(base, size, FACADE_BRICK, 1.0)
 	_occupy(center, Vector2(size.x, size.z))
 	var chimney := _svg_point(Vector2(86, 394))
-	_cylinder(1.6, 34, Vector3(chimney.x, 17, chimney.y), Color(0.5, 0.25, 0.18))
+	# The painted chimney is 34 units tall (canvas 2:3), so its width is 34 * 2/3.
+	_sprite(BOILER_CHIMNEY, _ground(chimney), 22.7)
 	var coal_spot := _svg_point(Vector2(45, 475))
-	var coal := _sphere(5.0, Vector3(coal_spot.x, 0.4, coal_spot.y), Color(0.1, 0.1, 0.11))
-	coal.scale = Vector3(1.3, 0.35, 0.8)
+	_sprite(COAL_HEAP, _ground(coal_spot), 14.0)
 
 	# Overground heat pipes from the boiler house to the courtyards.
 	for path in [
@@ -286,7 +329,7 @@ func _build_boiler() -> void:
 	for i in 3:
 		_sprite(SCAFFOLDING, base + Vector3(-size.x / 3.0 + i * size.x / 3.0, 0, front + 0.5), 9.0, repairing)
 	_box(Vector3(size.x + 8, 2, 0.2), base + Vector3(0, 1, front + 5), Color(0.85, 0.5, 0.2), repairing)
-	_box(Vector3(5, 2.2, 2.2), base + Vector3(size.x / 2.0 + 4, 1.1, front + 2), Color(0.85, 0.65, 0.15), repairing)
+	_sprite(CRANE_TRUCK, base + Vector3(size.x / 2.0 + 7, 0, front + 4), 12.0, repairing, true)
 	repairing.visible = false
 
 	var working := Node3D.new()
@@ -316,7 +359,7 @@ func _build_boiler() -> void:
 # --- Center: square and administration -------------------------------------
 
 func _build_center() -> void:
-	_svg_ground(Rect2(940, 370, 200, 90), PAVING, 0.04, true)
+	_svg_ground(Rect2(940, 370, 200, 90), PAVING, 0.04, true, GROUND_PAVING, 12.0)
 	var monument := _svg_point(Vector2(1040, 415))
 	_box(Vector3(3, 2, 3), Vector3(monument.x, 1, monument.y), Color(0.45, 0.45, 0.45))
 	_cylinder(0.7, 4, Vector3(monument.x, 4, monument.y), Color(0.3, 0.32, 0.3))
@@ -343,14 +386,7 @@ func _build_old_center() -> void:
 	var rect := Rect2(1230, 520, 60, 70)
 	var center := _svg_center(rect)
 	var base := Vector3(center.x, 0, center.y)
-	_box(Vector3(10, 9, 14), base + Vector3(0, 4.5, 0), Color(0.93, 0.9, 0.84))
-	_box(Vector3(6, 6, 5), base + Vector3(0, 3, 9), Color(0.93, 0.9, 0.84))
-	_cylinder(3.0, 4, base + Vector3(0, 11, 0), Color(0.93, 0.9, 0.84))
-	var dome := _sphere(3.2, base + Vector3(0, 13.4, 0), Color(0.24, 0.45, 0.36))
-	dome.scale = Vector3(1, 1.2, 1)
-	_sphere(0.7, base + Vector3(0, 17.4, 0), Color(0.85, 0.68, 0.25))
-	_box(Vector3(0.25, 3, 0.25), base + Vector3(0, 19, 0), Color(0.85, 0.68, 0.25))
-	_box(Vector3(1.6, 0.25, 0.25), base + Vector3(0, 19.6, 0), Color(0.85, 0.68, 0.25))
+	_sprite(CHURCH, base, 24.0)
 	_occupy(center, Vector2(14, 22))
 	# Merchant houses.
 	for house in [Rect2(960, 520, 80, 44), Rect2(1060, 520, 90, 44), Rect2(960, 590, 190, 44), Rect2(1220, 610, 110, 40)]:
@@ -361,9 +397,9 @@ func _build_old_center() -> void:
 
 func _build_depot() -> void:
 	for spot in [Vector2(1240, 245), Vector2(1300, 245), Vector2(1360, 245)]:
-		var at := _svg_point(spot)
-		_cylinder(5.5, 8, Vector3(at.x, 4, at.y), Color(0.72, 0.73, 0.72))
-		_occupy(at, Vector2(12, 12))
+		_occupy(_svg_point(spot), Vector2(12, 12))
+	# One painted sprite for the whole tank farm with its manifold.
+	_sprite(FUEL_TANKS, _ground(_svg_point(Vector2(1300, 250))), 34.0)
 	_svg_building(Rect2(1180, 330, 120, 44), 6, BRICK, Color(0.4, 0.33, 0.28), false, FACADE_WAREHOUSE)
 	_svg_box(Rect2(1300, 160, 160, 20), 0.8, Color(0.5, 0.48, 0.45))
 	var fence := _svg_point(Vector2(1300, 285))
@@ -376,11 +412,16 @@ func _build_depot() -> void:
 func _build_south() -> void:
 	_svg_building(Rect2(840, 885, 120, 45), 8, Color(0.85, 0.8, 0.68), Color(0.4, 0.42, 0.4))
 	# Station market: out of reach at the aide stage, but busy.
-	_svg_ground(Rect2(560, 790, 260, 130), PAVING, 0.04, true)
+	_svg_ground(Rect2(560, 790, 260, 130), PAVING, 0.04, true, GROUND_PAVING, 12.0)
 	for row in 3:
 		for col in 7:
 			var at := _svg_point(Vector2(590 + col * 34, 818 + row * 34))
 			_sprite(MARKET_TENT, _ground(at), 8.0, null, (row + col) % 2 == 0)
+	# Shoppers in the aisles between the stalls.
+	for i in 16:
+		var aisle := _svg_point(Vector2(_rng.randf_range(580, 800), 800 + (i % 3) * 34 + 17))
+		var person: Dictionary = PEOPLE[_rng.randi() % PEOPLE.size()]
+		_sprite(person["texture"], _ground(aisle), person["width"], null, _rng.randf() < 0.5)
 	# Private houses with pitched roofs.
 	for row in 3:
 		for col in 4:
@@ -389,7 +430,7 @@ func _build_south() -> void:
 			_svg_building(Rect2(1230 + col * 50, 740 + row * 60, 30, 26), 3.5, Color(0.78, 0.7, 0.58), Color(0.4, 0.3, 0.26), true)
 	# Wasteland: bare ground with garbage and a birch grove.
 	var waste := Rect2(150, 840, 300, 90)
-	_svg_ground(waste, Color(0.45, 0.42, 0.3), 0.04)
+	_svg_ground(waste, Color(0.45, 0.42, 0.3), 0.04, false, GROUND_DIRT, 22.0)
 	var center := _svg_center(waste)
 	for i in 8:
 		_box(Vector3(1.2, 0.6, 0.9), Vector3(center.x + _rng.randf_range(-30, 30), 0.3, center.y + _rng.randf_range(-8, 8)), Color(0.35, 0.33, 0.3))
@@ -416,15 +457,7 @@ func _build_overlays() -> void:
 	var picket := Node3D.new()
 	add_child(picket)
 	var block5: Vector2 = Week1.LOTS["block5"]["pos"]
-	var coats := [Color(0.25, 0.22, 0.2), Color(0.4, 0.3, 0.25), Color(0.3, 0.32, 0.38), Color(0.5, 0.42, 0.3)]
-	for i in 9:
-		var spot := Vector3(block5.x - 10 + i * 2.4, 0, block5.y + 4 + (i % 2) * 1.6)
-		_capsule(spot + Vector3(0, 1.0, 0), coats[i % coats.size()], picket)
-		if i % 3 == 1:
-			_box(Vector3(0.15, 3.2, 0.15), spot + Vector3(0.5, 1.6, 0), Color(0.4, 0.3, 0.2), picket)
-			_box(Vector3(2.4, 1.4, 0.1), spot + Vector3(0.5, 3.4, 0), Color(0.95, 0.93, 0.88), picket)
-	# Overlays are drawn larger than life so they read from the map camera.
-	_scale_around(picket, Vector3(block5.x, 0, block5.y + 5), 2.2)
+	_sprite(PICKET_GROUP, Vector3(block5.x, 0, block5.y + 9), 12.0, picket)
 	picket.visible = false
 	_overlays["block5:picket"] = picket
 
@@ -432,13 +465,7 @@ func _build_overlays() -> void:
 	var truck := Node3D.new()
 	add_child(truck)
 	var coal := _svg_point(Vector2(45, 475))
-	var at := Vector3(coal.x + 12, 0, coal.y + 2)
-	_box(Vector3(3, 2.6, 2.6), at + Vector3(4.5, 1.6, 0), Color(0.25, 0.32, 0.25), truck)
-	_box(Vector3(6, 1.8, 2.8), at + Vector3(0, 1.4, 0), Color(0.3, 0.36, 0.28), truck)
-	_box(Vector3(5.4, 0.6, 2.4), at + Vector3(0, 2.6, 0), Color(0.1, 0.1, 0.11), truck)
-	for i in 3:
-		_capsule(at + Vector3(-4 + i * 1.5, 1.0, 2.5), Color(0.2, 0.2, 0.2), truck)
-	_scale_around(truck, at, 1.8)
+	_sprite(TRUCK_ZIL, Vector3(coal.x + 13, 0, coal.y + 3), 12.0, truck)
 	truck.visible = false
 	_overlays["boiler:truck"] = truck
 
@@ -467,16 +494,7 @@ func _build_tokens() -> void:
 		var disc_color := Color(0.85, 0.36, 0.27) if id == "me" else Color(0.12, 0.13, 0.12)
 		var disc := _cylinder(2.2, 0.4, Vector3(0, 0.2, 0), disc_color, token)
 		disc.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		var sprite := Sprite3D.new()
-		sprite.texture = load(info["portrait"])
-		sprite.region_enabled = true
-		sprite.region_rect = info["face"]
-		sprite.pixel_size = 8.0 / info["face"].size.x
-		sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-		sprite.no_depth_test = true
-		sprite.render_priority = 10
-		sprite.position = Vector3(0, 7.0, 0)
-		token.add_child(sprite)
+		# The face itself is drawn by the HUD, crisp and unaffected by map lighting.
 		var start: Vector2 = sim.actors[id]["pos"]
 		token.position = Vector3(start.x, 0, start.y + 6)
 		_tokens[id] = token
@@ -495,7 +513,7 @@ func _move_tokens() -> void:
 		var ids: Array = groups[key]
 		for i in ids.size():
 			var pos: Vector2 = sim.actors[ids[i]]["pos"]
-			var spread := (i - (ids.size() - 1) / 2.0) * 8.5
+			var spread := (i - (ids.size() - 1) / 2.0) * 15.0
 			var token: Node3D = _tokens[ids[i]]
 			token.position = token.position.lerp(Vector3(pos.x + spread, 0.0, pos.y + 6.0), 0.35)
 
@@ -526,12 +544,129 @@ func _svg_center(rect: Rect2) -> Vector2:
 
 
 # A flat ground patch (roads, yards, water) from a schematic rectangle.
-func _svg_ground(rect: Rect2, color: Color, y: float, occupied: bool = false) -> void:
+func _svg_ground(rect: Rect2, color: Color, y: float, occupied: bool = false, texture: Texture2D = null, tile: float = 24.0, turned: bool = false, tint: Color = Color.WHITE) -> void:
 	var center := _svg_center(rect)
 	var size := rect.size * SVG_SCALE
 	_box(Vector3(size.x, 0.2, size.y), Vector3(center.x, y, center.y), color)
+	if texture != null:
+		_ground_quad(center, size, y + 0.1, texture, tile, turned, tint)
 	if occupied:
 		_occupy(center, size)
+
+
+# A painted ground tile laid flat on top of a patch. Tiles line up in world
+# space, so neighboring patches of the same texture continue seamlessly. `tile`
+# is the edge of one texture repeat in map units; `turned` runs the texture
+# along the other axis (for a north-south railway).
+func _ground_quad(center: Vector2, size: Vector2, y: float, texture: Texture2D, tile: float, turned: bool = false, tint: Color = Color.WHITE) -> void:
+	_ground_layer += 1
+	var quad := QuadMesh.new()
+	var material := StandardMaterial3D.new()
+	material.albedo_texture = texture
+	material.albedo_color = tint
+	material.roughness = 0.95
+	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+	var instance := MeshInstance3D.new()
+	if turned:
+		quad.size = Vector2(size.y, size.x)
+		material.uv1_scale = Vector3(size.y / tile, size.x / tile, 1.0)
+		instance.basis = Basis(Vector3.UP, PI / 2.0) * Basis(Vector3.RIGHT, -PI / 2.0)
+	else:
+		quad.size = size
+		material.uv1_scale = Vector3(size.x / tile, size.y / tile, 1.0)
+		var corner := center - size / 2.0
+		material.uv1_offset = Vector3(corner.x / tile, corner.y / tile, 0.0)
+		instance.basis = Basis(Vector3.RIGHT, -PI / 2.0)
+	instance.mesh = quad
+	instance.material_override = material
+	instance.position = Vector3(center.x, y + _ground_layer * 0.004, center.y)
+	add_child(instance)
+
+
+# A worn white road marking laid flat on the asphalt: transparent, so only the
+# paint shows. `width` runs along the road; `yaw` turns it (PI / 2 for a
+# north-south road).
+func _decal(texture: Texture2D, at: Vector2, width: float, yaw: float) -> void:
+	var quad := QuadMesh.new()
+	quad.size = Vector2(width, width * texture.get_height() / texture.get_width())
+	var material := StandardMaterial3D.new()
+	material.albedo_texture = texture
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_DEPTH_PRE_PASS
+	material.roughness = 1.0
+	var instance := MeshInstance3D.new()
+	instance.mesh = quad
+	instance.material_override = material
+	instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	instance.basis = Basis(Vector3.UP, yaw) * Basis(Vector3.RIGHT, -PI / 2.0)
+	instance.position = Vector3(at.x, 0.62, at.y)
+	add_child(instance)
+
+
+# Center lines on the main street and the cross street, plus zebra crossings.
+func _build_road_markings() -> void:
+	var main_x := _svg_point(Vector2(900, 0)).x
+	var cross_z := _svg_point(Vector2(0, 483)).y
+	var z := -88.0
+	while z < 98.0:
+		if abs(z - cross_z) > 16.0:
+			_decal(DECAL_CENTER_LINE, Vector2(main_x, z), 28.0, PI / 2.0)
+		z += 28.0
+	var x := -196.0
+	while x < 196.0:
+		if abs(x - main_x) > 18.0:
+			_decal(DECAL_CENTER_LINE, Vector2(x, cross_z), 28.0, 0.0)
+		x += 28.0
+	for crossing_z in [cross_z - 11.0, cross_z + 11.0]:
+		_decal(DECAL_CROSSWALK, Vector2(main_x, crossing_z), 9.0, 0.0)
+
+
+# People walking back and forth along the streets: ambient life that goes on
+# while the game is paused, and never touches the simulation.
+func _build_pedestrians() -> void:
+	var main_x := _svg_point(Vector2(900, 0)).x
+	var cross_z := _svg_point(Vector2(0, 483)).y
+	var north_z := _svg_point(Vector2(0, 239)).y
+	var south_z := _svg_point(Vector2(0, 729)).y
+	# Walking lanes just off the road centers: [from, to].
+	var lanes := [
+		[Vector2(main_x + 7.0, -88), Vector2(main_x + 7.0, 98)],
+		[Vector2(main_x - 7.0, -88), Vector2(main_x - 7.0, 98)],
+		[Vector2(-190, cross_z + 5.0), Vector2(190, cross_z + 5.0)],
+		[Vector2(-190, cross_z - 5.0), Vector2(190, cross_z - 5.0)],
+		[Vector2(-168, north_z + 4.0), Vector2(14, north_z + 4.0)],
+		[Vector2(-168, south_z - 4.0), Vector2(14, south_z - 4.0)],
+		[Vector2(-172.0, north_z), Vector2(-172.0, south_z)],
+	]
+	for i in 22:
+		var lane: Array = lanes[_rng.randi() % lanes.size()]
+		var length: float = lane[0].distance_to(lane[1])
+		var span := _rng.randf_range(36.0, 80.0)
+		var start := _rng.randf_range(0.0, max(1.0, length - span))
+		var direction: Vector2 = (lane[1] - lane[0]).normalized()
+		var person: Dictionary = PEOPLE[_rng.randi() % PEOPLE.size()]
+		var sprite := _sprite(person["texture"], Vector3.ZERO, person["width"])
+		var from: Vector2 = lane[0] + direction * start
+		_walkers.append({
+			"sprite": sprite, "from": from, "to": from + direction * span,
+			"t": _rng.randf(), "dir": 1.0 if _rng.randf() < 0.5 else -1.0,
+			"speed": _rng.randf_range(2.0, 3.4), "lift": sprite.position.y,
+		})
+
+
+func _move_walkers(delta: float) -> void:
+	for walker in _walkers:
+		var from: Vector2 = walker["from"]
+		var to: Vector2 = walker["to"]
+		var length: float = from.distance_to(to)
+		walker["t"] += walker["dir"] * walker["speed"] * delta / length
+		if walker["t"] > 1.0 or walker["t"] < 0.0:
+			walker["t"] = clamp(walker["t"], 0.0, 1.0)
+			walker["dir"] = -walker["dir"]
+		var pos: Vector2 = from.lerp(to, walker["t"])
+		var sprite: Sprite3D = walker["sprite"]
+		sprite.position = Vector3(pos.x, walker["lift"], pos.y)
+		var heading: Vector2 = (to - from) * walker["dir"]
+		sprite.flip_h = heading.x + heading.y * 0.5 < 0.0
 
 
 func _svg_box(rect: Rect2, height: float, color: Color) -> void:
