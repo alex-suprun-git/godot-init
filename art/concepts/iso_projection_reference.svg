@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1320 1320" width="1320" height="1320">
+<rect width="1320" height="1320" fill="#f4f0e6"/>
+<text x="40.0" y="56.0" font-family="Helvetica, Arial, sans-serif" font-size="32" font-weight="bold" fill="#2b2b2b" text-anchor="start">True isometric reference for map sprites</text>
+<text x="40.0" y="90.0" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#4a4a4a" text-anchor="start">Orthographic. Ground axes run at exactly 30 degrees to the horizontal edge of the picture (a ground line changes 0.577 px per 1 px of width).</text>
+<text x="40.0" y="150.0" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="bold" fill="#2b2b2b" text-anchor="start">Rules</text>
+<text x="40.0" y="184.0" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#333" text-anchor="start">1. The long side of every vehicle, wagon row, garage row, fence and station runs along the red axis (rising to the right).</text>
+<text x="40.0" y="208.0" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#333" text-anchor="start">    The game mirrors the picture when a street runs the other way.</text>
+<text x="40.0" y="232.0" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#333" text-anchor="start">2. The footprint is a clean rectangle in this projection. Its near corner (the bottom of the picture) touches the bottom</text>
+<text x="40.0" y="256.0" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#333" text-anchor="start">    edge, with a margin of at most 3% of the height.</text>
+<text x="40.0" y="280.0" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#333" text-anchor="start">3. Vertical edges stay exactly vertical. No perspective: far parts are not smaller.</text>
+<text x="40.0" y="304.0" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#333" text-anchor="start">4. The long side facing the viewer is the one on the lower right; the short end faces the lower left.</text>
+<text x="40.0" y="328.0" font-family="Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#333" text-anchor="start">5. The red slope (0.577) is the target. Flatter than 0.52 or steeper than 0.63 is rejected.</text>
+<line x1="414.6" y1="948.0" x2="747.1" y2="1140.0" stroke="#cfc9b6" stroke-width="1" />
+<line x1="470.0" y1="916.0" x2="802.6" y2="1108.0" stroke="#cfc9b6" stroke-width="1" />
+<line x1="525.4" y1="884.0" x2="858.0" y2="1076.0" stroke="#cfc9b6" stroke-width="1" />
+<line x1="580.9" y1="852.0" x2="913.4" y2="1044.0" stroke="#cfc9b6" stroke-width="1" />
+<line x1="636.3" y1="820.0" x2="968.8" y2="1012.0" stroke="#cfc9b6" stroke-width="1" />
+<line x1="691.7" y1="788.0" x2="1024.3" y2="980.0" stroke="#cfc9b6" stroke-width="1" />
+<line x1="747.1" y1="756.0" x2="1079.7" y2="948.0" stroke="#cfc9b6" stroke-width="1" />
+<line x1="802.6" y1="724.0" x2="1135.1" y2="916.0" stroke="#cfc9b6" stroke-width="1" />
+<line x1="858.0" y1="692.0" x2="1190.5" y2="884.0" stroke="#cfc9b6" stroke-width="1" />
+<line x1="414.6" y1="948.0" x2="858.0" y2="692.0" stroke="#cfc9b6" stroke-width="1" />
+<line x1="470.0" y1="980.0" x2="913.4" y2="724.0" stroke="#cfc9b6" stroke-width="1" />
+<line x1="525.4" y1="1012.0" x2="968.8" y2="756.0" stroke="#cfc9b6" stroke-width="1" />
+<line x1="580.9" y1="1044.0" x2="1024.3" y2="788.0" stroke="#cfc9b6" stroke-width="1" />
+<line x1="636.3" y1="1076.0" x2="1079.7" y2="820.0" stroke="#cfc9b6" stroke-width="1" />
+<line x1="691.7" y1="1108.0" x2="1135.1" y2="852.0" stroke="#cfc9b6" stroke-width="1" />
+<line x1="747.1" y1="1140.0" x2="1190.5" y2="884.0" stroke="#cfc9b6" stroke-width="1" />
+<polygon points="470.0,980.0 747.1,820.0 858.0,884.0 580.9,1044.0" fill="#e0dccb" stroke="#9a9684" stroke-width="1"/>
+<polygon points="470.0,980.0 580.9,1044.0 580.9,954.4 470.0,890.4" fill="#b9b4a2" stroke="#2b2b2b" stroke-width="2"/>
+<polygon points="580.9,1044.0 858.0,884.0 858.0,794.4 580.9,954.4" fill="#cfcab8" stroke="#2b2b2b" stroke-width="2"/>
+<polygon points="470.0,890.4 747.1,730.4 858.0,794.4 580.9,954.4" fill="#e7e3d3" stroke="#2b2b2b" stroke-width="2"/>
+<line x1="580.9" y1="1044.0" x2="979.9" y2="813.6" stroke="#a63d2a" stroke-width="4" />
+<polygon points="979.9,813.6 970.1,828.5 962.1,814.7" fill="#a63d2a" stroke="#a63d2a" stroke-width="1"/>
+<text x="993.9" y="809.6" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#a63d2a" text-anchor="start">long axis: rises to the right  /</text>
+<line x1="580.9" y1="1044.0" x2="725.0" y2="1127.2" stroke="#2f5f7e" stroke-width="4" />
+<polygon points="725.0,1127.2 707.1,1126.1 715.1,1112.3" fill="#2f5f7e" stroke="#2f5f7e" stroke-width="1"/>
+<text x="739.0" y="1133.2" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#2f5f7e" text-anchor="start">short axis: falls to the right  \</text>
+<line x1="410.9" y1="1044.0" x2="750.9" y2="1044.0" stroke="#777" stroke-width="1" stroke-dasharray="6 5"/>
+<text x="756.9" y="1049.0" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#777" text-anchor="start">horizontal</text>
+<path d="M 670.9 1044.0 A 90 90 0 0 0 658.8 999.0" fill="none" stroke="#a63d2a" stroke-width="2"/>
+<text x="676.9" y="1030.0" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="bold" fill="#a63d2a" text-anchor="start">30°</text>
+<text x="40.0" y="1290.0" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#777" text-anchor="start">Reference only: do not copy the grid or the box into the artwork.</text>
+</svg>

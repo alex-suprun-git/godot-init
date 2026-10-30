@@ -5,10 +5,11 @@
 extends Node3D
 
 const Week1 = preload("res://scripts/data/week1.gd")
+const Settings = preload("res://scripts/data/settings.gd")
+const SpriteAnchors = preload("res://scripts/data/sprite_anchors.gd")
 
 const GRASS := Color(0.42, 0.47, 0.29)
 const FOREIGN_GRASS := Color(0.5, 0.5, 0.36)
-const GRASS_TINT := Color(0.66, 0.78, 0.56)
 const ASPHALT := Color(0.24, 0.25, 0.26)
 const PAVING := Color(0.55, 0.53, 0.49)
 const PANEL := Color(0.66, 0.65, 0.61)
@@ -27,6 +28,14 @@ const FACADE_ADMIN := preload("res://assets/textures/facade_admin_stalinist.png"
 const FACADE_WAREHOUSE := preload("res://assets/textures/facade_warehouse.png")
 const FACADE_MERCHANT := preload("res://assets/textures/facade_merchant_house.png")
 const ROOF_TAR := preload("res://assets/textures/roof_tar.png")
+const ROOF_RUSTY := preload("res://assets/textures/roof_rusty_metal.png")
+
+# Paint over the grey panel facade, so a row of identical blocks reads as a living
+# district: neutral, faded yellow, blue, green, salmon and cream.
+const PANEL_TINTS := [
+	Color(1.0, 1.0, 1.0), Color(1.0, 0.93, 0.74), Color(0.8, 0.9, 1.0),
+	Color(0.84, 0.97, 0.84), Color(1.0, 0.84, 0.78), Color(0.96, 0.96, 0.9),
+]
 const TREE_BIRCH := preload("res://assets/sprites/tree_birch_august.png")
 const TREE_POPLAR := preload("res://assets/sprites/tree_poplar_august.png")
 const KIOSK := preload("res://assets/sprites/kiosk.png")
@@ -61,6 +70,75 @@ const GROUND_RAIL := preload("res://assets/textures/ground_rail.png")
 const GROUND_COURTYARD := preload("res://assets/textures/ground_courtyard.png")
 const DECAL_CENTER_LINE := preload("res://assets/sprites/decal_center_line.png")
 const DECAL_CROSSWALK := preload("res://assets/sprites/decal_crosswalk.png")
+const GROUND_SNOW_GRASS := preload("res://assets/textures/ground_snow_grass.png")
+const GROUND_SNOW_GRASS_DRY := preload("res://assets/textures/ground_snow_grass_dry.png")
+const GROUND_SNOW_ASPHALT := preload("res://assets/textures/ground_snow_asphalt.png")
+const GROUND_SNOW_PAVING := preload("res://assets/textures/ground_snow_paving.png")
+const GROUND_SNOW_DIRT := preload("res://assets/textures/ground_snow_dirt.png")
+const TREE_BIRCH_OCTOBER := preload("res://assets/sprites/tree_birch_october.png")
+const TREE_POPLAR_OCTOBER := preload("res://assets/sprites/tree_poplar_october.png")
+const TREE_BIRCH_WINTER := preload("res://assets/sprites/tree_birch_winter.png")
+const TREE_POPLAR_WINTER := preload("res://assets/sprites/tree_poplar_winter.png")
+
+# Props that were boxes before the full sprite set arrived.
+const PRIVATE_HOUSE := preload("res://assets/sprites/private_house.png")
+const GARAGES_ROW := preload("res://assets/sprites/garages_row.png")
+const LAMP_POST := preload("res://assets/sprites/lamp_post.png")
+const POWER_POLE := preload("res://assets/sprites/power_pole.png")
+const BENCH_PLAYGROUND := preload("res://assets/sprites/bench_playground.png")
+const BUS_STOP := preload("res://assets/sprites/bus_stop.png")
+const BUS_LIAZ := preload("res://assets/sprites/bus_liaz.png")
+const TRAM := preload("res://assets/sprites/tram.png")
+const FENCE_CHAINLINK := preload("res://assets/sprites/fence_chainlink.png")
+const MONUMENT := preload("res://assets/sprites/monument.png")
+const BORDER_POST := preload("res://assets/sprites/border_post.png")
+const TRAIN_WAGONS := preload("res://assets/sprites/train_wagons.png")
+const STATION := preload("res://assets/sprites/station.png")
+const BARGE := preload("res://assets/sprites/barge.png")
+const GARBAGE_PILE := preload("res://assets/sprites/garbage_pile.png")
+const BUSH := preload("res://assets/sprites/bush.png")
+const WATER_TOWER := preload("res://assets/sprites/water_tower.png")
+
+# The same scenario in three looks. Each season picks the ground tiles, the
+# trees, the light and the weather; nothing else about the map changes.
+const SEASONS := {
+	"summer": {
+		"label": "Лето",
+		"grass": GROUND_GRASS, "grass_dry": GROUND_GRASS_DRY, "asphalt": GROUND_ASPHALT,
+		"paving": GROUND_PAVING, "dirt": GROUND_DIRT, "courtyard": GROUND_COURTYARD,
+		"water": GROUND_WATER, "rail": GROUND_RAIL,
+		"birch": TREE_BIRCH, "poplar": TREE_POPLAR, "bushes": true,
+		"grass_tint": Color(0.66, 0.78, 0.56), "asphalt_tint": Color.WHITE,
+		"sky_top": Color(0.45, 0.55, 0.68), "sky_horizon": Color(0.78, 0.74, 0.66),
+		"sun_rotation": Vector3(-55.0, -30.0, 0.0), "sun_color": Color(1.0, 0.97, 0.92), "sun_energy": 1.3,
+		"ambient": 0.6, "fog_color": Color(0.78, 0.82, 0.86), "fog_density": 0.00008,
+		"saturation": 0.95, "contrast": 1.12, "weather": "",
+	},
+	"autumn": {
+		"label": "Осень",
+		"grass": GROUND_GRASS, "grass_dry": GROUND_GRASS_DRY, "asphalt": GROUND_ASPHALT,
+		"paving": GROUND_PAVING, "dirt": GROUND_DIRT, "courtyard": GROUND_COURTYARD,
+		"water": GROUND_WATER, "rail": GROUND_RAIL,
+		"birch": TREE_BIRCH_OCTOBER, "poplar": TREE_POPLAR_OCTOBER, "bushes": true,
+		"grass_tint": Color(0.86, 0.74, 0.52), "asphalt_tint": Color.WHITE,
+		"sky_top": Color(0.5, 0.55, 0.62), "sky_horizon": Color(0.78, 0.72, 0.64),
+		"sun_rotation": Vector3(-42.0, -30.0, 0.0), "sun_color": Color(1.0, 0.9, 0.78), "sun_energy": 1.15,
+		"ambient": 0.55, "fog_color": Color(0.8, 0.76, 0.7), "fog_density": 0.00025,
+		"saturation": 1.0, "contrast": 1.1, "weather": "leaves",
+	},
+	"winter": {
+		"label": "Зима",
+		"grass": GROUND_SNOW_GRASS, "grass_dry": GROUND_SNOW_GRASS_DRY, "asphalt": GROUND_SNOW_ASPHALT,
+		"paving": GROUND_SNOW_PAVING, "dirt": GROUND_SNOW_DIRT, "courtyard": GROUND_SNOW_GRASS,
+		"water": GROUND_WATER, "rail": GROUND_RAIL,
+		"birch": TREE_BIRCH_WINTER, "poplar": TREE_POPLAR_WINTER, "bushes": false,
+		"grass_tint": Color(0.82, 0.86, 0.92), "asphalt_tint": Color(0.5, 0.53, 0.6),
+		"sky_top": Color(0.5, 0.56, 0.66), "sky_horizon": Color(0.74, 0.78, 0.84),
+		"sun_rotation": Vector3(-30.0, -30.0, 0.0), "sun_color": Color(0.9, 0.94, 1.0), "sun_energy": 1.15,
+		"ambient": 0.5, "fog_color": Color(0.78, 0.82, 0.88), "fog_density": 0.0003,
+		"saturation": 0.8, "contrast": 1.22, "weather": "snow",
+	},
+}
 
 # Schematic coordinates: 1 SVG px = 0.25 map units, SVG (800, 530) is the origin.
 const SVG_SCALE := 0.25
@@ -70,14 +148,24 @@ const SVG_ORIGIN := Vector2(800, 530)
 const BOUNDS := Rect2(-200, -130, 400, 260)
 const ZOOM_MIN := 120.0
 const ZOOM_MAX := 520.0
-const ZOOM_DEFAULT := 330.0
-const CAMERA_DIRECTION := Vector3(0.0, 0.75, 0.66) # Up and toward the viewer.
+const ZOOM_DEFAULT := 300.0
 const PAN_SPEED := 1.1 # Fraction of the zoom distance per second for keyboard panning.
+
+# The two cameras. "elevation" is the angle above the ground in degrees: for an
+# axis at 45 degrees yaw, a ground line's slope on screen equals sin(elevation),
+# so 30 degrees gives the classic 2:1 isometric slope of 0.5.
+const CAMERA_VIEWS := {
+	# True isometric: elevation atan(1 / sqrt(2)), so all three axes are foreshortened
+	# equally and ground lines run at 30 degrees (slope 0.577). Use 30.0 for the
+	# 2:1 game isometric (slope 0.5) the painted sprites measure closer to.
+	"iso": {"yaw": 45.0, "elevation": 35.264, "orthographic": true},
+	"front": {"yaw": 0.0, "elevation": 48.5, "orthographic": false},
+}
 
 var sim
 var camera: Camera3D
-var _camera_target := Vector3(-35, 0, 15)
-var _camera_goal := Vector3(-35, 0, 15)
+var _camera_target := Vector3(-8, 0, -4)
+var _camera_goal := Vector3(-8, 0, -4)
 var _zoom := ZOOM_DEFAULT
 var _dragging := false
 var _tokens := {} # actor id -> Node3D
@@ -88,12 +176,16 @@ var _ground_layer := 0 # Each ground tile sits a hair above the last so overlaps
 var _walkers: Array[Dictionary] = [] # Pedestrians walking back and forth along a street.
 var _materials := {}
 var _rng := RandomNumberGenerator.new()
+var _season: Dictionary
+var _weather: CPUParticles3D # Snow or falling leaves, following the camera.
 
 
 func setup(week_sim) -> void:
 	sim = week_sim
+	_season = SEASONS[Settings.season]
 	_rng.seed = 7
 	_build_environment()
+	_build_weather()
 	_build_ground_and_roads()
 	_build_microdistrict()
 	_build_boiler()
@@ -102,9 +194,11 @@ func setup(week_sim) -> void:
 	_build_depot()
 	_build_south()
 	_build_traffic()
+	_build_street_furniture()
 	_build_pedestrians()
 	_build_overlays()
 	_build_trees()
+	_build_bushes()
 	_build_tokens()
 	sim.overlay_changed.connect(_on_overlay_changed)
 	sim.lot_state_changed.connect(_on_lot_state_changed)
@@ -119,9 +213,14 @@ func _process(delta: float) -> void:
 	_update_camera()
 	_move_tokens()
 	_move_walkers(delta)
+	if _weather != null:
+		_weather.global_position = _camera_target + Vector3(0, 80, 0)
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F2:
+		Settings.camera_mode = "front" if Settings.camera_mode == "iso" else "iso"
+		return
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP and event.pressed:
 			_zoom = max(ZOOM_MIN, _zoom * 0.9)
@@ -130,9 +229,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE]:
 			_dragging = event.pressed
 	elif event is InputEventMouseMotion and _dragging:
-		# Drag the map: move the target against the mouse, scaled by zoom.
+		# Drag the map: move the target against the mouse, scaled by zoom and
+		# turned into the camera's own right and forward directions.
 		var per_pixel := _zoom / 900.0
-		_set_goal(_camera_goal + Vector3(-event.relative.x, 0, -event.relative.y) * per_pixel)
+		_set_goal(_camera_goal + (-_view_right() * event.relative.x + _view_forward() * event.relative.y) * per_pixel)
 		_camera_target = _camera_goal
 
 
@@ -158,15 +258,26 @@ func focus_on(lot: String) -> void:
 func _pan_with_keys(delta: float) -> void:
 	var direction := Vector3.ZERO
 	if Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP):
-		direction.z -= 1
+		direction += _view_forward()
 	if Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN):
-		direction.z += 1
+		direction -= _view_forward()
 	if Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT):
-		direction.x -= 1
+		direction -= _view_right()
 	if Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT):
-		direction.x += 1
+		direction += _view_right()
 	if direction != Vector3.ZERO:
 		_set_goal(_camera_goal + direction.normalized() * _zoom * PAN_SPEED * delta)
+
+
+# "Up" and "right" on the screen, as directions on the ground.
+func _view_forward() -> Vector3:
+	var yaw := deg_to_rad(CAMERA_VIEWS[Settings.camera_mode]["yaw"])
+	return Vector3(-sin(yaw), 0.0, -cos(yaw))
+
+
+func _view_right() -> Vector3:
+	var yaw := deg_to_rad(CAMERA_VIEWS[Settings.camera_mode]["yaw"])
+	return Vector3(cos(yaw), 0.0, -sin(yaw))
 
 
 func _set_goal(goal: Vector3) -> void:
@@ -176,21 +287,37 @@ func _set_goal(goal: Vector3) -> void:
 
 
 func _update_camera() -> void:
-	camera.position = _camera_target + CAMERA_DIRECTION.normalized() * _zoom
+	var view: Dictionary = CAMERA_VIEWS[Settings.camera_mode]
+	var yaw := deg_to_rad(view["yaw"])
+	var elevation := deg_to_rad(view["elevation"])
+	var direction := Vector3(sin(yaw) * cos(elevation), sin(elevation), cos(yaw) * cos(elevation))
+	camera.position = _camera_target + direction * _zoom
 	camera.look_at(_camera_target)
+	# The painted sprites are isometric: an orthographic camera keeps every
+	# building and prop at one scale and slope instead of bending toward the edges.
+	var visible_height := _zoom * 0.573 # What the 32 degree perspective camera shows at the target.
+	if view["orthographic"]:
+		camera.projection = Camera3D.PROJECTION_ORTHOGONAL
+		camera.size = visible_height
+		camera.near = 1.0
+	else:
+		camera.projection = Camera3D.PROJECTION_PERSPECTIVE
+		camera.fov = 32.0
+		camera.near = 0.05
 	# Shift the picture left so the target sits in the middle of the free map
 	# area rather than under the right panel.
-	camera.h_offset = _zoom * 0.1
-	camera.v_offset = -_zoom * 0.03
+	var shift := visible_height if view["orthographic"] else _zoom
+	camera.h_offset = shift * (0.21 if view["orthographic"] else 0.1)
+	camera.v_offset = -shift * (0.03 if view["orthographic"] else 0.03)
 
 
 # --- Environment -------------------------------------------------------------
 
 func _build_environment() -> void:
 	var sky_material := ProceduralSkyMaterial.new()
-	sky_material.sky_top_color = Color(0.45, 0.55, 0.68)
-	sky_material.sky_horizon_color = Color(0.78, 0.74, 0.66)
-	sky_material.ground_horizon_color = Color(0.6, 0.56, 0.48)
+	sky_material.sky_top_color = _season["sky_top"]
+	sky_material.sky_horizon_color = _season["sky_horizon"]
+	sky_material.ground_horizon_color = _season["sky_horizon"].darkened(0.2)
 	var sky := Sky.new()
 	sky.sky_material = sky_material
 
@@ -198,29 +325,30 @@ func _build_environment() -> void:
 	environment.background_mode = Environment.BG_SKY
 	environment.sky = sky
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	environment.ambient_light_energy = 0.6
+	environment.ambient_light_energy = _season["ambient"]
 	environment.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	environment.ssao_enabled = true
 	environment.ssao_radius = 2.0
 	environment.ssao_intensity = 2.5
-	# The map is a calm backdrop, so game elements on top can stand out: neutral
-	# daylight, almost no haze, and slightly muted colors.
+	# The map is a calm backdrop, so game elements on top can stand out: little
+	# haze and slightly muted colors in every season.
 	environment.fog_enabled = true
-	environment.fog_light_color = Color(0.78, 0.82, 0.86)
-	environment.fog_density = 0.00008
+	environment.fog_light_color = _season["fog_color"]
+	environment.fog_density = _season["fog_density"]
 	environment.adjustment_enabled = true
-	environment.adjustment_contrast = 1.12
-	environment.adjustment_saturation = 0.82
+	environment.adjustment_contrast = _season["contrast"]
+	environment.adjustment_saturation = _season["saturation"]
 
 	var world := WorldEnvironment.new()
 	world.environment = environment
 	add_child(world)
 
-	# Late August midday: neutral white sun, high enough for short shadows.
+	# The sun follows the season: high and white in summer, lower and warmer in
+	# autumn, low and cool in winter.
 	var sun := DirectionalLight3D.new()
-	sun.rotation_degrees = Vector3(-55.0, -30.0, 0.0)
-	sun.light_color = Color(1.0, 0.97, 0.92)
-	sun.light_energy = 1.3
+	sun.rotation_degrees = _season["sun_rotation"]
+	sun.light_color = _season["sun_color"]
+	sun.light_energy = _season["sun_energy"]
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 900.0
 	add_child(sun)
@@ -231,15 +359,54 @@ func _build_environment() -> void:
 	add_child(camera)
 
 
+# Snow in winter, falling leaves in autumn: a box of particles that hovers
+# above wherever the camera looks.
+func _build_weather() -> void:
+	var kind: String = _season["weather"]
+	if kind == "":
+		return
+	_weather = CPUParticles3D.new()
+	_weather.local_coords = false
+	_weather.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	_weather.emission_box_extents = Vector3(190, 1, 130)
+	_weather.direction = Vector3(0, -1, 0)
+	var quad := QuadMesh.new()
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	if kind == "snow":
+		_weather.amount = 1600
+		_weather.lifetime = 9.0
+		_weather.gravity = Vector3(0, -3.0, 0)
+		_weather.spread = 20.0
+		_weather.initial_velocity_min = 0.5
+		_weather.initial_velocity_max = 1.5
+		quad.size = Vector2(0.5, 0.5)
+		material.albedo_color = Color(1, 1, 1)
+	else:
+		_weather.amount = 240
+		_weather.lifetime = 11.0
+		_weather.gravity = Vector3(0, -1.9, 0)
+		_weather.spread = 60.0
+		_weather.initial_velocity_min = 0.5
+		_weather.initial_velocity_max = 2.5
+		quad.size = Vector2(0.8, 0.5)
+		material.albedo_color = Color(0.85, 0.5, 0.14)
+	quad.material = material
+	_weather.mesh = quad
+	_weather.preprocess = _weather.lifetime
+	add_child(_weather)
+
+
 func _build_ground_and_roads() -> void:
 	_box(Vector3(900, 1, 700), Vector3(0, -0.5, 60), GRASS)
 	# The painted grass is bright and busy at map scale: tint it greener and use a
 	# large tile so it reads as calm lawn.
-	_ground_quad(Vector2(0, 60), Vector2(900, 700), 0.005, GROUND_GRASS, 44.0, false, GRASS_TINT)
+	_ground_quad(Vector2(0, 60), Vector2(900, 700), 0.005, _season["grass"], 44.0, false, _season["grass_tint"])
 	# Neighbor state, river, embankment.
-	_svg_ground(Rect2(-400, -400, 2400, 470), FOREIGN_GRASS, 0.01, false, GROUND_GRASS_DRY, 44.0, false, GRASS_TINT)
-	_svg_ground(Rect2(-400, 70, 2400, 80), Color(0.24, 0.36, 0.42), 0.02, false, GROUND_WATER, 40.0)
-	_svg_ground(Rect2(-400, 150, 2400, 10), Color(0.5, 0.5, 0.48), 0.05, false, GROUND_PAVING, 10.0)
+	_svg_ground(Rect2(-400, -400, 2400, 470), FOREIGN_GRASS, 0.01, false, _season["grass_dry"], 44.0, false, _season["grass_tint"])
+	_svg_ground(Rect2(-400, 70, 2400, 80), Color(0.24, 0.36, 0.42), 0.02, false, _season["water"], 40.0)
+	_svg_ground(Rect2(-400, 150, 2400, 10), Color(0.5, 0.5, 0.48), 0.05, false, _season["paving"], 10.0)
 
 	# Roads from the schematic.
 	var roads := [
@@ -248,36 +415,43 @@ func _build_ground_and_roads() -> void:
 		Rect2(920, 300, 560, 18), Rect2(1180, 496, 18, 444), Rect2(920, 700, 560, 18),
 	]
 	for road in roads:
-		_svg_ground(road, ASPHALT, 0.06, true, GROUND_ASPHALT, 14.0)
+		_svg_ground(road, ASPHALT, 0.06, true, _season["asphalt"], 14.0, false, _season["asphalt_tint"])
 	_build_road_markings()
 
 	# Railway along the south edge and the spur to the depot (one tile spans the track).
-	_svg_ground(Rect2(-400, 940, 2400, 12), Color(0.36, 0.33, 0.3), 0.08, true, GROUND_RAIL, 3.0)
-	_svg_ground(Rect2(1480, 200, 12, 740), Color(0.36, 0.33, 0.3), 0.08, true, GROUND_RAIL, 3.0, true)
+	_svg_ground(Rect2(-400, 940, 2400, 12), Color(0.36, 0.33, 0.3), 0.08, true, _season["rail"], 3.0)
+	_svg_ground(Rect2(1480, 200, 12, 740), Color(0.36, 0.33, 0.3), 0.08, true, _season["rail"], 3.0, true)
 
 	# Bridge and the border checkpoint on the far bank.
 	_svg_box(Rect2(880, 40, 40, 120), 1.2, Color(0.55, 0.55, 0.53))
-	_svg_box(Rect2(855, 10, 90, 28), 3.5, Color(0.85, 0.85, 0.8))
-	_box(Vector3(14, 0.5, 0.6), Vector3(25, 1.8, -121), Color(0.8, 0.25, 0.2))
-	var tower := _svg_point(Vector2(966, 17))
-	for corner in [Vector2(-1.6, -1.6), Vector2(1.6, -1.6), Vector2(-1.6, 1.6), Vector2(1.6, 1.6)]:
-		_box(Vector3(0.4, 14, 0.4), Vector3(tower.x + corner.x, 7, tower.y + corner.y), Color(0.3, 0.3, 0.3))
-	_box(Vector3(5, 3, 5), Vector3(tower.x, 15.5, tower.y), Color(0.35, 0.38, 0.33))
+	# The checkpoint with its barrier and watchtower is one painted sprite.
+	_sprite(BORDER_POST, _ground(_svg_point(Vector2(900, 30))), 30.0)
 
 
 # --- West: the residential micro-district --------------------------------------
 
 func _build_microdistrict() -> void:
+	# Floors, paint and roof differ block to block; the layout is fixed so
+	# playthroughs match.
+	var floors_cycle := [5, 5, 9, 5, 9, 5, 5, 9, 5, 5, 9]
+	var tint_cycle := [0, 1, 2, 0, 3, 4, 5, 1, 2, 3, 0]
+	var index := 0
 	for rect in [
 		Rect2(170, 270, 140, 34), Rect2(330, 270, 140, 34), Rect2(550, 270, 140, 34),
 		Rect2(710, 270, 130, 34), Rect2(550, 400, 140, 34), Rect2(170, 530, 140, 34),
 		Rect2(550, 530, 140, 34), Rect2(710, 530, 130, 34), Rect2(170, 650, 140, 34),
 		Rect2(550, 650, 140, 34), Rect2(710, 650, 130, 34),
 	]:
-		_panel_block(_svg_center(rect), rect.size.x * SVG_SCALE, 5)
+		var length: float = rect.size.x * SVG_SCALE
+		var floors: int = floors_cycle[index]
+		# Nine-storey towers are shorter slabs, as in real estates.
+		if floors == 9:
+			length *= 0.72
+		_panel_block(_svg_center(rect), length, floors, PANEL_TINTS[tint_cycle[index]], index % 3 == 1)
+		index += 1
 	# Block 5 is the same kind of building; it only matters because of who lives there.
 	var block5 := Rect2(330, 400, 140, 40)
-	_panel_block(_svg_center(block5), block5.size.x * SVG_SCALE, 5)
+	_panel_block(_svg_center(block5), block5.size.x * SVG_SCALE, 5, PANEL_TINTS[1], false)
 	var yard := _svg_center(block5) + Vector2(0, 11)
 	_box(Vector3(3, 0.6, 0.8), Vector3(yard.x - 8, 0.3, yard.y), Color(0.35, 0.5, 0.3))
 	_box(Vector3(3, 0.6, 0.8), Vector3(yard.x + 8, 0.3, yard.y), Color(0.35, 0.5, 0.3))
@@ -287,15 +461,26 @@ func _build_microdistrict() -> void:
 
 	# Courtyards, school, kindergarten, garages.
 	for rect in [Rect2(215, 320, 250, 70), Rect2(565, 320, 270, 70), Rect2(215, 580, 250, 60), Rect2(565, 580, 270, 60)]:
-		_svg_ground(rect, Color(0.5, 0.56, 0.33), 0.03, false, GROUND_COURTYARD, 22.0)
+		_svg_ground(rect, Color(0.5, 0.56, 0.33), 0.03, false, _season["courtyard"], 22.0)
 	_svg_building(Rect2(740, 390, 100, 60), 9, Color(0.86, 0.76, 0.52), Color(0.45, 0.4, 0.35))
 	_svg_building(Rect2(380, 530, 90, 40), 6, Color(0.86, 0.76, 0.52), Color(0.45, 0.4, 0.35))
-	for i in 8:
-		_svg_building(Rect2(170 + i * 24, 760, 22, 30), 2.6, Color(0.5, 0.45, 0.4), Color(0.35, 0.3, 0.27))
+	# One painted row of eight garages.
+	var garages := _svg_point(Vector2(265, 776))
+	_prop(GARAGES_ROW, _ground(garages), 27.0, "x")
+	_occupy(garages, Vector2(30, 10))
 
 	# Kiosks along the main street.
 	for y in [520, 560, 640, 800, 840]:
 		_sprite(KIOSK, _ground(_svg_point(Vector2(865, y))), 5.0, null, y % 80 == 0)
+
+	# Benches and playgrounds in the courtyards.
+	for spot in [Vector2(340, 356), Vector2(700, 356), Vector2(340, 610), Vector2(700, 610)]:
+		_sprite(BENCH_PLAYGROUND, _ground(_svg_point(spot)), 11.0, null, spot.x > 500)
+
+	# The bus stop on the main street, a bus waiting and a tram on the cross street.
+	_sprite(BUS_STOP, _ground(_svg_point(Vector2(945, 580))), 10.0)
+	_prop(BUS_LIAZ, _ground(_svg_point(Vector2(902, 612))), 12.0, "z")
+	_prop(TRAM, _ground(_svg_point(Vector2(430, 483))), 14.0, "x")
 
 
 func _build_boiler() -> void:
@@ -329,7 +514,7 @@ func _build_boiler() -> void:
 	for i in 3:
 		_sprite(SCAFFOLDING, base + Vector3(-size.x / 3.0 + i * size.x / 3.0, 0, front + 0.5), 9.0, repairing)
 	_box(Vector3(size.x + 8, 2, 0.2), base + Vector3(0, 1, front + 5), Color(0.85, 0.5, 0.2), repairing)
-	_sprite(CRANE_TRUCK, base + Vector3(size.x / 2.0 + 7, 0, front + 4), 12.0, repairing, true)
+	_prop(CRANE_TRUCK, base + Vector3(size.x / 2.0 + 7, 0, front + 4), 9.0, "x", repairing)
 	repairing.visible = false
 
 	var working := Node3D.new()
@@ -359,10 +544,8 @@ func _build_boiler() -> void:
 # --- Center: square and administration -------------------------------------
 
 func _build_center() -> void:
-	_svg_ground(Rect2(940, 370, 200, 90), PAVING, 0.04, true, GROUND_PAVING, 12.0)
-	var monument := _svg_point(Vector2(1040, 415))
-	_box(Vector3(3, 2, 3), Vector3(monument.x, 1, monument.y), Color(0.45, 0.45, 0.45))
-	_cylinder(0.7, 4, Vector3(monument.x, 4, monument.y), Color(0.3, 0.32, 0.3))
+	_svg_ground(Rect2(940, 370, 200, 90), PAVING, 0.04, true, _season["paving"], 12.0)
+	_sprite(MONUMENT, _ground(_svg_point(Vector2(1040, 418))), 7.0)
 
 	var rect := Rect2(975, 324, 130, 44)
 	var center := _svg_center(rect)
@@ -375,6 +558,11 @@ func _build_center() -> void:
 	var front := Vector2(size.x, size.y)
 	_facade(front, base + Vector3(0, size.y / 2.0, size.z / 2.0 + 0.01), 0.0, FACADE_ADMIN, Vector2(1, 1))
 	_facade(front, base + Vector3(0, size.y / 2.0, -size.z / 2.0 - 0.01), PI, FACADE_ADMIN, Vector2(1, 1))
+	# The ends show the plain side of the same painted facade.
+	var end := Vector2(size.z, size.y)
+	var end_tiles := Vector2(size.z / (size.y * 2.0), 1.0)
+	_facade(end, base + Vector3(size.x / 2.0 + 0.01, size.y / 2.0, 0), PI / 2.0, FACADE_ADMIN, end_tiles)
+	_facade(end, base + Vector3(-size.x / 2.0 - 0.01, size.y / 2.0, 0), -PI / 2.0, FACADE_ADMIN, end_tiles)
 	_cylinder(0.15, 19, base + Vector3(size.x / 2.0 - 2, 9.5, size.z / 2.0 + 4), Color(0.3, 0.3, 0.3))
 	_box(Vector3(2.4, 1.4, 0.1), base + Vector3(size.x / 2.0 - 0.8, 18, size.z / 2.0 + 4), Color(0.7, 0.2, 0.18))
 	_occupy(center, Vector2(size.x, size.z + 8))
@@ -402,17 +590,27 @@ func _build_depot() -> void:
 	_sprite(FUEL_TANKS, _ground(_svg_point(Vector2(1300, 250))), 34.0)
 	_svg_building(Rect2(1180, 330, 120, 44), 6, BRICK, Color(0.4, 0.33, 0.28), false, FACADE_WAREHOUSE)
 	_svg_box(Rect2(1300, 160, 160, 20), 0.8, Color(0.5, 0.48, 0.45))
-	var fence := _svg_point(Vector2(1300, 285))
-	_box(Vector3(46, 2.2, 0.2), Vector3(fence.x, 1.1, fence.y), Color(0.4, 0.42, 0.4))
-	_box(Vector3(7, 2.6, 2.4), Vector3(fence.x - 14, 1.3, fence.y + 3), Color(0.6, 0.55, 0.2))
+	# Chain-link fence along the road side of the depot, a barge at the pier and
+	# the water tower behind.
+	var fence := _svg_point(Vector2(1300, 290))
+	for i in 4:
+		_prop(FENCE_CHAINLINK, _ground(fence + Vector2(-20.0 + i * 13.0, 0.0)), 14.0, "x")
+	_box(Vector3(7, 2.6, 2.4), Vector3(fence.x - 22, 1.3, fence.y + 4), Color(0.6, 0.55, 0.2))
+	_prop(BARGE, _ground(_svg_point(Vector2(1380, 114))), 36.0, "x")
+	_sprite(WATER_TOWER, _ground(_svg_point(Vector2(1440, 300))), 19.0)
 
 
 # --- South: station, market, private houses, wasteland ------------------------
 
 func _build_south() -> void:
-	_svg_building(Rect2(840, 885, 120, 45), 8, Color(0.85, 0.8, 0.68), Color(0.4, 0.42, 0.4))
+	var station := _svg_point(Vector2(900, 906))
+	_sprite(STATION, _ground(station), 40.0)
+	_occupy(station, Vector2(30, 12))
+	# Freight wagons on the railway.
+	_prop(TRAIN_WAGONS, _ground(_svg_point(Vector2(1150, 946))), 28.0, "x")
+	_prop(TRAIN_WAGONS, _ground(_svg_point(Vector2(280, 946))), 28.0, "x")
 	# Station market: out of reach at the aide stage, but busy.
-	_svg_ground(Rect2(560, 790, 260, 130), PAVING, 0.04, true, GROUND_PAVING, 12.0)
+	_svg_ground(Rect2(560, 790, 260, 130), PAVING, 0.04, true, _season["paving"], 12.0)
 	for row in 3:
 		for col in 7:
 			var at := _svg_point(Vector2(590 + col * 34, 818 + row * 34))
@@ -427,13 +625,16 @@ func _build_south() -> void:
 		for col in 4:
 			if row == 2 and col == 3:
 				continue
-			_svg_building(Rect2(1230 + col * 50, 740 + row * 60, 30, 26), 3.5, Color(0.78, 0.7, 0.58), Color(0.4, 0.3, 0.26), true)
+			var house := _svg_point(Vector2(1245 + col * 50, 753 + row * 60))
+			_sprite(PRIVATE_HOUSE, _ground(house), 13.0, null, (row + col) % 2 == 0)
+			_occupy(house, Vector2(8, 7))
 	# Wasteland: bare ground with garbage and a birch grove.
 	var waste := Rect2(150, 840, 300, 90)
-	_svg_ground(waste, Color(0.45, 0.42, 0.3), 0.04, false, GROUND_DIRT, 22.0)
+	_svg_ground(waste, Color(0.45, 0.42, 0.3), 0.04, false, _season["dirt"], 22.0)
 	var center := _svg_center(waste)
-	for i in 8:
-		_box(Vector3(1.2, 0.6, 0.9), Vector3(center.x + _rng.randf_range(-30, 30), 0.3, center.y + _rng.randf_range(-8, 8)), Color(0.35, 0.33, 0.3))
+	for spot in [Vector2(-34, 3), Vector2(2, -4), Vector2(30, 5)]:
+		_sprite(GARBAGE_PILE, _ground(center + spot), 8.0, null, spot.x > 0)
+	_sprite(GARBAGE_PILE, _ground(_svg_point(Vector2(840, 800))), 7.0)
 	for i in 14:
 		_tree(Vector3(center.x + _rng.randf_range(-34, 34), 0, center.y + _rng.randf_range(-9, 9)))
 
@@ -442,14 +643,57 @@ func _build_south() -> void:
 # Ladas along the streets. Sprites are fixed in place; people move, cars do not (yet).
 func _build_traffic() -> void:
 	var admin := _svg_point(Vector2(1040, 346))
-	_sprite(CAR_VOLGA, _ground(admin + Vector2(-16, 14)), 8.5)
-	_sprite(VAN_UAZ, _ground(_svg_point(Vector2(1110, 380))), 8.5, null, true)
+	_prop(CAR_VOLGA, _ground(admin + Vector2(-16, 14)), 5.7, "x")
+	_prop(VAN_UAZ, _ground(_svg_point(Vector2(1110, 380))), 5.2, "x")
+	# Ladas standing along the streets: [position, axis of the street].
 	var lada_spots := [
-		Vector2(900, 600), Vector2(900, 340), Vector2(900, 760), Vector2(400, 242), Vector2(640, 726),
-		Vector2(1000, 706), Vector2(1100, 306), Vector2(300, 478), Vector2(1190, 640), Vector2(700, 484),
+		[Vector2(900, 600), "z"], [Vector2(900, 340), "z"], [Vector2(900, 760), "z"],
+		[Vector2(400, 242), "x"], [Vector2(640, 726), "x"], [Vector2(1000, 706), "x"],
+		[Vector2(1100, 306), "x"], [Vector2(300, 478), "x"], [Vector2(1190, 640), "z"],
+		[Vector2(700, 484), "x"],
 	]
-	for i in lada_spots.size():
-		_sprite(CAR_LADA, _ground(_svg_point(lada_spots[i])), 7.5, null, i % 2 == 1)
+	for spot in lada_spots:
+		_prop(CAR_LADA, _ground(_svg_point(spot[0])), 5.0, spot[1])
+
+
+# Lamp posts along the two main streets and power poles on the edges.
+func _build_street_furniture() -> void:
+	var main_x := _svg_point(Vector2(900, 0)).x
+	var cross_z := _svg_point(Vector2(0, 483)).y
+	var z := -84.0
+	var i := 0
+	while z < 98.0:
+		if abs(z - cross_z) > 12.0:
+			_sprite(LAMP_POST, _ground(Vector2(main_x + (7.5 if i % 2 == 0 else -7.5), z)), 6.0)
+		z += 26.0
+		i += 1
+	var x := -186.0
+	i = 0
+	while x < 190.0:
+		if abs(x - main_x) > 14.0:
+			_sprite(LAMP_POST, _ground(Vector2(x, cross_z + (5.5 if i % 2 == 0 else -5.5))), 6.0)
+		x += 30.0
+		i += 1
+	var north_z := _svg_point(Vector2(0, 239)).y
+	for px in [-150.0, -100.0, -50.0, 0.0]:
+		_sprite(POWER_POLE, _ground(Vector2(px, north_z - 5.0)), 12.0)
+	for px in [60.0, 110.0, 160.0]:
+		_sprite(POWER_POLE, _ground(Vector2(px, cross_z - 6.0)), 12.0)
+
+
+# Shrubs close to buildings and roads, bare in winter.
+func _build_bushes() -> void:
+	if not _season["bushes"]:
+		return
+	var placed := 0
+	var attempts := 0
+	while placed < 90 and attempts < 3000:
+		attempts += 1
+		var spot := Vector2(_rng.randf_range(-190, 190), _rng.randf_range(-85, 100))
+		if _is_occupied(spot, 0.5) or not _is_occupied(spot, 6.0):
+			continue
+		_sprite(BUSH, _ground(spot), _rng.randf_range(3.5, 5.5), null, _rng.randf() < 0.5)
+		placed += 1
 
 
 func _build_overlays() -> void:
@@ -465,7 +709,7 @@ func _build_overlays() -> void:
 	var truck := Node3D.new()
 	add_child(truck)
 	var coal := _svg_point(Vector2(45, 475))
-	_sprite(TRUCK_ZIL, Vector3(coal.x + 13, 0, coal.y + 3), 12.0, truck)
+	_prop(TRUCK_ZIL, Vector3(coal.x + 13, 0, coal.y + 3), 8.5, "z", truck)
 	truck.visible = false
 	_overlays["boiler:truck"] = truck
 
@@ -513,9 +757,12 @@ func _move_tokens() -> void:
 		var ids: Array = groups[key]
 		for i in ids.size():
 			var pos: Vector2 = sim.actors[ids[i]]["pos"]
+			# Spread along the screen's horizontal so faces never overlap, whatever
+			# the camera angle.
 			var spread := (i - (ids.size() - 1) / 2.0) * 15.0
 			var token: Node3D = _tokens[ids[i]]
-			token.position = token.position.lerp(Vector3(pos.x + spread, 0.0, pos.y + 6.0), 0.35)
+			var spot := Vector3(pos.x, 0.0, pos.y) + _view_right() * spread - _view_forward() * 6.0
+			token.position = token.position.lerp(spot, 0.35)
 
 
 # --- Signal handlers ---------------------------------------------------------
@@ -666,7 +913,9 @@ func _move_walkers(delta: float) -> void:
 		var sprite: Sprite3D = walker["sprite"]
 		sprite.position = Vector3(pos.x, walker["lift"], pos.y)
 		var heading: Vector2 = (to - from) * walker["dir"]
-		sprite.flip_h = heading.x + heading.y * 0.5 < 0.0
+		# Face the way they walk as seen on screen.
+		var right := _view_right()
+		sprite.flip_h = heading.x * right.x + heading.y * right.z < 0.0
 
 
 func _svg_box(rect: Rect2, height: float, color: Color) -> void:
@@ -695,16 +944,15 @@ func _svg_building(rect: Rect2, height: float, wall: Color, roof: Color, pitched
 	_occupy(center, size)
 
 
-func _panel_block(center: Vector2, length: float, floors: int) -> void:
+func _panel_block(center: Vector2, length: float, floors: int, tint: Color = Color.WHITE, rusty_roof: bool = false) -> void:
 	var base := Vector3(center.x, 0, center.y)
 	var height := floors * 3.0
 	_box(Vector3(length, height, 11), base + Vector3(0, height / 2.0, 0), PANEL)
 	_box(Vector3(length + 0.6, 0.6, 11.6), base + Vector3(0, height + 0.3, 0), PANEL_ROOF)
-	_roof(Vector2(length + 0.6, 11.6), base + Vector3(0, height + 0.62, 0), 18.0)
-	# Long sides get the painted facade; taller blocks repeat it vertically.
-	var tiles_x := length / (height * 2.0 * 5.0 / floors)
-	_facade(Vector2(length, height), base + Vector3(0, height / 2.0, 5.51), 0.0, FACADE_PANEL, Vector2(tiles_x, floors / 5.0))
-	_facade(Vector2(length, height), base + Vector3(0, height / 2.0, -5.51), PI, FACADE_PANEL, Vector2(tiles_x, floors / 5.0))
+	_roof(Vector2(length + 0.6, 11.6), base + Vector3(0, height + 0.62, 0), 18.0, ROOF_RUSTY if rusty_roof else ROOF_TAR)
+	# All four sides get the painted facade, so the block looks right from the
+	# diagonal camera too; taller blocks repeat it vertically.
+	_facades(base, Vector3(length, height, 11.0), FACADE_PANEL, floors / 5.0, tint)
 	_occupy(center, Vector2(length, 11))
 
 
@@ -755,7 +1003,7 @@ func _tree(at: Vector3) -> void:
 	var poplar := _rng.randf() < 0.25
 	var height := _rng.randf_range(13.0, 18.0) if poplar else _rng.randf_range(9.0, 13.0)
 	var sprite := Sprite3D.new()
-	sprite.texture = TREE_POPLAR if poplar else TREE_BIRCH
+	sprite.texture = _season["poplar"] if poplar else _season["birch"]
 	sprite.pixel_size = height / sprite.texture.get_height()
 	sprite.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
 	sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
@@ -780,17 +1028,44 @@ func _sprite(texture: Texture2D, at: Vector3, width: float, parent: Node = null,
 	sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
 	sprite.shaded = true
 	sprite.flip_h = flip
-	sprite.position = at + Vector3(0, texture.get_height() * sprite.pixel_size / 2.0, 0)
+	# The node sits exactly on the ground point and the picture hangs from its
+	# measured anchor (see scripts/dev/measure_sprite_anchors.gd), so a long prop
+	# stands on the road instead of floating by the empty margin below it.
+	var anchor := _anchor_of(texture)
+	var anchor_x := (1.0 - anchor.x) if flip else anchor.x
+	# With centered off, the offset is the picture's bottom-left corner relative to
+	# the node: the anchor is (1 - anchor.y) of the picture above the bottom edge.
+	sprite.centered = false
+	sprite.offset = Vector2(-anchor_x * texture.get_width(), -(1.0 - anchor.y) * texture.get_height())
+	sprite.position = at
 	(parent if parent != null else self).add_child(sprite)
 	return sprite
 
 
+# A long prop laid along a street, a rail or a river. The art is drawn along one
+# map axis (its ground edge slopes like a backslash for X, a slash for Z), so it
+# is mirrored when the thing it stands on runs along the other one.
+func _prop(texture: Texture2D, at: Vector3, width: float, axis: String, parent: Node = null) -> Sprite3D:
+	var drawn := "x" if _slope_of(texture) > 0.0 else "z"
+	return _sprite(texture, at, width, parent, drawn != axis)
+
+
+func _anchor_of(texture: Texture2D) -> Vector2:
+	var entry: Dictionary = SpriteAnchors.ANCHORS.get(texture.resource_path.get_file().get_basename(), {})
+	return entry.get("anchor", Vector2(0.5, 1.0))
+
+
+func _slope_of(texture: Texture2D) -> float:
+	var entry: Dictionary = SpriteAnchors.ANCHORS.get(texture.resource_path.get_file().get_basename(), {})
+	return entry.get("slope", 0.0)
+
+
 # A textured flat roof: a quad facing up, tiled so the roof detail stays small.
-func _roof(size: Vector2, at: Vector3, tile: float) -> void:
+func _roof(size: Vector2, at: Vector3, tile: float, texture: Texture2D = ROOF_TAR) -> void:
 	var quad := QuadMesh.new()
 	quad.size = size
 	var material := StandardMaterial3D.new()
-	material.albedo_texture = ROOF_TAR
+	material.albedo_texture = texture
 	material.uv1_scale = Vector3(size.x / tile, size.y / tile, 1.0)
 	material.roughness = 0.95
 	var instance := MeshInstance3D.new()
@@ -802,21 +1077,22 @@ func _roof(size: Vector2, at: Vector3, tile: float) -> void:
 
 
 # Painted facades on the four sides of a box-shaped building.
-func _facades(base: Vector3, size: Vector3, texture: Texture2D, tiles_per_height: float) -> void:
+func _facades(base: Vector3, size: Vector3, texture: Texture2D, tiles_per_height: float, tint: Color = Color.WHITE) -> void:
 	var tile_width := size.y * 2.0 / tiles_per_height
 	var center_y := size.y / 2.0
-	_facade(Vector2(size.x, size.y), base + Vector3(0, center_y, size.z / 2.0 + 0.01), 0.0, texture, Vector2(size.x / tile_width, tiles_per_height))
-	_facade(Vector2(size.x, size.y), base + Vector3(0, center_y, -size.z / 2.0 - 0.01), PI, texture, Vector2(size.x / tile_width, tiles_per_height))
-	_facade(Vector2(size.z, size.y), base + Vector3(size.x / 2.0 + 0.01, center_y, 0), PI / 2.0, texture, Vector2(size.z / tile_width, tiles_per_height))
-	_facade(Vector2(size.z, size.y), base + Vector3(-size.x / 2.0 - 0.01, center_y, 0), -PI / 2.0, texture, Vector2(size.z / tile_width, tiles_per_height))
+	_facade(Vector2(size.x, size.y), base + Vector3(0, center_y, size.z / 2.0 + 0.01), 0.0, texture, Vector2(size.x / tile_width, tiles_per_height), tint)
+	_facade(Vector2(size.x, size.y), base + Vector3(0, center_y, -size.z / 2.0 - 0.01), PI, texture, Vector2(size.x / tile_width, tiles_per_height), tint)
+	_facade(Vector2(size.z, size.y), base + Vector3(size.x / 2.0 + 0.01, center_y, 0), PI / 2.0, texture, Vector2(size.z / tile_width, tiles_per_height), tint)
+	_facade(Vector2(size.z, size.y), base + Vector3(-size.x / 2.0 - 0.01, center_y, 0), -PI / 2.0, texture, Vector2(size.z / tile_width, tiles_per_height), tint)
 
 
 # One textured wall: a quad facing +Z, turned by yaw around the vertical axis.
-func _facade(size: Vector2, at: Vector3, yaw: float, texture: Texture2D, tiles: Vector2) -> void:
+func _facade(size: Vector2, at: Vector3, yaw: float, texture: Texture2D, tiles: Vector2, tint: Color = Color.WHITE) -> void:
 	var quad := QuadMesh.new()
 	quad.size = size
 	var material := StandardMaterial3D.new()
 	material.albedo_texture = texture
+	material.albedo_color = tint
 	material.uv1_scale = Vector3(tiles.x, tiles.y, 1.0)
 	material.roughness = 0.95
 	var instance := MeshInstance3D.new()

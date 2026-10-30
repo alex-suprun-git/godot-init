@@ -18,6 +18,9 @@ Prompts for the art needed by the first playable week (the heating-season openin
 | W1 pipe burst (early October) | Done |
 | W2 office | Next |
 | Map kit (K1–K12) | Generated; awaiting review |
+| Ground textures and road decals (G1–G8, D1–D2) | Generated; awaiting in-game visual review |
+| Map sprites (M1–M29) | Generated; awaiting in-game visual review |
+| Seasonal tree variants and snow ground (S1–S4) | Generated; awaiting in-game visual review |
 | Later window art (W3–W7) | After W2 |
 
 ## Established looks
@@ -49,7 +52,12 @@ Canonical appearance from the chosen portraits. Later variants of these characte
 ### Technical rules for sprites (map props)
 
 - One object, centered, whole, nothing cropped.
-- Viewed from above at about 45 degrees, matching the map camera. All sprites in the set use the same angle.
+- Exact projection (the map camera is orthographic and true isometric; sprites that deviate float or tilt against the streets):
+  - Orthographic, no perspective: parallel lines stay parallel, size does not depend on distance.
+  - True isometric: the horizontal ground axes run at 30 degrees to the horizontal edge of the picture (a ground line rises or falls 0.577 pixels for every pixel of width). Vertical edges stay vertical.
+  - The long side of a vehicle or building runs along one of those two axes, never straight across the picture. Draw it with the long axis rising to the right ("/"); the game mirrors it when a street runs the other way.
+  - The footprint is a clean rhombus whose near corner touches the bottom of the picture; nothing but a thin margin below it.
+  - Reference for the angle: `art/concepts/iso_projection_reference.png` (added with the next batch); until then match `train_wagons.png`, the closest existing sprite.
 - Flat, even, shadowless lighting; no ground shadow.
 - Transparent background. If transparency is not possible, a flat pure magenta (#FF00FF) background with no gradient, so it can be keyed out.
 - No ground, no other objects around it.
@@ -242,6 +250,24 @@ What the map still builds from plain boxes or leaves empty. Sprite rules apply; 
 | S2 | `init/assets/sprites/tree_birch_october.png` and `tree_poplar_october.png` | October: half bare, orange and brown leaves. |
 | S3 | `init/assets/sprites/tree_birch_winter.png` and `tree_poplar_winter.png` | Winter: bare, snow on the branches. |
 | S4 | `init/assets/textures/ground_snow_*.png` | Snow versions of the ground tiles G1 to G5. |
+
+## R: Redraw list for the true isometric projection
+
+The full request for Codex, with prompts per object and the slope check, is `art/REDRAW_REQUEST.md`. Projection reference: `art/concepts/iso_projection_reference.png`. Wagons and the barge were first judged close enough by their numbers, but wagons look crooked beside the rail in the map, so wagons are redrawn too.
+
+Measured with `scripts/dev/measure_sprite_anchors.gd` (slope of the ground edge; the true isometric camera needs 0.577). The first group sits flatter than the camera and shows it next to a street; the second is close enough to keep for now.
+
+| Redraw first (slope well below 0.577) | Slope |
+|---|---|
+| `garages_row`, `fence_chainlink` | 0.30 and 0.39 |
+| `bus_liaz`, `tram`, `bus_stop` | 0.37, 0.36 and 0.28 |
+| `car_lada`, `car_volga_black`, `van_uaz_police`, `truck_zil_plain`, `crane_truck` | 0.30 to 0.34 |
+| `station`, `private_house`, `market_tent`, `bench_playground`, `kiosk` | 0.1 to 0.26 (nearly front-on) |
+
+| Keep (close to the camera) | Slope |
+|---|---|
+| `train_wagons`, `barge` | 0.53 and 0.49 |
+| trees, `church`, `fuel_tanks`, `boiler_chimney`, `water_tower`, `monument`, people | upright objects, no long axis |
 
 ## Not generated here
 

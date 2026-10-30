@@ -13,6 +13,7 @@ signal state_changed # money, standing, promises, objectives
 signal overlay_changed(lot: String, overlay: String, visible: bool)
 signal lot_state_changed(lot: String, state: String)
 signal promise_resolved(status: String) # "kept" or "broken"
+signal option_chosen(request_id: String, option_id: String, actor: String)
 signal week_ended
 
 const WEEK_HOURS := Week1.HOURS_PER_DAY * Week1.DAYS_PER_WEEK
@@ -212,6 +213,7 @@ func choose(request_id: String, option_id: String) -> void:
 	var option := _find_option(request, option_id)
 	if option.is_empty() or option_block_reason(request_id, option) != "":
 		return
+	option_chosen.emit(request_id, option_id, option["actor"])
 	match option["actor"]:
 		"promise":
 			_make_promise(request, option["promise"])

@@ -34,5 +34,7 @@
 - Run the game locally with F5. Running Godot and local game builds does not incur usage fees.
 - Do not add or run automated tests unless the user asks. For visual changes, launch and inspect the game where practical.
 - To check a visual or gameplay change without clicking, run the dev autoplay, which plays the first week and saves screenshots of each phase: `Godot --path init -- --autoplay --shots=<absolute output dir>` (Godot is at `/Users/oleksiisuprun/Desktop/Godot.app/Contents/MacOS/Godot`). Read the PNGs it writes. Run `Godot --headless --path init --import` first when new assets were added.
+- Every run writes a playtest log (JSON lines plus a week summary with waiting time, request latency and contact utilization) to `~/Library/Application Support/Godot/app_userdata/Init/playtests/`; files ending in `_player.jsonl` are real plays, `_autoplay.jsonl` come from the dev autoplay, and `--no-log` turns it off. When asked to analyze a playtest, read the latest `_player` log first, find where the week drags or stalls, and only then compare with the user's own feedback.
+- After sprites are added or redrawn, run `Godot --headless --path init --script res://scripts/dev/measure_sprite_anchors.gd` to refresh `scripts/data/sprite_anchors.gd` (where each sprite touches the ground and which map axis it is drawn along).
 - Generated art is described in `art/PROMPTS.md`; game-ready images live under `init/assets/`, concepts under `art/concepts/`.
 - Do not commit or push unless explicitly asked.

@@ -7,11 +7,14 @@ const Week1 = preload("res://scripts/data/week1.gd")
 const RequestMarker = preload("res://scripts/ui/request_marker.gd")
 const PersonToken = preload("res://scripts/ui/person_token.gd")
 const PathLayer = preload("res://scripts/ui/path_layer.gd")
+const Settings = preload("res://scripts/data/settings.gd")
+const SeasonLabels := {"summer": "Лето", "autumn": "Осень", "winter": "Зима"}
 
 signal start_week_pressed
 signal speed_selected(speed: float)
 signal next_week_pressed
 signal restart_pressed
+signal season_selected(key: String)
 
 const INK := Color(0.09, 0.1, 0.1, 0.92)
 const PAPER := Color(0.93, 0.9, 0.83)
@@ -28,6 +31,7 @@ const TYPE_COLORS := {
 var sim
 var map
 var audio # AudioManager; optional, the HUD works silently without it
+var play_log # PlayLog; optional, records card opens and closes for playtests
 var phase := "planning"
 
 var _root: Control
@@ -36,6 +40,7 @@ var _phase_label: Label
 var _money_label: Label
 var _start_button: Button
 var _speed_buttons := {}
+var _season_buttons := {}
 var _objectives_box: VBoxContainer
 var _promises_box: VBoxContainer
 var _standing_box: VBoxContainer
@@ -52,10 +57,11 @@ var _overlay_panel: PanelContainer
 var _toast_box: VBoxContainer
 
 
-func setup(week_sim, city_map, audio_manager = null) -> void:
+func setup(week_sim, city_map, audio_manager = null, playtest_log = null) -> void:
 	sim = week_sim
 	map = city_map
 	audio = audio_manager
+	play_log = playtest_log
 	_root = Control.new()
 	_root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -94,14 +100,23 @@ func setup(week_sim, city_map, audio_manager = null) -> void:
 	sim.request_changed.connect(_on_request_changed)
 	sim.state_changed.connect(_refresh_panels)
 	sim.entry_added.connect(_on_entry_added)
-	sim.crisis_started.connect(open_card.bind(true))
+	sim.crisis_started.connect(open_card.bind(true, true))
 	sim.time_changed.connect(_refresh_clock)
 	_refresh_all()
+
+
+func _on_season_pressed(key: String) -> void:
+	if key == Settings.season:
+		_season_buttons[key].button_pressed = true
+		return
+	season_selected.emit(key)
 
 
 func set_phase(new_phase: String) -> void:
 	phase = new_phase
 	_start_button.visible = phase == "planning"
+	for key in _season_buttons:
+		_season_buttons[key].visible = phase == "planning"
 	for speed in _speed_buttons:
 		_speed_buttons[speed].visible = phase == "live"
 	match phase:
@@ -132,9 +147,11 @@ func show_week_two(changes: Array[String]) -> void:
 	_show_overlay("Понедельник, " + sim.date_text(0).substr(3), "Что изменилось за выходные", lines, "Сыграть заново", restart_pressed.emit, true)
 
 
-func open_card(request_id: String, focus: bool = false) -> void:
+func open_card(request_id: String, focus: bool = false, auto: bool = false) -> void:
 	if not _card.visible:
 		_sfx("card_open")
+		if play_log != null:
+			play_log.note_card_open(request_id, auto)
 	_card_request = request_id
 	_card.visible = true
 	if focus:
@@ -217,6 +234,20 @@ func _build_top_bar() -> void:
 	row.add_child(_date_label)
 	_phase_label = _label("", 13, AMBER)
 	row.add_child(_phase_label)
+	# The same scenario in three looks; picking one restarts the week.
+	var season_row := HBoxContainer.new()
+	season_row.add_theme_constant_override("separation", 4)
+	row.add_child(season_row)
+	for key in Settings.SEASONS:
+		var button := Button.new()
+		button.text = SeasonLabels[key]
+		button.toggle_mode = true
+		button.button_pressed = Settings.season == key
+		button.custom_minimum_size = Vector2(68, 36)
+		button.tooltip_text = "Карта: " + SeasonLabels[key].to_lower() + " (перезапустит неделю)"
+		button.pressed.connect(_on_season_pressed.bind(key))
+		season_row.add_child(button)
+		_season_buttons[key] = button
 	var spacer := Control.new()
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(spacer)
@@ -562,6 +593,8 @@ func _on_option_pressed(option_id: String) -> void:
 
 
 func _close_card(play_sound: bool = true) -> void:
+	if _card.visible and play_log != null and _card_request != "":
+		play_log.note_card_close(_card_request)
 	if play_sound and _card.visible:
 		_sfx("card_close")
 	_card.visible = false
