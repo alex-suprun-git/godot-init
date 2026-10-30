@@ -18,6 +18,11 @@ func _ready() -> void:
 
 func _run() -> void:
 	await _wait(1.5)
+	main.map._zoom = main.map.ZOOM_MAX
+	await _wait(0.5)
+	await _shot("0_overview")
+	main.map._zoom = main.map.ZOOM_DEFAULT
+	await _wait(0.5)
 	main.hud.open_card("hot_water")
 	await _shot("1_card")
 	main.sim.choose("hot_water", "promise")

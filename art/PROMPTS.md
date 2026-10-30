@@ -14,11 +14,21 @@ Prompts for the art needed by the first playable week (the heating-season openin
 | Item | Status |
 |---|---|
 | Portraits: Mikhalych, Baba Nina, Tolik, the boss | Done |
-| Test batch for the 3D map (T1–T3) | Next |
+| Test batch for the 3D map (T1–T3) | Generated; awaiting review |
 | W1 pipe burst (early October) | Done |
 | W2 office | Next |
 | Map kit (K1–K12) | After the test batch passes |
 | Later window art (W3–W7) | After W2 |
+
+## Established looks
+
+Canonical appearance from the chosen portraits. Later variants of these characters (seasons, story changes) must keep these features.
+
+- Protagonist (`protagonist.png`): man of about 26, short brown hair, clean-shaven, tired watchful eyes, grey suit, white shirt, narrow dark striped tie, cardboard folders; painted against a city view from a window.
+- Mikhalych (`mikhalych.png`): heavy-set man around sixty, grey hair under a flat cap, large grey walrus moustache, ruddy face, grumpy sideways look, padded work jacket over a striped undershirt, rusty red pipe wrench on his shoulder.
+- Tolik (`tolik.png`): lean, gaunt man in his forties, messy dark hair, light stubble, sly sideways glance, cigarette behind his ear, worn brown leather jacket over a checked shirt and knitted sweater, car keys in hand.
+- Baba Nina (`baba_nina.png`): woman in her seventies, floral headscarf, glasses on a cord, brown knitted cardigan, floral dress, green notebook held to her chest.
+- The boss (`boss.png`): heavy man in his early sixties, grey swept-back hair, heavy tired eyes, oversized grey suit, loosened burgundy striped tie.
 
 ## Rules
 
@@ -62,13 +72,13 @@ This batch decides whether the textured-3D approach works. Generate these three 
 
 Path: `init/assets/textures/facade_panel_5storey.png`
 
-> [Map style block] [Texture rules] Straight-on elevation of one section of a Khrushchev-era five-storey panel apartment building: grey concrete panels with visible seams, five rows of windows with wooden frames and mismatched curtains, three of them with glazed-in balconies of different colors, laundry on one balcony, a satellite dish, rust streaks under the window sills, the ground-floor entrance door with a small concrete canopy at the bottom center. Tileable horizontally. 2:1 canvas, wider than tall.
+> [Map style block] [Texture rules] Straight-on elevation of one repeatable section of a Khrushchev-era five-storey panel apartment building: grey concrete panels with visible seams, five rows of windows with wooden frames and mismatched curtains, three of them with glazed-in balconies of different colors, laundry on one balcony, a satellite dish, rust streaks under the window sills. Do not include a unique entrance door in this repeating texture; add the entrance as separate geometry in Godot. Tileable horizontally. 2:1 canvas, wider than tall.
 
 ### T2. Facade texture: red-brick boiler house wall
 
 Path: `init/assets/textures/facade_boiler_brick.png`
 
-> [Map style block] [Texture rules] Straight-on elevation of the long wall of a 1960s red-brick industrial boiler house: weathered brick with darker repaired patches, tall arched windows with some broken panes, a large metal gate with peeling green paint, soot stains above the windows, a pipe running along the wall. Tileable horizontally. 2:1 canvas, wider than tall.
+> [Map style block] [Texture rules] Straight-on elevation of a repeatable section of the long wall of a 1960s red-brick industrial boiler house: weathered brick with darker repaired patches, tall arched windows with some broken panes, soot stains above the windows, a pipe running along the wall. Do not include a unique gate in this repeating texture; add the gate as separate geometry in Godot. Tileable horizontally. 2:1 canvas, wider than tall.
 
 ### T3. Sprite: autumn birch tree
 
@@ -123,6 +133,14 @@ Path: `init/assets/events/rival_tv.png`
 Path: `init/assets/locations/boiler_house.png`
 
 > [Window style block] Late August, green trees with the first yellow leaves. Eye-level scene. The yard of a red-brick boiler house with one tall brick chimney, cold and smokeless; coal heaps, a rusty gate, broken windows, a sleepy watchman in a booth with a radio, two contractors in leather jackets arguing next to their cars. Landscape 16:9.
+
+### W8. Portrait: the protagonist (prototype)
+
+Done, saved as `init/assets/portraits/protagonist.png` (chosen variant).
+
+Path: `init/assets/portraits/protagonist.png`
+
+> [Window style block] Bust portrait, three-quarter view, matching the framing, background, and manner of the portraits in `init/assets/portraits/`. A man of 26, newly hired aide to a district head in late August 1997: clean-shaven, short practical haircut, attentive intelligent eyes, a cheap grey suit slightly too big at the shoulders, a white shirt, a narrow dark tie that is clearly his only one, a cardboard folder of papers under his arm. Expression neutral and watchful, neither naive nor cynical yet: the player decides who he becomes. Ordinary, believable face, not a model or a hero. Portrait 3:4.
 
 ## K: Map kit (after the test batch passes)
 

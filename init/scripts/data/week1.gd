@@ -22,34 +22,36 @@ const FACTIONS := {
 	"boss": {"name": "Босс", "value": 10},
 }
 
-# Map positions are on the ground plane (x, z) in map units.
+# Map positions are on the ground plane (x, z) in map units, matching the
+# schematic in art/concepts/district_layout.svg (1 SVG px = 0.25 units).
 const LOTS := {
-	"office": {"name": "Администрация района", "pos": Vector2(0, 2)},
-	"block5": {"name": "Дом 5", "pos": Vector2(-34, 14)},
-	"boiler": {"name": "Котельная №3", "pos": Vector2(-36, -20)},
-	"depot": {"name": "Склад топлива", "pos": Vector2(34, -22)},
-	"church": {"name": "Церковь", "pos": Vector2(36, 18)},
-	"market": {"name": "Рынок у вокзала", "pos": Vector2(10, 34)},
-	"wasteland": {"name": "Пустырь", "pos": Vector2(-62, 36)},
+	"office": {"name": "Администрация района", "pos": Vector2(66, -30)},
+	"block5": {"name": "Дом 5", "pos": Vector2(-100, -22)},
+	"boiler": {"name": "Котельная №3", "pos": Vector2(-185, -19)},
+	"depot": {"name": "Склад топлива", "pos": Vector2(125, -62)},
+	"church": {"name": "Церковь", "pos": Vector2(115, 17)},
+	"market": {"name": "Рынок у вокзала", "pos": Vector2(-27, 81)},
+	"wasteland": {"name": "Пустырь", "pos": Vector2(-125, 85)},
 }
 
-# speed: map units per game hour.
+# speed: map units per game hour. Office to the boiler house is about two hours
+# on foot and well under an hour with Tolik's car.
 const ACTORS := {
 	"me": {
-		"name": "Вы", "role": "Помощник главы района", "start_lot": "office", "speed": 40.0,
-		"portrait": "", "face": Rect2(),
+		"name": "Вы", "role": "Помощник главы района", "start_lot": "office", "speed": 120.0,
+		"portrait": "res://assets/portraits/protagonist.png", "face": Rect2(375, 176, 1237, 1237),
 	},
 	"mikhalych": {
-		"name": "Михалыч", "role": "Слесарь ЖЭКа", "start_lot": "office", "speed": 35.0,
-		"portrait": "res://assets/portraits/mikhalych.png", "face": Rect2(330, 200, 540, 540),
+		"name": "Михалыч", "role": "Слесарь ЖЭКа", "start_lot": "office", "speed": 100.0,
+		"portrait": "res://assets/portraits/mikhalych.png", "face": Rect2(362, 229, 580, 580),
 	},
 	"nina": {
-		"name": "Баба Нина", "role": "Старшая по дому 5", "start_lot": "block5", "speed": 25.0,
+		"name": "Баба Нина", "role": "Старшая по дому 5", "start_lot": "block5", "speed": 70.0,
 		"portrait": "res://assets/portraits/baba_nina.png", "face": Rect2(370, 140, 540, 540),
 	},
 	"tolik": {
-		"name": "Толик", "role": "Водитель администрации", "start_lot": "office", "speed": 110.0,
-		"portrait": "res://assets/portraits/tolik.png", "face": Rect2(290, 200, 540, 540),
+		"name": "Толик", "role": "Водитель администрации", "start_lot": "office", "speed": 400.0,
+		"portrait": "res://assets/portraits/tolik.png", "face": Rect2(266, 180, 555, 555),
 	},
 }
 

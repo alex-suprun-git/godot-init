@@ -67,7 +67,7 @@ func setup(week_sim, city_map) -> void:
 	sim.request_changed.connect(_on_request_changed)
 	sim.state_changed.connect(_refresh_panels)
 	sim.entry_added.connect(func(_entry): _refresh_wire())
-	sim.crisis_started.connect(open_card)
+	sim.crisis_started.connect(open_card.bind(true))
 	sim.time_changed.connect(_refresh_clock)
 	_refresh_all()
 
@@ -105,19 +105,36 @@ func show_week_two(changes: Array[String]) -> void:
 	_show_overlay("Понедельник, " + sim.date_text(0).substr(3), "Что изменилось за выходные", lines, "Сыграть заново", restart_pressed.emit, true)
 
 
-func open_card(request_id: String) -> void:
+func open_card(request_id: String, focus: bool = false) -> void:
 	_card_request = request_id
 	_card.visible = true
+	if focus:
+		map.focus_on(sim.requests[request_id]["data"]["lot"])
 	_refresh_card()
 
 
 func _process(_delta: float) -> void:
+	# Markers float above their lot; when the lot is off-screen they stick to
+	# the edge of the free map area with an arrow pointing toward it.
+	var area := _map_area()
 	for id in _markers:
 		var marker: Button = _markers[id]
-		var lot: String = sim.requests[id]["data"]["lot"]
+		var data: Dictionary = sim.requests[id]["data"]
+		var lot: String = data["lot"]
 		var index: int = _markers_at_lot(lot).find(id)
 		var screen: Vector2 = map.lot_screen_position(lot)
-		marker.position = screen - Vector2(marker.size.x / 2.0, marker.size.y + index * (marker.size.y + 4))
+		var offscreen := not area.has_point(screen)
+		var label := _marker_text(id)
+		if offscreen:
+			label = _edge_arrow(screen, area) + " " + label
+		if marker.text != label:
+			marker.text = label
+			marker.reset_size()
+		var pos := screen - Vector2(marker.size.x / 2.0, marker.size.y + index * (marker.size.y + 4))
+		if offscreen:
+			pos = pos.clamp(area.position, area.end - marker.size)
+		marker.position = pos
+		marker.set_meta("offscreen", offscreen)
 
 
 # --- Layout ------------------------------------------------------------------
@@ -330,13 +347,13 @@ func _refresh_markers() -> void:
 	for id in visible_ids:
 		if not _markers.has(id):
 			var marker := Button.new()
-			marker.pressed.connect(open_card.bind(id))
+			marker.pressed.connect(_on_marker_pressed.bind(id))
 			_markers_layer.add_child(marker)
 			_markers[id] = marker
 		var data: Dictionary = sim.requests[id]["data"]
 		var marker: Button = _markers[id]
 		var assigned: bool = sim.requests[id]["status"] == "assigned"
-		marker.text = TYPE_NAMES[data["type"]] + (" · в работе" if assigned else "")
+		marker.text = _marker_text(id)
 		var color: Color = TYPE_COLORS[data["type"]]
 		if assigned:
 			color = color.darkened(0.4)
@@ -491,6 +508,29 @@ func _show_overlay(title: String, subtitle: String, lines: Array[String], button
 
 
 # --- Helpers -----------------------------------------------------------------
+
+func _on_marker_pressed(id: String) -> void:
+	open_card(id, _markers[id].get_meta("offscreen", false))
+
+
+func _marker_text(id: String) -> String:
+	var request: Dictionary = sim.requests[id]
+	return TYPE_NAMES[request["data"]["type"]] + (" · в работе" if request["status"] == "assigned" else "")
+
+
+# The part of the screen where the map is visible, between the panels.
+func _map_area() -> Rect2:
+	var size := _root.get_viewport_rect().size
+	return Rect2(Vector2(12, 68), Vector2(size.x - 400 - 12, size.y - 68 - 116))
+
+
+func _edge_arrow(screen: Vector2, area: Rect2) -> String:
+	if screen.x < area.position.x:
+		return "←"
+	if screen.x > area.end.x:
+		return "→"
+	return "↑" if screen.y < area.position.y else "↓"
+
 
 func _markers_at_lot(lot: String) -> Array:
 	return _markers.keys().filter(func(id): return sim.requests[id]["data"]["lot"] == lot)
