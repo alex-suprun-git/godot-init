@@ -7,6 +7,10 @@ extends Node3D
 const Week1 = preload("res://scripts/data/week1.gd")
 const Settings = preload("res://scripts/data/settings.gd")
 const SpriteAnchors = preload("res://scripts/data/sprite_anchors.gd")
+const GroundedProps = preload("res://scripts/map/grounded_props.gd")
+const GarageModel = preload("res://scripts/map/garage_model.gd")
+const PitchedRoof = preload("res://scripts/map/pitched_roof.gd")
+const PropDimensions = preload("res://scripts/data/prop_dimensions.gd")
 
 const GRASS := Color(0.42, 0.47, 0.29)
 const FOREIGN_GRASS := Color(0.5, 0.5, 0.36)
@@ -40,16 +44,16 @@ const TREE_BIRCH := preload("res://assets/sprites/tree_birch_august.png")
 const TREE_POPLAR := preload("res://assets/sprites/tree_poplar_august.png")
 const KIOSK := preload("res://assets/sprites/kiosk.png")
 const MARKET_TENT := preload("res://assets/sprites/market_tent.png")
-const CAR_LADA := preload("res://assets/sprites/car_lada.png")
-const CAR_VOLGA := preload("res://assets/sprites/car_volga_black.png")
+const CAR_LADA := preload("res://assets/sprites/car_lada_v3.png")
+const CAR_VOLGA := preload("res://assets/sprites/car_volga_black_v3.png")
 const VAN_UAZ := preload("res://assets/sprites/van_uaz_police.png")
 const SCAFFOLDING := preload("res://assets/sprites/scaffolding.png")
 const PEOPLE := [
-	{"texture": preload("res://assets/sprites/person_walk_man.png"), "width": 2.1},
-	{"texture": preload("res://assets/sprites/person_walk_woman.png"), "width": 2.1},
-	{"texture": preload("res://assets/sprites/person_pensioner.png"), "width": 2.1},
-	{"texture": preload("res://assets/sprites/person_worker.png"), "width": 2.7},
-	{"texture": preload("res://assets/sprites/person_kid.png"), "width": 3.9},
+	{"texture": preload("res://assets/sprites/person_walk_man.png"), "width": PropDimensions.PEOPLE_WIDTHS["person_walk_man"]},
+	{"texture": preload("res://assets/sprites/person_walk_woman.png"), "width": PropDimensions.PEOPLE_WIDTHS["person_walk_woman"]},
+	{"texture": preload("res://assets/sprites/person_pensioner.png"), "width": PropDimensions.PEOPLE_WIDTHS["person_pensioner"]},
+	{"texture": preload("res://assets/sprites/person_worker.png"), "width": PropDimensions.PEOPLE_WIDTHS["person_worker"]},
+	{"texture": preload("res://assets/sprites/person_kid.png"), "width": PropDimensions.PEOPLE_WIDTHS["person_kid"]},
 ]
 const PICKET_GROUP := preload("res://assets/sprites/picket_group.png")
 const TRUCK_ZIL := preload("res://assets/sprites/truck_zil_plain.png")
@@ -82,17 +86,18 @@ const TREE_POPLAR_WINTER := preload("res://assets/sprites/tree_poplar_winter.png
 
 # Props that were boxes before the full sprite set arrived.
 const PRIVATE_HOUSE := preload("res://assets/sprites/private_house.png")
-const GARAGES_ROW := preload("res://assets/sprites/garages_row.png")
+const GARAGE_SINGLE := preload("res://assets/sprites/garage_single_v3.png")
+const CARPET_BEATER := preload("res://assets/sprites/carpet_beater_v2.png")
 const LAMP_POST := preload("res://assets/sprites/lamp_post.png")
 const POWER_POLE := preload("res://assets/sprites/power_pole.png")
 const BENCH_PLAYGROUND := preload("res://assets/sprites/bench_playground.png")
-const BUS_STOP := preload("res://assets/sprites/bus_stop.png")
+const BUS_STOP := preload("res://assets/sprites/bus_stop_v2.png")
 const BUS_LIAZ := preload("res://assets/sprites/bus_liaz.png")
 const TRAM := preload("res://assets/sprites/tram.png")
 const FENCE_CHAINLINK := preload("res://assets/sprites/fence_chainlink.png")
 const MONUMENT := preload("res://assets/sprites/monument.png")
 const BORDER_POST := preload("res://assets/sprites/border_post.png")
-const TRAIN_WAGONS := preload("res://assets/sprites/train_wagons.png")
+const TRAIN_WAGONS := preload("res://assets/sprites/train_wagons_v2.png")
 const STATION := preload("res://assets/sprites/station.png")
 const BARGE := preload("res://assets/sprites/barge.png")
 const GARBAGE_PILE := preload("res://assets/sprites/garbage_pile.png")
@@ -175,6 +180,8 @@ var _occupied: Array[Rect2] = [] # Ground taken by buildings and roads; trees av
 var _ground_layer := 0 # Each ground tile sits a hair above the last so overlaps never flicker.
 var _walkers: Array[Dictionary] = [] # Pedestrians walking back and forth along a street.
 var _materials := {}
+var _grounded_props := GroundedProps.new()
+var _garage_model := GarageModel.new()
 var _rng := RandomNumberGenerator.new()
 var _season: Dictionary
 var _weather: CPUParticles3D # Snow or falling leaves, following the camera.
@@ -464,21 +471,30 @@ func _build_microdistrict() -> void:
 		_svg_ground(rect, Color(0.5, 0.56, 0.33), 0.03, false, _season["courtyard"], 22.0)
 	_svg_building(Rect2(740, 390, 100, 60), 9, Color(0.86, 0.76, 0.52), Color(0.45, 0.4, 0.35))
 	_svg_building(Rect2(380, 530, 90, 40), 6, Color(0.86, 0.76, 0.52), Color(0.45, 0.4, 0.35))
-	# One painted row of eight garages.
+	# Eight independently dimensioned bays: 3.2 m wide, 6 m deep, 2.5 m eaves.
 	var garages := _svg_point(Vector2(265, 776))
-	_prop(GARAGES_ROW, _ground(garages), 27.0, "x")
-	_occupy(garages, Vector2(30, 10))
+	for i in 8:
+		var garage := _garage_model.create(GARAGE_SINGLE, PANEL_TINTS[i % PANEL_TINTS.size()])
+		garage.position = _ground(garages + Vector2((i - 3.5) * GarageModel.WIDTH, 0))
+		add_child(garage)
+	_occupy(garages, Vector2(8 * GarageModel.WIDTH, GarageModel.DEPTH))
 
 	# Kiosks along the main street.
 	for y in [520, 560, 640, 800, 840]:
-		_sprite(KIOSK, _ground(_svg_point(Vector2(865, y))), 5.0, null, y % 80 == 0)
+		_sprite(KIOSK, _ground(_svg_point(Vector2(865, y))), 3.5, null, y % 80 == 0)
 
 	# Benches and playgrounds in the courtyards.
 	for spot in [Vector2(340, 356), Vector2(700, 356), Vector2(340, 610), Vector2(700, 610)]:
 		_sprite(BENCH_PLAYGROUND, _ground(_svg_point(spot)), 11.0, null, spot.x > 500)
+	for spot in [Vector2(290, 370), Vector2(630, 625)]:
+		var carpet_spot := _svg_point(spot)
+		_prop(CARPET_BEATER, _ground(carpet_spot), 4.2, "x")
+		_occupy(carpet_spot, Vector2(4.5, 2.0))
 
 	# The bus stop on the main street, a bus waiting and a tram on the cross street.
-	_sprite(BUS_STOP, _ground(_svg_point(Vector2(945, 580))), 10.0)
+	var shelter := _svg_point(Vector2(865, 600))
+	_prop(BUS_STOP, _ground(shelter), 6.5, "z")
+	_occupy(shelter, Vector2(3.5, 7.0))
 	_prop(BUS_LIAZ, _ground(_svg_point(Vector2(902, 612))), 12.0, "z")
 	_prop(TRAM, _ground(_svg_point(Vector2(430, 483))), 14.0, "x")
 
@@ -490,6 +506,7 @@ func _build_boiler() -> void:
 	var base := Vector3(center.x, 0, center.y)
 	_box(size, base + Vector3(0, 4.5, 0), BRICK)
 	_box(Vector3(size.x + 1, 0.6, size.z + 1), base + Vector3(0, 9.3, 0), Color(0.3, 0.3, 0.3))
+	_roof(Vector2(size.x + 1, size.z + 1), base + Vector3(0, 9.62, 0), 16.0, ROOF_TAR)
 	_facades(base, size, FACADE_BRICK, 1.0)
 	_occupy(center, Vector2(size.x, size.z))
 	var chimney := _svg_point(Vector2(86, 394))
@@ -551,7 +568,7 @@ func _build_center() -> void:
 	var center := _svg_center(rect)
 	var base := Vector3(center.x, 0, center.y)
 	# Tall enough that the 2:1 facade (columns, steps, emblem) keeps its proportions.
-	var size := Vector3(rect.size.x * SVG_SCALE, 15, rect.size.y * SVG_SCALE)
+	var size := Vector3(45, 19, 18)
 	_box(size, base + Vector3(0, size.y / 2.0, 0), PLASTER)
 	_box(Vector3(size.x + 1, 0.8, size.z + 1), base + Vector3(0, size.y + 0.4, 0), Color(0.5, 0.48, 0.44))
 	_roof(Vector2(size.x + 1, size.z + 1), base + Vector3(0, size.y + 0.82, 0), 14.0)
@@ -563,8 +580,8 @@ func _build_center() -> void:
 	var end_tiles := Vector2(size.z / (size.y * 2.0), 1.0)
 	_facade(end, base + Vector3(size.x / 2.0 + 0.01, size.y / 2.0, 0), PI / 2.0, FACADE_ADMIN, end_tiles)
 	_facade(end, base + Vector3(-size.x / 2.0 - 0.01, size.y / 2.0, 0), -PI / 2.0, FACADE_ADMIN, end_tiles)
-	_cylinder(0.15, 19, base + Vector3(size.x / 2.0 - 2, 9.5, size.z / 2.0 + 4), Color(0.3, 0.3, 0.3))
-	_box(Vector3(2.4, 1.4, 0.1), base + Vector3(size.x / 2.0 - 0.8, 18, size.z / 2.0 + 4), Color(0.7, 0.2, 0.18))
+	_cylinder(0.15, 24, base + Vector3(size.x / 2.0 - 2, 12, size.z / 2.0 + 4), Color(0.3, 0.3, 0.3))
+	_box(Vector3(2.4, 1.4, 0.1), base + Vector3(size.x / 2.0 - 0.8, 23, size.z / 2.0 + 4), Color(0.7, 0.2, 0.18))
 	_occupy(center, Vector2(size.x, size.z + 8))
 
 
@@ -574,11 +591,11 @@ func _build_old_center() -> void:
 	var rect := Rect2(1230, 520, 60, 70)
 	var center := _svg_center(rect)
 	var base := Vector3(center.x, 0, center.y)
-	_sprite(CHURCH, base, 24.0)
-	_occupy(center, Vector2(14, 22))
+	_sprite(CHURCH, base, 32.0)
+	_occupy(center, Vector2(20, 26))
 	# Merchant houses.
 	for house in [Rect2(960, 520, 80, 44), Rect2(1060, 520, 90, 44), Rect2(960, 590, 190, 44), Rect2(1220, 610, 110, 40)]:
-		_svg_building(house, 7, OCHRE, ROOF_RED, true, FACADE_MERCHANT)
+		_svg_building(house, 9.5, OCHRE, ROOF_RED, true, FACADE_MERCHANT)
 
 
 # --- North-east: fuel depot on the embankment --------------------------------
@@ -604,20 +621,23 @@ func _build_depot() -> void:
 
 func _build_south() -> void:
 	var station := _svg_point(Vector2(900, 906))
-	_sprite(STATION, _ground(station), 40.0)
-	_occupy(station, Vector2(30, 12))
+	# Long facade follows the railway's X axis.
+	_grounded_prop(STATION, _ground(station), 22.0, true, Vector2(0.824, -0.234))
+	_occupy(station, Vector2(24, 10))
 	# Freight wagons on the railway.
 	_prop(TRAIN_WAGONS, _ground(_svg_point(Vector2(1150, 946))), 28.0, "x")
 	_prop(TRAIN_WAGONS, _ground(_svg_point(Vector2(280, 946))), 28.0, "x")
 	# Station market: out of reach at the aide stage, but busy.
 	_svg_ground(Rect2(560, 790, 260, 130), PAVING, 0.04, true, _season["paving"], 12.0)
 	for row in 3:
-		for col in 7:
-			var at := _svg_point(Vector2(590 + col * 34, 818 + row * 34))
-			_sprite(MARKET_TENT, _ground(at), 8.0, null, (row + col) % 2 == 0)
+		for col in 10:
+			var at := _svg_point(Vector2(590 + col * 24, 818 + row * 28))
+			# Mirror consistently along the row; random mirroring swaps map axes.
+			_grounded_prop(MARKET_TENT, _ground(at), 5.6, true, Vector2(0.843, -0.366))
+			_occupy(at, Vector2(3.4, 3.4))
 	# Shoppers in the aisles between the stalls.
 	for i in 16:
-		var aisle := _svg_point(Vector2(_rng.randf_range(580, 800), 800 + (i % 3) * 34 + 17))
+		var aisle := _svg_point(Vector2(_rng.randf_range(580, 800), 805 + (i % 3) * 28))
 		var person: Dictionary = PEOPLE[_rng.randi() % PEOPLE.size()]
 		_sprite(person["texture"], _ground(aisle), person["width"], null, _rng.randf() < 0.5)
 	# Private houses with pitched roofs.
@@ -896,7 +916,7 @@ func _build_pedestrians() -> void:
 		_walkers.append({
 			"sprite": sprite, "from": from, "to": from + direction * span,
 			"t": _rng.randf(), "dir": 1.0 if _rng.randf() < 0.5 else -1.0,
-			"speed": _rng.randf_range(2.0, 3.4), "lift": sprite.position.y,
+			"speed": _rng.randf_range(1.0, 1.5), "lift": sprite.position.y,
 		})
 
 
@@ -932,11 +952,13 @@ func _svg_building(rect: Rect2, height: float, wall: Color, roof: Color, pitched
 	var base := Vector3(center.x, 0, center.y)
 	_box(Vector3(size.x, height, size.y), base + Vector3(0, height / 2.0, 0), wall)
 	if pitched:
-		# Stepped stand-in for a pitched roof until roofs get real shapes.
-		_box(Vector3(size.x + 0.6, 2.4, size.y * 0.72), base + Vector3(0, height + 1.0, 0), roof)
-		_box(Vector3(size.x + 0.6, 1.2, size.y * 0.4), base + Vector3(0, height + 2.6, 0), roof)
+		_box(Vector3(size.x + 0.6, 0.2, size.y + 0.6), base + Vector3(0, height + 0.1, 0), roof)
+		var pitched_mesh := PitchedRoof.create(Vector2(size.x + 0.6, size.y + 0.6), 3.0, ROOF_RUSTY)
+		pitched_mesh.position = base + Vector3(0, height + 0.2, 0)
+		add_child(pitched_mesh)
 	else:
 		_box(Vector3(size.x + 0.5, 0.5, size.y + 0.5), base + Vector3(0, height + 0.25, 0), roof)
+		_roof(Vector2(size.x + 0.5, size.y + 0.5), base + Vector3(0, height + 0.52, 0), 12.0, ROOF_TAR)
 	if facade != null:
 		_facades(base, Vector3(size.x, height, size.y), facade, 1.0)
 	elif height >= 5.0:
@@ -988,13 +1010,19 @@ func _is_occupied(spot: Vector2, margin: float) -> bool:
 # --- Shape helpers -----------------------------------------------------------
 
 func _windows(base: Vector3, footprint: Vector2, floors: int, per_row: int, floor_height: float) -> void:
-	var spacing := footprint.x / float(per_row)
+	var spacing: float = footprint.x / float(per_row)
+	var end_windows: int = maxi(2, int(footprint.y / 3.5))
+	var end_spacing: float = footprint.y / float(end_windows)
 	for floor_index in floors:
+		var window_y: float = floor_index * floor_height + floor_height * 0.55
 		for i in per_row:
-			var x := -footprint.x / 2.0 + spacing * (i + 0.5)
-			var y := floor_index * floor_height + floor_height * 0.55
+			var x: float = -footprint.x / 2.0 + spacing * (i + 0.5)
 			for side in [-1.0, 1.0]:
-				_box(Vector3(spacing * 0.45, floor_height * 0.45, 0.1), base + Vector3(x, y, side * (footprint.y / 2.0 + 0.05)), WINDOW)
+				_box(Vector3(spacing * 0.45, floor_height * 0.45, 0.1), base + Vector3(x, window_y, side * (footprint.y / 2.0 + 0.05)), WINDOW)
+		for i in end_windows:
+			var z: float = -footprint.y / 2.0 + end_spacing * (i + 0.5)
+			for side in [-1.0, 1.0]:
+				_box(Vector3(0.1, floor_height * 0.45, end_spacing * 0.45), base + Vector3(side * (footprint.x / 2.0 + 0.05), window_y, z), WINDOW)
 
 
 func _tree(at: Vector3) -> void:
@@ -1045,9 +1073,27 @@ func _sprite(texture: Texture2D, at: Vector3, width: float, parent: Node = null,
 # A long prop laid along a street, a rail or a river. The art is drawn along one
 # map axis (its ground edge slopes like a backslash for X, a slash for Z), so it
 # is mirrored when the thing it stands on runs along the other one.
-func _prop(texture: Texture2D, at: Vector3, width: float, axis: String, parent: Node = null) -> Sprite3D:
+func _prop(texture: Texture2D, at: Vector3, width: float, axis: String, parent: Node = null) -> Node3D:
+	var profile: Dictionary = PropDimensions.PROFILES.get(texture.resource_path.get_file().get_basename(), {})
+	if not profile.is_empty():
+		var source_axes: Vector2 = profile["axes"]
+		return _grounded_prop(texture, at, float(profile["width"]), axis == "x", source_axes, parent)
 	var drawn := "x" if _slope_of(texture) > 0.0 else "z"
-	return _sprite(texture, at, width, parent, drawn != axis)
+	var slope := _slope_of(texture)
+	var axes := Vector2(slope, -0.577) if slope > 0.0 else Vector2(0.577, slope)
+	return _grounded_prop(texture, at, width, drawn != axis, axes, parent)
+
+
+func _grounded_prop(texture: Texture2D, at: Vector3, width: float, flip: bool, axes: Vector2, parent: Node = null) -> Node3D:
+	# Calibration describes the fixed orthographic isometric view. Preserve the
+	# original billboard rendering for the optional perspective camera.
+	if not CAMERA_VIEWS[Settings.camera_mode]["orthographic"]:
+		return _sprite(texture, at, width, parent, flip)
+	var profile: Dictionary = PropDimensions.PROFILES.get(texture.resource_path.get_file().get_basename(), {})
+	var prop := _grounded_props.create(texture, width, flip, _anchor_of(texture), axes, CAMERA_VIEWS[Settings.camera_mode], float(profile.get("height_scale", 1.0)))
+	prop.position = at + Vector3(0, 0.12, 0)
+	(parent if parent != null else self).add_child(prop)
+	return prop
 
 
 func _anchor_of(texture: Texture2D) -> Vector2:

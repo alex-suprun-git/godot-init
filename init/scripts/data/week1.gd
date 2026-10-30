@@ -60,11 +60,44 @@ const BOSS := {
 	"portrait": "res://assets/portraits/boss.png", "face": Rect2(330, 160, 540, 540),
 }
 
+# Important notices use a small set of visual formats (a character portrait or
+# a newspaper clipping) and lead into the weekly task board.
+const START_BRIEFING := {
+	"style": "portrait", "speaker": "boss",
+	"eyebrow": "ПОРУЧЕНИЕ БОССА",
+	"title": "Отопительный сезон к 15 октября",
+	"body": "К 15 октября район должен быть готов к проверке городской комиссии. Провал не обсуждается.",
+	"button": "К поручениям",
+}
+
+const WEEKLY_MANDATE := {
+	"title": "Подготовить район к отопительному сезону",
+	"deadline": "15 октября",
+	"description": "Городская комиссия проверит район. Босс ждёт результата.",
+}
+
+# Optional press item, opened from the map's incoming tray. It reports the
+# existing hot-water request and does not change simulation state.
+const MORNING_NEWS := {
+	"style": "newspaper", "masthead": "Городские вести",
+	"eyebrow": "НЕЗАВИСИМАЯ ГОРОДСКАЯ ГАЗЕТА",
+	"issue": "№ 34 (218)", "section": "ГОРОДСКОЕ ХОЗЯЙСТВО",
+	"title": "Воду отключили. Объяснений пока нет.",
+	"lead": "Жители дома №5 четвёртый день греют воду в кастрюлях.",
+	"body": "По словам жильцов, это уже третье отключение за год. Когда закончится ремонт, в ЖЭКе пока не говорят.\n\nВ администрации района обещали разобраться в ситуации.",
+	"quote": "«Зима ещё не началась, а мы уже с тазиками»",
+	"quote_author": "Нина Ивановна, старшая по дому №5",
+	"illustration": "res://assets/portraits/baba_nina.png",
+	"illustration_region": Rect2(110, 35, 900, 760),
+	"caption": "Нина Ивановна. Горячей воды в доме нет с четверга.",
+	"button": "Отложить газету →",
+}
+
 # The boss's order for the week. An objective is met when its flag is set and
 # failed when the request with the same id closes without it.
 const OBJECTIVES := [
-	{"id": "contractor", "text": "Выбрать подрядчика для котельной (до Чт)", "flag": "contractor"},
-	{"id": "boss_report", "text": "Пт: явиться к боссу на отчёт (он вызовет, будет метка в кабинете)", "flag": "report"},
+	{"id": "contractor", "title": "Выбрать подрядчика для котельной", "deadline": "До четверга", "lot": "boiler", "flag": "contractor"},
+	{"id": "boss_report", "title": "Явиться к боссу на отчёт", "deadline": "Пятница", "lot": "office", "flag": "report"},
 ]
 
 # Request types: plea, conflict, crisis, offer.

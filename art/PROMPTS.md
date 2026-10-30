@@ -21,6 +21,7 @@ Prompts for the art needed by the first playable week (the heating-season openin
 | Ground textures and road decals (G1–G8, D1–D2) | Generated; awaiting in-game visual review |
 | Map sprites (M1–M29) | Generated; awaiting in-game visual review |
 | Seasonal tree variants and snow ground (S1–S4) | Generated; awaiting in-game visual review |
+| True-isometric redraw request (R1–R3) | In progress: 4 sprites pass anchor checks; rejected drafts are in `art/concepts/redraw_attempts/` |
 | Later window art (W3–W7) | After W2 |
 
 ## Established looks
@@ -48,6 +49,10 @@ Canonical appearance from the chosen portraits. Later variants of these characte
 - The image is the surface only, edge to edge: no sky, no ground, no surroundings, no frame.
 - When marked tileable, the left edge must continue seamlessly into the right edge.
 - Square or 2:1 canvas as noted.
+
+### Roof surfaces
+
+Map buildings need visible material on every roof plane; do not leave broad top faces as a single flat color. Existing reusable surfaces are `init/assets/textures/roof_tar.png` for flat tarred roofs and `roof_rusty_metal.png` for corrugated metal roofs. New roof textures should be top-down, orthographic, tileable, and detailed at the scale of a building roof: seams, worn patches, drains, and a few vents are useful, while large standalone rooftop props should remain separate geometry.
 
 ### Technical rules for sprites (map props)
 
@@ -269,8 +274,49 @@ Measured with `scripts/dev/measure_sprite_anchors.gd` (slope of the ground edge;
 | `train_wagons`, `barge` | 0.53 and 0.49 |
 | trees, `church`, `fuel_tanks`, `boiler_chimney`, `water_tower`, `monument`, people | upright objects, no long axis |
 
+### R redraw attempt log (2026-10-30)
+
+The first generated batch did not meet the projection rules consistently. Only these new sprites are currently kept under `init/assets/sprites/`; slopes are from `measure_sprite_anchors.gd`:
+
+| File | Slope | Check |
+|---|---:|---|
+| `garages_row_v2.png` | -0.52 | Pass |
+| `train_wagons_v2.png` | -0.53 | Pass after one projection correction |
+| `bus_stop_v2.png` | -0.55 | Pass; compact footprint reported as `foot` |
+| `carpet_beater_v2.png` | -0.63 | Pass; compact footprint reported as `foot` |
+
+These four sprites are connected to the playable map in `scripts/map/city_map.gd`: the garage row, both freight trains, and the bus shelter use the new versions, and two carpet-beating frames furnish the residential courtyards. Confirmed in a graphical autoplay run on 2026-10-31.
+
+Renderer correction (2026-10-31): a passing silhouette slope alone does not establish correct projection. Long props, the station, and market tents now use `scripts/map/grounded_props.gd`: both source ground axes are mapped to the orthographic camera axes, and a strip mesh maps the opaque bottom contour onto the ground. This avoids terrain cutting through the lower half of a billboard. Station and tent axes are calibrated from their structural edges; station and market rows follow the railway's X direction. PNG files remain unchanged. Graphical close-ups are required when changing this calibration; inspect wheels, both footprint axes, vertical edges, mirrored lighting, and intersections with neighboring buildings.
+
+Other generated sprite drafts failed the requested slope or visual projection check and are kept in `art/concepts/redraw_attempts/`, not as game assets. The three facade drafts have the requested 1774×887 dimensions, but their left/right edge mismatch is still visible and they are not considered tileable. The three redraw batches remain incomplete pending corrected images.
+
 ## Not generated here
 
 - The 3D geometry of the map, lighting, smoke, fire, weather, and day and night: built in Godot.
 - Request icons (plea, conflict, crisis, offer, promise) and UI panels: built in Godot or as SVG.
 - Map tokens for people: cropped from the portraits in Godot.
+
+## Proportion pass V3 (2026-10-31)
+
+Built-in image generation produced the following new assets. The garage image is mapped onto a dimensioned 3D bay, not displayed as a billboard. The two cars use source-axis calibration and a separate vertical factor in `scripts/data/prop_dimensions.gd`. Raw silhouette slopes are -0.33 (Lada), -0.32 (Volga), and +0.27 (single garage); these numbers are not accepted as proof of correct source projection. The final game geometry and the visual reference scene are the acceptance reference.
+
+- `init/assets/sprites/garage_single_v3.png`: new single-bay material. Model dimensions are 3.2 × 6 m, eaves 2.5 m, ridge 2.9 m. Eight bays are assembled in Godot.
+- `init/assets/sprites/car_lada_v3.png`: new white Lada; width and vertical correction are calibrated alongside a 1.8 m adult and garage door.
+- `init/assets/sprites/car_volga_black_v3.png`: new black Volga, calibrated alongside the Lada.
+
+Full generation prompts, with `art/concepts/iso_projection_reference.png` as projection reference and transparent output requested:
+
+### Garage single V3
+
+> Game asset, one isolated SINGLE Soviet metal car garage, hand-painted detailed muted late-August 1997 provincial post-Soviet city style. Realistic proportions based on an engineering box: footprint 3.2 metres across the front by 6 metres deep, vertical walls 2.5 metres high, shallow pitched roof ridge only 2.9 metres high. One rusty faded sage-green metal double door 2.5 metres wide and 2.2 metres high on the narrow FRONT face. Important: NOT a tall warehouse, NOT multiple garages. Strict orthographic true isometric parallel projection matching attached ground-axis reference; both ground axes exactly 30 degrees and verticals stay vertical. Door face faces lower right, long side wall faces lower left; the width across the doors rises right; all parallel edges stay parallel, no vanishing points. Transparent background, whole object uncropped, no ground or weeds, no cast shadow, no people, no text or watermark. Show enough fine rust and worn corrugation to match painted city props, flat even illumination.
+
+### Lada V3
+
+> One transparent game sprite of a worn white Lada 2107 sedan for a hand-painted 1997 post-Soviet provincial city. Exact orthographic true isometric camera, no perspective: both ground axes 30 degrees as reference, parallel edges stay parallel, verticals vertical. Car dimensions 4.1m long, 1.7m wide, 1.45m high, wheel diameter 0.57m. Long low sedan with small normal-size wheels, NOT a tall toy car. Long body axis rises right, front short end lower left, broad side faces lower right. Use an engineering axonometric car-body box before painting: equal-size front and rear wheels, parallel rocker panels and roof edges, no lens distortion or taper. Muted realistic hand-painted worn finish, soft even light, late August. One whole car uncropped on transparent background, no ground, cast shadow, props, labels, license plate text, watermark.
+
+### Volga V3
+
+> One isolated transparent sprite of a clean black GAZ-24 Volga sedan, for a detailed hand-painted 1997 post-Soviet city map. Engineering proportions: length4.7m width1.8m height1.5m, wheel diameter0.65m. Strict orthographic true isometric matching attached reference, both ground axes exactly30degrees, verticals vertical, parallel edges remain parallel, equal-size front/rear wheels. Long axis rises right, broad side faces lower right, short front end faces lower left. Long low dignified sedan; no photographic lens perspective, no exaggerated tall cabin or huge wheels. Muted realistic painted finish, subdued chrome, flat even lighting, late August. Whole car uncropped, transparent background, no ground, no cast shadow, no people, labels, readable plates, text or watermark.
+
+Manual calibration scene: `init/scenes/dev/scale_reference.tscn` (F6). It places the actual game assets on a 1 m grid with a 1.8 m pole and a 2.2 m door reference. People, station, market stalls, bus shelter, bus and tram were recalibrated in this pass. The executive committee and historic centre were enlarged following the creative direction recorded in README.md; the church was enlarged by one third.

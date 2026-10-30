@@ -1,0 +1,247 @@
+{
+  "date": "2026-10-31",
+  "reference": "3 world units per apartment floor; iso elevation 35.264 degrees",
+  "method": "Alpha >= 0.5, every second image column. visible_screen_width excludes transparent margins. height_equivalent is a SCREEN/RENDERING diagnostic, NOT the anatomical/structural height: for billboards it is alpha bounding-box height divided by cos(camera elevation); for grounded props it is maximum opaque column span times the projection vertical correction divided by cos(elevation). Roof depth, antennas, posture and grouped content affect this diagnostic. Do not use it as physical object height or as the sole rescaling target.",
+  "assets": [
+    {
+      "asset": "person_walk_man",
+      "canvas_width_units": 2.1,
+      "grounded": false,
+      "height_equivalent": 3.28,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 1.16
+    },
+    {
+      "asset": "person_walk_woman",
+      "canvas_width_units": 2.1,
+      "grounded": false,
+      "height_equivalent": 3.32,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 1.22
+    },
+    {
+      "asset": "person_pensioner",
+      "canvas_width_units": 2.1,
+      "grounded": false,
+      "height_equivalent": 3.41,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 1.45
+    },
+    {
+      "asset": "person_worker",
+      "canvas_width_units": 2.7,
+      "grounded": false,
+      "height_equivalent": 3.41,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 1.35
+    },
+    {
+      "asset": "person_kid",
+      "canvas_width_units": 3.9,
+      "grounded": false,
+      "height_equivalent": 3.53,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 1.24
+    },
+    {
+      "asset": "car_lada",
+      "canvas_width_units": 5.0,
+      "grounded": true,
+      "height_equivalent": 4.06,
+      "projection_stretch": 1.29,
+      "visible_screen_width": 4.67
+    },
+    {
+      "asset": "car_volga_black",
+      "canvas_width_units": 5.7,
+      "grounded": true,
+      "height_equivalent": 4.49,
+      "projection_stretch": 1.26,
+      "visible_screen_width": 5.49
+    },
+    {
+      "asset": "van_uaz_police",
+      "canvas_width_units": 5.2,
+      "grounded": true,
+      "height_equivalent": 4.92,
+      "projection_stretch": 1.3,
+      "visible_screen_width": 4.94
+    },
+    {
+      "asset": "bus_liaz",
+      "canvas_width_units": 12.0,
+      "grounded": true,
+      "height_equivalent": 7.67,
+      "projection_stretch": 1.22,
+      "visible_screen_width": 11.48
+    },
+    {
+      "asset": "tram",
+      "canvas_width_units": 14.0,
+      "grounded": true,
+      "height_equivalent": 9.7,
+      "projection_stretch": 1.23,
+      "visible_screen_width": 11.59
+    },
+    {
+      "asset": "train_wagons_v2",
+      "canvas_width_units": 28.0,
+      "grounded": true,
+      "height_equivalent": 7.5,
+      "projection_stretch": 1.04,
+      "visible_screen_width": 26.14
+    },
+    {
+      "asset": "garages_row_v2",
+      "canvas_width_units": 27.0,
+      "grounded": true,
+      "height_equivalent": 8.61,
+      "projection_stretch": 1.05,
+      "visible_screen_width": 24.93
+    },
+    {
+      "asset": "bus_stop_v2",
+      "canvas_width_units": 10.0,
+      "grounded": true,
+      "height_equivalent": 8.02,
+      "projection_stretch": 1.02,
+      "visible_screen_width": 9.12
+    },
+    {
+      "asset": "carpet_beater_v2",
+      "canvas_width_units": 4.2,
+      "grounded": true,
+      "height_equivalent": 3.19,
+      "projection_stretch": 0.96,
+      "visible_screen_width": 4.0
+    },
+    {
+      "asset": "market_tent",
+      "canvas_width_units": 8.0,
+      "grounded": true,
+      "height_equivalent": 6.37,
+      "projection_stretch": 0.96,
+      "visible_screen_width": 7.01
+    },
+    {
+      "asset": "station",
+      "canvas_width_units": 40.0,
+      "grounded": true,
+      "height_equivalent": 29.38,
+      "projection_stretch": 1.09,
+      "visible_screen_width": 37.29
+    },
+    {
+      "asset": "private_house",
+      "canvas_width_units": 13.0,
+      "grounded": false,
+      "height_equivalent": 10.14,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 12.58
+    },
+    {
+      "asset": "kiosk",
+      "canvas_width_units": 5.0,
+      "grounded": false,
+      "height_equivalent": 4.91,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 4.18
+    },
+    {
+      "asset": "church",
+      "canvas_width_units": 24.0,
+      "grounded": false,
+      "height_equivalent": 24.62,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 15.91
+    },
+    {
+      "asset": "boiler_chimney",
+      "canvas_width_units": 22.7,
+      "grounded": false,
+      "height_equivalent": 40.34,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 7.89
+    },
+    {
+      "asset": "water_tower",
+      "canvas_width_units": 19.0,
+      "grounded": false,
+      "height_equivalent": 32.43,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 9.5
+    },
+    {
+      "asset": "lamp_post",
+      "canvas_width_units": 6.0,
+      "grounded": false,
+      "height_equivalent": 10.65,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 2.33
+    },
+    {
+      "asset": "power_pole",
+      "canvas_width_units": 12.0,
+      "grounded": false,
+      "height_equivalent": 15.08,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 11.5
+    },
+    {
+      "asset": "fuel_tanks",
+      "canvas_width_units": 34.0,
+      "grounded": false,
+      "height_equivalent": 25.24,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 18.86
+    },
+    {
+      "asset": "barge",
+      "canvas_width_units": 36.0,
+      "grounded": true,
+      "height_equivalent": 18.33,
+      "projection_stretch": 1.08,
+      "visible_screen_width": 33.61
+    },
+    {
+      "asset": "bench_playground",
+      "canvas_width_units": 11.0,
+      "grounded": false,
+      "height_equivalent": 8.74,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 7.91
+    },
+    {
+      "asset": "bush",
+      "canvas_width_units": 5.5,
+      "grounded": false,
+      "height_equivalent": 5.28,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 5.17
+    },
+    {
+      "asset": "coal_heap",
+      "canvas_width_units": 14.0,
+      "grounded": false,
+      "height_equivalent": 9.48,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 13.09
+    },
+    {
+      "asset": "crane_truck",
+      "canvas_width_units": 9.0,
+      "grounded": true,
+      "height_equivalent": 7.52,
+      "projection_stretch": 1.26,
+      "visible_screen_width": 7.82
+    },
+    {
+      "asset": "picket_group",
+      "canvas_width_units": 12.0,
+      "grounded": false,
+      "height_equivalent": 9.28,
+      "projection_stretch": 1.0,
+      "visible_screen_width": 10.5
+    }
+  ]
+}

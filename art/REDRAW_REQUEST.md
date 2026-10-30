@@ -24,6 +24,41 @@ After saving a batch, run
 
 and read the line for each new file. For a long object drawn with its long axis rising to the right, `slope` must print between -0.52 and -0.63. Compact objects (station, house) print values near 0 and are judged by eye against the reference: their main edges must be parallel to the red and blue axes. If a slope is outside the range, redraw it before reporting. Report the printed slope for every file.
 
+## Attempt status (2026-10-30)
+
+| Batch | Status |
+|---|---|
+| 1 | Partial: `garages_row_v2` and `train_wagons_v2` pass; station, bus, tram, and fence drafts failed projection QA. |
+| 2 | Partial: `bus_stop_v2` passes; vehicle drafts failed projection QA. The house failed visual axis review. |
+| 3 | Partial: `carpet_beater_v2` passes; pigeon loft and laundry line failed projection QA. Facade dimensions pass, but edge seams do not. |
+
+Accepted sprite files remain in `init/assets/sprites/`. Rejected drafts are under `art/concepts/redraw_attempts/` and are not game assets. The batches are not done.
+
+### Sprite measurement results
+
+Slope values are from `scripts/dev/measure_sprite_anchors.gd`; the train was re-generated once, so its value below is the final measurement. “Foot” means the script classified the image as a compact footprint rather than fitting a long ground edge.
+
+| File | Slope | Result |
+|---|---:|---|
+| `station_v2.png` | -0.34 after one retry | Rejected; visual axes also too shallow |
+| `garages_row_v2.png` | -0.52 | Pass |
+| `train_wagons_v2.png` | -0.53 | Pass after correction |
+| `bus_liaz_v2.png` | -0.50 | Rejected |
+| `tram_v2.png` | -0.46 | Rejected |
+| `fence_chainlink_v2.png` | -0.49 | Rejected |
+| `car_lada_v2.png` | -0.35 | Rejected |
+| `car_volga_black_v2.png` | -0.37 | Rejected |
+| `van_uaz_police_v2.png` | -0.34 | Rejected |
+| `truck_zil_plain_v2.png` | -0.37 | Rejected |
+| `crane_truck_v2.png` | -0.29 | Rejected |
+| `bus_stop_v2.png` | -0.55 (foot) | Pass |
+| `private_house_v2.png` | -0.05 (foot) | Rejected by visual axis review |
+| `pigeon_loft_v2.png` | -0.35 (foot) | Rejected |
+| `carpet_beater_v2.png` | -0.63 (foot) | Pass |
+| `laundry_line_v2.png` | -0.51 (foot) | Rejected |
+
+The facade drafts are each 1774×887. Exact opposite-edge pixel comparison still found mean RGB differences (normalized 0–1) of 0.077 for `facade_brick_5storey_v2.png`, 0.061 for `facade_panel_painted_5storey_v2.png`, and 0.050 for `facade_panel_9storey_v2.png`; they need another pass before use as repeating textures.
+
 ## Batch 1: redraw first (these look crooked on the map)
 
 | File | Prompt |

@@ -4,15 +4,16 @@
 # and readable whatever the map lighting does.
 extends Control
 
+const OfficeTheme = preload("res://scripts/ui/office_theme.gd")
 const PortraitDraw = preload("res://scripts/ui/portrait_draw.gd")
 
 const BODY := Vector2(64, 86)
 const CENTER := Vector2(32, 30)
-const INK := Color(0.11, 0.12, 0.11)
-const CREAM := Color(0.95, 0.93, 0.87)
-const RED := Color(0.89, 0.29, 0.29)
-const YELLOW := Color(0.98, 0.78, 0.46)
-const STEEL := Color(0.45, 0.68, 0.85)
+const INK := OfficeTheme.GRAPHITE
+const CREAM := OfficeTheme.PAPER
+const RED := OfficeTheme.BURGUNDY
+const YELLOW := Color("c39967")
+const STEEL := Color("729da5")
 
 var display_name := ""
 var texture: Texture2D
@@ -55,7 +56,7 @@ func _draw() -> void:
 		draw_arc(CENTER, 25.0, -PI / 2.0, -PI / 2.0 + TAU * work_fraction, 40, STEEL, 5.0)
 
 	# Name under the portrait; the player is just "Вы".
-	var font := ThemeDB.fallback_font
+	var font := OfficeTheme.BODY_FONT
 	var label := "Вы" if is_player else display_name
 	draw_string_outline(font, Vector2(-16, 52), label, HORIZONTAL_ALIGNMENT_CENTER, 96.0, 12, 4, INK)
 	draw_string(font, Vector2(-16, 52), label, HORIZONTAL_ALIGNMENT_CENTER, 96.0, 12, CREAM)

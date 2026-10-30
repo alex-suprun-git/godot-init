@@ -4,18 +4,19 @@
 # dulls it. Text appears only as a tooltip.
 extends Control
 
+const OfficeTheme = preload("res://scripts/ui/office_theme.gd")
 const PortraitDraw = preload("res://scripts/ui/portrait_draw.gd")
 
 signal pressed
 
 const BODY := Vector2(64, 74)
 const CENTER := Vector2(32, 32)
-const INK := Color(0.11, 0.12, 0.11)
-const CREAM := Color(0.95, 0.93, 0.87)
-const AMBER := Color(0.94, 0.62, 0.15)
-const RED := Color(0.89, 0.29, 0.29)
-const BLUE := Color(0.22, 0.54, 0.87)
-const STEEL := Color(0.45, 0.68, 0.85)
+const INK := OfficeTheme.GRAPHITE
+const CREAM := OfficeTheme.PAPER
+const AMBER := Color("c39967")
+const RED := OfficeTheme.BURGUNDY
+const BLUE := Color("729da5")
+const STEEL := Color("729da5")
 const COLORS := {"plea": CREAM, "conflict": AMBER, "crisis": RED, "offer": BLUE}
 
 var kind := "plea"
@@ -117,5 +118,5 @@ func _draw() -> void:
 
 
 func _glyph(text: String, color: Color, lift: float = 0.0) -> void:
-	var font := ThemeDB.fallback_font
+	var font := OfficeTheme.BODY_FONT
 	draw_string(font, CENTER + Vector2(-20, 8.0 - lift), text, HORIZONTAL_ALIGNMENT_CENTER, 40.0, 24, color)

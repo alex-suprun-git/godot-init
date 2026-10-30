@@ -20,7 +20,21 @@ func _run() -> void:
 	await _wait(1.5)
 	main.map._zoom = main.map.ZOOM_MAX
 	await _wait(0.5)
+	await _shot("0_week_briefing")
+	main.hud._continue_to_tasks()
+	await _shot("0_week_tasks")
+	for tab in range(1, main.hud._week_tabs.get_tab_count()):
+		main.hud._week_tabs.current_tab = tab
+		await _shot("0_week_tab_%d" % tab)
+	main.hud._week_tabs.current_tab = 0
+	main.hud._close_week_panel()
+	main.hud._show_important_notice(main.hud.Week1.MORNING_NEWS)
+	await _shot("0_newspaper")
+	main.hud._close_important_notice()
 	await _shot("0_overview")
+	main.hud._show_contact_detail("mikhalych")
+	await _shot("0_contact_detail")
+	main.hud._close_contact_detail()
 	main.map._zoom = main.map.ZOOM_DEFAULT
 	await _wait(0.5)
 	main.hud.open_card("hot_water")

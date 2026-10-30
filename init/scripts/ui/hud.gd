@@ -1,8 +1,10 @@
-# Screen UI over the 3D map: top bar, right panel, contacts bar, request
-# markers, the request card, and the week summary. Built in code so the whole
-# layout lives in one readable place while the prototype is changing fast.
+# Screen UI over the 3D map: top bar, weekly task board, important notices,
+# contacts, request markers/cards, and the week summary. Built in code while
+# the prototype layout is still changing quickly.
 extends CanvasLayer
 
+const OfficeTheme = preload("res://scripts/ui/office_theme.gd")
+const Newspaper = preload("res://scripts/ui/newspaper.gd")
 const Week1 = preload("res://scripts/data/week1.gd")
 const RequestMarker = preload("res://scripts/ui/request_marker.gd")
 const PersonToken = preload("res://scripts/ui/person_token.gd")
@@ -16,12 +18,12 @@ signal next_week_pressed
 signal restart_pressed
 signal season_selected(key: String)
 
-const INK := Color(0.09, 0.1, 0.1, 0.92)
-const PAPER := Color(0.93, 0.9, 0.83)
-const MUTED := Color(0.72, 0.69, 0.62)
-const AMBER := Color(0.91, 0.66, 0.27)
-const RUST := Color(0.85, 0.36, 0.27)
-const STEEL := Color(0.45, 0.68, 0.85)
+const INK := OfficeTheme.GRAPHITE
+const PAPER := OfficeTheme.LIGHT_TEXT
+const MUTED := OfficeTheme.LIGHT_MUTED
+const AMBER := Color("c39967")
+const RUST := OfficeTheme.BURGUNDY
+const STEEL := Color("729da5")
 const TYPE_NAMES := {"plea": "Просьба", "conflict": "Конфликт", "crisis": "Кризис", "offer": "Предложение"}
 const TYPE_COLORS := {
 	"plea": Color(0.16, 0.18, 0.18), "conflict": Color(0.62, 0.42, 0.12),
@@ -39,13 +41,28 @@ var _date_label: Label
 var _phase_label: Label
 var _money_label: Label
 var _start_button: Button
+var _tasks_button: Button
 var _speed_buttons := {}
 var _season_buttons := {}
 var _objectives_box: VBoxContainer
 var _promises_box: VBoxContainer
 var _standing_box: VBoxContainer
 var _wire_box: VBoxContainer
-var _contacts := {} # actor id -> status label
+var _week_backdrop: ColorRect
+var _week_panel: PanelContainer
+var _week_tabs: TabContainer
+var _notice_backdrop: ColorRect
+var _notice_panel: PanelContainer
+var _notice_is_newspaper := false
+var _incoming_tray: VBoxContainer
+var _paper_theme := OfficeTheme.make_theme(true)
+var _title_font := OfficeTheme.heading_font()
+var _contact_progress := {} # actor id -> work progress
+var _contact_dots := {} # actor id -> availability color
+var _contact_cards := {} # actor id -> compact card
+var _contact_detail_panel: PanelContainer
+var _contact_detail_status: Label
+var _contact_detail_actor := ""
 var _path_layer: Control
 var _tokens_layer: Control
 var _tokens := {} # actor id -> PersonToken
@@ -91,10 +108,12 @@ func setup(week_sim, city_map, audio_manager = null, playtest_log = null) -> voi
 		_tokens[id] = token
 
 	_build_top_bar()
-	_build_right_panel()
+	_build_week_panel()
 	_build_contacts_bar()
 	_build_card()
 	_build_toasts()
+	_build_incoming_tray()
+	_show_important_notice(Week1.START_BRIEFING)
 
 	sim.request_opened.connect(func(_id): _refresh_markers())
 	sim.request_changed.connect(_on_request_changed)
@@ -115,10 +134,16 @@ func _on_season_pressed(key: String) -> void:
 func set_phase(new_phase: String) -> void:
 	phase = new_phase
 	_start_button.visible = phase == "planning"
+	_tasks_button.visible = phase in ["planning", "live"]
+	_incoming_tray.visible = phase in ["planning", "live"]
 	for key in _season_buttons:
 		_season_buttons[key].visible = phase == "planning"
 	for speed in _speed_buttons:
 		_speed_buttons[speed].visible = phase == "live"
+	if phase != "planning":
+		_close_week_panel()
+		_close_important_notice()
+		_close_contact_detail()
 	match phase:
 		"planning":
 			_phase_label.text = "ПЛАНИРОВАНИЕ · ВРЕМЯ СТОИТ"
@@ -148,6 +173,7 @@ func show_week_two(changes: Array[String]) -> void:
 
 
 func open_card(request_id: String, focus: bool = false, auto: bool = false) -> void:
+	_close_contact_detail()
 	if not _card.visible:
 		_sfx("card_open")
 		if play_log != null:
@@ -162,9 +188,12 @@ func open_card(request_id: String, focus: bool = false, auto: bool = false) -> v
 func _process(_delta: float) -> void:
 	_update_tokens()
 	_update_markers(_map_area())
-	# Toasts step aside while a card or the summary needs the player's attention;
-	# everything they said is also in the wire on the right.
-	var overlay_open: bool = _overlay_panel != null and is_instance_valid(_overlay_panel)
+	# Toasts step aside while a card, briefing, task board, or summary needs attention.
+	var overlay_open: bool = (
+		(_overlay_panel != null and is_instance_valid(_overlay_panel))
+		or (_week_panel != null and _week_panel.visible)
+		or (_notice_panel != null and _notice_panel.visible)
+	)
 	_toast_box.visible = not _card.visible and not overlay_open
 
 
@@ -224,17 +253,21 @@ func _eta_text(hours: float) -> String:
 func _build_top_bar() -> void:
 	var bar := _panel(INK)
 	bar.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	bar.custom_minimum_size = Vector2(0, 56)
 	_root.add_child(bar)
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 18)
+	row.add_theme_constant_override("separation", 20)
 	bar.add_child(row)
-
-	_date_label = _label("", 20, PAPER)
+	_date_label = _heading("", 20, PAPER)
+	_date_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 	row.add_child(_date_label)
-	_phase_label = _label("", 13, AMBER)
+	_phase_label = _label("", 13, MUTED)
 	row.add_child(_phase_label)
-	# The same scenario in three looks; picking one restarts the week.
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(spacer)
+	_money_label = _label("", 17, PAPER)
+	_money_label.tooltip_text = "Влияние: взято взаймы у босса"
+	row.add_child(_money_label)
 	var season_row := HBoxContainer.new()
 	season_row.add_theme_constant_override("separation", 4)
 	row.add_child(season_row)
@@ -243,132 +276,312 @@ func _build_top_bar() -> void:
 		button.text = SeasonLabels[key]
 		button.toggle_mode = true
 		button.button_pressed = Settings.season == key
-		button.custom_minimum_size = Vector2(68, 36)
 		button.tooltip_text = "Карта: " + SeasonLabels[key].to_lower() + " (перезапустит неделю)"
 		button.pressed.connect(_on_season_pressed.bind(key))
 		season_row.add_child(button)
 		_season_buttons[key] = button
-	var spacer := Control.new()
-	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(spacer)
-
 	for speed in [0.0, 1.0, 2.0, 4.0]:
 		var button := Button.new()
-		button.text = "II" if speed == 0.0 else "x%d" % speed
+		button.text = "Ⅱ" if speed == 0.0 else "×%d" % speed
 		button.toggle_mode = true
-		button.custom_minimum_size = Vector2(48, 40)
+		button.custom_minimum_size = Vector2(46, 40)
 		button.pressed.connect(speed_selected.emit.bind(speed))
 		button.pressed.connect(_sfx.bind("speed_click"))
 		row.add_child(button)
 		_speed_buttons[speed] = button
-
-	_money_label = _label("", 16, PAPER)
-	row.add_child(_money_label)
-	row.add_child(_label("Влияние: взято взаймы у босса", 14, MUTED))
-
-	_start_button = Button.new()
-	_start_button.text = "Начать неделю"
-	_start_button.custom_minimum_size = Vector2(170, 40)
-	_start_button.add_theme_stylebox_override("normal", _style(RUST))
-	_start_button.add_theme_stylebox_override("hover", _style(RUST.lightened(0.12)))
+	_start_button = _primary_button("Начать неделю →")
 	_start_button.pressed.connect(start_week_pressed.emit)
 	row.add_child(_start_button)
+	# The folder is a map control, independent of the time controls above.
+	_tasks_button = Button.new()
+	_tasks_button.text = ""
+	_tasks_button.theme = _paper_theme
+	_tasks_button.add_theme_font_override("font", _title_font)
+	_tasks_button.add_theme_font_size_override("font_size", 20)
+	_tasks_button.add_theme_stylebox_override("normal", OfficeTheme.box(OfficeTheme.COVER, OfficeTheme.EDGE, 16))
+	_tasks_button.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	_tasks_button.offset_left = -250
+	_tasks_button.offset_right = -16
+	_tasks_button.offset_top = -104
+	_tasks_button.offset_bottom = -16
+	_tasks_button.pressed.connect(_toggle_week_panel)
+	_root.add_child(_tasks_button)
+	var folder_title := VBoxContainer.new()
+	folder_title.set_anchors_preset(Control.PRESET_FULL_RECT)
+	folder_title.offset_left = 16
+	folder_title.offset_top = 10
+	folder_title.offset_right = -16
+	folder_title.offset_bottom = -10
+	folder_title.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_tasks_button.add_child(folder_title)
+	var folder_caption := _paper_label("К ИСПОЛНЕНИЮ", 11, OfficeTheme.SECONDARY)
+	folder_caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	folder_title.add_child(folder_caption)
+	var folder_name := _heading("Дела недели · %d" % Week1.OBJECTIVES.size(), 22)
+	folder_name.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	folder_title.add_child(folder_name)
 
 
-func _build_right_panel() -> void:
-	var panel := _panel(INK)
-	panel.anchor_left = 1.0
-	panel.anchor_right = 1.0
-	panel.anchor_top = 0.0
-	panel.anchor_bottom = 1.0
-	panel.offset_left = -380
-	panel.offset_top = 64
-	panel.offset_right = -8
-	panel.offset_bottom = -8
-	_root.add_child(panel)
+func _build_week_panel() -> void:
+	_week_backdrop = ColorRect.new()
+	_week_backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_week_backdrop.color = Color(0.12, 0.075, 0.07, 0.7)
+	_week_backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+	_week_backdrop.visible = false
+	_root.add_child(_week_backdrop)
+	_week_panel = _panel(OfficeTheme.COVER)
+	_week_panel.theme = _paper_theme
+	_week_panel.set_anchors_preset(Control.PRESET_CENTER)
+	_week_panel.offset_left = -540
+	_week_panel.offset_right = 540
+	_week_panel.offset_top = -380
+	_week_panel.offset_bottom = 380
+	_week_panel.visible = false
+	_root.add_child(_week_panel)
+	var cover := VBoxContainer.new()
+	cover.add_theme_constant_override("separation", 10)
+	_week_panel.add_child(cover)
+	cover.add_child(_paper_label("РАБОЧАЯ ПАПКА / 01", 12))
+	var page := _paper_panel()
+	page.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	cover.add_child(page)
+	var layout := VBoxContainer.new()
+	layout.add_theme_constant_override("separation", 14)
+	page.add_child(layout)
+	var metadata := HBoxContainer.new()
+	var department := _paper_label("АДМИНИСТРАЦИЯ РАЙОНА", 12, OfficeTheme.SECONDARY)
+	department.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	metadata.add_child(department)
+	var close_button := Button.new()
+	close_button.text = "×"
+	close_button.tooltip_text = "Закрыть папку"
+	close_button.custom_minimum_size = Vector2(38, 38)
+	close_button.pressed.connect(_close_week_panel)
+	metadata.add_child(close_button)
+	layout.add_child(metadata)
+	var header := HBoxContainer.new()
+	var title_column := VBoxContainer.new()
+	title_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title_column.add_child(_heading("Дела недели", 38))
+	title_column.add_child(_paper_label("%s — %s" % [sim.date_text(0), sim.date_text(4)], 15, OfficeTheme.SECONDARY))
+	header.add_child(title_column)
+	var stamp := _paper_panel()
+	stamp.custom_minimum_size.x = 190
+	stamp.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	stamp.add_theme_stylebox_override("panel", OfficeTheme.box(OfficeTheme.PAPER, OfficeTheme.BURGUNDY, 8))
+	var stamp_text := _heading("К ИСПОЛНЕНИЮ", 17, OfficeTheme.BURGUNDY)
+	stamp_text.autowrap_mode = TextServer.AUTOWRAP_OFF
+	stamp.add_child(stamp_text)
+	header.add_child(stamp)
+	layout.add_child(header)
+	_week_tabs = TabContainer.new()
+	_week_tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	layout.add_child(_week_tabs)
+	var task_column := _folder_page("Поручения")
+	task_column.add_child(_paper_label("ГЛАВНАЯ ЦЕЛЬ · ДО " + Week1.WEEKLY_MANDATE["deadline"].to_upper(), 12, OfficeTheme.BURGUNDY))
+	task_column.add_child(_heading(Week1.WEEKLY_MANDATE["title"], 28))
+	task_column.add_child(_paper_label(Week1.WEEKLY_MANDATE["description"], 16, OfficeTheme.SECONDARY))
+	var signature := _heading("П. Петрович", 17, OfficeTheme.LINK)
+	signature.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	task_column.add_child(signature)
+	task_column.add_child(HSeparator.new())
+	_objectives_box = VBoxContainer.new()
+	_objectives_box.add_theme_constant_override("separation", 14)
+	task_column.add_child(_objectives_box)
+	_promises_box = _folder_page("Обещания")
+	_standing_box = _folder_page("Положение")
+	_wire_box = _folder_page("События")
+	layout.add_child(_paper_label("Помощник главы района · личный экземпляр", 12, OfficeTheme.SECONDARY))
+
+
+func _folder_page(title: String) -> VBoxContainer:
 	var scroll := ScrollContainer.new()
+	scroll.name = title
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	panel.add_child(scroll)
+	_week_tabs.add_child(scroll)
 	var column := VBoxContainer.new()
 	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	column.add_theme_constant_override("separation", 10)
 	scroll.add_child(column)
+	return column
 
-	var boss_row := HBoxContainer.new()
-	boss_row.add_theme_constant_override("separation", 10)
-	boss_row.add_child(_face(Week1.BOSS["portrait"], Week1.BOSS["face"], 56))
-	var boss_text := VBoxContainer.new()
-	boss_text.add_child(_label("ПОРУЧЕНИЕ БОССА", 12, AMBER))
-	boss_text.add_child(_label("Отопительный сезон к 15 октября", 17, PAPER))
-	boss_row.add_child(boss_text)
-	column.add_child(boss_row)
-	_objectives_box = VBoxContainer.new()
-	column.add_child(_objectives_box)
 
-	column.add_child(_label("ОБЕЩАНИЯ", 12, AMBER))
-	_promises_box = VBoxContainer.new()
-	column.add_child(_promises_box)
+func _show_important_notice(notice: Dictionary) -> void:
+	if phase == "live":
+		speed_selected.emit(0.0)
+	_close_important_notice()
+	_close_contact_detail()
+	_notice_backdrop = ColorRect.new()
+	_notice_backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_notice_backdrop.color = Color(0.12, 0.075, 0.07, 0.7)
+	_notice_backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+	_root.add_child(_notice_backdrop)
+	var newspaper: bool = notice.get("style", "portrait") == "newspaper"
+	_notice_is_newspaper = newspaper
+	var dismiss: Callable = _close_important_notice if newspaper else _continue_to_tasks
+	_notice_panel = Newspaper.new() if newspaper else _paper_panel()
+	_notice_panel.set_anchors_preset(Control.PRESET_CENTER)
+	_notice_panel.offset_left = -470 if newspaper else -500
+	_notice_panel.offset_right = 470 if newspaper else 500
+	_notice_panel.offset_top = -380 if newspaper else -230
+	_notice_panel.offset_bottom = 380 if newspaper else 230
+	_root.add_child(_notice_panel)
+	if newspaper:
+		(_notice_panel as Newspaper).build(notice, notice.get("date", sim.date_text(0)), dismiss)
+		return
+	var layout := VBoxContainer.new()
+	layout.add_theme_constant_override("separation", 18)
+	_notice_panel.add_child(layout)
+	var header := HBoxContainer.new()
+	var eyebrow := _paper_label(notice.get("eyebrow", "ГОРОД И ЛЮДИ"), 12, OfficeTheme.SECONDARY)
+	eyebrow.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header.add_child(eyebrow)
+	var close_button := Button.new()
+	close_button.text = "×"
+	close_button.custom_minimum_size = Vector2(38, 38)
+	close_button.pressed.connect(dismiss)
+	header.add_child(close_button)
+	layout.add_child(header)
+	var message := HBoxContainer.new()
+	message.add_theme_constant_override("separation", 28)
+	var speaker_id: String = notice.get("speaker", "boss")
+	var speaker: Dictionary = Week1.BOSS if speaker_id == "boss" else Week1.ACTORS.get(speaker_id, {})
+	if speaker.get("portrait", "") != "":
+		var frame := _panel(OfficeTheme.PAPER.lightened(0.08))
+		frame.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+		frame.add_theme_stylebox_override("panel", OfficeTheme.box(OfficeTheme.PAPER.lightened(0.08), OfficeTheme.COVER, 5))
+		frame.add_child(_face(speaker["portrait"], speaker["face"], 154))
+		message.add_child(frame)
+	var text_column := VBoxContainer.new()
+	text_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	text_column.add_theme_constant_override("separation", 16)
+	text_column.add_child(_paper_label("%s · %s" % [speaker.get("name", ""), speaker.get("role", "")], 15, OfficeTheme.SECONDARY))
+	text_column.add_child(_heading(notice.get("title", ""), 30))
+	var body := _paper_label(notice.get("body", ""), 19)
+	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	text_column.add_child(body)
+	message.add_child(text_column)
+	message.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	layout.add_child(message)
+	layout.add_child(HSeparator.new())
+	var continue_button := _primary_button(notice.get("button", "Продолжить →"))
+	continue_button.size_flags_horizontal = Control.SIZE_SHRINK_END
+	continue_button.pressed.connect(dismiss)
+	layout.add_child(continue_button)
 
-	column.add_child(_label("ПОЛОЖЕНИЕ", 12, AMBER))
-	_standing_box = VBoxContainer.new()
-	column.add_child(_standing_box)
 
-	column.add_child(_label("СВОДКА", 12, AMBER))
-	_wire_box = VBoxContainer.new()
-	_wire_box.add_theme_constant_override("separation", 6)
-	column.add_child(_wire_box)
+func _continue_to_tasks() -> void:
+	_close_important_notice()
+	_show_week_panel()
+
+
+func _close_important_notice() -> void:
+	if _notice_panel != null and is_instance_valid(_notice_panel):
+		_notice_panel.queue_free()
+	_notice_panel = null
+	if _notice_backdrop != null and is_instance_valid(_notice_backdrop):
+		_notice_backdrop.queue_free()
+	_notice_backdrop = null
+
+
+func _show_week_panel() -> void:
+	if phase not in ["planning", "live"]:
+		return
+	if phase == "live":
+		speed_selected.emit(0.0)
+	_close_important_notice()
+	_close_contact_detail()
+	_close_card(false)
+	_week_backdrop.visible = true
+	_week_panel.visible = true
+	_week_backdrop.move_to_front()
+	_week_panel.move_to_front()
+	_tasks_button.button_pressed = true
+
+
+func _toggle_week_panel() -> void:
+	if _week_panel.visible:
+		_close_week_panel()
+	else:
+		_show_week_panel()
+
+
+func _close_week_panel() -> void:
+	if _week_panel != null:
+		_week_panel.visible = false
+	if _week_backdrop != null:
+		_week_backdrop.visible = false
+	if _tasks_button != null:
+		_tasks_button.button_pressed = false
 
 
 func _build_contacts_bar() -> void:
-	var bar := HBoxContainer.new()
-	bar.anchor_top = 1.0
-	bar.anchor_bottom = 1.0
-	bar.anchor_right = 1.0
-	bar.offset_left = 8
-	bar.offset_top = -104
-	bar.offset_right = -392
-	bar.offset_bottom = -8
-	bar.add_theme_constant_override("separation", 8)
-	_root.add_child(bar)
+	var contact_count: int = Week1.ACTORS.size() - 1
+	var dock := _panel(INK)
+	dock.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	dock.offset_left = 16
+	dock.offset_right = 16 + 20 + contact_count * 54 + maxi(0, contact_count - 1) * 10
+	dock.offset_top = -108
+	dock.offset_bottom = -16
+	dock.add_theme_stylebox_override("panel", OfficeTheme.box(INK, OfficeTheme.EDGE.darkened(0.25), 10))
+	_root.add_child(dock)
+	var layout := VBoxContainer.new()
+	layout.add_theme_constant_override("separation", 7)
+	dock.add_child(layout)
+	layout.add_child(_label("СВЯЗИ", 11, MUTED))
+	var photos := HBoxContainer.new()
+	photos.add_theme_constant_override("separation", 10)
+	layout.add_child(photos)
 	for id in Week1.ACTORS:
+		if id == "me":
+			continue
 		var info: Dictionary = Week1.ACTORS[id]
-		var card := _panel(INK)
-		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		bar.add_child(card)
-		var row := HBoxContainer.new()
-		row.add_theme_constant_override("separation", 10)
-		card.add_child(row)
-		if info["portrait"] != "":
-			row.add_child(_face(info["portrait"], info["face"], 72))
-		else:
-			var badge := _panel(Color(0.85, 0.36, 0.27))
-			badge.custom_minimum_size = Vector2(72, 72)
-			var me_label := _label("ВЫ", 22, PAPER)
-			me_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			me_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-			badge.add_child(me_label)
-			row.add_child(badge)
-		var text := VBoxContainer.new()
-		text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		text.add_child(_label(info["name"], 17, PAPER))
-		text.add_child(_label(info["role"], 12, MUTED))
-		var status := _label("", 13, AMBER)
-		status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		text.add_child(status)
-		row.add_child(text)
-		_contacts[id] = status
+		var button := Button.new()
+		button.custom_minimum_size = Vector2(54, 54)
+		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		button.add_theme_stylebox_override("normal", OfficeTheme.box(OfficeTheme.PAPER, OfficeTheme.PAPER, 3))
+		button.add_theme_stylebox_override("hover", OfficeTheme.box(OfficeTheme.COVER, OfficeTheme.COVER, 3))
+		button.pressed.connect(_on_contact_pressed.bind(id))
+		photos.add_child(button)
+		var portrait := _face(info["portrait"], info["face"], 48)
+		portrait.position = Vector2(3, 3)
+		portrait.size = Vector2(48, 48)
+		portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(portrait)
+		var dot := ColorRect.new()
+		dot.position = Vector2(44, 0)
+		dot.size = Vector2(10, 10)
+		dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(dot)
+		var progress := ProgressBar.new()
+		progress.position = Vector2(3, 48)
+		progress.size = Vector2(48, 3)
+		progress.show_percentage = false
+		progress.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(progress)
+		_contact_cards[id] = button
+		_contact_dots[id] = dot
+		_contact_progress[id] = progress
+	_refresh_clock()
+
+
+func _on_contact_pressed(actor_id: String) -> void:
+	if _contact_detail_actor == actor_id:
+		_close_contact_detail()
+	else:
+		_show_contact_detail(actor_id)
 
 
 func _build_card() -> void:
-	_card = _panel(Color(0.12, 0.12, 0.11, 0.97))
+	_card = _paper_panel()
 	_card.anchor_left = 0.5
 	_card.anchor_right = 0.5
 	_card.anchor_top = 0.5
 	_card.anchor_bottom = 0.5
-	_card.offset_left = -440
-	_card.offset_right = 20
+	_card.offset_left = -310
+	_card.offset_right = 310
 	_card.offset_top = -280
-	_card.offset_bottom = 230
+	_card.offset_bottom = 280
 	_card.visible = false
 	_root.add_child(_card)
 
@@ -383,44 +596,155 @@ func _refresh_all() -> void:
 
 
 func _refresh_clock() -> void:
-	_date_label.text = "Неделя %d · %s · %s" % [sim.week, sim.date_text(), sim.clock_text()]
-	for id in _contacts:
-		_contacts[id].text = sim.actor_status_text(id)
+	_date_label.text = "%s · %s" % [sim.date_text(), sim.clock_text()]
+	for id in _contact_cards:
+		_contact_dots[id].color = _contact_status_color(id)
+		_contact_cards[id].tooltip_text = "%s · %s\n%s" % [Week1.ACTORS[id]["name"], Week1.ACTORS[id]["role"], sim.actor_status_text(id)]
+		var progress: ProgressBar = _contact_progress[id]
+		progress.visible = sim.actors[id]["state"] == "work"
+		progress.value = sim.actor_work_fraction(id) * 100.0
+	if _contact_detail_status != null and is_instance_valid(_contact_detail_status):
+		_contact_detail_status.text = sim.actor_status_text(_contact_detail_actor)
+
+
+func _contact_status_color(id: String) -> Color:
+	match sim.actors[id]["state"]:
+		"travel":
+			return AMBER
+		"work":
+			return RUST
+		"driving":
+			return STEEL
+	return Color(0.48, 0.74, 0.54)
+
+
+func _show_contact_detail(actor_id: String) -> void:
+	_close_contact_detail()
+	_contact_detail_actor = actor_id
+	var info: Dictionary = Week1.ACTORS[actor_id]
+	var card_rect: Rect2 = _contact_cards[actor_id].get_global_rect()
+	var viewport_size: Vector2 = _root.get_viewport_rect().size
+	var detail_size := Vector2(360, 218)
+	var detail_x: float = clampf(card_rect.position.x, 8.0, maxf(8.0, viewport_size.x - detail_size.x - 8.0))
+	var detail_y: float = maxf(68.0, card_rect.position.y - detail_size.y - 8.0)
+
+	_contact_detail_panel = _paper_panel()
+	_contact_detail_panel.position = Vector2(detail_x, detail_y)
+	_contact_detail_panel.custom_minimum_size = detail_size
+	_contact_detail_panel.size = detail_size
+	_root.add_child(_contact_detail_panel)
+	var layout := VBoxContainer.new()
+	layout.add_theme_constant_override("separation", 10)
+	_contact_detail_panel.add_child(layout)
+	var header := HBoxContainer.new()
+	if info["portrait"] != "":
+		header.add_child(_face(info["portrait"], info["face"], 56))
+	else:
+		var badge := ColorRect.new()
+		badge.color = RUST
+		badge.custom_minimum_size = Vector2(56, 56)
+		var badge_text := _label(info["name"].substr(0, 1), 20, PAPER)
+		badge_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		badge_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		badge_text.set_anchors_preset(Control.PRESET_FULL_RECT)
+		badge_text.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		badge.add_child(badge_text)
+		header.add_child(badge)
+	var identity := VBoxContainer.new()
+	identity.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	identity.add_child(_heading(info["name"], 22))
+	var role := _paper_label(info["role"], 15, OfficeTheme.SECONDARY)
+	role.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	identity.add_child(role)
+	header.add_child(identity)
+	var close_button := Button.new()
+	close_button.text = "×"
+	close_button.custom_minimum_size = Vector2(36, 36)
+	close_button.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	close_button.pressed.connect(_close_contact_detail)
+	header.add_child(close_button)
+	layout.add_child(header)
+	_contact_detail_status = _paper_label(sim.actor_status_text(actor_id), 16)
+	_contact_detail_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	layout.add_child(_contact_detail_status)
+	var map_button := Button.new()
+	map_button.text = "Показать на карте"
+	map_button.custom_minimum_size = Vector2(0, 36)
+	map_button.pressed.connect(_focus_contact_on_map.bind(actor_id))
+	layout.add_child(map_button)
+	_contact_detail_panel.move_to_front()
+
+
+func _focus_contact_on_map(actor_id: String) -> void:
+	var lot_id: String = sim.actor_target_lot(actor_id)
+	if lot_id == "":
+		lot_id = sim.actors[actor_id]["lot"]
+	_close_contact_detail()
+	map.focus_on(lot_id)
+
+
+func _close_contact_detail() -> void:
+	if _contact_detail_panel != null and is_instance_valid(_contact_detail_panel):
+		_contact_detail_panel.queue_free()
+	_contact_detail_panel = null
+	_contact_detail_status = null
+	_contact_detail_actor = ""
 
 
 func _refresh_panels() -> void:
 	_money_label.text = "%s млн руб." % String.num(sim.money / 1_000_000.0, 1).replace(".", ",")
-
 	_clear(_objectives_box)
+	var number := 0
 	for objective in Week1.OBJECTIVES:
+		number += 1
 		var status: String = sim.objective_status(objective)
-		var color: Color = {"done": STEEL, "failed": RUST, "pending": PAPER}[status]
-		var mark: String = {"done": "Выполнено · ", "failed": "Провалено · ", "pending": ""}[status]
-		var line := _label(mark + objective["text"], 14, color)
-		line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		_objectives_box.add_child(line)
-
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 16)
+		_objectives_box.add_child(row)
+		row.add_child(_paper_label("%02d" % number, 14, OfficeTheme.SECONDARY))
+		var text_column := VBoxContainer.new()
+		text_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		text_column.add_theme_constant_override("separation", 7)
+		row.add_child(text_column)
+		text_column.add_child(_heading(objective.get("title", ""), 22))
+		var location: String = objective.get("lot", "")
+		if Week1.LOTS.has(location):
+			text_column.add_child(_paper_label(Week1.LOTS[location]["name"], 15, OfficeTheme.SECONDARY))
+			var map_button := Button.new()
+			map_button.text = "Показать на карте ↗"
+			map_button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+			map_button.pressed.connect(_focus_objective_location.bind(location))
+			text_column.add_child(map_button)
+		var note: String = {"done": "Выполнено", "failed": "Провалено", "pending": objective.get("deadline", "")}[status]
+		var deadline := _paper_label(note, 15, OfficeTheme.BURGUNDY)
+		deadline.custom_minimum_size.x = 125
+		deadline.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		row.add_child(deadline)
+		_objectives_box.add_child(HSeparator.new())
 	_clear(_promises_box)
 	if sim.promises.is_empty():
-		_promises_box.add_child(_label("Пока никому ничего не обещали.", 13, MUTED))
+		_promises_box.add_child(_heading("Пока никому ничего не обещали.", 24))
 	for promise in sim.promises:
-		var status_text: String = {"active": "до " + promise["due_text"], "kept": "сдержано", "broken": "НАРУШЕНО"}[promise["status"]]
-		var color: Color = {"active": PAPER, "kept": STEEL, "broken": RUST}[promise["status"]]
-		var line := _label("%s · %s" % [promise["text"], status_text], 14, color)
-		line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		_promises_box.add_child(line)
-
+		var status_text: String = {"active": "до " + promise["due_text"], "kept": "сдержано", "broken": "нарушено"}[promise["status"]]
+		_promises_box.add_child(_heading(promise["text"], 22))
+		_promises_box.add_child(_paper_label(status_text, 15, OfficeTheme.BURGUNDY))
+		_promises_box.add_child(HSeparator.new())
 	_clear(_standing_box)
 	for id in sim.factions:
 		var row := HBoxContainer.new()
-		var name_label := _label(Week1.FACTIONS[id]["name"], 15, PAPER)
+		var name_label := _paper_label(Week1.FACTIONS[id]["name"], 19)
 		name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		row.add_child(name_label)
-		var value: int = sim.factions[id]
-		var word_color := RUST if value <= -15 else (STEEL if value > 5 else PAPER)
-		row.add_child(_label(sim.standing_word(value), 15, word_color))
+		row.add_child(_paper_label(sim.standing_word(sim.factions[id]), 19, OfficeTheme.LINK))
 		_standing_box.add_child(row)
+		_standing_box.add_child(HSeparator.new())
 	_refresh_clock()
+	_refresh_wire()
+
+
+func _focus_objective_location(location: String) -> void:
+	_close_week_panel()
+	map.focus_on(location)
 
 
 func _on_entry_added(entry: Dictionary) -> void:
@@ -435,8 +759,11 @@ func _refresh_wire() -> void:
 	_clear(_wire_box)
 	var recent: Array = sim.entries.slice(max(0, sim.entries.size() - 6))
 	recent.reverse()
+	if recent.is_empty():
+		_wire_box.add_child(_paper_label("Пока новостей нет.", 18, OfficeTheme.SECONDARY))
+		return
 	for entry in recent:
-		var line := _label("%s  %s" % [entry["time"], entry["text"]], 15, PAPER if entry["tone"] != "request" else MUTED)
+		var line := _paper_label("%s  %s" % [entry["time"], entry["text"]], 18, OfficeTheme.TEXT if entry["tone"] != "request" else OfficeTheme.SECONDARY)
 		line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		_wire_box.add_child(line)
 
@@ -447,8 +774,8 @@ func _build_toasts() -> void:
 	_toast_box = VBoxContainer.new()
 	_toast_box.anchor_left = 0.5
 	_toast_box.anchor_right = 0.5
-	_toast_box.offset_left = -470
-	_toast_box.offset_right = 90
+	_toast_box.offset_left = -280
+	_toast_box.offset_right = 280
 	_toast_box.offset_top = 76
 	_toast_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_toast_box.add_theme_constant_override("separation", 8)
@@ -462,7 +789,7 @@ func _show_toast(entry: Dictionary) -> void:
 		oldest.queue_free()
 	var tone_color: Color = {"good": STEEL, "bad": RUST, "neutral": AMBER}.get(entry["tone"], AMBER)
 	var panel := PanelContainer.new()
-	var style := _style(Color(0.1, 0.11, 0.11, 0.96), tone_color)
+	var style := _style(INK, tone_color)
 	style.set_border_width_all(0)
 	style.border_width_left = 8
 	style.set_content_margin_all(14)
@@ -518,18 +845,26 @@ func _refresh_card() -> void:
 	_clear(_card)
 	var request: Dictionary = sim.requests[_card_request]
 	var data: Dictionary = request["data"]
+	var outer := VBoxContainer.new()
+	outer.add_theme_constant_override("separation", 10)
+	_card.add_child(outer)
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	outer.add_child(scroll)
 	var column := VBoxContainer.new()
+	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	column.add_theme_constant_override("separation", 8)
-	_card.add_child(column)
+	scroll.add_child(column)
 
 	var header := HBoxContainer.new()
-	var kind := _label("%s · %s" % [TYPE_NAMES[data["type"]].to_upper(), Week1.LOTS[data["lot"]]["name"]], 12, AMBER)
+	var kind := _paper_label("%s · %s" % [TYPE_NAMES[data["type"]].to_upper(), Week1.LOTS[data["lot"]]["name"]], 12, OfficeTheme.SECONDARY)
 	kind.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(kind)
-	header.add_child(_label("до " + sim.when_text(data["expire"]), 12, RUST))
+	header.add_child(_paper_label("до " + sim.when_text(data["expire"]), 12, OfficeTheme.BURGUNDY))
 	column.add_child(header)
 
-	var title := _label(data["title"], 22, PAPER)
+	var title := _heading(data["title"], 26)
 	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	column.add_child(title)
 
@@ -538,20 +873,20 @@ func _refresh_card() -> void:
 	if data["asker"] != "":
 		var asker: Dictionary = Week1.ACTORS[data["asker"]]
 		body.add_child(_face(asker["portrait"], asker["face"], 72))
-	var text := _label(data["text"], 15, PAPER)
+	var text := _paper_label(data["text"], 17, OfficeTheme.TEXT)
 	text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.add_child(text)
 	column.add_child(body)
 
 	if request["promised"]:
-		column.add_child(_label("Вы уже пообещали. Теперь надо сделать.", 13, AMBER))
+		column.add_child(_paper_label("Вы уже пообещали. Теперь надо сделать.", 14, OfficeTheme.BURGUNDY))
 	if request["status"] == "closed":
-		column.add_child(_label("Вопрос закрыт.", 14, MUTED))
+		column.add_child(_paper_label("Вопрос закрыт.", 15, OfficeTheme.SECONDARY))
 	elif request["status"] == "assigned":
-		column.add_child(_label("В работе.", 14, AMBER))
+		column.add_child(_paper_label("В работе.", 15, OfficeTheme.BURGUNDY))
 
-	column.add_child(_label("КОГО ОТПРАВИТЬ", 12, MUTED))
+	column.add_child(_paper_label("КОГО ОТПРАВИТЬ", 12, OfficeTheme.SECONDARY))
 	for option in data["options"]:
 		var reason: String = sim.option_block_reason(_card_request, option)
 		var button := Button.new()
@@ -561,14 +896,14 @@ func _refresh_card() -> void:
 		button.disabled = reason != ""
 		button.pressed.connect(_on_option_pressed.bind(option["id"]))
 		column.add_child(button)
-		var hint := _label(option["hint"] + ("" if reason == "" else "  [" + reason + "]"), 13, MUTED)
+		var hint := _paper_label(option["hint"] + ("" if reason == "" else "  [" + reason + "]"), 14, OfficeTheme.SECONDARY)
 		hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		column.add_child(hint)
 
 	var close := Button.new()
 	close.text = "Закрыть"
 	close.pressed.connect(_close_card)
-	column.add_child(close)
+	outer.add_child(close)
 
 
 func _on_request_changed(_id: String) -> void:
@@ -623,7 +958,7 @@ func _show_summary() -> void:
 func _show_overlay(title: String, subtitle: String, lines: Array[String], button_text: String, action: Callable, compact: bool = false) -> void:
 	if _overlay_panel != null:
 		_overlay_panel.queue_free()
-	_overlay_panel = _panel(Color(0.12, 0.12, 0.11, 0.97))
+	_overlay_panel = _paper_panel()
 	if compact:
 		_overlay_panel.anchor_top = 1.0
 		_overlay_panel.anchor_bottom = 1.0
@@ -636,16 +971,16 @@ func _show_overlay(title: String, subtitle: String, lines: Array[String], button
 		_overlay_panel.anchor_right = 0.5
 		_overlay_panel.anchor_top = 0.5
 		_overlay_panel.anchor_bottom = 0.5
-		_overlay_panel.offset_left = -520
-		_overlay_panel.offset_right = 80
+		_overlay_panel.offset_left = -340
+		_overlay_panel.offset_right = 340
 		_overlay_panel.offset_top = -300
 		_overlay_panel.offset_bottom = 260
 	_root.add_child(_overlay_panel)
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 10)
 	_overlay_panel.add_child(column)
-	column.add_child(_label(subtitle.to_upper(), 12, AMBER))
-	column.add_child(_label(title, 26, PAPER))
+	column.add_child(_paper_label(subtitle.to_upper(), 12, OfficeTheme.SECONDARY))
+	column.add_child(_heading(title, 30))
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -655,11 +990,10 @@ func _show_overlay(title: String, subtitle: String, lines: Array[String], button
 	list.add_theme_constant_override("separation", 8)
 	scroll.add_child(list)
 	for line_text in lines:
-		var line := _label(line_text, 16, PAPER)
+		var line := _paper_label(line_text, 17)
 		line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		list.add_child(line)
-	var button := Button.new()
-	button.text = button_text
+	var button := _primary_button(button_text)
 	button.custom_minimum_size = Vector2(0, 44)
 	button.add_theme_stylebox_override("normal", _style(RUST))
 	button.add_theme_stylebox_override("hover", _style(RUST.lightened(0.12)))
@@ -676,7 +1010,7 @@ func _on_marker_pressed(id: String) -> void:
 # The part of the screen where the map is visible, between the panels.
 func _map_area() -> Rect2:
 	var size := _root.get_viewport_rect().size
-	return Rect2(Vector2(12, 68), Vector2(size.x - 400 - 12, size.y - 68 - 116))
+	return Rect2(Vector2(12, 68), Vector2(size.x - 24, size.y - 68 - 116))
 
 
 func _markers_at_lot(lot: String) -> Array:
@@ -684,17 +1018,7 @@ func _markers_at_lot(lot: String) -> Array:
 
 
 func _make_theme() -> Theme:
-	var theme := Theme.new()
-	theme.default_font_size = 15
-	theme.set_color("font_color", "Label", PAPER)
-	theme.set_color("font_color", "Button", PAPER)
-	theme.set_color("font_disabled_color", "Button", Color(0.5, 0.48, 0.44))
-	theme.set_stylebox("normal", "Button", _style(Color(0.22, 0.23, 0.22), Color(0.45, 0.43, 0.38)))
-	theme.set_stylebox("hover", "Button", _style(Color(0.3, 0.31, 0.29), AMBER))
-	theme.set_stylebox("pressed", "Button", _style(Color(0.4, 0.33, 0.18), AMBER))
-	theme.set_stylebox("disabled", "Button", _style(Color(0.16, 0.16, 0.15), Color(0.25, 0.25, 0.23)))
-	theme.set_stylebox("focus", "Button", StyleBoxEmpty.new())
-	return theme
+	return OfficeTheme.make_theme()
 
 
 func _style(color: Color, border: Color = Color(0, 0, 0, 0)) -> StyleBoxFlat:
@@ -712,7 +1036,7 @@ func _style(color: Color, border: Color = Color(0, 0, 0, 0)) -> StyleBoxFlat:
 
 func _panel(color: Color) -> PanelContainer:
 	var panel := PanelContainer.new()
-	var style := _style(color, Color(0.36, 0.32, 0.24, 0.8))
+	var style := _style(color, OfficeTheme.EDGE.darkened(0.15))
 	style.set_content_margin_all(14)
 	panel.add_theme_stylebox_override("panel", style)
 	return panel
@@ -733,6 +1057,10 @@ func _face(path: String, region: Rect2, size: int) -> TextureRect:
 	var rect := TextureRect.new()
 	rect.texture = atlas
 	rect.custom_minimum_size = Vector2(size, size)
+	# HBox containers otherwise stretch the crop to the tallest sibling. Keep
+	# portraits square even when the dialog body expands to fill its window.
+	rect.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	rect.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	return rect
@@ -742,3 +1070,85 @@ func _clear(node: Node) -> void:
 	for child in node.get_children():
 		node.remove_child(child)
 		child.queue_free()
+
+
+func _paper_panel() -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.theme = _paper_theme
+	var style := OfficeTheme.box(OfficeTheme.PAPER, OfficeTheme.COVER, 24)
+	style.shadow_color = Color(0.1, 0.06, 0.05, 0.4)
+	style.shadow_size = 12
+	panel.add_theme_stylebox_override("panel", style)
+	return panel
+
+
+func _paper_label(text: String, size: int, color: Color = OfficeTheme.TEXT) -> Label:
+	var label := _label(text, size, color)
+	label.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	return label
+
+
+func _heading(text: String, size: int, color: Color = OfficeTheme.TEXT) -> Label:
+	var label := _paper_label(text, size, color)
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.add_theme_font_override("font", _title_font)
+	return label
+
+
+func _primary_button(text: String) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.custom_minimum_size.y = 44
+	button.add_theme_stylebox_override("normal", OfficeTheme.box(OfficeTheme.BURGUNDY, OfficeTheme.BURGUNDY, 12))
+	button.add_theme_stylebox_override("hover", OfficeTheme.box(OfficeTheme.BURGUNDY.lightened(0.1), OfficeTheme.BURGUNDY, 12))
+	button.add_theme_stylebox_override("pressed", OfficeTheme.box(OfficeTheme.BURGUNDY.darkened(0.1), OfficeTheme.BURGUNDY, 12))
+	for state in ["font_color", "font_hover_color", "font_pressed_color"]:
+		button.add_theme_color_override(state, OfficeTheme.LIGHT_TEXT)
+	return button
+
+
+func _unhandled_key_input(event: InputEvent) -> void:
+	if not event.is_action_pressed("ui_cancel"):
+		return
+	if _notice_panel != null:
+		if _notice_is_newspaper:
+			_close_important_notice()
+		else:
+			_continue_to_tasks()
+	elif _week_panel.visible:
+		_close_week_panel()
+	elif _contact_detail_panel != null:
+		_close_contact_detail()
+	elif _card.visible:
+		_close_card()
+	else:
+		return
+	get_viewport().set_input_as_handled()
+
+
+func _build_incoming_tray() -> void:
+	_incoming_tray = VBoxContainer.new()
+	_incoming_tray.anchor_left = 1.0
+	_incoming_tray.anchor_right = 1.0
+	_incoming_tray.offset_left = -270
+	_incoming_tray.offset_right = -16
+	_incoming_tray.offset_top = 86
+	_incoming_tray.add_theme_constant_override("separation", 8)
+	_root.add_child(_incoming_tray)
+	var caption := _label("НА ВАШЕМ СТОЛЕ", 11, PAPER)
+	caption.add_theme_color_override("font_shadow_color", INK)
+	caption.add_theme_constant_override("shadow_offset_y", 1)
+	caption.add_theme_constant_override("shadow_outline_size", 2)
+	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_incoming_tray.add_child(caption)
+	var order := Button.new()
+	order.text = "ПЁТР ПЕТРОВИЧ\nПоручение на неделю"
+	order.add_theme_font_size_override("font_size", 14)
+	order.pressed.connect(_show_important_notice.bind(Week1.START_BRIEFING))
+	_incoming_tray.add_child(order)
+	var newspaper := Button.new()
+	newspaper.text = "ГОРОДСКИЕ ВЕСТИ\nУтренний выпуск"
+	newspaper.add_theme_font_size_override("font_size", 14)
+	newspaper.pressed.connect(_show_important_notice.bind(Week1.MORNING_NEWS))
+	_incoming_tray.add_child(newspaper)

@@ -83,6 +83,10 @@ A border trade city on a river that lives on trade and transit rather than on a 
 - Each contact has their own dialog and a relationship that can be developed, unlocking new help.
 - A request is resolved by sending people, money, or a promise to its location. Travel takes time, and busy people cannot be used elsewhere. Results show on the map.
 - Weekly cycle on this model: planning is scheduling on the map (where the player goes, whom to send where, where to place promises); the live week shows people moving and doing their jobs, and crises force reassignments; the summary shows changes on the map rather than walls of text.
+- At the start of a week, an important authored message can appear as a short portrait dialog or a newspaper-style notice, followed by a large, dismissible task board. The board keeps weekly objectives clear and puts promises, faction standing, and the event log in separate tabs; the player can reopen it from the map.
+- Contact availability stays in a compact dock along the bottom edge. Selecting a person opens their role, full status, and a map focus action without keeping a large character card on screen.
+- Approved UI direction: "Living Chancellery" — cream paper, warm graphite, burgundy ink, Roboto Slab headings, and Golos Text controls/body copy. Weekly objectives are lines in a personal work folder; contact availability uses small framed photos with status marks and work progress. The player is excluded from the contacts dock; they remain on the map and can act personally on requests. Character messages and optional press items have distinct document layouts. Font binaries and their licenses are bundled under `init/assets/fonts/`.
+- Press items use a newspaper front page: a strong masthead, issue/date/section line, editorial columns, a pull quote and captioned duotone photo, subtle paper grain, and printed rules. The work folder keeps a shared inset below all tabs so page content does not touch the active-tab underline.
 - Calls: a phone call is fast but only works from the office and only with strong contacts; a visit is slower but stronger. A mobile phone (rare and a status symbol in 1997–98) is a career reward that allows calls from anywhere; a pager may be an intermediate step.
 - Dialogs remain for rare, short key story moments (the boss, the meeting of accomplices, deals with the rival), like cutscenes.
 - Each week is a self-contained run: urgency and timers live within one working or calendar week, together with NPC interactions.
@@ -135,10 +139,11 @@ A border trade city on a river that lives on trade and transit rather than on a 
 - A detailed, good-looking city map is a key priority.
 - Visual direction: the playable map is a stylized 3D scene seen from above at an angle (similar to *Smuggler*), so the whole area can be shown at a consistent scale and stay alive: moving traffic and people, day and night, weather, construction stages, smoke, pickets, and fire through the engine rather than redrawn art.
 - Buildings are simple 3D shapes dressed with generated painted facade textures, matching the mood of `art/concepts/isometric-city-direction-v2.png`. Key locations get distinct, recognizable models.
+- The district executive committee is a prominent civic landmark, larger in mass than an ordinary five-storey Khrushchev-era block: a broad facade, high ceilings and a formal entrance facing the square. The merchant buildings opposite it have generous storey heights and proper pitched roofs. The church should have a substantial body and an easily recognizable silhouette among them.
 - Everything shown in windows is 2D painted art in the same mood: location scenes, event illustrations, contact portraits, and story scenes.
 - The playable area grows with the career: the aide's micro-district first, then the district, then the city, each as its own map.
 - In-game text is in Russian. Code, identifiers, and documentation stay in English; UI strings should go through Godot's translation system so other languages remain possible.
-- A first layout-only mockup (screens, panel placement, map layout) exists, but its visual style was rejected; the visual style will be developed separately.
+- The first layout-only mockup's visual style was rejected. The approved interface direction is now "Living Chancellery" (see Core Loop); map art remains a separate visual system.
 - The map visibly reflects decisions: a cleared forest becomes a new housing block; broken promises to garage owners lead to pickets.
 - Contextual events and tasks appear in different parts of the map. The player's contacts span the whole city, not only their district.
 - Panels and tabs show details such as the satisfaction of factions and individuals and the request backlog.
