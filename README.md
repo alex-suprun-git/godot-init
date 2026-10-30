@@ -8,19 +8,169 @@ A learning project for exploring Godot and gradually building an original 2D gra
 - Use Pax Historia as an inspiration point for an alternate-history sandbox, not as a design to copy.
 - The gameplay loop, eras, map, and victory conditions are still open design questions.
 
+## Setting and Tone (Provisional)
+
+- This campaign is the first chapter of the larger grand strategy game.
+- Setting: a fictional city in a small fictional Slavic post-Soviet republic during the 1990s, with the full mix of the era: some good and a lot of rot. Society is deeply divided, but there is no civil war.
+- The outside world is background context in the first chapter. If the starting city is a border city, neighboring states may become an active factor.
+- The first chapter takes place in the 1990s and ends by the year 2000 at the latest.
+- The starting city has about 250,000–300,000 inhabitants, large enough to support many mechanics and factions.
+- Tone: pragmatic realism with dark humor, not grim horror.
+- The player is the protagonist. A backstory may exist but is secondary.
+- Core fantasy: climbing to power and reshaping the system according to the player's own vision, with methods the player chooses.
+
+## The City (Provisional)
+
+A border trade city on a river that lives on trade and transit rather than on a dying factory.
+
+- River port and a bridge crossing the border: the city's main artery and main source of illicit income (customs, trucks, smuggling).
+- A huge clothing market near the railway station, where traders, the mafia, police, and ordinary people meet. It produces many requests.
+- An old center with merchant houses and a cathedral, so the city has real visual beauty, not only gray.
+- Soviet housing estates and one factory on the verge of closing: background and a source of social tension, not the face of the city.
+- River, embankment, and suburban dachas with forest: space for decisions such as clearing forest for a new housing block.
+- Visual contrast is the signature look: beautiful old buildings next to kiosks, advertising, and new gangster mansions. The 1990s without grim horror.
+- The border adds colour in the first chapter (smuggling) and becomes a sharper factor at the mayor stage.
+
+## Factions (Provisional)
+
+| Faction | Wants | Leverage |
+|---|---|---|
+| Ordinary people | Wages, heating, order, to be left alone | Pickets, votes, rumors |
+| Police | Their cut, budget, no interference | Inspections, looking the other way or not |
+| Church | Land, buildings, moral authority | Influence over the elderly and society, public endorsement |
+| Business | Land, permits, tax breaks, protection | Money, jobs, connections higher up |
+| Mafia | Control of the market and the border | Threats, money, "solving problems" |
+
+- Superiors (district head, city hall) and the press are pressure forces but do not need to be full factions in the first prototype. Superiors set objectives and deadlines; the press amplifies any event and is a key tool for the rival.
+- Factions become interesting when their interests collide on the same place. For example, the market matters to the mafia, business, police, and ordinary people at once, so any decision about it offends someone.
+
+## Rival (Provisional)
+
+- An old party apparatchik from another district who competes with the player for the mayor's office. The central theme is new versus old.
+- They know every connection, are an experienced schemer, and act mainly through superiors and the police.
+- On the map: their district changes visibly, requests the player is too slow on get intercepted by them, press scandals about the player appear, and they occasionally offer a deal.
+- Their character and motives can be deepened later.
+
+## Career Paths (Provisional)
+
+- The player starts as an aide to the district head, hired for their qualities as a clean slate. The boss does not involve them in shady dealings from day one.
+- Each career stage widens the player's world, which is what makes stages feel different beyond scale:
+  - Aide: ordinary residents and workers from day one; the church and business only in rare, one-off episodes. The boss assigns tasks that cannot be solved by the book, and the player learns "the street": the system does not work as written, and the boss only cares that the issue is closed.
+  - District head: the mafia and everything tied to it come into play directly.
+- The boss, the district head, is a tired cynic: once idealistic, now just holding on until retirement and covering himself. Not evil; "that's just how things work". His more human side is revealed gradually, which makes removing him more dramatic.
+- Starting resources of an aide: influence initially comes from the boss's name and cannot be abused without the boss noticing. The salary is close to nothing; real money comes mostly through gray channels (envelopes, kickbacks, favors). Without money tasks are hard, and the only easy money is dirty.
+- The honest path must be genuinely viable. Balancing it is a key design priority: it works through people, relationships, and promises rather than money.
+- The honest path has strengths the corrupt path cannot buy:
+  - People's trust as a resource: residents help on their own (for example, fixing their building's entrance) when the player keeps their word, replacing money for small tasks.
+  - People tell the player things: pieces of compromising material come to an honest official for free, while a corrupt one has to buy them.
+  - No traces: the rival finds little to build a dossier on, a major advantage late in the chapter.
+  - The press is more willing to back an honest official.
+  - Popular support decides the mayoral election, where money helps less than with appointments.
+- Resulting asymmetry: the corrupt path is fast early but accumulates vulnerability; the honest path stalls early but becomes nearly untouchable by the end. Trust must still be earned; it does not come automatically.
+- To become district head, something must happen to the current boss, and the player should have several ways to make that happen. Candidate paths:
+  - Do the boss's work while quietly digging under them; the work builds connections at every level, and reputation unlocks access to valuable information and people.
+  - Make a deal with the mafia to remove the boss, then win the snap election with residents' support.
+  - Dig up compromising material so the boss is arrested, then win the election.
+  - Help the boss become mayor and receive the district post as a reward.
+- Release version of the first chapter: the player chooses a starting district for replayability. Prototype: one district, the most eventful one, tuned for the demo.
+
+## Core Loop: People on the Map (Provisional)
+
+- The core gameplay is allocating the player and their contacts across the city map, not answering dialog windows. The map is the main interface, not a backdrop.
+- The player is physically somewhere on the map and can only be in one place at a time. Showing up in person is slower but carries more weight than sending someone.
+- Contacts are people the player knows (for example, a plumber, a beat cop, a journalist, a driver), not subordinates. They help because the player owes them or they owe the player, so every favor is a debt, in line with promises and traces.
+- Contacts are alive: they have loyalty, can be bought by the rival, can leave traces or betray the player. The network grows with the career and reflects the player's history.
+- Each contact has their own dialog and a relationship that can be developed, unlocking new help.
+- A request is resolved by sending people, money, or a promise to its location. Travel takes time, and busy people cannot be used elsewhere. Results show on the map.
+- Weekly cycle on this model: planning is scheduling on the map (where the player goes, whom to send where, where to place promises); the live week shows people moving and doing their jobs, and crises force reassignments; the summary shows changes on the map rather than walls of text.
+- Calls: a phone call is fast but only works from the office and only with strong contacts; a visit is slower but stronger. A mobile phone (rare and a status symbol in 1997–98) is a career reward that allows calls from anywhere; a pager may be an intermediate step.
+- Dialogs remain for rare, short key story moments (the boss, the meeting of accomplices, deals with the rival), like cutscenes.
+- Each week is a self-contained run: urgency and timers live within one working or calendar week, together with NPC interactions.
+- Two kinds of map change:
+  - Instant: sudden events such as a fire, a picket, or an accident appear in the middle of the week as overlays.
+  - Gradual: slow changes such as a new housing block change lot states only between weeks, at the start of the next week, alongside the consequences of the previous one. Long projects pass through visible intermediate stages over several weeks (fence, foundation, frame) rather than appearing out of nowhere.
+- Provisional target: about 35–40 weeks per chapter at roughly 3–4 minutes each. Exact numbers are tuned in the prototype, and day length is a configuration value.
+- The shift to this core loop needs deliberate balancing.
+
+## Player Actions and Requests (Provisional)
+
+- Besides answering requests, the player can act on their own initiative: call the right person (spend influence), give or take a bribe (money), arrange a meeting between two sides (compromise), leak information to the press, and make promises.
+- Promises are the signature mechanic: they cost nothing now and become a debt later. Broken promises surface as consequences on the map, such as pickets.
+- At most 3–4 requests are active on the map at the same time. How long each one stays open is undecided.
+- Request types:
+  - Plea: a person or group asks for help; ignoring it hurts the relationship.
+  - Conflict: two sides clash and the player picks one; someone is always offended.
+  - Crisis: a timer runs; missing it has serious consequences such as fires, accidents, or riots.
+  - Offer: someone proposes a deal, money, or an alliance; the player may refuse.
+
+## Compromising Material (Provisional)
+
+- Connections are part of influence, not a separate resource.
+- Compromising material is not a currency but a rare, concrete item about a specific person, such as a faction leader or the player's boss.
+- It works like an ultimate ability: assembled slowly and painstakingly from several pieces, then used once for a big effect (arrest, blackmail, a press scandal), not as a small bonus in negotiations.
+- A dossier on one person consists of 3–4 pieces (a witness, a document, a photo, accounting records). Pieces come from contacts, request rewards, risky actions, or events.
+- Ways to use a complete dossier:
+  - Leak it to the press: loud, the target falls, but the press may turn on the player too.
+  - Hand it to the police or prosecutors: the target is removed, but the player needs their own people there.
+  - Blackmail: the target stays in place and works for the player, but will never forgive it.
+- It works both ways: the rival is also building a dossier on the player. The player sees hints but does not know how much the rival has. Because promotion requires being active rather than lying low, this pressure keeps growing over time.
+- Open: how a target notices the player digging and reacts (striking first, covering tracks). This needs its own mechanic.
+
+## Endings and Pacing (Provisional)
+
+- Victory: the player becomes mayor, and the kind of mayor depends on the path: the mafia's man, business's puppet, the people's mayor, or a puppet of superiors.
+- Defeat: a missed deadline, the rival winning, or being removed (arrest, disgraceful resignation, or, in the 1990s, physically).
+- A playthrough of the first chapter lasts about 2–3 hours. Artificial grinding is not a goal.
+- Time follows a weekly hybrid cycle, inspired by *This Is the Police* and *Papers, Please*:
+  - Planning phase: time is stopped. The player reads the summary, makes important decisions, and hands out promises.
+  - Live phase: the week plays out in real time (with pause and speed-up). The city lives, and crises pop up that need quick answers.
+  - Summary: the results of the week, including consequences that arrived.
+- Risk: weeks can feel monotonous if they are too similar, so authored events, deadlines, and crises must vary their rhythm.
+- Undecided: whether time of day still matters inside the live phase.
+- Feeling the city and the player's impact on it matters more than covering many calendar years. The first chapter therefore covers a short period of about 1–2 years, ending by 2000 at the latest; the exact years are open.
+- Undecided: whether the protagonist has stats or perks.
+
+## City Map (Provisional)
+
+- A detailed, well-drawn 2D city map is a key priority.
+- The map visibly reflects decisions: a cleared forest becomes a new housing block; broken promises to garage owners lead to pickets.
+- Contextual events and tasks appear in different parts of the map. The player's contacts span the whole city, not only their district.
+- Panels and tabs show details such as the satisfaction of factions and individuals and the request backlog.
+- The player mainly thinks about resource management and long-term decisions.
+- Technical approach: the city is divided into lots (forest, yard, square, wasteland, factory). Each lot has states with their own artwork (forest → clearing → construction → housing block; square → kiosks → market). Temporary overlays sit on top (pickets, garbage, a police van, the rival's advertising). Player decisions change lot states.
+
+## Opening Scenario (Provisional)
+
+The first stretch of the game is built around one concrete 1990s objective: the heating season.
+
+- Setup: late summer. The boss, the district head, orders the player to have the district ready for heating by October 15, when a city commission will inspect it. Failing is not an option. This is the first objective with a deadline.
+- Every faction has a stake: residents fear another winter in coats; business wants the fuel oil supply and boiler repair contracts; the mafia steals fuel oil and wants its own contractor; the police protect the fuel depot; the church asks to heat the cathedral or open a shelter.
+- Day one: each request teaches one mechanic.
+  1. Plea: elderly residents of a five-storey block ask to fix the pipes. Teaches basic responses and spending money or influence.
+  2. Offer: a businessman puts an envelope on the desk to get his repair contract signed. Teaches bribes and the first trace.
+  3. Residents' meeting: the player may promise heating by October 1. Teaches promises, the first debt.
+  4. Conflict: two contractors fight over the boiler house; one is quietly backed by the mafia, which the player does not know yet. Teaches picking a side.
+  5. Evening: the rival appears on TV claiming their district is ready for winter. First encounter with the rival.
+- About ten days later, consequences show on the map: repairs at the boiler house or an abandoned construction site; unhappy residents gathering as the promised date nears; a newspaper note hinting that someone is interested in the player's affairs.
+- Hidden hook: the boss is taking a kickback on the fuel oil contract. This is the player's first chance to start digging under the boss, quietly opening the compromising-material path without telling the player directly.
+- This scenario is also the content of the first prototype: one objective, a handful of requests, faction relationships, and visible map changes.
+
 ## Current Campaign Concept (Provisional)
 
-- The player starts in an existing fictional state with post-Soviet-like problems and builds a political career, beginning as an aide to a district or city leader and potentially rising to the head of state.
+- The player starts in an existing fictional state with post-Soviet-like problems and builds a political career, beginning as an aide to the district head. In the first chapter, district head is an intermediate milestone and mayor is the final goal; head of state remains the long-term ambition beyond this chapter.
 - The gameplay loop takes inspiration from *This Is the Police*: a map with incoming requests and conflicts from interested parties, but the player does not run a police department. Parties may include residents, businesses, the mafia, police, courts, and powerful political actors.
 - The first prototype should show the request map and faction relationships. The player responds to requests either by choosing a position or allocating resources.
-- Requests may come from individuals, groups, and organizations. It is undecided whether time or political influence is the primary scarce resource.
-- Faction relationships should be shown as both a number and a clear verbal status.
-- Time runs continuously and can be paused or sped up. Major objectives in the first career segment have deadlines; a rival may overtake the player, and missing a deadline may end the campaign. It is undecided whether individual actions also consume explicit time.
+- Requests may come from individuals, groups, and organizations.
+- Time is the primary source of pressure: it only moves forward, and the story keeps adding new problems. Influence (reputation) is what the player spends to contain them.
+- Money is a separate resource. Bribes and payoffs cannot be handled with influence alone, though influence may affect prices. Some quests may require money for a specific task.
+- Numbers stay inside the simulation and are hidden from the player for immersion. Faction relationships are shown as a clear verbal status, and choices show only the direction of their effect (for example, "residents will be pleased, the police will not"). The game always reports direction honestly.
+- Exception: authored preparation moments before key events, where readiness explicitly decides whether the session continues or must restart (as in *This Is the Police* or *Frostpunk*), may show explicit progress.
+- Time follows a weekly hybrid cycle (see Endings and Pacing). Major objectives in the first career segment have deadlines; a rival may overtake the player, and missing a deadline may end the campaign. It is undecided whether individual actions also consume explicit time.
 - Political influence is provisionally a spendable resource for actions and agreements. Time creates urgency; influence determines the methods available.
 - The first career segment has one prominent rival with a distinct personality and story. Rival progress is shown through story events, not a separate progress bar.
 - Influence may come from completed requests, relationships, compromises, and events.
 - Promotion provisionally requires completing a list of objectives before a deadline. The first list of objectives is undecided.
-- In the MVP, the rival clearly opposes the player by scheming, intercepting assignments, and damaging the player's reputation. A successful run removes the rival as an obstacle, but the exact resolution is open. A full game may carry the rival into a second act; the rival will not become the player's friend.
+- In the MVP, the rival clearly opposes the player by scheming, intercepting assignments, and damaging the player's reputation. A successful run removes the rival as an obstacle, but the exact resolution is open. Because the rival is an older figure, they can be written off at the end of this chapter, and later chapters can introduce new rivals. The rival will not become the player's friend.
 - Delayed requests have consequences that vary by request type. In the first chapter, the protagonist personally makes important decisions; delegation is not currently planned.
 - Pressure is central and remains present on an honest, reform-oriented path. The player may cooperate with the corrupt system or try to act with integrity; the honest path is not an easier mode. The player can change sides at each career stage.
 - Sides are dynamic rather than fixed camps. Honest and corrupt approaches share a broad goal but differ in methods, allies, and consequences.
@@ -28,7 +178,17 @@ A learning project for exploring Godot and gradually building an original 2D gra
 - The story combines authored key events with dynamic events between them. Relationships with important people and organizations persist after promotions.
 - There is no explicit morality meter. Faction relationships are visible, while the moral character of the player's choices is conveyed through actions and consequences.
 - The initial scope should reuse structures for objectives, conflicts, and deadlines across offices. Missing deadlines may end the campaign; implementation details are undecided.
-- The provisional campaign goal is to become head of state. The campaign may end there; interstate politics is not required for this first arc.
+- The first chapter ends when the player becomes mayor. Changing the rules of the system itself (appointing loyalists, shaping which requests arrive) is out of scope for this chapter; interstate politics is not required either.
+
+## References
+
+- Yuri Bykov's films, especially *The Fool* (*Durak*, 2014), *The Factory* (*Zavod*, 2018), and *The Major* (*Mayor*, 2013): sources of characters and situations (a tired official, collective complicity, a factory in crisis, police protecting their own). Borrow characters and situations, not the bleakness; the game's tone stays pragmatic with dark humor. Planned borrowings:
+  - The boss follows the template of the district administration head in *The Fool*: not a monster, but someone who has lived inside the system so long that they defend it because they are part of it.
+  - A "meeting of accomplices" as an authored turning point: all the officials gather in one room, and it turns out each has taken a share. The player sees how deep the rot goes.
+  - Ingratitude of the rescued: people the honest player helps are not automatically grateful.
+  - From *The Factory*: workers cheated by the owner of the closing factory, a conflict for the district head stage (business versus ordinary people, with the mafia nearby).
+  - From *The Major*: police covering for their own, so even a complete dossier may fail against a protected target.
+- *This Is the Police*, *Suzerain*, *Frostpunk*: mechanical references for request maps, political choices, and escalating pressure.
 
 ## Learning Approach
 
