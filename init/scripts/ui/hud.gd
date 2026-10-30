@@ -24,6 +24,7 @@ const TYPE_COLORS := {
 
 var sim
 var map
+var audio # AudioManager; optional, the HUD works silently without it
 var phase := "planning"
 
 var _root: Control
@@ -44,9 +45,10 @@ var _card_request := ""
 var _overlay_panel: PanelContainer
 
 
-func setup(week_sim, city_map) -> void:
+func setup(week_sim, city_map, audio_manager = null) -> void:
 	sim = week_sim
 	map = city_map
+	audio = audio_manager
 	_root = Control.new()
 	_root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -84,7 +86,7 @@ func set_phase(new_phase: String) -> void:
 			_phase_label.text = "ЖИВАЯ НЕДЕЛЯ"
 		"summary":
 			_phase_label.text = "ИТОГИ НЕДЕЛИ"
-			_close_card()
+			_close_card(false)
 			_show_summary()
 		"week2":
 			_phase_label.text = "УТРО ПОНЕДЕЛЬНИКА"
@@ -106,6 +108,8 @@ func show_week_two(changes: Array[String]) -> void:
 
 
 func open_card(request_id: String, focus: bool = false) -> void:
+	if not _card.visible:
+		_sfx("card_open")
 	_card_request = request_id
 	_card.visible = true
 	if focus:
@@ -162,6 +166,7 @@ func _build_top_bar() -> void:
 		button.toggle_mode = true
 		button.custom_minimum_size = Vector2(48, 40)
 		button.pressed.connect(speed_selected.emit.bind(speed))
+		button.pressed.connect(_sfx.bind("speed_click"))
 		row.add_child(button)
 		_speed_buttons[speed] = button
 
@@ -429,21 +434,30 @@ func _on_request_changed(_id: String) -> void:
 
 func _on_option_pressed(option_id: String) -> void:
 	var request_id := _card_request
-	sim.choose(request_id, option_id)
 	var option: Dictionary = {}
 	for candidate in sim.requests[request_id]["data"]["options"]:
 		if candidate["id"] == option_id:
 			option = candidate
+	# Committing to a choice is a tier 2 sound; a promise has its own.
+	_sfx("promise_made" if option.get("actor", "") == "promise" else "option_choose")
+	sim.choose(request_id, option_id)
 	# Promises keep the card open so the player can still send someone.
 	if option.get("actor", "") == "promise":
 		_refresh_card()
 	else:
-		_close_card()
+		_close_card(false)
 
 
-func _close_card() -> void:
+func _close_card(play_sound: bool = true) -> void:
+	if play_sound and _card.visible:
+		_sfx("card_close")
 	_card.visible = false
 	_card_request = ""
+
+
+func _sfx(event_id: String) -> void:
+	if audio != null:
+		audio.play(event_id)
 
 
 func _show_summary() -> void:

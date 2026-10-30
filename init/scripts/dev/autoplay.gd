@@ -42,6 +42,10 @@ func _run() -> void:
 			live_shot_taken = true
 			main.set_speed(0.0)
 			await _shot("4_live")
+			main.audio_debug.visible = true
+			await _wait(0.5)
+			await _shot("8_audio_panel")
+			main.audio_debug.visible = false
 			main.set_speed(4.0)
 		if main.speed == 0.0 and not _crisis_handled:
 			_crisis_handled = true

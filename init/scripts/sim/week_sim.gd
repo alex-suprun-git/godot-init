@@ -12,6 +12,7 @@ signal entry_added(entry: Dictionary)
 signal state_changed # money, standing, promises, objectives
 signal overlay_changed(lot: String, overlay: String, visible: bool)
 signal lot_state_changed(lot: String, state: String)
+signal promise_resolved(status: String) # "kept" or "broken"
 signal week_ended
 
 const WEEK_HOURS := Week1.HOURS_PER_DAY * Week1.DAYS_PER_WEEK
@@ -308,9 +309,11 @@ func _check_promises() -> void:
 		if flags.get(promise["flag"], false):
 			promise["status"] = "kept"
 			_apply(promise["kept"])
+			promise_resolved.emit("kept")
 		elif promise["due"] <= t:
 			promise["status"] = "broken"
 			_apply(promise["broken"])
+			promise_resolved.emit("broken")
 
 
 func _check_report() -> void:
