@@ -13,7 +13,7 @@ A learning project for exploring Godot and gradually building an original 2D gra
 - This campaign is the first chapter of the larger grand strategy game.
 - Setting: a fictional city in a small fictional Slavic post-Soviet republic during the 1990s, with the full mix of the era: some good and a lot of rot. Society is deeply divided, but there is no civil war.
 - The outside world is background context in the first chapter. If the starting city is a border city, neighboring states may become an active factor.
-- The first chapter takes place in the 1990s and ends by the year 2000 at the latest.
+- The first chapter takes place in the 1990s: it starts in late August 1997 and ends by the year 2000 at the latest.
 - The starting city has about 250,000–300,000 inhabitants, large enough to support many mechanics and factions.
 - Tone: pragmatic realism with dark humor, not grim horror.
 - The player is the protagonist. A backstory may exist but is secondary.
@@ -127,23 +127,29 @@ A border trade city on a river that lives on trade and transit rather than on a 
   - Summary: the results of the week, including consequences that arrived.
 - Risk: weeks can feel monotonous if they are too similar, so authored events, deadlines, and crises must vary their rhythm.
 - Undecided: whether time of day still matters inside the live phase.
-- Feeling the city and the player's impact on it matters more than covering many calendar years. The first chapter therefore covers a short period of about 1–2 years, ending by 2000 at the latest; the exact years are open.
+- Feeling the city and the player's impact on it matters more than covering many calendar years. The first chapter therefore covers a short period of about 1–2 years, ending by 2000 at the latest. It starts in late August 1997; the end date is open.
 - Undecided: whether the protagonist has stats or perks.
 
 ## City Map (Provisional)
 
-- A detailed, well-drawn 2D city map is a key priority.
+- A detailed, good-looking city map is a key priority.
+- Visual direction: the playable map is a stylized 3D scene seen from above at an angle (similar to *Smuggler*), so the whole area can be shown at a consistent scale and stay alive: moving traffic and people, day and night, weather, construction stages, smoke, pickets, and fire through the engine rather than redrawn art.
+- Buildings are simple 3D shapes dressed with generated painted facade textures, matching the mood of `art/concepts/isometric-city-direction-v2.png`. Key locations get distinct, recognizable models.
+- Everything shown in windows is 2D painted art in the same mood: location scenes, event illustrations, contact portraits, and story scenes.
+- The playable area grows with the career: the aide's micro-district first, then the district, then the city, each as its own map.
+- In-game text is in Russian. Code, identifiers, and documentation stay in English; UI strings should go through Godot's translation system so other languages remain possible.
+- A first layout-only mockup (screens, panel placement, map layout) exists, but its visual style was rejected; the visual style will be developed separately.
 - The map visibly reflects decisions: a cleared forest becomes a new housing block; broken promises to garage owners lead to pickets.
 - Contextual events and tasks appear in different parts of the map. The player's contacts span the whole city, not only their district.
 - Panels and tabs show details such as the satisfaction of factions and individuals and the request backlog.
 - The player mainly thinks about resource management and long-term decisions.
-- Technical approach: the city is divided into lots (forest, yard, square, wasteland, factory). Each lot has states with their own artwork (forest → clearing → construction → housing block; square → kiosks → market). Temporary overlays sit on top (pickets, garbage, a police van, the rival's advertising). Player decisions change lot states.
+- Technical approach: the city is divided into lots (forest, yard, square, wasteland, factory). Each lot has states with their own 3D models (forest → clearing → construction → housing block; square → kiosks → market). Temporary overlays sit on top (pickets, garbage, a police van, the rival's advertising). Player decisions change lot states.
 
 ## Opening Scenario (Provisional)
 
 The first stretch of the game is built around one concrete 1990s objective: the heating season.
 
-- Setup: late summer. The boss, the district head, orders the player to have the district ready for heating by October 15, when a city commission will inspect it. Failing is not an option. This is the first objective with a deadline.
+- Setup: late August 1997, about seven weeks before the deadline. The boss, the district head, orders the player to have the district ready for heating by October 15, when a city commission will inspect it. Failing is not an option. This is the first objective with a deadline.
 - Every faction has a stake: residents fear another winter in coats; business wants the fuel oil supply and boiler repair contracts; the mafia steals fuel oil and wants its own contractor; the police protect the fuel depot; the church asks to heat the cathedral or open a shelter.
 - Day one: each request teaches one mechanic.
   1. Plea: elderly residents of a five-storey block ask to fix the pipes. Teaches basic responses and spending money or influence.
@@ -152,6 +158,8 @@ The first stretch of the game is built around one concrete 1990s objective: the 
   4. Conflict: two contractors fight over the boiler house; one is quietly backed by the mafia, which the player does not know yet. Teaches picking a side.
   5. Evening: the rival appears on TV claiming their district is ready for winter. First encounter with the rival.
 - About ten days later, consequences show on the map: repairs at the boiler house or an abandoned construction site; unhappy residents gathering as the promised date nears; a newspaper note hinting that someone is interested in the player's affairs.
+- Early October: the first trial run of the heating system bursts a pipe at Block 5, a crisis (art: `init/assets/events/pipe_burst.png`). Week one needs its own late-summer crisis; it is undecided.
+- Seasons move visibly through the opening: summer greenery with the first yellow leaves in late August, heavy leaf fall by October.
 - Hidden hook: the boss is taking a kickback on the fuel oil contract. This is the player's first chance to start digging under the boss, quietly opening the compromising-material path without telling the player directly.
 - This scenario is also the content of the first prototype: one objective, a handful of requests, faction relationships, and visible map changes.
 
