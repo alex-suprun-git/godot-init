@@ -3,7 +3,7 @@
 #   tools/pr_screenshots.sh <feature-slug>                    run autoplay, list available shots
 #   tools/pr_screenshots.sh <feature-slug> --pick a b c        keep the named shots (no .png)
 #   tools/pr_screenshots.sh <feature-slug> --from <dir> --pick a   reuse an existing shots folder
-# Output: docs/pr-assets/<feature-slug>/<shot>.png, resized to at most 1600 px.
+# Output: docs/pr-assets/<feature-slug>/<shot>.jpg, resized to at most 1600 px (JPEG, quality 80).
 set -euo pipefail
 
 GODOT="${GODOT:-/Users/oleksiisuprun/Desktop/Godot.app/Contents/MacOS/Godot}"
@@ -44,7 +44,7 @@ mkdir -p "$OUT"
 for shot in "${PICKS[@]}"; do
   src="$FROM/$shot.png"
   [ -f "$src" ] || { echo "missing: $src" >&2; exit 1; }
-  sips -Z 1600 "$src" --out "$OUT/$shot.png" > /dev/null
-  echo "$OUT/$shot.png ($(du -k "$OUT/$shot.png" | cut -f1) KB)"
+  sips -Z 1600 -s format jpeg -s formatOptions 80 "$src" --out "$OUT/$shot.jpg" > /dev/null
+  echo "$OUT/$shot.jpg ($(du -k "$OUT/$shot.jpg" | cut -f1) KB)"
 done
 echo "Next: read the images, commit them on their own, then embed them with commit permalinks (docs/PR_WORKFLOW.md)."
