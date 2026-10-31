@@ -2,6 +2,14 @@
 
 Prompts for the art needed by the first playable week (the heating-season opening, see `README.md`). Written for an image generator; each prompt is self-contained.
 
+## Far-bank city concept (2026-10-31)
+
+- Output: `art/concepts/far-bank-city-direction-v1.png`.
+- Full prompt: `art/concepts/far-bank-city-v1.prompt.md`.
+- Generator: built-in ImageGen; edit target/style/geography reference: `art/concepts/border-direction-v1.png`.
+- Purpose: explore a distinct inhabited town across the river in the brotherly republic, with an older pitched-roof urban fabric, market square and residential waterfront. This replaces the sparse far bank of the earlier concept while retaining the near-bank district, river and two crossings.
+- Status: exploratory, awaiting user feedback. Source concept only; no optimization, game integration or visual approval is implied. Gameplay intent and open questions are in README's Far-Bank City section.
+
 ## Direction
 
 - The playable map is a 3D scene seen from above at an angle, built in Godot. The generator does not paint the map itself. It paints the **surfaces and props** that dress the 3D map: facade textures for simple building shapes and flat sprites for trees, cars, kiosks, and people.
