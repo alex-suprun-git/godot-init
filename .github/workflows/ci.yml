@@ -2,6 +2,8 @@ name: CI
 
 on:
   pull_request:
+    # `edited` re-runs the description lint when the body is changed, not only on pushes.
+    types: [opened, edited, synchronize, reopened]
   push:
     branches: [main]
 
@@ -22,7 +24,7 @@ jobs:
           if ! printf '%s' "$PR_BODY" | grep -Eiq '(closes|fixes|refs) #[0-9]+|no issue'; then
             echo "::error::The description needs 'Closes #n', 'Refs #n' or 'No issue: <reason>'."; fail=1
           fi
-          if printf '%s' "$PR_BODY" | grep -q '#<issue number>'; then
+          if printf '%s' "$PR_BODY" | grep -Eq '^(Closes|Refs) #<issue number>'; then
             echo "::error::Replace the '#<issue number>' placeholder from the template."; fail=1
           fi
           for section in '## Summary' '## Scope' '## How to verify' '## Not verified'; do
