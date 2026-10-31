@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-460 -530 920 1070" font-family="Helvetica, Arial, sans-serif">
+<title>District layout v3: lot grid (meters)</title>
+<desc>Coordinates are map meters: x east, z south, origin at map center. Lot ids match the layout data planned in docs/MAP_LAYOUT_REQUEST.md.</desc>
+<rect x="-460" y="-530" width="920" height="1070" fill="#f7f4ee"/>
+<text x="-450" y="-498" font-size="18" font-weight="bold" fill="#2c2c2a">District layout v3: outskirts lot grid</text>
+<text x="-450" y="-470" font-size="11" fill="#5f5e5a">1 unit = 1 m, x east, z south, origin = map center. Lot ids are the data keys.</text>
+<rect x="-450" y="-460" width="900" height="60" fill="#e3e6dc"/><text x="-440" y="-425" font-size="14" fill="#444441">Neighboring "western" country</text>
+<rect x="-450" y="-400" width="900" height="70" fill="#b5d4f4"/><text x="-440" y="-360" font-size="14" fill="#0c447c">Border river</text>
+<rect x="-450" y="-195" width="875" height="15" fill="#b4b2a9"/>
+<rect x="-450" y="-90" width="875" height="10" fill="#b4b2a9"/>
+<rect x="-450" y="300" width="875" height="10" fill="#b4b2a9"/>
+<rect x="-20" y="-330" width="30" height="642" fill="#b4b2a9"/>
+<rect x="-450" y="105" width="430" height="10" fill="#d3d1c7"/>
+<rect x="-230" y="-80" width="10" height="380" fill="#d3d1c7"/>
+<rect x="140" y="-80" width="10" height="380" fill="#b4b2a9"/>
+<rect x="-430" y="-320" width="140" height="120" fill="#faeeda" stroke="#854f0b" stroke-width="1"/>
+<text x="-360.0" y="-260.0" font-size="13" text-anchor="middle" dominant-baseline="middle" fill="#854f0b">ATP depot</text>
+<text x="-427" y="-204" font-size="8" fill="#854f0b">atp</text>
+<rect x="-280" y="-320" width="140" height="120" fill="#faeeda" stroke="#854f0b" stroke-width="1"/>
+<text x="-210.0" y="-260.0" font-size="13" text-anchor="middle" dominant-baseline="middle" fill="#854f0b">Truck stop</text>
+<text x="-277" y="-204" font-size="8" fill="#854f0b">truck_stop</text>
+<rect x="-130" y="-320" width="250" height="120" fill="#faeeda" stroke="#854f0b" stroke-width="1"/>
+<text x="-5.0" y="-260.0" font-size="13" text-anchor="middle" dominant-baseline="middle" fill="#854f0b">Checkpoint + customs</text>
+<text x="-127" y="-204" font-size="8" fill="#854f0b">checkpoint</text>
+<rect x="130" y="-320" width="160" height="120" fill="#faeeda" stroke="#854f0b" stroke-width="1"/>
+<text x="210.0" y="-260.0" font-size="13" text-anchor="middle" dominant-baseline="middle" fill="#854f0b">River port + transfer</text>
+<text x="133" y="-204" font-size="8" fill="#854f0b">port</text>
+<rect x="300" y="-320" width="95" height="120" fill="#faeeda" stroke="#854f0b" stroke-width="1"/>
+<text x="347.5" y="-260.0" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#854f0b">Fuel depot</text>
+<text x="303" y="-204" font-size="8" fill="#854f0b">fuel_depot</text>
+<rect x="-430" y="-170" width="100" height="75" fill="#faeeda" stroke="#854f0b" stroke-width="1"/>
+<text x="-380.0" y="-132.5" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#854f0b">Boiler house No. 3</text>
+<text x="-427" y="-99" font-size="8" fill="#854f0b">boiler</text>
+<rect x="-320" y="-170" width="290" height="75" fill="#eeedfe" stroke="#534ab7" stroke-width="1"/>
+<text x="-175.0" y="-132.5" font-size="13" text-anchor="middle" dominant-baseline="middle" fill="#534ab7">Garage cooperative</text>
+<text x="-317" y="-99" font-size="8" fill="#534ab7">garages</text>
+<rect x="15" y="-170" width="380" height="75" fill="none" stroke="#5f5e5a" stroke-width="1" stroke-dasharray="6 4"/>
+<text x="205.0" y="-132.5" font-size="13" text-anchor="middle" dominant-baseline="middle" fill="#5f5e5a">Reserve block (wasteland, abandoned site)</text>
+<text x="18" y="-99" font-size="8" fill="#5f5e5a">reserve</text>
+<rect x="-375" y="-73" width="90" height="24" fill="#d3d1c7" stroke="#5f5e5a" stroke-width="1"/>
+<rect x="-375" y="79" width="90" height="24" fill="#d3d1c7" stroke="#5f5e5a" stroke-width="1"/>
+<rect x="-428" y="-30" width="24" height="90" fill="#d3d1c7" stroke="#5f5e5a" stroke-width="1"/>
+<rect x="-256" y="-30" width="24" height="90" fill="#d3d1c7" stroke="#5f5e5a" stroke-width="1"/>
+<rect x="-380" y="-25" width="100" height="80" fill="#e1f5ee" stroke="#0f6e56" stroke-width="1" stroke-dasharray="6 4"/>
+<text x="-330.0" y="15.0" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#0f6e56">K a1</text>
+<text x="-377" y="51" font-size="8" fill="#0f6e56">a1_k</text>
+<rect x="-165" y="-73" width="90" height="24" fill="#d3d1c7" stroke="#5f5e5a" stroke-width="1"/>
+<rect x="-165" y="79" width="90" height="24" fill="#d3d1c7" stroke="#5f5e5a" stroke-width="1"/>
+<rect x="-218" y="-30" width="24" height="90" fill="#d3d1c7" stroke="#5f5e5a" stroke-width="1"/>
+<rect x="-46" y="-30" width="24" height="90" fill="#d3d1c7" stroke="#5f5e5a" stroke-width="1"/>
+<rect x="-170" y="-25" width="100" height="80" fill="#e1f5ee" stroke="#0f6e56" stroke-width="1" stroke-dasharray="6 4"/>
+<text x="-120.0" y="15.0" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#0f6e56">K b1</text>
+<text x="-167" y="51" font-size="8" fill="#0f6e56">b1_k</text>
+<rect x="-375" y="117" width="90" height="24" fill="#d3d1c7" stroke="#5f5e5a" stroke-width="1"/>
+<rect x="-375" y="269" width="90" height="24" fill="#d3d1c7" stroke="#5f5e5a" stroke-width="1"/>
+<rect x="-428" y="160" width="24" height="90" fill="#d3d1c7" stroke="#5f5e5a" stroke-width="1"/>
+<rect x="-256" y="160" width="24" height="90" fill="#d3d1c7" stroke="#5f5e5a" stroke-width="1"/>
+<rect x="-380" y="165" width="100" height="80" fill="#e1f5ee" stroke="#0f6e56" stroke-width="1" stroke-dasharray="6 4"/>
+<text x="-330.0" y="205.0" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#0f6e56">K a2</text>
+<text x="-377" y="241" font-size="8" fill="#0f6e56">a2_k</text>
+<rect x="-165" y="117" width="90" height="24" fill="#d3d1c7" stroke="#5f5e5a" stroke-width="1"/>
+<rect x="-165" y="269" width="90" height="24" fill="#d3d1c7" stroke="#5f5e5a" stroke-width="1"/>
+<rect x="-218" y="160" width="24" height="90" fill="#d3d1c7" stroke="#5f5e5a" stroke-width="1"/>
+<rect x="-46" y="160" width="24" height="90" fill="#d3d1c7" stroke="#5f5e5a" stroke-width="1"/>
+<rect x="-170" y="165" width="100" height="80" fill="#e1f5ee" stroke="#0f6e56" stroke-width="1" stroke-dasharray="6 4"/>
+<text x="-120.0" y="205.0" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#0f6e56">K b2</text>
+<text x="-167" y="241" font-size="8" fill="#0f6e56">b2_k</text>
+<rect x="20" y="-75" width="115" height="45" fill="#eeedfe" stroke="#534ab7" stroke-width="1"/>
+<text x="77.5" y="-52.5" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#534ab7">Police</text>
+<text x="23" y="-34" font-size="8" fill="#534ab7">police</text>
+<rect x="20" y="-20" width="115" height="60" fill="#eeedfe" stroke="#534ab7" stroke-width="1"/>
+<text x="77.5" y="10.0" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#534ab7">Polyclinic</text>
+<text x="23" y="36" font-size="8" fill="#534ab7">polyclinic</text>
+<rect x="20" y="50" width="115" height="85" fill="#eeedfe" stroke="#534ab7" stroke-width="1"/>
+<text x="77.5" y="92.5" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#534ab7">Executive committee</text>
+<text x="23" y="131" font-size="8" fill="#534ab7">ispolkom</text>
+<rect x="20" y="145" width="115" height="55" fill="#eeedfe" stroke="#534ab7" stroke-width="1"/>
+<text x="77.5" y="172.5" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#534ab7">G free</text>
+<text x="23" y="196" font-size="8" fill="#534ab7">g_axis_1</text>
+<rect x="20" y="210" width="115" height="55" fill="#eeedfe" stroke="#534ab7" stroke-width="1"/>
+<text x="77.5" y="237.5" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#534ab7">G free</text>
+<text x="23" y="261" font-size="8" fill="#534ab7">g_axis_2</text>
+<rect x="155" y="-75" width="240" height="370" fill="#eaf3de" stroke="#3b6d11" stroke-width="1" stroke-dasharray="6 4"/>
+<text x="275.0" y="110.0" font-size="13" text-anchor="middle" dominant-baseline="middle" fill="#3b6d11">Old village</text>
+<text x="158" y="291" font-size="8" fill="#3b6d11">village</text>
+<rect x="245" y="80" width="60" height="50" fill="#e1f5ee" stroke="#0f6e56" stroke-width="1" stroke-dasharray="6 4"/>
+<text x="275.0" y="105.0" font-size="11" text-anchor="middle" dominant-baseline="middle" fill="#0f6e56">Church</text>
+<text x="248" y="126" font-size="8" fill="#0f6e56">church</text>
+<rect x="-430" y="315" width="200" height="70" fill="#eeedfe" stroke="#534ab7" stroke-width="1"/>
+<text x="-330.0" y="350.0" font-size="13" text-anchor="middle" dominant-baseline="middle" fill="#534ab7">G free</text>
+<text x="-427" y="381" font-size="8" fill="#534ab7">g_south</text>
+<rect x="-215" y="315" width="185" height="70" fill="#faeeda" stroke="#854f0b" stroke-width="1"/>
+<text x="-122.5" y="350.0" font-size="13" text-anchor="middle" dominant-baseline="middle" fill="#854f0b">Market</text>
+<text x="-212" y="381" font-size="8" fill="#854f0b">market</text>
+<rect x="15" y="315" width="215" height="70" fill="#faeeda" stroke="#854f0b" stroke-width="1"/>
+<text x="122.5" y="350.0" font-size="13" text-anchor="middle" dominant-baseline="middle" fill="#854f0b">Station + bus station</text>
+<text x="18" y="381" font-size="8" fill="#854f0b">station</text>
+<path d="M150 -40 L205 -40 L205 80 L325 80 L325 220 L395 220 M205 80 L205 230 L280 230" fill="none" stroke="#ba9a6a" stroke-width="5" stroke-dasharray="8 5"/>
+<rect x="165" y="-60" width="30" height="35" fill="#c0dd97" stroke="#3b6d11" stroke-width="0.8"/>
+<rect x="215" y="-55" width="30" height="35" fill="#c0dd97" stroke="#3b6d11" stroke-width="0.8"/>
+<rect x="275" y="-65" width="35" height="35" fill="#c0dd97" stroke="#3b6d11" stroke-width="0.8"/>
+<rect x="335" y="-55" width="30" height="40" fill="#c0dd97" stroke="#3b6d11" stroke-width="0.8"/>
+<rect x="170" y="10" width="30" height="40" fill="#c0dd97" stroke="#3b6d11" stroke-width="0.8"/>
+<rect x="345" y="5" width="35" height="40" fill="#c0dd97" stroke="#3b6d11" stroke-width="0.8"/>
+<rect x="175" y="160" width="30" height="40" fill="#c0dd97" stroke="#3b6d11" stroke-width="0.8"/>
+<rect x="230" y="175" width="30" height="35" fill="#c0dd97" stroke="#3b6d11" stroke-width="0.8"/>
+<rect x="330" y="150" width="35" height="40" fill="#c0dd97" stroke="#3b6d11" stroke-width="0.8"/>
+<rect x="170" y="240" width="30" height="40" fill="#c0dd97" stroke="#3b6d11" stroke-width="0.8"/>
+<rect x="290" y="235" width="35" height="40" fill="#c0dd97" stroke="#3b6d11" stroke-width="0.8"/>
+<rect x="350" y="240" width="35" height="40" fill="#c0dd97" stroke="#3b6d11" stroke-width="0.8"/>
+<rect x="-12" y="-405" width="14" height="80" fill="#e8e6df" stroke="#444441" stroke-width="1.5"/>
+<rect x="405" y="-405" width="20" height="80" fill="#e8e6df" stroke="#444441" stroke-width="1.5"/>
+<text x="8" y="-412" font-size="10" fill="#444441">road bridge</text><text x="330" y="-412" font-size="10" fill="#444441">rail bridge</text>
+<path d="M-450 395 L410 395 L410 -405" fill="none" stroke="#444441" stroke-width="2.5"/>
+<path d="M-450 405 L420 405 L420 -405" fill="none" stroke="#444441" stroke-width="2.5"/>
+<path d="M410 -230 L395 -245 L150 -245" fill="none" stroke="#444441" stroke-width="2"/>
+<text x="-450" y="425" font-size="11" fill="#444441">Passenger line, two tracks. Freight line on the east edge to the rail bridge, siding into the port.</text>
+<rect x="-450" y="450" width="14" height="14" fill="#d3d1c7" stroke="#5f5e5a"/><text x="-430" y="461" font-size="12" fill="#2c2c2a">W housing lot</text>
+<rect x="-150" y="450" width="14" height="14" fill="#e1f5ee" stroke="#0f6e56"/><text x="-130" y="461" font-size="12" fill="#2c2c2a">K core lot (school, kindergarten)</text>
+<rect x="150" y="450" width="14" height="14" fill="#eeedfe" stroke="#534ab7"/><text x="170" y="461" font-size="12" fill="#2c2c2a">G street lot</text>
+<rect x="-450" y="472" width="14" height="14" fill="#faeeda" stroke="#854f0b"/><text x="-430" y="483" font-size="12" fill="#2c2c2a">X large lot</text>
+<rect x="-150" y="472" width="14" height="14" fill="#eaf3de" stroke="#3b6d11"/><text x="-130" y="483" font-size="12" fill="#2c2c2a">D village plot, dirt roads</text>
+<rect x="150" y="472" width="14" height="14" fill="none" stroke="#5f5e5a"/><text x="170" y="483" font-size="12" fill="#2c2c2a">R reserve</text>
+</svg>

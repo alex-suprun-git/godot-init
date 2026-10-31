@@ -72,8 +72,7 @@ const GROUND_DIRT := preload("res://assets/textures/ground_dirt.png")
 const GROUND_WATER := preload("res://assets/textures/ground_water.png")
 const GROUND_RAIL := preload("res://assets/textures/ground_rail.png")
 const GROUND_COURTYARD := preload("res://assets/textures/ground_courtyard.png")
-const DECAL_CENTER_LINE := preload("res://assets/sprites/decal_center_line.png")
-const DECAL_CROSSWALK := preload("res://assets/sprites/decal_crosswalk.png")
+const ROAD_PAINT_SHADER := preload("res://assets/shaders/road_paint.gdshader")
 const GROUND_SNOW_GRASS := preload("res://assets/textures/ground_snow_grass.png")
 const GROUND_SNOW_GRASS_DRY := preload("res://assets/textures/ground_snow_grass_dry.png")
 const GROUND_SNOW_ASPHALT := preload("res://assets/textures/ground_snow_asphalt.png")
@@ -178,6 +177,9 @@ var _overlays := {} # "lot:name" -> Node3D
 var _lot_states := {} # lot -> {state -> Node3D}
 var _occupied: Array[Rect2] = [] # Ground taken by buildings and roads; trees avoid it.
 var _ground_layer := 0 # Each ground tile sits a hair above the last so overlaps never flicker.
+var _road_paint_material: ShaderMaterial
+var _main_paint_y := 0.0
+var _cross_paint_y := 0.0
 var _walkers: Array[Dictionary] = [] # Pedestrians walking back and forth along a street.
 var _materials := {}
 var _grounded_props := GroundedProps.new()
@@ -421,8 +423,13 @@ func _build_ground_and_roads() -> void:
 		Rect2(120, 720, 760, 18), Rect2(120, 230, 18, 508), Rect2(500, 230, 18, 508),
 		Rect2(920, 300, 560, 18), Rect2(1180, 496, 18, 444), Rect2(920, 700, 560, 18),
 	]
-	for road in roads:
+	for road_index in roads.size():
+		var road: Rect2 = roads[road_index]
 		_svg_ground(road, ASPHALT, 0.06, true, _season["asphalt"], 14.0, false, _season["asphalt_tint"])
+		if road_index == 0:
+			_main_paint_y = 0.16 + _ground_layer * 0.004 + 0.005
+		elif road_index == 1:
+			_cross_paint_y = 0.16 + _ground_layer * 0.004 + 0.005
 	_build_road_markings()
 
 	# Railway along the south edge and the spur to the depot (one tile spans the track).
@@ -850,41 +857,63 @@ func _ground_quad(center: Vector2, size: Vector2, y: float, texture: Texture2D, 
 	add_child(instance)
 
 
-# A worn white road marking laid flat on the asphalt: transparent, so only the
-# paint shows. `width` runs along the road; `yaw` turns it (PI / 2 for a
-# north-south road).
-func _decal(texture: Texture2D, at: Vector2, width: float, yaw: float) -> void:
+# Paint dimensions are in world metres, independent of any image canvas.
+func _paint_patch(size: Vector2, at: Vector2, y: float) -> void:
+	if _road_paint_material == null:
+		_road_paint_material = ShaderMaterial.new()
+		_road_paint_material.shader = ROAD_PAINT_SHADER
 	var quad := QuadMesh.new()
-	quad.size = Vector2(width, width * texture.get_height() / texture.get_width())
-	var material := StandardMaterial3D.new()
-	material.albedo_texture = texture
-	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_DEPTH_PRE_PASS
-	material.roughness = 1.0
+	quad.size = size
 	var instance := MeshInstance3D.new()
 	instance.mesh = quad
-	instance.material_override = material
+	instance.material_override = _road_paint_material
 	instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	instance.basis = Basis(Vector3.UP, yaw) * Basis(Vector3.RIGHT, -PI / 2.0)
-	instance.position = Vector3(at.x, 0.62, at.y)
+	instance.rotation.x = -PI / 2.0
+	instance.position = Vector3(at.x, y, at.y)
 	add_child(instance)
 
 
-# Center lines on the main street and the cross street, plus zebra crossings.
+# A crossing spans the road; each narrow bar runs along the direction of travel.
+func _crosswalk(at: Vector2, road_width: float, along_z: bool, y: float) -> void:
+	const BAR := 0.45
+	const GAP := 0.45
+	const DEPTH := 3.5
+	var count := int((road_width - 1.0 + GAP) / (BAR + GAP))
+	for i in count:
+		var offset := (i - (count - 1) / 2.0) * (BAR + GAP)
+		var shift := Vector2(offset, 0) if along_z else Vector2(0, offset)
+		var size := Vector2(BAR, DEPTH) if along_z else Vector2(DEPTH, BAR)
+		_paint_patch(size, at + shift, y)
+
+
 func _build_road_markings() -> void:
+	const LINE_WIDTH := 0.12
+	const DASH := 3.0
+	const PERIOD := 8.0
 	var main_x := _svg_point(Vector2(900, 0)).x
 	var cross_z := _svg_point(Vector2(0, 483)).y
+	var main_junctions := [239.0, 309.0, 709.0, 729.0]
 	var z := -88.0
 	while z < 98.0:
-		if abs(z - cross_z) > 16.0:
-			_decal(DECAL_CENTER_LINE, Vector2(main_x, z), 28.0, PI / 2.0)
-		z += 28.0
+		var clear := absf(z - cross_z) > 10.0
+		for junction in main_junctions:
+			if absf(z - _svg_point(Vector2(900, junction)).y) < 5.0:
+				clear = false
+		if clear:
+			_paint_patch(Vector2(LINE_WIDTH, DASH), Vector2(main_x, z), _main_paint_y)
+		z += PERIOD
 	var x := -196.0
 	while x < 196.0:
-		if abs(x - main_x) > 18.0:
-			_decal(DECAL_CENTER_LINE, Vector2(x, cross_z), 28.0, 0.0)
-		x += 28.0
-	for crossing_z in [cross_z - 11.0, cross_z + 11.0]:
-		_decal(DECAL_CROSSWALK, Vector2(main_x, crossing_z), 9.0, 0.0)
+		var clear := absf(x - main_x) > 12.0
+		for junction in [120.0, 500.0, 1189.0]:
+			if absf(x - _svg_point(Vector2(junction, 483)).x) < 5.0:
+				clear = false
+		if clear:
+			_paint_patch(Vector2(DASH, LINE_WIDTH), Vector2(x, cross_z), _cross_paint_y)
+		x += PERIOD
+	for side in [-1.0, 1.0]:
+		_crosswalk(Vector2(main_x, cross_z + side * 6.25), 10.0, true, _main_paint_y)
+		_crosswalk(Vector2(main_x + side * 8.0, cross_z), 6.5, false, _cross_paint_y)
 
 
 # People walking back and forth along the streets: ambient life that goes on

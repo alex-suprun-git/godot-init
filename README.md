@@ -139,7 +139,7 @@ A border trade city on a river that lives on trade and transit rather than on a 
 - A detailed, good-looking city map is a key priority.
 - Visual direction: the playable map is a stylized 3D scene seen from above at an angle (similar to *Smuggler*), so the whole area can be shown at a consistent scale and stay alive: moving traffic and people, day and night, weather, construction stages, smoke, pickets, and fire through the engine rather than redrawn art.
 - Buildings are simple 3D shapes dressed with generated painted facade textures, matching the mood of `art/concepts/isometric-city-direction-v2.png`. Key locations get distinct, recognizable models.
-- The district executive committee is a prominent civic landmark, larger in mass than an ordinary five-storey Khrushchev-era block: a broad facade, high ceilings and a formal entrance facing the square. The merchant buildings opposite it have generous storey heights and proper pitched roofs. The church should have a substantial body and an easily recognizable silhouette among them.
+- The district executive committee is a prominent civic landmark, larger in mass than an ordinary five-storey Khrushchev-era block: a broad facade, high ceilings and a formal entrance facing the square. The church should have a substantial body and an easily recognizable silhouette. (Merchant houses belong to the old city center, which is not part of the starting district; see Starting District Layout.)
 - Everything shown in windows is 2D painted art in the same mood: location scenes, event illustrations, contact portraits, and story scenes.
 - The playable area grows with the career: the aide's micro-district first, then the district, then the city, each as its own map.
 - In-game text is in Russian. Code, identifiers, and documentation stay in English; UI strings should go through Godot's translation system so other languages remain possible.
@@ -149,6 +149,32 @@ A border trade city on a river that lives on trade and transit rather than on a 
 - Panels and tabs show details such as the satisfaction of factions and individuals and the request backlog.
 - The player mainly thinks about resource management and long-term decisions.
 - Technical approach: the city is divided into lots (forest, yard, square, wasteland, factory). Each lot has states with their own 3D models (forest → clearing → construction → housing block; square → kiosks → market). Temporary overlays sit on top (pickets, garbage, a police van, the rival's advertising). Player decisions change lot states.
+
+## Starting District Layout (Provisional)
+
+The starting district is an outskirt, not the city center. The center lies far beyond the map and is not part of the first version.
+
+- Function: the district lives on transport, the border, and trade. Its core is the border crossing with customs, the river port, the transport hub, and the railway junction. Around them: a bus and truck depot (ATP), a truck stop for long-haul drivers, shuttle traders, and a spontaneous market.
+- History in layers: an old village by the river with a church and gardens came first; then the port, the railway, and transport enterprises; then late-1980s panel housing for their workers. In the 1990s, parking lots, trading, warehouses, and side businesses grew around the flows of people and goods. The district was planned for further growth, and part of the promised infrastructure was never built, which explains empty plots and awkward connections.
+- Condition differs by layer and is a visual rule, not decoration:
+  - Late panel housing (built about 1982–1988, so 10–15 years old in 1997): intact facades, ordinary yards, young trees, some landscaping left unfinished. Not ruined.
+  - Transport and industry: wear from use, not from age: oil stains, broken driveways, repair bays, queues, temporary structures.
+  - Old village: slowly emptying; abandoned plots alternate with tidy, inhabited houses.
+  - Unfinished: reserved plots that stayed wasteland, an abandoned construction site.
+- Planning grid: the map is built from fixed lots, and unique buildings are added gradually by changing what stands on a lot, not by moving the layout.
+  - W, housing lot: one panel block.
+  - K, core lot: the center of every residential superblock (four W lots around one K lot), reserved for a school or kindergarten. Until then it is a yard, sports ground, or wasteland ("a school was supposed to stand here").
+  - G, street lot: small public or commercial buildings along a street (police, polyclinic, pharmacy, exchange office, cafe, garages).
+  - X, large lot: transport and industry (ATP, truck stop, checkpoint and customs, port, boiler house, market, station).
+  - D, village plot: irregular, with a garden, reached by dirt roads.
+  - R, reserve: a whole empty block.
+  - Ground floors of panel blocks can host small public places (district police officer, pharmacy, savings bank) by swapping the facade only.
+- Layout, north to south: the neighboring "western" country; the border river with a road bridge and a separate railway bridge; a transport band along the embankment (ATP, truck stop, checkpoint and customs with a truck holding area, port with fuel depot and freight transfer station); a highway along the river; a reserve band (boiler house, garages, empty reserve block); four residential superblocks in the west; a public axis from the bridge to the station; the old village with the church in the east; the market, the passenger station, and the bus station in the south; a double-track passenger line along the south edge; and a freight line along the east edge to the railway bridge.
+- The public axis runs from the checkpoint to the station. Along it, from the highway inward: police, polyclinic, the district executive committee one block further from the river, then free street lots. The executive committee does not sit directly at the river.
+- No tram and no merchant houses in this district. Dirt roads exist only in the village.
+- The district executive committee is a late-Soviet modernist building, built together with the district in the 1980s, not a Stalinist one.
+- The medical facility is a mid-size polyclinic, not a hospital complex.
+- Open: how many superblocks the first version has (four planned, room for two more in the west).
 
 ## Opening Scenario (Provisional)
 

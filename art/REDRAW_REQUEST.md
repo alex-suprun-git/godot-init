@@ -26,6 +26,8 @@ and read the line for each new file. For a long object drawn with its long axis 
 
 ## Attempt status (2026-10-30)
 
+Follow-up on 2026-10-31: the proportion pass supersedes the flat garage row with a dimensioned eight-bay 3D model using `garage_single_v3.png`. New Lada and Volga V3 art is connected through the calibrated renderer. See `art/analysis/PROPORTION_PASS_V3.md` and the full generation prompts in `art/PROMPTS.md`. The remaining original redraw items are still tracked below.
+
 | Batch | Status |
 |---|---|
 | 1 | Partial: `garages_row_v2` and `train_wagons_v2` pass; station, bus, tram, and fence drafts failed projection QA. |

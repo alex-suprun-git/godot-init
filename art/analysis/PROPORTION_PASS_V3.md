@@ -27,3 +27,7 @@ The garage is a real dimensioned mesh. Cars, the church, and other painted props
 - Open `init/scenes/dev/scale_reference.tscn` with F6 to compare the actual assets on a metre grid. Green pole: 1.8 m. Door reference: 2.2 m.
 - The garage material is sampled by face UV landmarks from `garage_single_v3.png`; its source perspective does not set the mesh dimensions.
 - Ordinary apartment geometry remains the 3 m floor reference. This pass does not establish a complete physical specification for industrial props, mixed playground illustrations or the picket group.
+
+## Road paint follow-up
+
+Road paint is now generated as individual ground quads in world dimensions rather than scaling entire transparent marking images. Centre dashes: 0.12 m wide, 3 m long, 8 m period. Zebra bars: 0.45 m wide with 0.45 m gaps; crossing depth 3.5 m. Crossing spans follow the actual 10 m / 6.5 m road widths, with edge margins. All four approaches to the main junction receive correctly oriented crossings. Centre lines stop before crossings and secondary junctions. Paint is placed 5 mm above the corresponding road surface instead of at the old fixed 0.62 m elevation. A shared shader adds sparse paint wear. These are visual design dimensions for the prototype, not a claim of jurisdiction-specific road-code compliance.
