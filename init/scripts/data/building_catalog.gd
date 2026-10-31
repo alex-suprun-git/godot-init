@@ -59,7 +59,6 @@ const CONTENTS := {
 		"roof": "res://assets/textures/roof_tar.png", "placeholder_color": Color("d5d1c2"),
 		"ground": "paving", "label": "Райисполком", "dressing": [
 			{"sprite": "monument", "at": Vector2(-40, 0), "width": 7.0, "footprint": Vector2(6, 6)},
-			{"sprite": "car_volga_black_v3", "at": Vector2(-32, 25), "width": 5.0, "footprint": Vector2(5, 2), "axis": "z"},
 		],
 	},
 	"police": {
@@ -69,7 +68,6 @@ const CONTENTS := {
 		"facade_wing": "res://assets/textures/facade_police_side.png",
 		"roof": "res://assets/textures/roof_tar.png", "placeholder_color": Color("aab5b5"),
 		"ground": "paving", "label": "Райотдел милиции", "dressing": [
-			{"sprite": "van_uaz_police", "at": Vector2(-28, 8), "width": 5.2, "footprint": Vector2(5, 2), "axis": "z"},
 		],
 	},
 	"polyclinic": {
@@ -79,8 +77,6 @@ const CONTENTS := {
 		"facade_wing": "res://assets/textures/facade_polyclinic.png",
 		"roof": "res://assets/textures/roof_tar.png", "placeholder_color": Color("cbd6d0"),
 		"ground": "paving", "label": "Поликлиника", "dressing": [
-			{"model": "lada", "at": Vector2(-30, -16), "length": 4.3, "footprint": Vector2(2.2, 5), "axis": "z"},
-			{"model": "lada", "at": Vector2(-30, -5), "length": 4.3, "footprint": Vector2(2.2, 5), "axis": "z"},
 		],
 	},
 	"boiler_house": {

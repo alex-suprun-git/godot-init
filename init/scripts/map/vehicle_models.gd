@@ -85,6 +85,14 @@ static func _source_length(model_id: String) -> float:
 # Background traffic: roughly one car in three is the wagon. Same seed, same car.
 # The same seed always gives the same car; the Volga share replaces some cars
 # without adding any, so the total on the map is unchanged.
+# Vehicle class from the district fleet mix to a model. Buses and tractors have no
+# model yet and run as cars until they do.
+static func model_for_class(vehicle_class: String, seed_value: int) -> String:
+	if vehicle_class == "truck":
+		return "kamaz_semi" if (abs(seed_value) >> 4) % 3 == 0 else "zil_flatbed"
+	return traffic_model(seed_value)
+
+
 static func traffic_model(seed_value: int) -> String:
 	if posmod(hash(seed_value), 15000) < int(VOLGA_TRAFFIC_SHARE * 15000.0):
 		return "volga"

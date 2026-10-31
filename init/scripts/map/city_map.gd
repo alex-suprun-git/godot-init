@@ -747,10 +747,20 @@ func _update_hero_car(delta: float) -> void:
 	var pos: Vector2 = me["pos"]
 	var path: PackedVector2Array = me["path"]
 	var index: int = me["path_index"]
-	_hero_car.position = Vector3(pos.x, 0.14, pos.y)
+	var lane := _lane_shift(me, true)
+	_hero_car.position = Vector3(pos.x + lane.x, 0.14, pos.y + lane.y)
 	if index < path.size() and pos.distance_to(path[index]) > 0.01:
 		var heading := path[index] - pos
 		_hero_car.rotation.y = lerp_angle(_hero_car.rotation.y, atan2(heading.x, heading.y), minf(1.0, delta * 8.0))
+
+
+# Where the actor stands relative to the route's centerline while travelling.
+func _lane_shift(actor: Dictionary, is_car: bool) -> Vector2:
+	var path: PackedVector2Array = actor["path"]
+	var index: int = actor["path_index"]
+	if actor["state"] != "travel" or index >= path.size():
+		return Vector2.ZERO
+	return sim.graph.lane_shift(actor["pos"], path[index] - actor["pos"], is_car)
 
 
 func _move_tokens() -> void:
@@ -765,7 +775,10 @@ func _move_tokens() -> void:
 	for key in groups:
 		var ids: Array = groups[key]
 		for i in ids.size():
-			var pos: Vector2 = sim.actors[ids[i]]["pos"]
+			var actor: Dictionary = sim.actors[ids[i]]
+			var pos: Vector2 = actor["pos"]
+			if not actor["driver"]:
+				pos += _lane_shift(actor, false)
 			# Spread along the screen's horizontal so faces never overlap, whatever
 			# the camera angle.
 			var origin := _ground(pos)
@@ -918,8 +931,10 @@ func _boulevard_median(road: Dictionary) -> void:
 
 
 const SIDEWALK_PLACEHOLDER := Color("8f8b80")
-const AMBIENT_WALKERS := 36
-const AMBIENT_CARS := 60
+# Pools: how many are shown depends on district and hour (see AmbientLife), so a pool
+# several times the typical crowd is needed.
+const AMBIENT_WALKERS := 240
+const AMBIENT_CARS := 130
 
 
 func _build_ambient() -> void:
@@ -940,11 +955,12 @@ func _build_ambient() -> void:
 		if agent.is_empty():
 			break
 		var seed_value := look.randi()
-		var model := VehicleModels.traffic_model(seed_value)
+		var model := VehicleModels.model_for_class(agent["class"], seed_value)
 		agent["visual"] = _vehicle(model, _ground(agent["pos"]) + Vector3.UP * 0.14, VehicleModels.map_length(model), "z", null, seed_value)
 
 
 func _move_ambient(delta: float) -> void:
+	_ambient.hour = sim.clock_hour()
 	_ambient.step(delta)
 	var right := _view_right()
 	for agent in _ambient.agents:
@@ -952,10 +968,12 @@ func _move_ambient(delta: float) -> void:
 		var heading: Vector2 = agent["heading"]
 		if agent["is_car"]:
 			var car: Node3D = agent["visual"]
+			car.visible = agent["visible"]
 			car.position = Vector3(at.x, 0.14, at.y)
 			car.rotation.y = lerp_angle(car.rotation.y, atan2(heading.x, heading.y), minf(1.0, delta * 6.0))
 		else:
 			var sprite: Sprite3D = agent["visual"]
+			sprite.visible = agent["visible"]
 			sprite.position = Vector3(at.x, agent["lift"], at.y)
 			# Face the way they walk as seen on screen.
 			sprite.flip_h = heading.x * right.x + heading.y * right.z < 0.0
