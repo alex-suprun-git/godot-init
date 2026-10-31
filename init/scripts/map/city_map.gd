@@ -5,6 +5,8 @@ extends Node3D
 const DistrictLayout = preload("res://scripts/data/district_layout.gd")
 const BuildingCatalog = preload("res://scripts/data/building_catalog.gd")
 const DistrictBuilder = preload("res://scripts/map/district_builder.gd")
+const Daylight = preload("res://scripts/map/daylight.gd")
+const LIT_FACADE := preload("res://assets/shaders/lit_facade.gdshader")
 const Week1 = preload("res://scripts/data/week1.gd")
 const Settings = preload("res://scripts/data/settings.gd")
 const SpriteAnchors = preload("res://scripts/data/sprite_anchors.gd")
@@ -153,11 +155,23 @@ var _grounded_props := GroundedProps.new()
 var _garage_model := GarageModel.new()
 var _rng := RandomNumberGenerator.new()
 var _season: Dictionary
+var _sun: DirectionalLight3D
+var _sky_material: ProceduralSkyMaterial
+var _environment: Environment
+var _window_materials: Array[ShaderMaterial] = [] # Facades whose windows glow at night.
+var _lamp_glow := {} # "head" / "pool" -> shared additive material.
+var _night := -1.0
+var _debug_hour := -1.0 # Dev: --hour=18.5 pins the clock for lighting checks.
 var _weather: CPUParticles3D # Snow or falling leaves, following the camera.
 
 
 func setup(week_sim) -> void:
 	sim = week_sim
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--hour="):
+			_debug_hour = float(arg.trim_prefix("--hour="))
+		elif arg.begins_with("--season=") and SEASONS.has(arg.trim_prefix("--season=")):
+			Settings.season = arg.trim_prefix("--season=")
 	_season = SEASONS[Settings.season]
 	_rng.seed = 7
 	_build_environment()
@@ -196,6 +210,7 @@ func _process(delta: float) -> void:
 	_move_tokens()
 	_update_hero_car(delta)
 	_move_ambient(delta)
+	_update_daylight()
 	if _graph_overlay.visible:
 		_draw_routes()
 	if _weather != null:
@@ -355,6 +370,7 @@ func _build_environment() -> void:
 	sky_material.ground_horizon_color = _season["sky_horizon"].darkened(0.2)
 	var sky := Sky.new()
 	sky.sky_material = sky_material
+	_sky_material = sky_material
 
 	var environment := Environment.new()
 	environment.background_mode = Environment.BG_SKY
@@ -374,6 +390,7 @@ func _build_environment() -> void:
 	environment.adjustment_contrast = _season["contrast"]
 	environment.adjustment_saturation = _season["saturation"]
 
+	_environment = environment
 	var world := WorldEnvironment.new()
 	world.environment = environment
 	add_child(world)
@@ -386,12 +403,42 @@ func _build_environment() -> void:
 	sun.light_energy = _season["sun_energy"]
 	sun.shadow_enabled = true
 	sun.directional_shadow_max_distance = 2200.0
+	_sun = sun
 	add_child(sun)
 
 	camera = Camera3D.new()
 	camera.fov = 32.0
 	camera.far = 5000.0
 	add_child(camera)
+
+
+# The light follows the clock on screen: sun height, warmth, sky and ambient.
+func _update_daylight() -> void:
+	var hour: float = _debug_hour if _debug_hour >= 0.0 else sim.clock_hour()
+	var look := Daylight.sample(Settings.season, _season, hour)
+	_sun.rotation_degrees = look["sun_rotation"]
+	_sun.light_color = look["sun_color"]
+	_sun.light_energy = look["sun_energy"]
+	_environment.ambient_light_energy = look["ambient"]
+	_environment.fog_light_color = look["fog_color"]
+	_environment.adjustment_saturation = look["saturation"]
+	_sky_material.sky_top_color = look["sky_top"]
+	_sky_material.sky_horizon_color = look["sky_horizon"]
+	_sky_material.ground_horizon_color = look["sky_horizon"].darkened(0.2)
+	_apply_night(look["night"])
+
+
+# Window glow and street lamps, driven by one number; skipped while it is unchanged.
+func _apply_night(night: float) -> void:
+	if absf(night - _night) < 0.01:
+		return
+	_night = night
+	for material in _window_materials:
+		material.set_shader_parameter("night", night)
+	if _lamp_glow.is_empty():
+		return
+	_lamp_glow["head"].albedo_color.a = night * 0.5
+	_lamp_glow["pool"].albedo_color.a = night * 0.26
 
 
 # Snow in winter, falling leaves in autumn: a box of particles that hovers
@@ -550,6 +597,52 @@ func _build_street_furniture() -> void:
 			var at := rect.position + offset
 			if not _is_occupied(at, 0.5):
 				_sprite(LAMP_POST, _ground(at), 6.0)
+				_lamp_light(_ground(at))
+
+
+# A lit lamp: a glow at the lamp head (about 8 m up, a little to the screen's
+# right where the arm ends) and a pool of light on the road under it.
+func _lamp_light(base: Vector3) -> void:
+	if _lamp_glow.is_empty():
+		var gradient := Gradient.new()
+		gradient.set_color(0, Color.WHITE)
+		gradient.set_color(1, Color(1, 1, 1, 0))
+		var texture := GradientTexture2D.new()
+		texture.gradient = gradient
+		texture.fill = GradientTexture2D.FILL_RADIAL
+		texture.fill_from = Vector2(0.5, 0.5)
+		texture.fill_to = Vector2(1.0, 0.5)
+		texture.width = 128
+		texture.height = 128
+		for key in ["head", "pool"]:
+			var material := StandardMaterial3D.new()
+			material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+			material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			material.albedo_texture = texture
+			material.albedo_color = Color(1.0, 0.76, 0.42, 0.0)
+			material.no_depth_test = key == "head"
+			material.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED if key == "head" else BaseMaterial3D.BILLBOARD_DISABLED
+			_lamp_glow[key] = material
+		var head := QuadMesh.new()
+		head.size = Vector2(2.2, 2.2)
+		_lamp_glow["head_mesh"] = head
+		var pool := QuadMesh.new()
+		pool.size = Vector2(16.0, 16.0)
+		_lamp_glow["pool_mesh"] = pool
+	var head_glow := MeshInstance3D.new()
+	head_glow.mesh = _lamp_glow["head_mesh"]
+	head_glow.material_override = _lamp_glow["head"]
+	head_glow.position = base + Vector3.UP * 8.2 + _view_right() * 0.7
+	head_glow.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(head_glow)
+	var pool_glow := MeshInstance3D.new()
+	pool_glow.mesh = _lamp_glow["pool_mesh"]
+	pool_glow.material_override = _lamp_glow["pool"]
+	pool_glow.rotation.x = -PI / 2.0
+	pool_glow.position = base + Vector3.UP * 0.2
+	pool_glow.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(pool_glow)
 
 
 func _build_bushes() -> void:
@@ -1067,11 +1160,13 @@ func _facades(base: Vector3, size: Vector3, texture: Texture2D, tiles_per_height
 func _facade(size: Vector2, at: Vector3, yaw: float, texture: Texture2D, tiles: Vector2, tint: Color = Color.WHITE, parent: Node = null) -> void:
 	var quad := QuadMesh.new()
 	quad.size = size
-	var material := StandardMaterial3D.new()
-	material.albedo_texture = texture
-	material.albedo_color = tint
-	material.uv1_scale = Vector3(tiles.x, tiles.y, 1.0)
-	material.roughness = 0.95
+	var material := ShaderMaterial.new()
+	material.shader = LIT_FACADE
+	material.set_shader_parameter("albedo_tex", texture)
+	material.set_shader_parameter("tint", tint)
+	material.set_shader_parameter("uv_scale", tiles)
+	material.set_shader_parameter("night", maxf(_night, 0.0))
+	_window_materials.append(material)
 	var instance := MeshInstance3D.new()
 	instance.mesh = quad
 	instance.material_override = material

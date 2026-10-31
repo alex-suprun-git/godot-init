@@ -86,6 +86,11 @@ func day_index() -> int:
 	return min(int(t / Week1.HOURS_PER_DAY), Week1.DAYS_PER_WEEK - 1)
 
 
+# Clock hour as a float (08:30 is 8.5), the same time clock_text() shows.
+func clock_hour() -> float:
+	return Week1.WORK_START_HOUR + (t - day_index() * Week1.HOURS_PER_DAY)
+
+
 func clock_text() -> String:
 	var in_day: float = t - day_index() * Week1.HOURS_PER_DAY
 	var total_minutes := int(in_day * 60.0)

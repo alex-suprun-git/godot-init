@@ -136,9 +136,11 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 					_prop(lot, recipe, center + part["at"])
 				else:
 					recipe["kind"] = "building"
-					_building(lot, recipe, center + part["at"])
+					_building(lot, recipe, center + part["at"], id)
 		"sprite":
 			_prop(lot, entry, center)
+			var size: Vector2 = entry["footprint"]
+			_register_doorstep(id, lot, entry, center, size.x if lot["facing"] in ["e", "w"] else size.y)
 		"station":
 			var spot := _fit(lot, center + Vector2(30, 5), entry["footprint"])
 			map._grounded_prop(_texture("res://assets/sprites/%s.png" % entry["sprite"]), map._ground(spot), entry["width"], true, entry.get("axes", Vector2(0.824, -0.234)))
@@ -209,9 +211,16 @@ func _building(lot: Dictionary, entry: Dictionary, desired: Vector2, lot_id: Str
 	if entry.get("kind", "") == "panel":
 		map._panel_overlays(entry, size, height, group)
 	map._occupy(center, footprint)
-	if entry.has("doorstep") and lot_id != "":
-		var out: Vector2 = {"s": Vector2.DOWN, "n": Vector2.UP, "e": Vector2.RIGHT, "w": Vector2.LEFT}[facing]
-		map.sim.graph.set_doorstep(lot_id, center + out * (size.y / 2.0 + float(entry["doorstep"])))
+	_register_doorstep(lot_id, lot, entry, center, size.y)
+
+
+# Where people stand on arrival: `entry.doorstep` metres in front of the facade
+# (`depth` is the building's size along its facing) on the lot's facing side.
+func _register_doorstep(lot_id: String, lot: Dictionary, entry: Dictionary, center: Vector2, depth: float) -> void:
+	if lot_id == "" or not entry.has("doorstep"):
+		return
+	var out: Vector2 = {"s": Vector2.DOWN, "n": Vector2.UP, "e": Vector2.RIGHT, "w": Vector2.LEFT}[lot["facing"]]
+	map.sim.graph.set_doorstep(lot_id, center + out * (depth / 2.0 + float(entry["doorstep"])))
 
 
 # Keep all footprints out of roads/railways, including village roads through plots.

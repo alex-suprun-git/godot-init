@@ -23,7 +23,7 @@ const CONTENTS := {
 		"placeholder_color": Color("ccc9bd"), "label": "Пятиэтажный дом", "dressing": [],
 	},
 	"panel_9": {
-		"kind": "panel", "footprint": Vector2(78, 12), "floors": 9,
+		"kind": "panel", "footprint": Vector2(78, 12), "floors": 9, "doorstep": 3.0,
 		"facade": "res://assets/textures/facade_panel_late_9storey.png",
 		"roof": "res://assets/textures/roof_panel_flat.png",
 		"entrance_base": "res://assets/textures/facade_panel_entrance.png",
@@ -74,7 +74,7 @@ const CONTENTS := {
 		],
 	},
 	"boiler_house": {
-		"kind": "building", "footprint": Vector2(28, 20), "height": 9.0,
+		"kind": "building", "footprint": Vector2(28, 20), "height": 9.0, "doorstep": 3.0,
 		"facade": "res://assets/textures/facade_boiler_brick.png", "roof": "res://assets/textures/roof_tar.png",
 		"placeholder_color": Color("8c4530"), "ground": "asphalt", "label": "Котельная №3", "dressing": [
 			{"sprite": "boiler_chimney", "at": Vector2(23, -15), "width": 22.7, "footprint": Vector2(7, 7)},
@@ -82,9 +82,9 @@ const CONTENTS := {
 		],
 	},
 	"garages": {"kind": "garages", "footprint": Vector2.ZERO, "ground": "asphalt", "label": "Гаражный кооператив", "dressing": []},
-	"church": {"kind": "sprite", "sprite": "church", "width": 32.0, "footprint": Vector2(24, 30), "ground": "grass_dry", "label": "Церковь", "dressing": []},
+	"church": {"kind": "sprite", "sprite": "church", "width": 32.0, "footprint": Vector2(24, 30), "doorstep": 3.0, "ground": "grass_dry", "label": "Церковь", "dressing": []},
 	"fuel_depot": {"kind": "group", "footprint": Vector2.ZERO, "ground": "asphalt", "label": "Склад топлива", "parts": [
-		{"at": Vector2(-10, -20), "footprint": Vector2(28, 12), "height": 6.0, "facade": "res://assets/textures/facade_warehouse.png", "placeholder_color": Color("a29079")},
+		{"at": Vector2(-10, -20), "footprint": Vector2(28, 12), "height": 6.0, "doorstep": 3.0, "facade": "res://assets/textures/facade_warehouse.png", "placeholder_color": Color("a29079")},
 	], "dressing": [
 		{"sprite": "fuel_tanks", "at": Vector2(0, 22), "width": 34.0, "footprint": Vector2(35, 24)},
 		{"sprite": "water_tower", "at": Vector2(30, -35), "width": 12.0, "footprint": Vector2(8, 8)},
