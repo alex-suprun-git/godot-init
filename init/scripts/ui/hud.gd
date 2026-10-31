@@ -73,6 +73,8 @@ var _markers := {} # request id -> RequestMarker
 var _card: PanelContainer
 var _card_request := ""
 var _overlay_panel: PanelContainer
+var _overlay_list: VBoxContainer # Body of the current overlay, for screens that add their own rows.
+var _card_wait_label: Label # The card's wait line; ticks with the clock.
 var _toast_box: VBoxContainer
 
 
@@ -702,10 +704,10 @@ func _build_card() -> void:
 	_card.anchor_right = 0.5
 	_card.anchor_top = 0.5
 	_card.anchor_bottom = 0.5
-	_card.offset_left = -310
-	_card.offset_right = 310
-	_card.offset_top = -280
-	_card.offset_bottom = 280
+	_card.offset_left = -360
+	_card.offset_right = 360
+	_card.offset_top = -390
+	_card.offset_bottom = 390
 	_card.visible = false
 	_root.add_child(_card)
 
@@ -729,6 +731,8 @@ func _refresh_clock() -> void:
 		progress.value = sim.actor_work_fraction(id) * 100.0
 	if _contact_detail_status != null and is_instance_valid(_contact_detail_status):
 		_contact_detail_status.text = sim.actor_status_text(_contact_detail_actor)
+	if _card != null and _card.visible and _card_request != "" and is_instance_valid(_card_wait_label):
+		_card_wait_label.text = sim.request_wait_text(_card_request)
 
 
 func _contact_status_color(id: String) -> Color:
@@ -951,10 +955,10 @@ func _refresh_markers() -> void:
 				var asker: Dictionary = Week1.ACTORS[data["asker"]]
 				created.asker_texture = load(asker["portrait"])
 				created.asker_region = asker["face"]
-			created.tooltip_text = "%s\nдо %s" % [data["title"], sim.when_text(data["expire"])]
 			_markers_layer.add_child(created)
 			_markers[id] = created
 		var marker: Control = _markers[id]
+		marker.tooltip_text = "%s\n%s" % [data["title"], sim.request_wait_text(id)]
 		marker.assigned = sim.requests[id]["status"] == "assigned"
 		var worker: String = sim.request_worker(id)
 		if worker != "":
@@ -981,11 +985,14 @@ func _refresh_card() -> void:
 	column.add_theme_constant_override("separation", 8)
 	scroll.add_child(column)
 
+	column.add_child(_card_banner(data))
+
 	var header := HBoxContainer.new()
 	var kind := _paper_label("%s · %s" % [TYPE_NAMES[data["type"]].to_upper(), Week1.LOTS[data["lot"]]["name"]], 12, OfficeTheme.SECONDARY)
 	kind.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(kind)
-	header.add_child(_paper_label("до " + sim.when_text(data["expire"]), 12, OfficeTheme.BURGUNDY))
+	_card_wait_label = _paper_label(sim.request_wait_text(_card_request), 12, OfficeTheme.BURGUNDY)
+	header.add_child(_card_wait_label)
 	column.add_child(header)
 
 	var title := _heading(data["title"], 26)
@@ -1010,24 +1017,132 @@ func _refresh_card() -> void:
 	elif request["status"] == "assigned":
 		column.add_child(_paper_label("В работе.", 15, OfficeTheme.BURGUNDY))
 
-	column.add_child(_paper_label("КОГО ОТПРАВИТЬ", 12, OfficeTheme.SECONDARY))
+	column.add_child(_paper_label("ЧТО ДЕЛАТЬ", 12, OfficeTheme.SECONDARY))
 	for option in data["options"]:
-		var reason: String = sim.option_block_reason(_card_request, option)
-		var button := Button.new()
-		button.text = option["label"]
-		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		button.custom_minimum_size = Vector2(0, 40)
-		button.disabled = reason != ""
-		button.pressed.connect(_on_option_pressed.bind(option["id"]))
-		column.add_child(button)
-		var hint := _paper_label(option["hint"] + ("" if reason == "" else "  [" + reason + "]"), 14, OfficeTheme.SECONDARY)
-		hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		column.add_child(hint)
+		column.add_child(_option_row(option))
 
 	var close := Button.new()
 	close.text = "Закрыть"
 	close.pressed.connect(_close_card)
 	outer.add_child(close)
+
+
+const BANNER_COLORS := {"plea": STEEL, "conflict": AMBER, "crisis": RUST, "offer": OfficeTheme.LINK}
+
+
+# The picture at the top of a situation: its own image when it has one,
+# otherwise a colored band that names the place.
+func _card_banner(data: Dictionary) -> Control:
+	var height := 190
+	if data.has("image"):
+		var picture := TextureRect.new()
+		picture.texture = load(data["image"])
+		picture.custom_minimum_size = Vector2(0, height)
+		picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		return picture
+	var band := PanelContainer.new()
+	band.custom_minimum_size = Vector2(0, 74)
+	var color: Color = BANNER_COLORS.get(data["type"], OfficeTheme.GRAPHITE)
+	band.add_theme_stylebox_override("panel", OfficeTheme.box(color.darkened(0.35), color.darkened(0.35), 14))
+	band.add_child(_label(Week1.LOTS[data["lot"]]["name"], 22, OfficeTheme.LIGHT_TEXT))
+	return band
+
+
+# One choice: who goes, what it says, and what it will cost or change. The whole
+# row is the button; a quiet panel behind it brightens on hover.
+func _option_row(option: Dictionary) -> Control:
+	var reason: String = sim.option_block_reason(_card_request, option)
+	var normal := OfficeTheme.box(Color("f4e9d6"), OfficeTheme.EDGE, 10)
+	var hover := OfficeTheme.box(Color("fbf2e2"), OfficeTheme.BURGUNDY, 10)
+	var panel := PanelContainer.new()
+	panel.add_theme_stylebox_override("panel", normal)
+
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
+	var actor_id: String = option["actor"]
+	if Week1.ACTORS.has(actor_id):
+		var info: Dictionary = Week1.ACTORS[actor_id]
+		row.add_child(_face(info["portrait"], info["face"], 52))
+	else:
+		var glyph := _paper_label("☎" if actor_id == "phone" else "✎", 28, OfficeTheme.SECONDARY)
+		glyph.custom_minimum_size = Vector2(52, 52)
+		glyph.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		glyph.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		row.add_child(glyph)
+	var body := VBoxContainer.new()
+	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	body.add_theme_constant_override("separation", 4)
+	body.add_child(_heading(option["label"], 18))
+	var hint := _paper_label(option["hint"] + ("" if reason == "" else "  [" + reason + "]"), 14, OfficeTheme.SECONDARY)
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.add_child(hint)
+	var chips := HFlowContainer.new()
+	chips.add_theme_constant_override("h_separation", 6)
+	chips.add_theme_constant_override("v_separation", 4)
+	for chip in _option_chips(option):
+		chips.add_child(_chip(chip[0], chip[1]))
+	body.add_child(chips)
+	row.add_child(body)
+	panel.add_child(row)
+	_ignore_mouse(row)
+
+	var button := Button.new()
+	button.flat = true
+	button.disabled = reason != ""
+	button.pressed.connect(_on_option_pressed.bind(option["id"]))
+	button.mouse_entered.connect(func(): panel.add_theme_stylebox_override("panel", hover))
+	button.mouse_exited.connect(func(): panel.add_theme_stylebox_override("panel", normal))
+	panel.add_child(button)
+	if reason != "":
+		panel.modulate = Color(1, 1, 1, 0.55)
+	return panel
+
+
+# What an option costs and changes, from its data. Directions only for factions;
+# money and time are shown plainly.
+func _option_chips(option: Dictionary) -> Array:
+	var chips: Array = []
+	var hours: float = float(option.get("hours", 0))
+	match option["actor"]:
+		"phone":
+			chips.append(["сразу", OfficeTheme.SECONDARY])
+		"promise":
+			chips.append(["бесплатно сейчас", OfficeTheme.SECONDARY])
+			chips.append(["станет долгом", AMBER])
+		_:
+			chips.append(["%d ч" % int(hours), OfficeTheme.SECONDARY])
+	if float(option.get("chance", 1.0)) < 1.0:
+		chips.append(["может сорваться", AMBER])
+	var effects: Dictionary = option.get("success", option.get("promise", {}).get("made", {}))
+	for id in sim.factions:
+		var delta: int = effects.get(id, 0)
+		if delta != 0:
+			chips.append(["%s %s" % ["↑" if delta > 0 else "↓", Week1.FACTIONS[id]["name"]], STEEL if delta > 0 else RUST])
+	var money: int = effects.get("money", 0)
+	if money != 0:
+		chips.append(["%s%.1f млн" % ["+" if money > 0 else "−", absf(money) / 1_000_000.0], STEEL if money > 0 else RUST])
+	if effects.get("trace", 0) > 0:
+		chips.append(["останется след", RUST])
+	return chips
+
+
+func _chip(text: String, color: Color) -> Control:
+	var chip := PanelContainer.new()
+	var style := OfficeTheme.box(color.lerp(Color.WHITE, 0.82), color.lerp(Color.WHITE, 0.55), 3)
+	style.content_margin_left = 8
+	style.content_margin_right = 8
+	style.set_corner_radius_all(9)
+	chip.add_theme_stylebox_override("panel", style)
+	chip.add_child(_paper_label(text, 12, color.darkened(0.35)))
+	return chip
+
+
+func _ignore_mouse(node: Node) -> void:
+	if node is Control:
+		node.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for child in node.get_children():
+		_ignore_mouse(child)
 
 
 func _on_request_changed(_id: String) -> void:
@@ -1065,18 +1180,118 @@ func _sfx(event_id: String) -> void:
 		audio.play(event_id)
 
 
+# Three zones: relations first, then what happened grouped by place (weightiest
+# first, small things folded away), then what carries into next week.
+const SUMMARY_SHOWN := 5
+const OUTCOME_TAGS := {
+	"done": ["сделано", STEEL], "failed": ["сорвалось", RUST], "missed": ["упущено", RUST],
+	"escalated": ["стало хуже", AMBER], "promise": ["обещано", AMBER],
+}
+
+
 func _show_summary() -> void:
-	var lines: Array[String] = []
-	lines.assign(sim.outcomes)
-	lines.append("")
+	var empty: Array[String] = []
+	_show_overlay("Итоги недели · 25–29.08.1997", "Что осталось после недели", empty, "Утро понедельника", next_week_pressed.emit)
+	_overlay_list.add_theme_constant_override("separation", 6)
+	# The summary is the week's main read: give it most of the screen height.
+	_overlay_panel.offset_left = -400
+	_overlay_panel.offset_right = 400
+	_overlay_panel.offset_top = -410
+	_overlay_panel.offset_bottom = 400
+
+	_summary_section("Отношения")
+	var standings := GridContainer.new()
+	standings.columns = 3
+	standings.add_theme_constant_override("h_separation", 14)
+	standings.add_theme_constant_override("v_separation", 2)
 	for id in sim.factions:
+		var delta: int = sim.factions[id] - sim.factions_at_start[id]
 		var before: String = sim.standing_word(sim.factions_at_start[id])
 		var after: String = sim.standing_word(sim.factions[id])
-		if before != after:
-			lines.append("%s: %s → %s" % [Week1.FACTIONS[id]["name"], before, after])
-	if sim.traces > 0:
-		lines.append("Кто-то запомнил, что вы взяли конверт.")
-	_show_overlay("Итоги недели · 25–29.08.1997", "Что осталось после недели", lines, "Утро понедельника", next_week_pressed.emit)
+		standings.add_child(_paper_label(Week1.FACTIONS[id]["name"], 16, OfficeTheme.SECONDARY))
+		standings.add_child(_paper_label(after if before == after else "%s → %s" % [before, after], 16))
+		var arrow := "↑" if delta > 0 else ("↓" if delta < 0 else "—")
+		standings.add_child(_paper_label(arrow, 16, STEEL if delta > 0 else (RUST if delta < 0 else OfficeTheme.SECONDARY)))
+	_overlay_list.add_child(standings)
+
+	var ranked: Array = sim.outcomes.duplicate()
+	ranked.sort_custom(func(a, b): return a["weight"] > b["weight"])
+	_summary_section("Что произошло")
+	_summary_groups(_overlay_list, ranked.slice(0, SUMMARY_SHOWN))
+	var rest: Array = ranked.slice(SUMMARY_SHOWN)
+	if not rest.is_empty():
+		var rest_box := VBoxContainer.new()
+		rest_box.add_theme_constant_override("separation", 6)
+		rest_box.visible = false
+		_summary_groups(rest_box, rest)
+		var toggle := Button.new()
+		toggle.flat = true
+		toggle.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		toggle.text = "Показать ещё %d" % rest.size()
+		toggle.add_theme_font_size_override("font_size", 15)
+		toggle.add_theme_color_override("font_color", OfficeTheme.LINK)
+		toggle.pressed.connect(func():
+			rest_box.visible = not rest_box.visible
+			toggle.text = "Свернуть" if rest_box.visible else "Показать ещё %d" % rest.size())
+		_overlay_list.add_child(toggle)
+		_overlay_list.add_child(rest_box)
+
+	var threads: Array[String] = sim.summary_threads()
+	if not threads.is_empty():
+		_summary_section("Тянется на следующую неделю")
+		for thread in threads:
+			var line := _paper_label("•  " + thread, 16)
+			line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			_overlay_list.add_child(line)
+
+
+func _summary_section(title: String) -> void:
+	var spacer := Control.new()
+	spacer.custom_minimum_size.y = 14
+	_overlay_list.add_child(spacer)
+	var rule := HSeparator.new()
+	_overlay_list.add_child(rule)
+	var caption := _paper_label(title.to_upper(), 12, OfficeTheme.SECONDARY)
+	caption.add_theme_constant_override("line_spacing", 0)
+	_overlay_list.add_child(caption)
+
+
+# Results grouped by place, in the order the weightiest of each place appears.
+func _summary_groups(parent: Control, items: Array) -> void:
+	var lots: Array[String] = []
+	for outcome in items:
+		if not lots.has(outcome["lot"]):
+			lots.append(outcome["lot"])
+	for lot in lots:
+		var gap := Control.new()
+		gap.custom_minimum_size.y = 8
+		parent.add_child(gap)
+		parent.add_child(_heading(Week1.LOTS[lot]["name"] if Week1.LOTS.has(lot) else "Прочее", 17))
+		for outcome in items:
+			if outcome["lot"] == lot:
+				parent.add_child(_summary_row(outcome))
+
+
+func _summary_row(outcome: Dictionary) -> Control:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
+	var tag: Array = OUTCOME_TAGS.get(outcome["kind"], OUTCOME_TAGS["done"])
+	var tag_label := _paper_label(tag[0], 12, tag[1])
+	tag_label.custom_minimum_size.x = 86
+	row.add_child(tag_label)
+	var text := _paper_label(outcome["text"], 16)
+	text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(text)
+	return row
+
+
+static func _plural(n: int, one: String, few: String, many: String) -> String:
+	if n % 10 == 1 and n % 100 != 11:
+		return one
+	if (n % 10 in [2, 3, 4]) and not (n % 100 in [12, 13, 14]):
+		return few
+	return many
 
 
 func _show_overlay(title: String, subtitle: String, lines: Array[String], button_text: String, action: Callable, compact: bool = false) -> void:
@@ -1113,6 +1328,7 @@ func _show_overlay(title: String, subtitle: String, lines: Array[String], button
 	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	list.add_theme_constant_override("separation", 8)
 	scroll.add_child(list)
+	_overlay_list = list
 	for line_text in lines:
 		var line := _paper_label(line_text, 17)
 		line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

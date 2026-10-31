@@ -122,12 +122,30 @@ Mobility and money are both scarce for a junior aide, which is part of what make
 
 - Besides answering requests, the player can act on their own initiative: call the right person (spend influence), give or take a bribe (money), arrange a meeting between two sides (compromise), leak information to the press, and make promises.
 - Promises are the signature mechanic: they cost nothing now and become a debt later. Broken promises surface as consequences on the map, such as pickets.
-- At most 3–4 requests are active on the map at the same time. How long each one stays open is undecided.
+- At most 3–4 requests are active on the map at the same time.
+- How long a request stays open follows from its situation, not from a hand-set date. Each request has an urgency class:
+  - Now (about 3 hours): people stand on the spot and wait (a conflict at the market, coal being stolen, a visitor in the office).
+  - Today (until 20:00): a deal that goes to someone else in the evening (the storekeeper's fuel, Gusev's stalls, a meeting tonight).
+  - Days (about two days): a complaint that can wait (the pipes, the church).
+  - Week (until Friday): the week's tasks (the contractor, the report).
+- The request card states the fiction, not a bare time: "Waiting for you at the station, about 3 h left" rather than "until Fri 12:00".
+- Requests that can wait escalate while unanswered instead of only expiring: the pipe complaint turns into a letter to the newspaper and then a picket. Waiting is allowed but grows more expensive. A promise pauses a request's deadline and escalation until the promised date.
+- Urgent requests combine with the office-only dispatch rule: leaving the office means missing what is urgent, which is the price of going out.
 - Request types:
   - Plea: a person or group asks for help; ignoring it hurts the relationship.
   - Conflict: two sides clash and the player picks one; someone is always offended.
   - Crisis: a timer runs; missing it has serious consequences such as fires, accidents, or riots.
   - Offer: someone proposes a deal, money, or an alliance; the player may refuse.
+
+## Week Summary (Provisional)
+
+The end-of-week summary is organized, not a chronological wall of text. The outcome texts themselves stay short and flavorful.
+
+1. Top: relations. A compact strip of faction standings with their direction this week (for example "Residents: Distrust → Discontent, down").
+2. Middle: what happened, grouped by place on the map, not by time. Each line is marked done, missed, or escalated. The weightiest come first; minor items collapse into "and N minor things".
+3. Bottom: threads into next week. What is unfinished and will come back (a stalled boiler house, a remembered license plate, stalls Gusev set up on his own, an open promise).
+
+A boss's one-line reaction with portrait and a newspaper clipping when the press wrote about the player are planned accents. Later, the middle list can become pins on the map with the same grouping.
 
 ## Compromising Material (Provisional)
 
@@ -196,6 +214,7 @@ The campaign has a peaceful arc and a war arc, and the second changes what the f
 - Visual direction: the playable map is a stylized 3D scene seen from above at an angle (similar to *Smuggler*), so the whole area can be shown at a consistent scale and stay alive: moving traffic and people, day and night, weather, construction stages, smoke, pickets, and fire through the engine rather than redrawn art.
 - Buildings are simple 3D shapes dressed with generated painted facade textures, matching the mood of `art/concepts/isometric-city-direction-v2.png`. Key locations get distinct, recognizable models.
 - Lada cars on streets, at the polyclinic and in the House 5 courtyard use the shared Blender V2 GLB at real scale, with actual 3D orientation and shadows. Editable source and rebuild instructions are in `art/models/lada/README.md`.
+- Civilian Volgas use the reviewed GAZ-24 GLB, with approximately one in fifteen passenger cars selected deterministically in ambient/parked traffic. Their palette is ivory, grey, muted blue, olive green, burgundy and beige. The administration's Volga retains its original black lacquer. Paint variants share materials and preserve glass/chrome/rubber finishes.
 - The district executive committee is a prominent civic landmark, larger in mass than an ordinary five-storey Khrushchev-era block: a broad facade, high ceilings and a formal entrance facing the square. The church should have a substantial body and an easily recognizable silhouette. (Merchant houses belong to the old city center, which is not part of the starting district; see Starting District Layout.)
 - Everything shown in windows is 2D painted art in the same mood: location scenes, event illustrations, contact portraits, and story scenes.
 - The playable area grows with the career: the aide's micro-district first, then the district, then the city, each as its own map.

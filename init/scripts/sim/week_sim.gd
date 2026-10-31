@@ -19,6 +19,8 @@ signal week_ended
 signal day_started(day: int) # A new working day began; everyone is back at their start lot.
 
 const WEEK_HOURS := Week1.HOURS_PER_DAY * Week1.DAYS_PER_WEEK
+# What a request's card says about its wait when the data gives no wait_text.
+const URGENCY_WAIT := {"now": "Ждут на месте", "today": "Только сегодня", "days": "Может подождать", "week": "Задача недели"}
 const STEP := 0.25 # Simulation step in game hours; keeps event ordering stable at high speed.
 
 var t := 0.0 # Working hours since Monday 07:00 of the current week; nights are not counted.
@@ -34,7 +36,8 @@ var actors := {} # id -> {pos, lot, state: idle|travel|work|driving, request, op
 var graph: RoadGraph # Roads derived from the layout; people travel along it.
 var promises: Array[Dictionary] = []
 var entries: Array[Dictionary] = [] # Wire: {time, text}
-var outcomes: Array[String] = [] # Notable results for the week summary.
+var outcomes: Array[Dictionary] = [] # Week summary lines: {text, lot, kind, weight}.
+var threads: Array[String] = [] # Unfinished business carried into next week.
 var next_week := {}
 var lot_states := {"boiler": "broken"}
 var ended := false
@@ -60,7 +63,10 @@ func _init(seed_value: int = 1997) -> void:
 			"path": PackedVector2Array(), "path_index": 0,
 		}
 	for data in Week1.REQUESTS:
-		requests[data["id"]] = {"data": data, "status": "pending", "promised": false}
+		requests[data["id"]] = {
+			"data": data, "status": "pending", "promised": false,
+			"expire_t": _expire_hours(data), "escalated": 0,
+		}
 		request_order.append(data["id"])
 
 
@@ -130,6 +136,32 @@ func day_date(day: int) -> Vector2i:
 
 func when_text(when: Dictionary) -> String:
 	return "%s %02d:00" % [Week1.DAY_NAMES[when["day"]], when["hour"]]
+
+
+# Working hours since Monday 07:00 as a weekday and clock time ("Ср 20:00").
+func hours_text(hours: float, with_day: bool = true) -> String:
+	var day: int = clampi(int(hours / Week1.HOURS_PER_DAY), 0, Week1.DAYS_PER_WEEK - 1)
+	var minutes := int(round((hours - day * Week1.HOURS_PER_DAY) * 60.0))
+	var clock := "%02d:%02d" % [Week1.WORK_START_HOUR + minutes / 60, minutes % 60]
+	return "%s %s" % [Week1.DAY_NAMES[day], clock] if with_day else clock
+
+
+# How long a request waits, told as its situation: "Ждут у вокзала · ещё ~2 ч".
+func request_wait_text(request_id: String) -> String:
+	var request: Dictionary = requests[request_id]
+	var data: Dictionary = request["data"]
+	var promise := _active_promise(request_id)
+	if not promise.is_empty():
+		return "Обещано · до " + promise["due_text"]
+	var urgency: String = data.get("urgency", "week")
+	var wait: String = data.get("wait_text", URGENCY_WAIT[urgency])
+	match urgency:
+		"now":
+			var left: float = request["expire_t"] - t
+			return wait + (" · меньше часа" if left < 1.0 else " · ещё ~%d ч" % ceili(left))
+		"today":
+			return wait + " · до " + hours_text(request["expire_t"], false)
+	return wait + " · до " + hours_text(request["expire_t"])
 
 
 static func standing_word(value: int) -> String:
@@ -225,7 +257,7 @@ func request_worker(request_id: String) -> String:
 func request_time_left(request_id: String) -> float:
 	var data: Dictionary = requests[request_id]["data"]
 	var start := to_hours(data["appear"])
-	var end := to_hours(data["expire"])
+	var end: float = requests[request_id]["expire_t"]
 	return clamp((end - t) / max(end - start, 0.01), 0.0, 1.0)
 
 
@@ -299,6 +331,23 @@ func begin_next_week() -> Array[String]:
 	return changes
 
 
+# Unfinished business for the week summary: explicit threads from results,
+# then what the state itself still says.
+func summary_threads() -> Array[String]:
+	var lines: Array[String] = []
+	lines.assign(threads)
+	for promise in promises:
+		if promise["status"] == "active":
+			lines.append("Обещание в силе: " + promise["text"].to_lower() + ".")
+	if overlay_on("block5", "picket"):
+		lines.append("У дома 5 стоит пикет.")
+	if next_week.get("boiler", "") == "repairing":
+		lines.append("В понедельник на котельной начнётся ремонт.")
+	if traces > 0:
+		lines.append("Есть люди, которые кое-что видели.")
+	return lines
+
+
 var _overlays := {}
 
 
@@ -312,6 +361,7 @@ func _tick(step: float) -> void:
 	t = min(t + step, float(WEEK_HOURS))
 	_open_due_requests()
 	_move_actors(step)
+	_escalate_requests()
 	_expire_requests()
 	_check_promises()
 	if t >= WEEK_HOURS:
@@ -387,7 +437,7 @@ func _resolve(request_id: String, option: Dictionary) -> void:
 	var request: Dictionary = requests[request_id]
 	var success: bool = rng.randf() < float(option.get("chance", 1.0))
 	var effects: Dictionary = option["success"] if success else option.get("fail", option["success"])
-	_apply(effects)
+	_apply(effects, {"lot": request["data"]["lot"], "kind": "done" if success else "failed"})
 	request["status"] = "open" if effects.get("reopen", false) else "closed"
 	if request["status"] == "closed" and request["data"].has("overlay"):
 		var overlay: Dictionary = request["data"]["overlay"]
@@ -407,9 +457,9 @@ func _resolve(request_id: String, option: Dictionary) -> void:
 func _expire_requests() -> void:
 	for id in request_order:
 		var request: Dictionary = requests[id]
-		if request["status"] == "open" and to_hours(request["data"]["expire"]) <= t:
+		if request["status"] == "open" and request["expire_t"] <= t and _active_promise(id).is_empty():
 			request["status"] = "closed"
-			_apply(request["data"]["expire_effects"])
+			_apply(request["data"]["expire_effects"], {"lot": request["data"]["lot"], "kind": "missed"})
 			if request["data"].has("overlay"):
 				var overlay: Dictionary = request["data"]["overlay"]
 				_set_overlay(overlay["lot"], overlay["name"], false)
@@ -417,13 +467,31 @@ func _expire_requests() -> void:
 			state_changed.emit()
 
 
+# Requests that can wait get worse while nobody answers: each step fires once,
+# counted from when the request appeared. Working on it or a promise pauses it.
+func _escalate_requests() -> void:
+	for id in request_order:
+		var request: Dictionary = requests[id]
+		var steps: Array = request["data"].get("escalation", [])
+		if request["status"] != "open" or not _active_promise(id).is_empty():
+			continue
+		while request["escalated"] < steps.size():
+			var next_step: Dictionary = steps[request["escalated"]]
+			if to_hours(request["data"]["appear"]) + float(next_step["after"]) > t:
+				break
+			request["escalated"] += 1
+			_apply(next_step["effects"], {"lot": request["data"]["lot"], "kind": "escalated"})
+			request_changed.emit(id)
+
+
 func _make_promise(request: Dictionary, promise: Dictionary) -> void:
 	request["promised"] = true
 	promises.append({
 		"text": promise["text"], "due": to_hours(promise["due"]), "due_text": when_text(promise["due"]),
 		"flag": promise["flag"], "kept": promise["kept"], "broken": promise["broken"], "status": "active",
+		"request": request["data"]["id"],
 	})
-	_apply(promise["made"])
+	_apply(promise["made"], {"lot": request["data"]["lot"], "kind": "promise"})
 	request_changed.emit(request["data"]["id"])
 
 
@@ -431,17 +499,25 @@ func _check_promises() -> void:
 	for promise in promises:
 		if promise["status"] != "active":
 			continue
+		var lot: String = _request_lot(promise["request"])
 		if flags.get(promise["flag"], false):
 			promise["status"] = "kept"
-			_apply(promise["kept"])
+			_apply(promise["kept"], {"lot": lot, "kind": "done"})
 			promise_resolved.emit("kept")
 		elif promise["due"] <= t:
 			promise["status"] = "broken"
-			_apply(promise["broken"])
+			_apply(promise["broken"], {"lot": lot, "kind": "missed"})
 			promise_resolved.emit("broken")
+			# The broken promise is the request's ending; it does not also expire.
+			var request: Dictionary = requests[promise["request"]]
+			if request["status"] == "open":
+				request["status"] = "closed"
+				request_changed.emit(promise["request"])
 
 
-func _apply(effects: Dictionary) -> void:
+# `context` places a logged result in the week summary: {lot, kind} where kind
+# is done, failed, missed, escalated or promise.
+func _apply(effects: Dictionary, context: Dictionary = {}) -> void:
 	for id in factions:
 		if effects.has(id):
 			factions[id] += effects[id]
@@ -454,13 +530,24 @@ func _apply(effects: Dictionary) -> void:
 		next_week[lot] = effects["next_week"][lot]
 	if effects.has("overlay"):
 		_set_overlay(effects["overlay"]["lot"], effects["overlay"]["name"], true)
+	if effects.has("overlay_off"):
+		_set_overlay(effects["overlay_off"]["lot"], effects["overlay_off"]["name"], false)
+	if effects.has("thread") and not threads.has(effects["thread"]):
+		threads.append(effects["thread"])
 	if effects.has("log"):
 		# Tone follows how the factions took it: it colors the toast on screen.
 		var mood := 0
 		for id in factions:
 			mood += effects.get(id, 0)
 		_add_entry(effects["log"], "bad" if mood < 0 else ("good" if mood > 0 else "neutral"))
-		outcomes.append(effects["log"])
+		var weight := 0
+		for id in factions:
+			weight += absi(effects.get(id, 0))
+		weight += 10 * (int(effects.has("overlay")) + effects.get("trace", 0))
+		outcomes.append({
+			"text": effects["log"], "lot": context.get("lot", ""), "kind": context.get("kind", "done"),
+			"weight": weight, "mood": mood,
+		})
 	state_changed.emit()
 
 
@@ -475,6 +562,30 @@ func _add_entry(text: String, tone: String = "request") -> void:
 	var entry := {"time": clock_text(), "text": text, "tone": tone}
 	entries.append(entry)
 	entry_added.emit(entry)
+
+
+# When an unanswered request closes. An explicit "expire" wins; otherwise the
+# urgency class sets the window from the moment it appears.
+func _expire_hours(data: Dictionary) -> float:
+	if data.has("expire"):
+		return to_hours(data["expire"])
+	var appear := to_hours(data["appear"])
+	var day: int = data["appear"]["day"]
+	match data.get("urgency", "week"):
+		"now":
+			return appear + 3.0
+		"today":
+			return maxf(to_hours({"day": day, "hour": 20}), appear + 3.0)
+		"days":
+			return to_hours({"day": mini(day + 2, Week1.DAYS_PER_WEEK - 1), "hour": 20})
+	return to_hours({"day": Week1.DAYS_PER_WEEK - 1, "hour": 20})
+
+
+func _active_promise(request_id: String) -> Dictionary:
+	for promise in promises:
+		if promise["request"] == request_id and promise["status"] == "active":
+			return promise
+	return {}
 
 
 func _request_lot(request_id: String) -> String:

@@ -105,6 +105,13 @@ const OBJECTIVES := [
 
 # Request types: plea, conflict, crisis, offer.
 # Times are {day, hour} within the week; day 0 is Monday.
+# urgency: how long the request waits, from its situation. "now": about three
+#   hours (people stand there); "today": until 20:00; "days": two days on, 20:00;
+#   "week": Friday 20:00. An explicit "expire" overrides the class.
+# wait_text: the card's words for the wait ("Ждут у вокзала"); time is added.
+# escalation: steps {after: hours since appearing, effects} that fire while
+#   the request stays unanswered. A promise or someone on the way pauses them.
+# Effects may add "thread": unfinished business shown at the end of the week.
 # Option fields:
 #   actor: who goes ("me", a contact id, "phone", or "promise").
 #   hours: work time on site after arriving.
@@ -114,16 +121,21 @@ const OBJECTIVES := [
 const REQUESTS := [
 	{
 		"id": "hot_water", "type": "plea", "lot": "block5", "asker": "nina",
+		"image": "res://assets/events/pipe_burst.png", # stand-in until a picture of the dead hot water exists
 		"title": "Нет горячей воды с четверга",
 		"text": "Баба Нина от имени подъезда: «Третий раз за год, а год ещё молодой».",
-		"appear": {"day": 0, "hour": 7}, "expire": {"day": 4, "hour": 22},
-		"expire_effects": {"residents": -10, "log": "Горячую воду в доме 5 так и не дали. Подъезд сделал выводы."},
+		"appear": {"day": 0, "hour": 7}, "urgency": "days", "wait_text": "Подъезд терпит, но недолго",
+		"escalation": [
+			{"after": 15, "effects": {"residents": -3, "log": "Жильцы дома 5 собирают подписи под жалобой в мэрию."}},
+			{"after": 26, "effects": {"residents": -5, "overlay": {"lot": "block5", "name": "picket"}, "log": "У дома 5 вышли с плакатами: «Где вода?»"}},
+		],
+		"expire_effects": {"residents": -10, "thread": "В доме 5 по-прежнему нет горячей воды.", "log": "Горячую воду в доме 5 так и не дали. Подъезд сделал выводы."},
 		"options": [
 			{
 				"id": "send_mikhalych", "actor": "mikhalych", "hours": 5, "chance": 0.7,
 				"label": "Отправить Михалыча",
 				"hint": "Починит. Жители будут довольны. Может не дойти: выпивает.",
-				"success": {"residents": 15, "flags": {"hot_water": true}, "log": "Михалыч починил трубу. В доме 5 горячая вода."},
+				"success": {"residents": 15, "flags": {"hot_water": true}, "overlay_off": {"lot": "block5", "name": "picket"}, "log": "Михалыч починил трубу. В доме 5 горячая вода."},
 				"fail": {"residents": -5, "reopen": true, "log": "Михалыч не дошёл до дома 5. Говорят, встретил кума."},
 			},
 			{
@@ -150,8 +162,8 @@ const REQUESTS := [
 		"id": "contractor", "type": "conflict", "lot": "boiler", "asker": "",
 		"title": "Два подрядчика на одну котельную",
 		"text": "Гусев и «Стройремонт» оба уверены, что ремонт котельной — их. Решать вам, на месте.",
-		"appear": {"day": 0, "hour": 7}, "expire": {"day": 3, "hour": 22},
-		"expire_effects": {"boss": -20, "log": "Подрядчика так и не выбрали. Котельная стоит, Пётр Петрович мрачнеет."},
+		"appear": {"day": 0, "hour": 7}, "urgency": "week", "expire": {"day": 3, "hour": 20}, "wait_text": "Решить до четверга",
+		"expire_effects": {"boss": -20, "thread": "Котельная стоит без подрядчика.", "log": "Подрядчика так и не выбрали. Котельная стоит, Пётр Петрович мрачнеет."},
 		"options": [
 			{
 				"id": "pick_gusev", "actor": "me", "hours": 3,
@@ -171,14 +183,14 @@ const REQUESTS := [
 		"id": "envelope", "type": "offer", "lot": "office", "asker": "",
 		"title": "Посетитель с конвертом",
 		"text": "Гусев кладёт на стол толстый конверт: «Это просто за понимание. С Петровичем всё согласовано».",
-		"appear": {"day": 0, "hour": 10}, "expire": {"day": 2, "hour": 22},
+		"appear": {"day": 0, "hour": 10}, "urgency": "now", "wait_text": "Гусев сидит в приёмной",
 		"expire_effects": {"business": -5, "log": "Гусев забрал конверт и ушёл, не прощаясь."},
 		"options": [
 			{
 				"id": "take", "actor": "me", "hours": 1,
 				"label": "Взять конверт",
 				"hint": "Деньги сейчас. Кто-то это видел.",
-				"success": {"money": 1_500_000, "business": 10, "trace": 1, "flags": {"envelope": true}, "log": "Конверт в ящике стола. Толик видел, как Гусев выходил довольным."},
+				"success": {"money": 1_500_000, "business": 10, "trace": 1, "flags": {"envelope": true}, "thread": "Толик видел, как Гусев выходил от вас довольным.", "log": "Конверт в ящике стола. Толик видел, как Гусев выходил довольным."},
 			},
 			{
 				"id": "refuse", "actor": "me", "hours": 1,
@@ -192,7 +204,7 @@ const REQUESTS := [
 		"id": "church_heat", "type": "plea", "lot": "church", "asker": "",
 		"title": "Протопить храм к зиме",
 		"text": "Отец Георгий просит включить храм в график отопления: «Прихожане молятся в пальто».",
-		"appear": {"day": 1, "hour": 9}, "expire": {"day": 4, "hour": 22},
+		"appear": {"day": 1, "hour": 9}, "urgency": "days", "wait_text": "Отец Георгий подождёт",
 		"expire_effects": {"church": -5, "log": "Отец Георгий так и не дождался ответа."},
 		"options": [
 			{
@@ -213,15 +225,15 @@ const REQUESTS := [
 		"id": "coal_theft", "type": "crisis", "lot": "boiler", "asker": "",
 		"title": "С котельной вывозят уголь",
 		"text": "Сторож пьян, у ворот грузовик без номеров, грузят уголь. Если не вмешаться — к зиме котельная без топлива.",
-		"appear": {"day": 3, "hour": 10}, "expire": {"day": 3, "hour": 14},
+		"appear": {"day": 3, "hour": 10}, "urgency": "now", "wait_text": "Грузят прямо сейчас",
 		"overlay": {"lot": "boiler", "name": "truck"},
-		"expire_effects": {"boss": -10, "residents": -10, "flags": {"coal_stolen": true}, "log": "Уголь увезли. Сторож проснулся и ничего не помнит."},
+		"expire_effects": {"boss": -10, "residents": -10, "flags": {"coal_stolen": true}, "thread": "Уголь с котельной увезли. Кто — неизвестно.", "log": "Уголь увезли. Сторож проснулся и ничего не помнит."},
 		"options": [
 			{
 				"id": "go_myself", "actor": "me", "hours": 1,
 				"label": "Поехать самому",
 				"hint": "Грузовик уедет, если вы приедете лично. Рискованно.",
-				"success": {"residents": 5, "log": "Вы приехали — грузовик уехал пустым. Номера вы всё-таки запомнили."},
+				"success": {"residents": 5, "thread": "Номера грузовика у котельной вы всё-таки запомнили.", "log": "Вы приехали — грузовик уехал пустым. Номера вы всё-таки запомнили."},
 			},
 			{
 				"id": "send_mikhalych", "actor": "mikhalych", "hours": 1, "chance": 0.6,
@@ -242,8 +254,8 @@ const REQUESTS := [
 		"id": "wasteland_stalls", "type": "offer", "lot": "wasteland", "asker": "",
 		"title": "Гусев хочет ларьки на пустыре",
 		"text": "«Всё равно там одни берёзы и бутылки. Я даже забор поставлю». Нужно решить на месте.",
-		"appear": {"day": 1, "hour": 14}, "expire": {"day": 3, "hour": 22},
-		"expire_effects": {"business": -4, "log": "Гусев не дождался ответа и поставил ларьки сам. Никто не заметил, как."},
+		"appear": {"day": 1, "hour": 14}, "urgency": "today", "wait_text": "Гусев ждёт ответа",
+		"expire_effects": {"business": -4, "thread": "На пустыре стоят ларьки Гусева. Без разрешения.", "log": "Гусев не дождался ответа и поставил ларьки сам. Никто не заметил, как."},
 		"options": [
 			{
 				"id": "allow", "actor": "me", "hours": 2,
@@ -263,7 +275,7 @@ const REQUESTS := [
 		"id": "market_cops", "type": "conflict", "lot": "market", "asker": "",
 		"title": "Ларёчники и милиция делят рынок",
 		"text": "Участковый хочет «порядка», торговцы хотят торговать. Обе стороны ждут вас у вокзала.",
-		"appear": {"day": 2, "hour": 9}, "expire": {"day": 4, "hour": 12},
+		"appear": {"day": 2, "hour": 9}, "urgency": "now", "wait_text": "Ждут вас у вокзала",
 		"expire_effects": {"police": -4, "business": -4, "log": "Рынок разобрался сам. Участковый ходит довольный, торговцы нет."},
 		"options": [
 			{
@@ -285,14 +297,14 @@ const REQUESTS := [
 		"id": "fuel_offer", "type": "offer", "lot": "depot", "asker": "",
 		"title": "Кладовщик предлагает мазут «мимо кассы»",
 		"text": "«Часть пойдёт на котельную, часть никто не считал. Вы же хотите, чтобы зимой было тепло».",
-		"appear": {"day": 2, "hour": 13}, "expire": {"day": 4, "hour": 10},
+		"appear": {"day": 2, "hour": 13}, "urgency": "today", "wait_text": "Вечером продаст другому",
 		"expire_effects": {"business": -2, "log": "Кладовщик пожал плечами и продал мазут кому-то другому."},
 		"options": [
 			{
 				"id": "take", "actor": "me", "hours": 2,
 				"label": "Взять мазут и деньги",
 				"hint": "Котельной хватит топлива. Следов больше.",
-				"success": {"money": 800_000, "business": 5, "police": -3, "trace": 1, "flags": {"fuel_off_books": true}, "log": "Мазут отгрузили без накладных. Кладовщик сказал, что вы понятливый."},
+				"success": {"money": 800_000, "business": 5, "police": -3, "trace": 1, "flags": {"fuel_off_books": true}, "thread": "Мазут ушёл на котельную без накладных.", "log": "Мазут отгрузили без накладных. Кладовщик сказал, что вы понятливый."},
 			},
 			{
 				"id": "refuse", "actor": "me", "hours": 2,
@@ -306,7 +318,7 @@ const REQUESTS := [
 		"id": "residents_meeting", "type": "plea", "lot": "block5", "asker": "nina",
 		"title": "Жильцы просят собрание",
 		"text": "Баба Нина: «Пусть кто-нибудь придёт и скажет людям, что будет. Мы же не слепые».",
-		"appear": {"day": 3, "hour": 7}, "expire": {"day": 4, "hour": 22},
+		"appear": {"day": 3, "hour": 7}, "urgency": "today", "wait_text": "Собрание сегодня вечером",
 		"expire_effects": {"residents": -6, "log": "Собрание в доме 5 прошло без вас. Баба Нина записала всё, что вы не сказали."},
 		"options": [
 			{
@@ -327,7 +339,7 @@ const REQUESTS := [
 		"id": "journalist", "type": "plea", "lot": "office", "asker": "",
 		"title": "Журналистка просит комментарий",
 		"text": "Звонок из районной газеты: «Что с горячей водой в доме 5? Люди интересуются».",
-		"appear": {"day": 4, "hour": 9}, "expire": {"day": 4, "hour": 15},
+		"appear": {"day": 4, "hour": 9}, "urgency": "today", "expire": {"day": 4, "hour": 15}, "wait_text": "Номер сдают в печать",
 		"expire_effects": {"residents": -3, "boss": -3, "log": "В газету ушло «от власти не поступило комментариев». Читать будут все."},
 		"options": [
 			{
@@ -348,8 +360,8 @@ const REQUESTS := [
 		"id": "boss_report", "type": "crisis", "lot": "office", "asker": "",
 		"title": "Босс вызывает на ковёр",
 		"text": "Пётр Петрович: «Через четыре часа в мэрии отчёт. Приходите и расскажите, что сделали».",
-		"appear": {"day": 4, "hour": 12}, "expire": {"day": 4, "hour": 16},
-		"expire_effects": {"boss": -15, "log": "Вы не пришли на отчёт. Пётр Петрович отчитывался за вас сам и это запомнит."},
+		"appear": {"day": 4, "hour": 12}, "urgency": "now", "expire": {"day": 4, "hour": 16}, "wait_text": "Отчёт в мэрии",
+		"expire_effects": {"boss": -15, "thread": "Пётр Петрович запомнил, что вы не пришли на отчёт.", "log": "Вы не пришли на отчёт. Пётр Петрович отчитывался за вас сам и это запомнит."},
 		"options": [
 			{
 				"id": "go_boss", "actor": "me", "hours": 1,
