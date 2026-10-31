@@ -3,6 +3,9 @@
 # Player-facing text is Russian; it moves to Godot's translation system later.
 extends RefCounted
 
+const DistrictLayout = preload("res://scripts/data/district_layout.gd")
+const BuildingCatalog = preload("res://scripts/data/building_catalog.gd")
+
 const YEAR := 1997
 const MONTH := 8
 const FIRST_DAY := 25 # Monday, 25 August 1997
@@ -22,20 +25,20 @@ const FACTIONS := {
 	"boss": {"name": "Босс", "value": 10},
 }
 
-# Map positions are on the ground plane (x, z) in map units, matching the
-# schematic in art/concepts/district_layout.svg (1 SVG px = 0.25 units).
+# Gameplay locations reference fixed layout lots; positions are never duplicated.
 const LOTS := {
-	"office": {"name": "Администрация района", "pos": Vector2(66, -30)},
-	"block5": {"name": "Дом 5", "pos": Vector2(-100, -22)},
-	"boiler": {"name": "Котельная №3", "pos": Vector2(-185, -19)},
-	"depot": {"name": "Склад топлива", "pos": Vector2(125, -62)},
-	"church": {"name": "Церковь", "pos": Vector2(115, 17)},
-	"market": {"name": "Рынок у вокзала", "pos": Vector2(-27, 81)},
-	"wasteland": {"name": "Пустырь", "pos": Vector2(-125, 85)},
+	"forest": {"name": "Лесная поляна", "layout": "forest_clearing"},
+	"pond": {"name": "Пруд у посёлка", "layout": "pond_bank"},
+	"office": {"name": "Администрация района", "layout": "ispolkom"},
+	"block5": {"name": "Дом 5", "layout": "b1_s"},
+	"boiler": {"name": "Котельная №3", "layout": "boiler"},
+	"depot": {"name": "Склад топлива", "layout": "fuel_depot"},
+	"church": {"name": "Церковь", "layout": "church"},
+	"market": {"name": "Рынок у вокзала", "layout": "market"},
+	"wasteland": {"name": "Пустырь", "layout": "a2_k"},
 }
 
-# speed: map units per game hour. Office to the boiler house is about two hours
-# on foot and well under an hour with Tolik's car.
+# Speed is in map metres per game hour; unchanged during the layout migration.
 const ACTORS := {
 	"me": {
 		"name": "Вы", "role": "Помощник главы района", "start_lot": "office", "speed": 120.0,
@@ -372,3 +375,25 @@ const STANDING_WORDS := [
 	{"max": 25, "word": "Расположение"},
 	{"max": 1000, "word": "Лояльность"},
 ]
+
+
+static func location_position(id: String) -> Vector2:
+	if not LOTS.has(id):
+		push_error("Week1: unknown location '%s'" % id)
+		return Vector2.ZERO
+	return DistrictLayout.lot_center(LOTS[id]["layout"])
+
+
+static func validate_layout() -> bool:
+	var valid := true
+	for id in LOTS:
+		var layout_id: String = LOTS[id]["layout"]
+		if not DistrictLayout.LOTS.has(layout_id):
+			push_error("Week1: location '%s' references missing lot '%s'" % [id, layout_id])
+			valid = false
+	for id in DistrictLayout.LOTS:
+		var content: String = DistrictLayout.LOTS[id]["content"]
+		if not BuildingCatalog.CONTENTS.has(content):
+			push_error("DistrictLayout: lot '%s' references missing content '%s'" % [id, content])
+			valid = false
+	return valid

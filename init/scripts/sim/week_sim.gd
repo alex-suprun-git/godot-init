@@ -39,6 +39,8 @@ var rng := RandomNumberGenerator.new()
 
 
 func _init(seed_value: int = 1997) -> void:
+	if not Week1.validate_layout():
+		return
 	rng.seed = seed_value
 	for id in Week1.FACTIONS:
 		factions[id] = Week1.FACTIONS[id]["value"]
@@ -46,7 +48,7 @@ func _init(seed_value: int = 1997) -> void:
 	for id in Week1.ACTORS:
 		var lot: String = Week1.ACTORS[id]["start_lot"]
 		actors[id] = {
-			"pos": Week1.LOTS[lot]["pos"], "lot": lot, "state": "idle",
+			"pos": Week1.location_position(lot), "lot": lot, "state": "idle",
 			"request": "", "option": {}, "work_left": 0.0, "driver": false,
 		}
 	for data in Week1.REQUESTS:
@@ -154,7 +156,7 @@ func actor_eta_hours(id: String) -> float:
 		"driving":
 			return actor_eta_hours("me")
 		"travel":
-			var target: Vector2 = Week1.LOTS[_request_lot(actor["request"])]["pos"]
+			var target: Vector2 = Week1.location_position(_request_lot(actor["request"]))
 			var speed: float = Week1.ACTORS["tolik" if actor["driver"] else id]["speed"]
 			var pos: Vector2 = actor["pos"]
 			return pos.distance_to(target) / speed
@@ -292,7 +294,7 @@ func _move_actors(step: float) -> void:
 	for id in actors:
 		var actor: Dictionary = actors[id]
 		if actor["state"] == "travel":
-			var target: Vector2 = Week1.LOTS[_request_lot(actor["request"])]["pos"]
+			var target: Vector2 = Week1.location_position(_request_lot(actor["request"]))
 			var speed: float = Week1.ACTORS["tolik" if actor["driver"] else id]["speed"]
 			var pos: Vector2 = actor["pos"]
 			actor["pos"] = pos.move_toward(target, speed * step)

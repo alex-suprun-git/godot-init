@@ -42,8 +42,11 @@ var _phase_label: Label
 var _money_label: Label
 var _start_button: Button
 var _tasks_button: Button
+var _map_controls: PanelContainer
+var _zoom_label: Label
 var _speed_buttons := {}
 var _season_buttons := {}
+var _season_controls: HBoxContainer
 var _objectives_box: VBoxContainer
 var _promises_box: VBoxContainer
 var _standing_box: VBoxContainer
@@ -113,6 +116,7 @@ func setup(week_sim, city_map, audio_manager = null, playtest_log = null) -> voi
 	_build_card()
 	_build_toasts()
 	_build_incoming_tray()
+	_build_map_controls()
 	_show_important_notice(Week1.START_BRIEFING)
 
 	sim.request_opened.connect(func(_id): _refresh_markers())
@@ -136,8 +140,7 @@ func set_phase(new_phase: String) -> void:
 	_start_button.visible = phase == "planning"
 	_tasks_button.visible = phase in ["planning", "live"]
 	_incoming_tray.visible = phase in ["planning", "live"]
-	for key in _season_buttons:
-		_season_buttons[key].visible = phase == "planning"
+	_season_controls.visible = phase == "planning"
 	for speed in _speed_buttons:
 		_speed_buttons[speed].visible = phase == "live"
 	if phase != "planning":
@@ -160,7 +163,9 @@ func set_phase(new_phase: String) -> void:
 
 func set_speed(speed: float) -> void:
 	for value in _speed_buttons:
-		_speed_buttons[value].button_pressed = is_equal_approx(value, speed)
+		_speed_buttons[value].set_pressed_no_signal(is_equal_approx(value, speed))
+	if phase == "live":
+		_phase_label.text = "ПАУЗА" if is_zero_approx(speed) else "ЖИВАЯ НЕДЕЛЯ · ×%d" % speed
 
 
 func show_week_two(changes: Array[String]) -> void:
@@ -195,6 +200,8 @@ func _process(_delta: float) -> void:
 		or (_notice_panel != null and _notice_panel.visible)
 	)
 	_toast_box.visible = not _card.visible and not overlay_open
+	_map_controls.visible = not overlay_open and not _card.visible
+	_zoom_label.text = "%d%%" % map.zoom_percent()
 
 
 # People stand where the map says; the token's feet are the spot on the ground.
@@ -250,27 +257,75 @@ func _eta_text(hours: float) -> String:
 
 # --- Layout ------------------------------------------------------------------
 
+func _build_map_controls() -> void:
+	_map_controls = _panel(INK)
+	_map_controls.add_theme_stylebox_override("panel", OfficeTheme.box(INK, OfficeTheme.EDGE.darkened(0.35), 7))
+	_map_controls.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	_map_controls.offset_left = -173
+	_map_controls.offset_right = 173
+	_map_controls.offset_top = -62
+	_map_controls.offset_bottom = -16
+	_root.add_child(_map_controls)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 5)
+	_map_controls.add_child(row)
+	var out := Button.new()
+	out.text = "−"
+	out.tooltip_text = "Отдалить карту · колесо вниз или −"
+	out.custom_minimum_size = Vector2(34, 34)
+	out.pressed.connect(map.zoom_by.bind(1.25))
+	row.add_child(out)
+	_zoom_label = _label("100%", 14, PAPER)
+	_zoom_label.custom_minimum_size.x = 48
+	_zoom_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_zoom_label.tooltip_text = "Масштаб карты · колесо мыши или щипок на трекпаде"
+	row.add_child(_zoom_label)
+	var closer := Button.new()
+	closer.text = "+"
+	closer.tooltip_text = "Приблизить карту · колесо вверх или +"
+	closer.custom_minimum_size = Vector2(34, 34)
+	closer.pressed.connect(map.zoom_by.bind(0.8))
+	row.add_child(closer)
+	var home := Button.new()
+	home.text = "К себе"
+	home.tooltip_text = "Вернуться к ГГ и обычному масштабу · Home"
+	home.add_theme_font_size_override("font_size", 14)
+	home.pressed.connect(map.reset_view)
+	row.add_child(home)
+	var overview := Button.new()
+	overview.text = "Район"
+	overview.tooltip_text = "Показать весь район"
+	overview.add_theme_font_size_override("font_size", 14)
+	overview.pressed.connect(map.show_overview)
+	row.add_child(overview)
+
+
 func _build_top_bar() -> void:
 	var bar := _panel(INK)
 	bar.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	_root.add_child(bar)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 20)
+	row.custom_minimum_size.y = 44
 	bar.add_child(row)
 	_date_label = _heading("", 20, PAPER)
 	_date_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	_date_label.size_flags_vertical = Control.SIZE_FILL
+	_date_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	row.add_child(_date_label)
 	_phase_label = _label("", 13, MUTED)
+	_phase_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	row.add_child(_phase_label)
 	var spacer := Control.new()
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(spacer)
 	_money_label = _label("", 17, PAPER)
+	_money_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_money_label.tooltip_text = "Влияние: взято взаймы у босса"
 	row.add_child(_money_label)
-	var season_row := HBoxContainer.new()
-	season_row.add_theme_constant_override("separation", 4)
-	row.add_child(season_row)
+	_season_controls = HBoxContainer.new()
+	_season_controls.add_theme_constant_override("separation", 4)
+	row.add_child(_season_controls)
 	for key in Settings.SEASONS:
 		var button := Button.new()
 		button.text = SeasonLabels[key]
@@ -278,16 +333,23 @@ func _build_top_bar() -> void:
 		button.button_pressed = Settings.season == key
 		button.tooltip_text = "Карта: " + SeasonLabels[key].to_lower() + " (перезапустит неделю)"
 		button.pressed.connect(_on_season_pressed.bind(key))
-		season_row.add_child(button)
+		_season_controls.add_child(button)
 		_season_buttons[key] = button
-	for speed in [0.0, 1.0, 2.0, 4.0]:
+	var time_controls := HBoxContainer.new()
+	time_controls.add_theme_constant_override("separation", 8)
+	row.add_child(time_controls)
+	var speed_group := ButtonGroup.new()
+	speed_group.allow_unpress = false
+	for speed in Settings.TIME_SPEEDS:
 		var button := Button.new()
 		button.text = "Ⅱ" if speed == 0.0 else "×%d" % speed
 		button.toggle_mode = true
-		button.custom_minimum_size = Vector2(46, 40)
+		button.button_group = speed_group
+		button.custom_minimum_size = Vector2(46, 44)
+		button.tooltip_text = "Пауза" if speed == 0.0 else "Скорость времени: ×%d" % speed
 		button.pressed.connect(speed_selected.emit.bind(speed))
 		button.pressed.connect(_sfx.bind("speed_click"))
-		row.add_child(button)
+		time_controls.add_child(button)
 		_speed_buttons[speed] = button
 	_start_button = _primary_button("Начать неделю →")
 	_start_button.pressed.connect(start_week_pressed.emit)

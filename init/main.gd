@@ -10,9 +10,6 @@ const AudioDebug = preload("res://scripts/audio/audio_debug.gd")
 const PlayLog = preload("res://scripts/dev/play_log.gd")
 const Settings = preload("res://scripts/data/settings.gd")
 
-# Real seconds per game hour at x1. A 12-hour working day takes 18 seconds.
-const HOUR_SECONDS := 1.5
-
 var sim
 var map
 var hud
@@ -72,7 +69,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if phase == "live" and speed > 0.0:
-		sim.advance(delta * speed / HOUR_SECONDS)
+		sim.advance(delta * speed / Settings.GAME_HOUR_SECONDS)
 
 
 func start_week() -> void:
@@ -86,6 +83,8 @@ func start_week() -> void:
 
 
 func set_speed(value: float) -> void:
+	if not Settings.TIME_SPEEDS.has(value):
+		return
 	speed = value
 	hud.set_speed(value)
 	if play_log != null:
