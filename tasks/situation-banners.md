@@ -1,6 +1,6 @@
 ---
 id: situation-banners
-status: review   # ready | in-progress | review | blocked | done
+status: done   # ready | in-progress | review | blocked | done
 worker: codex
 branch: task/situation-banners
 ---

@@ -2,6 +2,7 @@
 id: elite-towers
 status: ready   # draft | ready | in-progress | review | blocked | done. Stage 1 needs no approval; stages 2 and 3 wait for the user.
 worker: codex
+issue: "#4"
 branch: task/elite-towers
 ---
 

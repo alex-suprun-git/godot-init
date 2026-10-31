@@ -2,6 +2,7 @@
 id: civic-vehicles
 status: ready   # draft | ready | in-progress | review | blocked | done
 worker: codex
+issue: "#6"
 branch: task/civic-vehicles
 ---
 
