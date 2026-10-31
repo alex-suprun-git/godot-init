@@ -20,6 +20,9 @@ Prompts for the art needed by the first playable week (the heating-season openin
 | Map kit (K1–K12) | Generated; awaiting review |
 | Ground textures and road decals (G1–G8, D1–D2) | Generated; awaiting in-game visual review |
 | Map sprites (M1–M29) | Generated; awaiting in-game visual review |
+| Lada 3D pilot | V2 GLB integrated into street parking, the polyclinic and House 5 courtyard; replaces the Lada sprites. Source, previews and workflow: `art/models/lada/README.md`. |
+| District building art batch (A1–A5, B5–B6, B19–B21) | Generated and connected; in-game review pending |
+| Checkpoint booth sprite (B8) | Generated and connected |
 | Seasonal tree variants and snow ground (S1–S4) | Generated; awaiting in-game visual review |
 | True-isometric redraw request (R1–R3) | In progress: 4 sprites pass anchor checks; rejected drafts are in `art/concepts/redraw_attempts/` |
 | Later window art (W3–W7) | After W2 |
@@ -322,3 +325,120 @@ Full generation prompts, with `art/concepts/iso_projection_reference.png` as pro
 Manual calibration scene: `init/scenes/dev/scale_reference.tscn` (F6). It places the actual game assets on a 1 m grid with a 1.8 m pole and a 2.2 m door reference. People, station, market stalls, bus shelter, bus and tram were recalibrated in this pass. The executive committee and historic centre were enlarged following the creative direction recorded in README.md; the church was enlarged by one third.
 
 Road paint follow-up: the map no longer consumes `decal_center_line.png` or `decal_crosswalk.png` as stretched image patches. Individual dashes and zebra bars use world dimensions and `init/assets/shaders/road_paint.gdshader` for sparse wear; widths and placement are owned by `city_map.gd`. Existing generated decal images are retained as prior art.
+
+## District building facade batch (2026-10-31)
+
+Generated with the built-in ImageGen tool. These are flat facade textures for the existing dimensioned building meshes, not isometric billboards. All files are 2:1 architectural elevations; facades are wired in `scripts/data/building_catalog.gd`. The nine-storey facade's top ceramic strip was edited twice to remove pseudo-writing and replace it with plain geometry. In-game seam and close-range review is still required before treating the textures as final art.
+
+| File | Size | Use |
+|---|---:|---|
+| `init/assets/textures/facade_panel_late_9storey.png` | 1774×887 | A1, 54×27 m, nine storeys |
+| `init/assets/textures/facade_panel_late_5storey.png` | 1768×889 | A2, 30×15 m, five storeys |
+| `init/assets/textures/facade_ispolkom_front.png` | 1774×887 | B19, 30×15 m principal facade |
+| `init/assets/textures/facade_ispolkom_side.png` | 1774×887 | B20, 30×15 m side/rear tile |
+| `init/assets/textures/facade_panel_entrance.png` | 1774×887 | A3, 6×3 m entrance bay overlay |
+| `init/assets/textures/facade_panel_stair.png` | 1774×887 | A3b, 6×3 m repeatable stairwell overlay |
+| `init/assets/textures/facade_police_front.png` | 1774×887 | B5, 12×6 m main police facade |
+| `init/assets/textures/facade_police_side.png` | 1774×887 | B5, 12×6 m police side tile |
+| `init/assets/textures/facade_polyclinic.png` | 1774×887 | B6, 30×15 m polyclinic wall tile |
+| `init/assets/textures/facade_polyclinic_entrance.png` | 1774×887 | B21, 30×15 m polyclinic main facade |
+| `init/assets/textures/facade_panel_groundfloor_shop.png` | 1774×887 | A4, 6×3 m shop bay overlay |
+| `init/assets/textures/roof_panel_flat.png` | 1254×1254 | A5, 12×12 m panel roof tile |
+| `init/assets/sprites/checkpoint_booth.png` | 1344×1344 | B8, 3×3 m lane-island booth sprite |
+
+### A1 — nine-storey panel facade
+
+> Create one repeatable, perfectly front-facing orthographic elevation section of a late-1980s nine-storey Soviet panel apartment block in a fictional provincial border city, August 1997. Wide 2:1 landscape. The facade fills the image edge to edge. Exactly nine equal storeys: tidy pale grey and warm cream precast concrete panels, regular slab seams, repeated modest apartment windows and narrow loggias. A few loggias have mismatched glazing or curtains added by residents. Simple ceramic tile band under roofline. Detailed hand-painted architectural texture, inhabited and maintained but lightly weathered, subtle water stains, restrained muted blue-green glazing. Flat diffuse lighting, no shadows. This is a seamless tileable surface: left and right edges must join exactly, with consistent window and seam rhythm. Intended to repeat horizontally on a 54m by 27m wall. Facade only: no sides, perspective, roof plane, ground, sky, surroundings, frame, entrance doors, stairwell window columns, signs, text, logos, watermark, lit windows, deep shadows, dramatic contrast, heavy rust, or deep balconies. Keep flat window rhythm on all floors including ground floor.
+
+Refinement 1: remove every glyph, letter-like mark and pseudo-text from the top ceramic band, replacing it with plain muted teal and cream geometric tiles; preserve the rest and edge rhythm.
+
+Refinement 2: replace plus/cross motifs in the band with abstract cream and muted teal rectangles and diamonds, with no symbol resembling a cross, emblem, letter or number; preserve the facade below and matching edge pattern.
+
+### A2 — five-storey panel facade
+
+> Create one repeatable, perfectly front-facing orthographic elevation section of a late-1980s five-storey Soviet panel apartment block in the same residential estate series as a nine-storey building: pale grey and warm cream precast concrete panels, tidy regular slab seams, repeated modest apartment windows and narrow loggias, a few resident-glazed loggias with muted blue-green glass, lightly weathered concrete, a narrow restrained teal-and-cream geometric ceramic tile band at the roofline. Exactly five equal storeys with windows on every floor, including ground floor. Detailed hand-painted architectural texture, inhabited and maintained but lightly weathered, matching the late-Soviet panel facade palette. Wide 2:1 landscape, fill image edge to edge, seamless tileable left-to-right with matching wall, window and slab rhythms at both edges. Intended repeat tile: 30m wide by 15m tall. Flat diffuse light, no cast shadows. Facade only: no sides, perspective, roof plane, ground, sky, surroundings, frame, entrance doors, stairwell window columns, signs, text, letters, numbers, logos, crosses, or watermark. Avoid dramatic contrast, excessive rust, deep balconies, and any roof or signage.
+
+### B19 — executive committee front
+
+> Create a perfectly straight-on, orthographic architectural elevation of the principal facade of a late-Soviet district executive committee (райисполком), built in a fictional provincial border city in 1987 and seen in August 1997. Wide 2:1 landscape canvas, representing a 30-metre-wide by 15-metre-high wall. A restrained four-to-five-storey modernist civic building, long horizontal bands of dark reflective windows separated by light concrete or pale limestone spandrels, evenly spaced structural piers, broad glazed ground-floor lobby centered beneath a projecting flat concrete canopy on slim columns, broad shallow entrance steps integrated at the base. Above the canopy, a small blank circular state medallion with abstract laurel relief but no writing or recognizable real-world insignia. Two simple metal flagpole brackets near the roofline, no flags. Late-1980s Soviet provincial public architecture: formal, functional, maintained, a little weathered at edges, not imperial or neoclassical. Detailed hand-painted architectural texture consistent with a muted realistic 1990s post-Soviet game world. Flat diffuse lighting with no cast shadows. Surface only fills the image: no visible side walls, perspective, roof plane, ground, sky, surroundings, frame, readable text, letters, numbers, emblems with writing, logos, watermark, people, cars, trees, or signs. Avoid columns across the upper floors, ornate classical capitals, baroque or Stalinist decoration, extreme decay, and dramatic contrast.
+
+### B20 — executive committee side/rear tile
+
+> Create a perfectly straight-on orthographic elevation of the side/rear wall of the same late-Soviet district executive committee building as its main facade: a 1987 provincial modernist civic building in a fictional border city, seen in August 1997. Wide 2:1 landscape texture, representing a 30-metre-wide by 15-metre-high repeated wall tile. Exactly five equal storeys, with long horizontal dark window bands separated by pale concrete or limestone spandrels, evenly spaced structural piers, matching the material, window frames and subdued tone of a polished but slightly weathered late-1980s municipal building. Main entrance is not visible on this side; no canopy, no steps, no medallion, no flag brackets. Flat diffuse shadowless lighting. Tileable seamlessly left-to-right with matching wall, pier, window and floor rhythm at both edges. Facade only fills canvas edge to edge: no perspective, sides, roof plane, ground, sky, surroundings, frame, text, letters, logos, emblems, watermark, people, cars, or signs. Avoid classical ornament, columns, dramatic contrast and heavy decay.
+
+### A3 — apartment entrance base
+
+> Paint a straight-on orthographic 6-metre-wide by 3-metre-high ground-floor entrance bay for a late-1980s Soviet panel apartment block, matching a worn but inhabited August 1997 provincial residential estate. Pale grey and warm cream precast concrete wall panels with slab seams. Center a modest dark metal apartment entrance door beneath a shallow concrete canopy; low concrete steps; one small side window and a simple wall-mounted entrance lamp. Ordinary and lightly weathered, muted concrete tones with a rusty handrail. Flat diffuse shadowless light. Exact 2:1 horizontal surface fills the canvas edge-to-edge, no perspective or visible sides, no people, ground, sky, other buildings, signs, readable text, numbers, logos or watermark. Entrance centered and recognizable at map scale.
+
+### A3b — stairwell storey overlay
+
+> Paint one 6-metre-wide by 3-metre-high storey of the stairwell column of the same late-1980s Soviet panel apartment block: pale grey and warm cream precast concrete wall panels, subtle seams matching the facade, one narrow stairwell landing window set slightly above the centre line, muted dark blue-grey glass with a faint interior landing silhouette, no glowing light. Worn but inhabited August 1997 provincial estate, restrained weathering and muted colors. Straight-on orthographic surface, flat even shadowless light, no perspective. This exact texture will be stacked vertically, so top and bottom edges continue seamlessly in panel color, seams and wall detail. Wide 2:1 horizontal canvas, fills image edge to edge. No door, canopy, steps, signs, text, logos, watermark, people, ground, sky or surrounding building. Keep the window readable at small map scale.
+
+### B5 — district police department front
+
+> Create a straight-on orthographic 2:1 architectural elevation texture for a small two-storey district police department in a fictional provincial town in August 1997. Exact nominal surface 12m wide by 6m tall. Late-Soviet utilitarian building, maintained but worn: reddish-brown brick or faded beige render, regular dark-framed windows, barred ground-floor windows, a heavy centered entrance door reached by a few concrete steps, small lamp over the door, a blank round state medallion without writing or recognizable insignia. Restrained, believable, slightly stern civic architecture; hand-painted detailed surface, muted realistic 1990s palette. Flat diffuse light, no shadows, no perspective. Facade fills the entire image. No visible side, roof, ground, sky, surroundings, people, vehicles, flags, readable text, letters, numbers, logos or watermark. Avoid grand columns, palace-like ornament, modern glass architecture and dramatic decay.
+
+### B5 — district police department side tile
+
+> Straight-on orthographic 2:1 surface, one 12m by 6m two-storey module of the same late-Soviet district police department. Restrained red-brown brick and faded beige render wall, matching dark metal window frames and concrete trim; two floors of ordinary rectangular windows, with bars on the ground-floor windows. No entrance, steps, medallion or lamp. Maintained but worn provincial municipal building in August 1997, hand-painted realistic texture. Left/right edges repeat seamlessly with matching brick courses and window spacing. Flat diffuse shadowless lighting. Surface fills edge-to-edge, no perspective, roof, ground, sky, surroundings, people, cars, text, logos or watermark.
+
+### B6 — polyclinic wall tile
+
+> Create a straight-on orthographic 30-metre-wide by 15-metre-high elevation of one repeatable section of a five-storey district polyclinic in a fictional provincial town in August 1997. Late-Soviet white and pale sage-grey panel construction, five regular storeys with evenly spaced rectangular windows, visible slab seams, a modest red medical cross on a small blank panel near one edge (symbol only, no text), clean and maintained but slightly weathered. Muted believable 1990s public healthcare building, not a modern glass hospital. Detailed hand-painted architectural surface, flat diffuse shadowless lighting. Wide 2:1 image fills canvas edge-to-edge and tiles left-to-right with matching panel and floor rhythm. No visible sides, roof, ground, sky, surroundings, entrance door, canopy, people, vehicles, readable text, letters, numbers, logos or watermark. Avoid modern glass curtain walls, bright colors, grand columns or excessive decay.
+
+### B21 — polyclinic principal facade
+
+> Create a straight-on orthographic 2:1 facade texture for the front of a five-storey late-Soviet district polyclinic, 30 metres wide by 15 metres high, in a fictional provincial town in August 1997. Same pale grey and light sage-grey panel system, regular window grid, visible slab seams, and muted frames as a practical 1980s public clinic. At the ground-floor center, a wide modest glazed entrance hall with double doors beneath a flat concrete canopy, a few low steps, and one small red medical cross symbol above the entrance (symbol only). Windows and materials continue in the same rhythm above. Maintained and clean but not pristine, hand-painted architectural surface, flat diffuse shadowless lighting. Image fills edge-to-edge, no perspective, visible side, roof plane, ground, sky, surroundings, people, cars, readable text, letters, numbers, logo or watermark. Avoid modern hospital glass curtain walls, bright colors, grand columns or excessive dirt.
+
+### A4 — panel-building ground-floor shop overlay
+
+> Create a straight-on orthographic 2:1 surface for one 6m-wide by 3m-high ground-floor bay of an occupied late-1980s Soviet panel apartment block, August 1997. Match pale grey and cream precast panels and worn seams of its residential facade. A small ordinary neighborhood shop or service office: modest metal door, two broad barred display windows, shallow faded muted teal awning, a couple of empty window shelves, no readable goods labels. Practical, slightly improvised and lived-in. Flat diffuse shadowless light. Image fills edge-to-edge, no perspective, visible side, full building, ground, sky, surroundings, people, cars, text, letters, numbers, logos or watermark. Keep useful at 6m by 3m scale and avoid vivid modern retail styling.
+
+### A5 — panel-building flat roof
+
+> Create a square top-down orthographic texture of a flat tarred roof on a late-Soviet apartment block, August 1997. Dark charcoal bitumen, roofing seams, a few small rectangular ventilation caps and a simple antenna base spread naturally, patches of lighter repair tar, subtle grit and faded water stains. Muted realistic hand-painted texture matching a 1990s provincial Soviet city. Entire image is just the roof surface, flat even lighting, no shadows, sky, horizon, surrounding buildings, large rooftop machinery, people, text, numbers, labels, logos or watermark. Tileable seamlessly in both horizontal and vertical directions, with no conspicuous object cut off at an edge. Intended repeat size 12 by 12 metres.
+
+### B8 — checkpoint control booth
+
+> One small 1990s Soviet border checkpoint control booth, exactly 3m by 3m footprint and 3m high. Compact square booth with cream-gray prefab walls, large dark wraparound inspection windows on all visible sides, faded green lower paneling, a flat shallow metal roof, one small red-and-white striped corner post. It stands between truck lanes in a fictional provincial border post in August 1997. Detailed hand-painted muted realistic provincial post-Soviet style, flat even light. Strict orthographic true isometric parallel projection: ground axes at exactly 30 degrees to horizontal, no perspective; vertical edges stay vertical. Show the booth's broad front side facing the lower right and its short side facing the lower left. Square rhombus footprint, nearest ground corner at the bottom center with minimal transparent margin. One object only, completely visible, centered. Transparent background, no ground plane, cast shadow, other objects, people, text, logos or watermark. Avoid skewed shallow angles, vanishing points, cropped roof, exaggerated tallness, or a base pedestal.
+
+## Transport, port and village pass (2026-10-31)
+
+Built-in ImageGen produced `facade_bus_garage.png`, `facade_roadside_cafe.png`, `facade_customs_office.png`, `facade_inspection_hangar.png`, `portal_crane.png`, `shipping_containers.png`, and `village_house_kept.png`, `village_house_poor.png`, `village_house_abandoned.png`. These are connected through `building_catalog.gd`. The station draft is retained as `art/concepts/station_candidate.png`: it has a background and is not game-ready.
+
+Facade prompts: straight-on orthographic seamless horizontal facades in a detailed hand-painted, muted post-Soviet provincial style, August 1997, flat diffuse light, no perspective, sky, ground, people, signs, text or logos. Subjects: 16×8 m brick and corrugated-metal bus depot repair hangar with bus gates; 8×4 m faded rendered roadside cafe with curtained windows and metal canopy; 12×6 m two-storey pale rendered customs office with window blinds; 14×7 m grey corrugated-metal customs inspection hangar with truck gates.
+
+Sprite prompts: single isolated sprite, transparent background, no ground, shadow, text or people; detailed hand-painted muted 1997 post-Soviet provincial style; strict orthographic isometric with ground axes at 30 degrees and vertical edges vertical. Subjects: steel portal crane with raised lattice boom; three stacked faded 6 m shipping containers; kept painted wooden village house with carved window frames and slate roof; poor brick-and-wood house with patched roof and lean-to; abandoned boarded house with collapsing roof; pale-yellow provincial station with green roof and central portico (concept only).
+
+## Residential courtyard concept — October 31, 2026
+
+- `art/concepts/residential-courtyard-direction-v1.png`: built-in image_gen paintover of the compacted House 5 courtyard. The old city reference is used for mood only; current district geometry and late-Soviet housing are the subject.
+- Full prompt: `art/concepts/residential-courtyard-direction-v1.prompt.md`.
+- Status: proposed visual direction, awaiting user feedback. This is concept art, not achieved engine quality; generated details and floor counts need checking during implementation.
+
+Village details: built-in ImageGen produced `village_shed.png` and `village_well.png`, connected to house lots. Prompts requested isolated transparent sprites in muted hand-painted 1997 provincial style, strict orthographic isometric, no ground, shadow or text: a small wooden shed and outhouse with slate roofs; and an old wooden well with a pitched roof, bucket and crank. A 10 m worn picket fence draft and an edited station draft retained backgrounds and remain concepts rather than game assets.
+
+## District concept series — October 31, 2026
+
+The user strongly liked the residential courtyard concept and requested the same direction for other places. Five built-in image_gen concepts use current game screenshots for layout and `residential-courtyard-direction-v1.png` for style:
+
+- `art/concepts/forest-direction-v1.png`
+- `art/concepts/village-direction-v1.png`
+- `art/concepts/boiler-direction-v1.png`
+- `art/concepts/administration-direction-v1.png`
+- `art/concepts/border-direction-v1.png`
+
+Full prompts: `art/concepts/district-concept-series-v1.prompts.md`. Status: awaiting user feedback; not in-engine screenshots. Architectural details, floor counts, entrance orientation and traffic routes must be checked against the current layout during implementation.
+
+Transport follow-up: built-in ImageGen produced `art/concepts/bus_paz_candidate_2.png` and `art/concepts/truck_kamaz_candidate_2.png`; both retained an opaque background and remain concepts. Prompts asked for isolated transparent sprites in muted hand-painted 1997 post-Soviet style, orthographic isometric with long axis rising right 30 degrees: a cream-and-red PAZ bus and an olive KamAZ tractor with covered semi-trailer. A subsequent background-removal attempt also retained the backgrounds. The station platform canopy is instead assembled as dimensioned 3D concrete geometry in `district_builder.gd`.
+
+### Transport integration and alpha correction (2026-10-31)
+
+The previous claims that the transport/station drafts had an opaque background were incorrect: they were judged from the preview without reading the alpha channel. The selected bus, truck and station PNGs contain real transparent pixels (sampled transparent fractions 0.429, 0.588 and 0.604). Their painted RGB preview background is not evidence that those pixels are opaque.
+
+Selected built-in ImageGen outputs are now saved and connected:
+- `init/assets/sprites/bus_local_1997.png` (from `bus_paz_candidate_2.png`): two ATP buses and the bus-terminal bus. The generated appearance is a generic local bus, not a certified PAZ model.
+- `init/assets/sprites/truck_kamaz_semi.png` (from `truck_kamaz_candidate_2.png`): two truck-stop and two checkpoint semis.
+- `init/assets/sprites/station_v3.png` (from `station_candidate.png`): station building, with its own source-axis calibration.
+
+Vehicle dimensions and source-axis correction are in `prop_dimensions.gd`; the bus's positive source long-axis direction is handled explicitly by the existing sprite renderer. Original and concept files are preserved. The dimensioned 3D platform canopy remains in use. Anchor metadata was regenerated and a graphical scene inspection was performed.

@@ -1,0 +1,18 @@
+{
+  "model": "Lada Sedan V2",
+  "triangles": 21261,
+  "triangles_by_mesh": {
+    "Body": 8861,
+    "Wheel_L_F": 3100,
+    "Wheel_L_R": 3100,
+    "Wheel_R_F": 3100,
+    "Wheel_R_R": 3100
+  },
+  "meshes": 5,
+  "paint_atlas": "2048 x 2048",
+  "source": "lada_sedan_v2.blend",
+  "export": "init/assets/models/vehicles/lada_sedan_v2.glb",
+  "front_axis_blender": "-Y",
+  "front_axis_godot": "+Z",
+  "notes": "Procedural geometry and baked paint based on car_lada_v3.png. No external model assets. Original detail retained in Blender."
+}

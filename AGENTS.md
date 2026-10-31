@@ -38,3 +38,11 @@
 - After sprites are added or redrawn, run `Godot --headless --path init --script res://scripts/dev/measure_sprite_anchors.gd` to refresh `scripts/data/sprite_anchors.gd` (where each sprite touches the ground and which map axis it is drawn along).
 - Generated art is described in `art/PROMPTS.md`; game-ready images live under `init/assets/`, concepts under `art/concepts/`.
 - Do not commit or push unless explicitly asked.
+
+## Blender and 3D Assets
+
+- Use the project skill at `.agents/skills/blender-godot-assets/SKILL.md` for Blender modeling, export and Godot integration. The reusable MCP client is `tools/blender_mcp.py`; prefer the working API over repeated UI attempts.
+- Match the reference and intended map camera. Inspect the silhouette from several angles before expensive detailing, baking or rendering; show an actual Godot frame when reporting in-game results.
+- Choose geometry, material and texture budgets for the intended viewing distance before detailing. Keep the editable Blender source separate from its game export.
+- Keep build, material bake, export and preview as resumable stages. Record progress for long operations; an MCP timeout does not cancel Blender work, so check status and outputs before retrying.
+- Verify uncertain API names against the installed application. Scope glTF exports explicitly to the asset scene or collection and inspect the exported contents.

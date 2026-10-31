@@ -42,13 +42,48 @@ Each entry below names its condition. The same four words are the `condition` fi
 - After every batch, run the anchor script (`AGENTS.md` has the command) and report each sprite's printed slope.
 - For tileable textures, compare the left and right edges before reporting. The facade drafts in `REDRAW_REQUEST.md` failed exactly there.
 
+## Facade assembly (read before Batch A)
+
+Godot builds walls from pieces. Every facade image is one piece with a fixed real size, and pieces are never stretched. These rules settle how the pieces fit together.
+
+### Storey module
+
+- One storey is 3 m high. Every piece of a building with storeys is a whole number of storeys high, and its floor lines sit at exact multiples of 3 m from its bottom edge.
+- Single-volume halls are exempt from the storey grid but still 2:1: hangars, the gym, the bus garage, the inspection hangar, and the cafe.
+- Plain wall tiles (A1, A2) contain **no** entrance doors and **no** stairwell windows: only flat windows and loggias at regular spacing, the same on every storey. Entrances and stairwells are added as separate overlays at the positions Godot chooses.
+
+### Panel block entrances
+
+An entrance is two kinds of pieces, stacked vertically in one 6 m wide column, so the same set works for five and nine storeys:
+
+| Piece | File | Size | Use |
+|---|---|---|---|
+| Entrance base | `facade_panel_entrance.png` | 6 × 3 m (2:1) | Ground storey only: metal entrance door under a concrete canopy, steps, a bench at the side. Exactly one per entrance. |
+| Stairwell storey | `facade_panel_stair.png` | 6 × 3 m (2:1) | One storey of the stairwell above: the landing window, offset half a storey as in real stairwells, no door, no canopy. **Tileable vertically**: its top edge continues into its bottom edge. Godot stacks it 4× on a five-storey block and 8× on a nine-storey block. |
+
+The stairwell column ends at the roof line with no special top piece. Both pieces use exactly the panel colours and seam rhythm of A1 and A2, because they sit inside those walls.
+
+### Unique buildings: one center, repeating wings
+
+Every building with a single main entrance (school, police, polyclinic, executive committee) is assembled as:
+
+`[wing tile × k] [center] [wing tile × k]`
+
+- **Center:** the only piece with the main entrance, canopy, emblem, or mosaic. It appears exactly once per building.
+- **Wing tile:** has the same height, floor lines, window size, materials, and cornice as the center, and contains no entrance. It is tileable horizontally. Its left edge must also continue seamlessly into the center's right edge, and its right edge into the center's left edge.
+- Side and rear walls use the wing tile only.
+- Godot picks `k`, and the footprint length is always exactly `center + 2·k·wing` (see `docs/MAP_LAYOUT_REQUEST.md`). Nothing is scaled to fit.
+- Buildings whose openings legitimately repeat (hangars, garages, the bus garage, the inspection hangar) have no center: each tile has its own gate.
+- Buildings with no drawn main door (customs office, roadside cafe) also have no center. Godot adds the door as geometry.
+
 ## Batch A: blocks the new layout cannot do without (do first)
 
 | Id | File | Kind | Cond. | Real size | Content |
 |---|---|---|---|---|---|
-| A1 | `textures/facade_panel_late_9storey.png` | facade, tileable | kept | tile = 54 m wide, 27 m high (two entrances, nine floors) | Late-1980s nine-storey panel block: light grey and cream panels with tidy seams, regular windows, uniform loggias with a few glazed in by residents, a simple ceramic tile band under the roof. Ground floor plain. |
-| A2 | `textures/facade_panel_late_5storey.png` | facade, tileable | kept | tile = 30 m wide, 15 m high | Late-1980s five-storey panel block of the same series as A1: same panels and colours, five floors, loggias. Visibly the same estate as A1. |
-| A3 | `textures/facade_panel_entrance.png` | overlay, canvas 887×1774 (1:2 portrait) | kept | 7.5 m wide, 15 m high | The entrance bay of the A2 block: concrete canopy over a metal entrance door, a bench, the stairwell's vertical window strip. Placed by Godot over A1/A2 at each entrance. |
+| A1 | `textures/facade_panel_late_9storey.png` | facade, tileable | kept | tile = 54 m wide, 27 m high (nine storeys of 3 m) | Late-1980s nine-storey panel block: light grey and cream panels with tidy seams, regular windows, uniform loggias with a few glazed in by residents, a simple ceramic tile band under the roof. No entrances and no stairwell windows (see Facade assembly); the ground storey has the same plain windows as the others. |
+| A2 | `textures/facade_panel_late_5storey.png` | facade, tileable | kept | tile = 30 m wide, 15 m high (five storeys) | Late-1980s five-storey panel block of the same series as A1: same panels and colours, five storeys, loggias. Visibly the same estate as A1. No entrances and no stairwell windows. Used only for five-storey blocks; nine-storey blocks use A1, never a stacked A2. |
+| A3 | `textures/facade_panel_entrance.png` | overlay | kept | 6 × 3 m (2:1) | Entrance base, see Facade assembly: metal entrance door under a concrete canopy, steps, a bench at the side. Ground storey only. |
+| A3b | `textures/facade_panel_stair.png` | overlay, tileable vertically | kept | 6 × 3 m (2:1) | Stairwell storey, see Facade assembly: one landing window offset half a storey, panel wall around it. Top edge continues into bottom edge. |
 | A4 | `textures/facade_panel_groundfloor_shop.png` | overlay, not tileable | kept | 6 m wide, 3 m high (one bay) | Ground floor of the A1/A2 block converted to a small shop or office: a separate entrance with steps, a metal door, barred windows, an awning. No signs. Laid over the bottom floor of one section. Reused for pharmacy, police point, savings bank; Godot adds the label. |
 | A5 | `textures/roof_panel_flat.png` | roof, tileable both ways | kept | 12×12 m | Flat bitumen roof of a recent panel block: even dark surface, neat seams, vents, a few TV aerials, no puddles or patches. |
 | A6 | `textures/ground_dirt_road.png` | ground, tileable along one axis | fading | 6 m wide strip | Village dirt road from above: two packed wheel ruts, grass in the middle, puddle edges, gravel at the margins. Tileable lengthwise only, like `ground_rail.png`. |
@@ -63,13 +98,13 @@ Each entry below names its condition. The same four words are the `condition` fi
 
 | Id | File | Kind | Cond. | Real size | Content |
 |---|---|---|---|---|---|
-| B1 | `textures/facade_school_front.png` | facade, not tileable | kept | 26 m wide, 13 m high (the central entrance part; the rest of the front uses B2) | A typical late Soviet three-storey school: white sand-lime brick or light panels, long ribbon windows, a central entrance with a canopy, a mosaic panel with children and a sun (no text) on the stair tower. |
-| B2 | `textures/facade_school_side.png` | facade, tileable | kept | tile = 26 m wide, 13 m high | Side wall of B1, same materials, ribbon windows. |
+| B1 | `textures/facade_school_front.png` | center | kept | 24 m wide, 12 m high (four storeys of 3 m) | A typical late Soviet four-storey school: white sand-lime brick or light panels, long ribbon windows, a central entrance with a canopy, a mosaic panel with children and a sun (no text) on the stair tower. |
+| B2 | `textures/facade_school_side.png` | wing tile | kept | tile = 24 m wide, 12 m high | Side wall of B1, same materials, ribbon windows. |
 | B3 | `textures/facade_school_gym.png` | facade, tileable | kept | tile = 16 m wide, 8 m high | The gym wing: tall wall with high strip windows. |
 | B4 | `textures/ground_sports.png` | ground, tileable both ways | kept | 12×12 m | School yard and sports ground from above: asphalt with faded painted court lines, a strip of running track. |
-| B5 | `textures/facade_police_front.png` | facade, not tileable | kept | 14 m wide, 7 m high (entrance part; the rest uses the same walls without the door, save as `facade_police_side.png`, tileable) | A two-storey district police department: brick or rendered walls, barred ground-floor windows, a heavy door with steps, a lamp over the entrance, a state emblem without text. |
-| B6 | `textures/facade_polyclinic.png` | facade, tileable | kept | tile = 30 m wide, 15 m high | A mid-size district polyclinic, not a hospital complex: a five-storey white panel polyclinic: large regular windows, a red cross symbol on one section, clean. |
-| B7 | `textures/facade_customs_office.png` | facade, tileable | kept | tile = 14 m wide, 7 m high | Two-storey customs office building at the checkpoint: new-ish late Soviet build, light render, blinds in windows, a flagpole bracket. Serious, kept. |
+| B5 | `textures/facade_police_front.png` | center | kept | center 12 × 6 m (two storeys); wing tile `facade_police_side.png` 12 × 6 m | A two-storey district police department: brick or rendered walls, barred ground-floor windows, a heavy door with steps, a lamp over the entrance, a state emblem without text. |
+| B6 | `textures/facade_polyclinic.png` | wing tile | kept | tile = 30 m wide, 15 m high | A mid-size district polyclinic, not a hospital complex: a five-storey white panel polyclinic: large regular windows, a red cross symbol on one section, clean. |
+| B7 | `textures/facade_customs_office.png` | facade, tileable | kept | tile = 12 m wide, 6 m high | Two-storey customs office building at the checkpoint: new-ish late Soviet build, light render, blinds in windows, a flagpole bracket. Serious, kept. |
 | B8 | `sprites/checkpoint_booth.png` | sprite | kept | 3×3 m, 3 m high | A checkpoint control booth with windows on all sides, between traffic lanes. |
 | B9 | `sprites/checkpoint_barrier.png` | sprite | kept | 8 m long | A red and white lifting barrier with its post, long axis rising to the right. |
 | B10 | `sprites/border_watchtower.png` | sprite | worked | 3×3 m, 10 m high | A border guard watchtower of steel with a cabin on top. |
@@ -82,8 +117,9 @@ Each entry below names its condition. The same four words are the `condition` fi
 | B17 | `sprites/station_v3.png` | sprite | worked | 40 m long, 12 m deep | Replaces `station.png`. A small provincial station: pale yellow render on a brick plinth, green metal roof, central portico with a clock. Must pass the slope check (previous attempts failed). |
 | B18 | `sprites/platform_canopy.png` | sprite | worked | 30 m long | A concrete platform canopy on columns for the bus station. |
 
-| B19 | `textures/facade_ispolkom_front.png` | facade, not tileable | kept | 30 m wide, 15 m high (central entrance part) | A late-Soviet modernist district executive committee built in the 1980s: four to five storeys, long horizontal bands of windows between light concrete or white stone spandrels, a wide glazed ground-floor lobby under a projecting concrete canopy on slim pillars, broad steps, a state emblem without text above the canopy, flagpole brackets. Formal and kept. |
-| B20 | `textures/facade_ispolkom_side.png` | facade, tileable | kept | tile = 30 m wide, 15 m high | The same building's side and rear walls: the same window bands and spandrels, no entrance. |
+| B19 | `textures/facade_ispolkom_front.png` | center | kept | 30 m wide, 15 m high | A late-Soviet modernist district executive committee built in the 1980s: four to five storeys, long horizontal bands of windows between light concrete or white stone spandrels, a wide glazed ground-floor lobby under a projecting concrete canopy on slim pillars, broad steps, a state emblem without text above the canopy, flagpole brackets. Formal and kept. |
+| B20 | `textures/facade_ispolkom_side.png` | wing tile | kept | tile = 30 m wide, 15 m high | The same building's side and rear walls: the same window bands and spandrels, no entrance. |
+| B21 | `textures/facade_polyclinic_entrance.png` | center | kept | 30 m wide, 15 m high | The polyclinic's main entrance part: a glazed entrance hall on the ground storey under a canopy, the red cross symbol above it, the same window grid as B6 above. |
 
 The executive committee is late-Soviet modernist (decided, see README). `facade_admin_stalinist.png` is no longer its target look; the map keeps it only as a placeholder until B19 and B20 exist.
 

@@ -9,3 +9,8 @@
 # Editor and OS files
 .DS_Store
 Thumbs.db
+
+# Blender recovery copies and transient queued-job state
+*.blend[1-9]
+*.job.json
+*.job.json.tmp

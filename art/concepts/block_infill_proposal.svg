@@ -1,0 +1,307 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1120" viewBox="0 0 1600 1120"><rect width="1600" height="1120" fill="#f5f1e7"/><style>text{font-family:Arial,sans-serif;fill:#293735}.small{font-size:14px}.body{font-size:18px}.title{font-size:34px;font-weight:bold}</style>
+<text x="45" y="55" font-size="34" fill="#293735">Inside the existing blocks</text>
+<text x="45" y="88" font-size="17" fill="#293735">INFILL STUDY  /  Existing district geometry · proposed courtyard uses · top-down view</text>
+<g transform="translate(735 305) scale(1.48)">
+<rect x="-452" y="-125" width="610" height="445" fill="#d4dcc2" stroke="none" />
+<rect x="-450" y="-90" width="610" height="10" fill="#858d8a" stroke="none" />
+<rect x="-450" y="300" width="610" height="10" fill="#858d8a" stroke="none" />
+<rect x="-20" y="-125" width="30" height="437" fill="#858d8a" stroke="none" />
+<rect x="140" y="-80" width="10" height="380" fill="#858d8a" stroke="none" />
+<rect x="-450" y="105" width="430" height="10" fill="#bab9ac" stroke="none" />
+<rect x="-230" y="-80" width="10" height="380" fill="#bab9ac" stroke="none" />
+<rect x="-375.0" y="-73.0" width="90.0" height="24.0" fill="none" stroke="#a4ae97" stroke-dasharray="2 3" stroke-width="0.5"/>
+<rect x="-372.0" y="-66.5" width="84" height="11" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<rect x="-375.0" y="79.0" width="90.0" height="24.0" fill="none" stroke="#a4ae97" stroke-dasharray="2 3" stroke-width="0.5"/>
+<rect x="-372.0" y="85.5" width="84" height="11" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<rect x="-428.0" y="-30.0" width="24.0" height="90.0" fill="none" stroke="#a4ae97" stroke-dasharray="2 3" stroke-width="0.5"/>
+<rect x="-422.0" y="-24.0" width="12" height="78" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<rect x="-256.0" y="-30.0" width="24.0" height="90.0" fill="none" stroke="#a4ae97" stroke-dasharray="2 3" stroke-width="0.5"/>
+<rect x="-249.5" y="-27.0" width="11" height="84" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<rect x="-165.0" y="-73.0" width="90.0" height="24.0" fill="none" stroke="#a4ae97" stroke-dasharray="2 3" stroke-width="0.5"/>
+<rect x="-162.0" y="-66.5" width="84" height="11" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<rect x="-165.0" y="79.0" width="90.0" height="24.0" fill="none" stroke="#a4ae97" stroke-dasharray="2 3" stroke-width="0.5"/>
+<rect x="-159.0" y="85.0" width="78" height="12" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<rect x="-218.0" y="-30.0" width="24.0" height="90.0" fill="none" stroke="#a4ae97" stroke-dasharray="2 3" stroke-width="0.5"/>
+<rect x="-211.5" y="-27.0" width="11" height="84" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<rect x="-46.0" y="-30.0" width="24.0" height="90.0" fill="none" stroke="#a4ae97" stroke-dasharray="2 3" stroke-width="0.5"/>
+<rect x="-39.5" y="-27.0" width="11" height="84" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<rect x="-375.0" y="117.0" width="90.0" height="24.0" fill="none" stroke="#a4ae97" stroke-dasharray="2 3" stroke-width="0.5"/>
+<rect x="-369.0" y="123.0" width="78" height="12" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<rect x="-375.0" y="269.0" width="90.0" height="24.0" fill="none" stroke="#a4ae97" stroke-dasharray="2 3" stroke-width="0.5"/>
+<rect x="-372.0" y="275.5" width="84" height="11" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<rect x="-428.0" y="160.0" width="24.0" height="90.0" fill="none" stroke="#a4ae97" stroke-dasharray="2 3" stroke-width="0.5"/>
+<rect x="-421.5" y="163.0" width="11" height="84" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<rect x="-256.0" y="160.0" width="24.0" height="90.0" fill="none" stroke="#a4ae97" stroke-dasharray="2 3" stroke-width="0.5"/>
+<rect x="-250.0" y="166.0" width="12" height="78" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<rect x="-165.0" y="117.0" width="90.0" height="24.0" fill="none" stroke="#a4ae97" stroke-dasharray="2 3" stroke-width="0.5"/>
+<rect x="-162.0" y="123.5" width="84" height="11" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<rect x="-165.0" y="269.0" width="90.0" height="24.0" fill="none" stroke="#a4ae97" stroke-dasharray="2 3" stroke-width="0.5"/>
+<rect x="-162.0" y="275.5" width="84" height="11" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<rect x="-218.0" y="160.0" width="24.0" height="90.0" fill="none" stroke="#a4ae97" stroke-dasharray="2 3" stroke-width="0.5"/>
+<rect x="-212.0" y="166.0" width="12" height="78" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<rect x="-46.0" y="160.0" width="24.0" height="90.0" fill="none" stroke="#a4ae97" stroke-dasharray="2 3" stroke-width="0.5"/>
+<rect x="-39.5" y="163.0" width="11" height="84" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<polyline points="-393,-79 -393,-39 -265,-39 -265,65" fill="none" stroke="#b4b2a3" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-423,33 -382,33 -352,19 -285,19 -239,33" fill="none" stroke="#e9dfc4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-330,-47 -330,83" fill="none" stroke="#e9dfc4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<rect x="-380" y="-25" width="100" height="80" fill="none" stroke="#8f946f" stroke-dasharray="4 3" stroke-width="1"/>
+<polyline points="-357,-55 -357,-39" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-357,83 -357,95" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-330,-55 -330,-39" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-330,83 -330,95" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-303,-55 -303,-39" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-303,83 -303,95" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<rect x="-377" y="-34" width="8" height="4" fill="#718a91" stroke="#f5f1e7" stroke-width="0.6"/>
+<rect x="-366" y="-34" width="8" height="4" fill="#718a91" stroke="#f5f1e7" stroke-width="0.6"/>
+<rect x="-355" y="-34" width="8" height="4" fill="#718a91" stroke="#f5f1e7" stroke-width="0.6"/>
+<rect x="-275" y="-29" width="7" height="5" fill="#796f5b" stroke="none" />
+<circle cx="-410" cy="-25" r="6" fill="#82976a"/>
+<circle cx="-412" cy="-27" r="3.8" fill="#a5b887"/>
+<circle cx="-407" cy="58" r="6" fill="#82976a"/>
+<circle cx="-409" cy="56" r="3.8" fill="#a5b887"/>
+<circle cx="-382" cy="75" r="6" fill="#82976a"/>
+<circle cx="-384" cy="73" r="3.8" fill="#a5b887"/>
+<circle cx="-279" cy="77" r="6" fill="#82976a"/>
+<circle cx="-281" cy="75" r="3.8" fill="#a5b887"/>
+<circle cx="-252" cy="-19" r="6" fill="#82976a"/>
+<circle cx="-254" cy="-21" r="3.8" fill="#a5b887"/>
+<circle cx="-367" cy="-43" r="6" fill="#82976a"/>
+<circle cx="-369" cy="-45" r="3.8" fill="#a5b887"/>
+<circle cx="-300" cy="73" r="6" fill="#82976a"/>
+<circle cx="-302" cy="71" r="3.8" fill="#a5b887"/>
+<circle cx="-288" cy="-46" r="6" fill="#82976a"/>
+<circle cx="-290" cy="-48" r="3.8" fill="#a5b887"/>
+<rect x="-364" y="28" width="8" height="2" fill="#886442" stroke="none" />
+<rect x="-304" y="29" width="8" height="2" fill="#886442" stroke="none" />
+<rect x="-354" y="70" width="8" height="2" fill="#886442" stroke="none" />
+<text x="-377" y="-13" font-size="6.6" fill="#293735">A1 · PLAY COURT</text>
+<rect x="-368" y="-5" width="31" height="25" fill="#d8b77d" stroke="none" rx="5"/>
+<circle cx="-353" cy="7" r="6" fill="#ead7a9"/>
+<polyline points="-364,0 -343,0" fill="none" stroke="#a06c4b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<rect x="-320" y="-3" width="27" height="15" fill="#b0bd8d" stroke="none" />
+<text x="-319" y="7" font-size="5" fill="#293735">LAWN</text>
+<circle cx="-303" cy="42" r="9" fill="#f5f1e7"/>
+<text x="-306" y="45" font-size="8" fill="#293735">1</text>
+<polyline points="-183,-79 -183,-39 -55,-39 -55,65" fill="none" stroke="#b4b2a3" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-213,33 -172,33 -142,19 -75,19 -29,33" fill="none" stroke="#e9dfc4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-120,-47 -120,83" fill="none" stroke="#e9dfc4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<rect x="-170" y="-25" width="100" height="80" fill="none" stroke="#8f946f" stroke-dasharray="4 3" stroke-width="1"/>
+<polyline points="-147,-55 -147,-39" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-147,83 -147,95" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-120,-55 -120,-39" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-120,83 -120,95" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-93,-55 -93,-39" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-93,83 -93,95" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<rect x="-167" y="-34" width="8" height="4" fill="#718a91" stroke="#f5f1e7" stroke-width="0.6"/>
+<rect x="-156" y="-34" width="8" height="4" fill="#718a91" stroke="#f5f1e7" stroke-width="0.6"/>
+<rect x="-145" y="-34" width="8" height="4" fill="#718a91" stroke="#f5f1e7" stroke-width="0.6"/>
+<rect x="-65" y="-29" width="7" height="5" fill="#796f5b" stroke="none" />
+<circle cx="-200" cy="-25" r="6" fill="#82976a"/>
+<circle cx="-202" cy="-27" r="3.8" fill="#a5b887"/>
+<circle cx="-197" cy="58" r="6" fill="#82976a"/>
+<circle cx="-199" cy="56" r="3.8" fill="#a5b887"/>
+<circle cx="-172" cy="75" r="6" fill="#82976a"/>
+<circle cx="-174" cy="73" r="3.8" fill="#a5b887"/>
+<circle cx="-69" cy="77" r="6" fill="#82976a"/>
+<circle cx="-71" cy="75" r="3.8" fill="#a5b887"/>
+<circle cx="-42" cy="-19" r="6" fill="#82976a"/>
+<circle cx="-44" cy="-21" r="3.8" fill="#a5b887"/>
+<circle cx="-157" cy="-43" r="6" fill="#82976a"/>
+<circle cx="-159" cy="-45" r="3.8" fill="#a5b887"/>
+<circle cx="-90" cy="73" r="6" fill="#82976a"/>
+<circle cx="-92" cy="71" r="3.8" fill="#a5b887"/>
+<circle cx="-78" cy="-46" r="6" fill="#82976a"/>
+<circle cx="-80" cy="-48" r="3.8" fill="#a5b887"/>
+<rect x="-154" y="28" width="8" height="2" fill="#886442" stroke="none" />
+<rect x="-94" y="29" width="8" height="2" fill="#886442" stroke="none" />
+<rect x="-144" y="70" width="8" height="2" fill="#886442" stroke="none" />
+<text x="-167" y="-13" font-size="6.6" fill="#293735">B1 · SPORT COURT</text>
+<rect x="-158" y="-4" width="39" height="28" fill="#9da78c" stroke="#eee9d6" stroke-width="1"/>
+<polyline points="-138,-4 -138,24" fill="none" stroke="#eee9d6" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<circle cx="-138" cy="10" r="5" fill="none"/>
+<polyline points="-107,3 -83,3" fill="none" stroke="#886442" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-107,10 -83,10" fill="none" stroke="#886442" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<circle cx="-93" cy="42" r="9" fill="#f5f1e7"/>
+<text x="-96" y="45" font-size="8" fill="#293735">2</text>
+<polyline points="-393,111 -393,151 -265,151 -265,255" fill="none" stroke="#b4b2a3" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-423,223 -382,223 -352,209 -285,209 -239,223" fill="none" stroke="#e9dfc4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-330,143 -330,273" fill="none" stroke="#e9dfc4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<rect x="-380" y="165" width="100" height="80" fill="none" stroke="#8f946f" stroke-dasharray="4 3" stroke-width="1"/>
+<polyline points="-357,135 -357,151" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-357,273 -357,285" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-330,135 -330,151" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-330,273 -330,285" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-303,135 -303,151" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-303,273 -303,285" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<rect x="-377" y="156" width="8" height="4" fill="#718a91" stroke="#f5f1e7" stroke-width="0.6"/>
+<rect x="-366" y="156" width="8" height="4" fill="#718a91" stroke="#f5f1e7" stroke-width="0.6"/>
+<rect x="-355" y="156" width="8" height="4" fill="#718a91" stroke="#f5f1e7" stroke-width="0.6"/>
+<rect x="-275" y="161" width="7" height="5" fill="#796f5b" stroke="none" />
+<circle cx="-410" cy="165" r="6" fill="#82976a"/>
+<circle cx="-412" cy="163" r="3.8" fill="#a5b887"/>
+<circle cx="-407" cy="248" r="6" fill="#82976a"/>
+<circle cx="-409" cy="246" r="3.8" fill="#a5b887"/>
+<circle cx="-382" cy="265" r="6" fill="#82976a"/>
+<circle cx="-384" cy="263" r="3.8" fill="#a5b887"/>
+<circle cx="-279" cy="267" r="6" fill="#82976a"/>
+<circle cx="-281" cy="265" r="3.8" fill="#a5b887"/>
+<circle cx="-252" cy="171" r="6" fill="#82976a"/>
+<circle cx="-254" cy="169" r="3.8" fill="#a5b887"/>
+<circle cx="-367" cy="147" r="6" fill="#82976a"/>
+<circle cx="-369" cy="145" r="3.8" fill="#a5b887"/>
+<circle cx="-300" cy="263" r="6" fill="#82976a"/>
+<circle cx="-302" cy="261" r="3.8" fill="#a5b887"/>
+<circle cx="-288" cy="144" r="6" fill="#82976a"/>
+<circle cx="-290" cy="142" r="3.8" fill="#a5b887"/>
+<rect x="-364" y="218" width="8" height="2" fill="#886442" stroke="none" />
+<rect x="-304" y="219" width="8" height="2" fill="#886442" stroke="none" />
+<rect x="-354" y="260" width="8" height="2" fill="#886442" stroke="none" />
+<text x="-377" y="177" font-size="6.6" fill="#293735">A2 · WILD RESERVE</text>
+<polyline points="-376,237 -338,217 -287,186" fill="none" stroke="#c4b58c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3 2"/>
+<circle cx="-340" cy="207" r="1" fill="#a5ad81"/>
+<circle cx="-320" cy="218" r="1" fill="#a5ad81"/>
+<circle cx="-359" cy="192" r="1" fill="#a5ad81"/>
+<circle cx="-319" cy="223" r="2" fill="#a5ad81"/>
+<circle cx="-363" cy="202" r="3" fill="#a5ad81"/>
+<circle cx="-302" cy="211" r="2" fill="#a5ad81"/>
+<circle cx="-348" cy="194" r="2" fill="#a5ad81"/>
+<circle cx="-343" cy="189" r="3" fill="#a5ad81"/>
+<circle cx="-337" cy="205" r="1" fill="#a5ad81"/>
+<circle cx="-349" cy="207" r="2" fill="#a5ad81"/>
+<circle cx="-290" cy="234" r="2" fill="#a5ad81"/>
+<circle cx="-359" cy="226" r="2" fill="#a5ad81"/>
+<circle cx="-321" cy="220" r="1" fill="#a5ad81"/>
+<circle cx="-348" cy="203" r="2" fill="#a5ad81"/>
+<circle cx="-335" cy="193" r="3" fill="#a5ad81"/>
+<circle cx="-332" cy="188" r="2" fill="#a5ad81"/>
+<circle cx="-297" cy="233" r="2" fill="#a5ad81"/>
+<circle cx="-305" cy="200" r="2" fill="#a5ad81"/>
+<circle cx="-316" cy="226" r="2" fill="#a5ad81"/>
+<circle cx="-315" cy="216" r="1" fill="#a5ad81"/>
+<circle cx="-341" cy="207" r="2" fill="#a5ad81"/>
+<circle cx="-365" cy="193" r="1" fill="#a5ad81"/>
+<circle cx="-311" cy="228" r="2" fill="#a5ad81"/>
+<circle cx="-304" cy="222" r="3" fill="#a5ad81"/>
+<circle cx="-303" cy="232" r="9" fill="#f5f1e7"/>
+<text x="-306" y="235" font-size="8" fill="#293735">3</text>
+<polyline points="-183,111 -183,151 -55,151 -55,255" fill="none" stroke="#b4b2a3" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-213,223 -172,223 -142,209 -75,209 -29,223" fill="none" stroke="#e9dfc4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-120,143 -120,273" fill="none" stroke="#e9dfc4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<rect x="-170" y="165" width="100" height="80" fill="none" stroke="#8f946f" stroke-dasharray="4 3" stroke-width="1"/>
+<polyline points="-147,135 -147,151" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-147,273 -147,285" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-120,135 -120,151" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-120,273 -120,285" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-93,135 -93,151" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<polyline points="-93,273 -93,285" fill="none" stroke="#eee7d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray=""/>
+<rect x="-167" y="156" width="8" height="4" fill="#718a91" stroke="#f5f1e7" stroke-width="0.6"/>
+<rect x="-156" y="156" width="8" height="4" fill="#718a91" stroke="#f5f1e7" stroke-width="0.6"/>
+<rect x="-145" y="156" width="8" height="4" fill="#718a91" stroke="#f5f1e7" stroke-width="0.6"/>
+<rect x="-65" y="161" width="7" height="5" fill="#796f5b" stroke="none" />
+<circle cx="-200" cy="165" r="6" fill="#82976a"/>
+<circle cx="-202" cy="163" r="3.8" fill="#a5b887"/>
+<circle cx="-197" cy="248" r="6" fill="#82976a"/>
+<circle cx="-199" cy="246" r="3.8" fill="#a5b887"/>
+<circle cx="-172" cy="265" r="6" fill="#82976a"/>
+<circle cx="-174" cy="263" r="3.8" fill="#a5b887"/>
+<circle cx="-69" cy="267" r="6" fill="#82976a"/>
+<circle cx="-71" cy="265" r="3.8" fill="#a5b887"/>
+<circle cx="-42" cy="171" r="6" fill="#82976a"/>
+<circle cx="-44" cy="169" r="3.8" fill="#a5b887"/>
+<circle cx="-157" cy="147" r="6" fill="#82976a"/>
+<circle cx="-159" cy="145" r="3.8" fill="#a5b887"/>
+<circle cx="-90" cy="263" r="6" fill="#82976a"/>
+<circle cx="-92" cy="261" r="3.8" fill="#a5b887"/>
+<circle cx="-78" cy="144" r="6" fill="#82976a"/>
+<circle cx="-80" cy="142" r="3.8" fill="#a5b887"/>
+<rect x="-154" y="218" width="8" height="2" fill="#886442" stroke="none" />
+<rect x="-94" y="219" width="8" height="2" fill="#886442" stroke="none" />
+<rect x="-144" y="260" width="8" height="2" fill="#886442" stroke="none" />
+<text x="-167" y="177" font-size="6.6" fill="#293735">B2 · SHARED GARDEN</text>
+<rect x="-154" y="188" width="10" height="5" fill="#a48a5b" stroke="none" />
+<rect x="-154" y="197" width="10" height="5" fill="#a48a5b" stroke="none" />
+<rect x="-154" y="206" width="10" height="5" fill="#a48a5b" stroke="none" />
+<rect x="-140" y="188" width="10" height="5" fill="#a48a5b" stroke="none" />
+<rect x="-140" y="197" width="10" height="5" fill="#a48a5b" stroke="none" />
+<rect x="-140" y="206" width="10" height="5" fill="#a48a5b" stroke="none" />
+<rect x="-126" y="188" width="10" height="5" fill="#a48a5b" stroke="none" />
+<rect x="-126" y="197" width="10" height="5" fill="#a48a5b" stroke="none" />
+<rect x="-126" y="206" width="10" height="5" fill="#a48a5b" stroke="none" />
+<rect x="-105" y="189" width="20" height="16" fill="#c4cfaa" stroke="none" />
+<text x="-103" y="199" font-size="5" fill="#293735">REST</text>
+<circle cx="-93" cy="232" r="9" fill="#f5f1e7"/>
+<text x="-96" y="235" font-size="8" fill="#293735">4</text>
+<rect x="20.0" y="-75.0" width="115.0" height="45.0" fill="#bdcba8" stroke="#8f946f" stroke-width="0.7"/>
+<rect x="20.0" y="-61.5" width="57.5" height="18" fill="#e5d8ba" stroke="none" />
+<rect x="52.5" y="-67.5" width="15" height="30" fill="#e5d8ba" stroke="none" />
+<rect x="59.5" y="-59.5" width="36" height="14" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<text x="64.5" y="-50.5" font-size="5" fill="#293735">POLICE</text>
+<rect x="99.5" y="-70.0" width="27" height="10" fill="#b4b2a3" stroke="none" />
+<rect x="101.5" y="-68.0" width="5" height="3" fill="#718a91" stroke="none" />
+<rect x="109.5" y="-68.0" width="5" height="3" fill="#718a91" stroke="none" />
+<rect x="117.5" y="-68.0" width="5" height="3" fill="#718a91" stroke="none" />
+<circle cx="29.0" cy="-67.0" r="5" fill="#82976a"/>
+<circle cx="32.0" cy="-39.0" r="5" fill="#82976a"/>
+<circle cx="126.0" cy="-40.0" r="5" fill="#82976a"/>
+<rect x="20.0" y="-20.0" width="115.0" height="60.0" fill="#bdcba8" stroke="#8f946f" stroke-width="0.7"/>
+<rect x="20.0" y="1.0" width="57.5" height="18" fill="#e5d8ba" stroke="none" />
+<rect x="52.5" y="-5.0" width="15" height="30" fill="#e5d8ba" stroke="none" />
+<rect x="62.5" y="1.0" width="30" height="18" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<text x="64.5" y="12.0" font-size="5" fill="#293735">CLINIC</text>
+<rect x="99.5" y="-15.0" width="27" height="10" fill="#b4b2a3" stroke="none" />
+<rect x="101.5" y="-13.0" width="5" height="3" fill="#718a91" stroke="none" />
+<rect x="109.5" y="-13.0" width="5" height="3" fill="#718a91" stroke="none" />
+<rect x="117.5" y="-13.0" width="5" height="3" fill="#718a91" stroke="none" />
+<circle cx="29.0" cy="-12.0" r="5" fill="#82976a"/>
+<circle cx="32.0" cy="31.0" r="5" fill="#82976a"/>
+<circle cx="126.0" cy="30.0" r="5" fill="#82976a"/>
+<rect x="20.0" y="50.0" width="115.0" height="85.0" fill="#bdcba8" stroke="#8f946f" stroke-width="0.7"/>
+<rect x="20.0" y="83.5" width="57.5" height="18" fill="#e5d8ba" stroke="none" />
+<rect x="52.5" y="77.5" width="15" height="30" fill="#e5d8ba" stroke="none" />
+<rect x="62.5" y="80.0" width="30" height="25" fill="#586b70" stroke="#f5f1e7" stroke-width="1"/>
+<text x="64.5" y="94.5" font-size="5" fill="#293735">ADMIN</text>
+<rect x="99.5" y="55.0" width="27" height="10" fill="#b4b2a3" stroke="none" />
+<rect x="101.5" y="57.0" width="5" height="3" fill="#718a91" stroke="none" />
+<rect x="109.5" y="57.0" width="5" height="3" fill="#718a91" stroke="none" />
+<rect x="117.5" y="57.0" width="5" height="3" fill="#718a91" stroke="none" />
+<circle cx="29.0" cy="58.0" r="5" fill="#82976a"/>
+<circle cx="32.0" cy="126.0" r="5" fill="#82976a"/>
+<circle cx="126.0" cy="125.0" r="5" fill="#82976a"/>
+<rect x="20.0" y="145.0" width="115.0" height="55.0" fill="#c5cba7" stroke="#8f946f" stroke-dasharray="3 3" stroke-width="0.6"/>
+<text x="33.0" y="173.0" font-size="7" fill="#293735">RETAINED FREE LOT</text>
+<rect x="20.0" y="210.0" width="115.0" height="55.0" fill="#c5cba7" stroke="#8f946f" stroke-dasharray="3 3" stroke-width="0.6"/>
+<text x="33.0" y="238.0" font-size="7" fill="#293735">RETAINED FREE LOT</text>
+<text x="-420" y="-104" font-size="10" fill="#293735">Existing garage / reserve band</text>
+<text x="-415" y="330" font-size="10" fill="#293735">Existing market and station band continues south</text>
+</g>
+<rect x="1000" y="130" width="555" height="860" fill="#ebe5d8" stroke="none" rx="12"/>
+<text x="1027" y="173" font-size="24" fill="#293735">Same skeleton. More everyday life.</text>
+<text x="1027" y="218" font-size="20" fill="#293735">01  Shared access, small destinations</text>
+<text x="1027" y="248" font-size="17" fill="#293735">Connect entrances with narrow paths.</text>
+<text x="1027" y="273" font-size="17" fill="#293735">Short access lanes, a few parked cars,</text>
+<text x="1027" y="298" font-size="17" fill="#293735">bins near access points, benches by doors.</text>
+<text x="1027" y="353" font-size="20" fill="#293735">02  Four courts, four identities</text>
+<text x="1027" y="383" font-size="17" fill="#293735">A1: play area and a quiet lawn.</text>
+<text x="1027" y="408" font-size="17" fill="#293735">B1: ball court and carpet-beating rails.</text>
+<text x="1027" y="433" font-size="17" fill="#293735">A2: informal paths through a wild reserve.</text>
+<text x="1027" y="458" font-size="17" fill="#293735">B2: temporary beds and a meeting spot.</text>
+<text x="1027" y="513" font-size="20" fill="#293735">03  Public buildings get front + back</text>
+<text x="1027" y="543" font-size="17" fill="#293735">Small paved entrance courts toward the axis.</text>
+<text x="1027" y="568" font-size="17" fill="#293735">Green side areas and rear service parking.</text>
+<text x="1027" y="593" font-size="17" fill="#293735">Keep the existing buildings and lot boundaries.</text>
+<text x="1027" y="648" font-size="20" fill="#293735">04  Keep breathing room</text>
+<text x="1027" y="678" font-size="17" fill="#293735">School / kindergarten core reserves stay open</text>
+<text x="1027" y="703" font-size="17" fill="#293735">to future development. No new permanent blocks.</text>
+<text x="1027" y="728" font-size="17" fill="#293735">Leave clear space around request markers.</text>
+<text x="1027" y="852" font-size="14" fill="#293735">LEGEND</text>
+<rect x="1027" y="872" width="15" height="12" fill="#586b70" stroke="none" />
+<text x="1054" y="884" font-size="16" fill="#293735">Existing buildings</text>
+<rect x="1027" y="897" width="15" height="12" fill="#e5d8ba" stroke="none" />
+<text x="1054" y="909" font-size="16" fill="#293735">Proposed paths / small paved courts</text>
+<rect x="1027" y="922" width="15" height="12" fill="#82976a" stroke="none" />
+<text x="1054" y="934" font-size="16" fill="#293735">Proposed planting / usable green space</text>
+<rect x="1027" y="947" width="15" height="12" fill="#8f946f" stroke="none" />
+<text x="1054" y="959" font-size="16" fill="#293735">Dashed: retained core / lot boundaries</text>
+<text x="45" y="1040" font-size="18" fill="#293735">DESIGN PROPOSAL · Not an approved map change</text>
+<text x="45" y="1070" font-size="16" fill="#293735">Roads and lot positions follow district_layout.gd. Furniture, vegetation and paths are schematic; no gameplay files changed.</text>
+</svg>

@@ -90,7 +90,14 @@ Mix `panel_5` and `panel_9` across the 16 W lots in a fixed pattern, roughly two
 Create `init/scripts/data/building_catalog.gd`: content key → how to build it.
 
 - Fields: `footprint` (metres, centered in the lot unless stated), `floors` or `height`, `facade` (texture path or `""`), `facade_side`, `roof`, `placeholder_color`, `label` (Russian, shown only in the dev label mode below), and `dressing` (a list of props in **lot-local** coordinates, for example a bench at (-20, 8)).
-- Optional fields for panel blocks: `entrance_overlay` (texture laid over the wall at each entrance, every 15 m along the long side facing `facing`) and `ground_floor` (texture laid over the bottom 3 m of one chosen bay, for a shop, pharmacy, or police point). Both stay empty until `facade_panel_entrance.png` and `facade_panel_groundfloor_shop.png` exist.
+- Facades follow "Facade assembly" in `art/DISTRICT_ART_REQUEST.md`. Storeys are 3 m, and no piece is ever stretched.
+- Panel blocks: optional `entrance_base` and `stair` overlays.
+  - An entrance is one 6 m column: `entrance_base` on the ground storey, `stair` stacked on every storey above (4× on five storeys, 8× on nine).
+  - Place one entrance every 24 m along the long side named by `facing`.
+  - Optional `ground_floor` replaces the ground-storey overlay of one chosen bay (shop, pharmacy, police point).
+  - Nine-storey blocks use the nine-storey tile, never a stacked five-storey tile.
+  - All overlays stay empty until their files exist.
+- Unique buildings with a main entrance (school, police, polyclinic, ispolkom): `facade_center`, `facade_wing`, and both piece widths. The front wall is `[wing × k] [center] [wing × k]`, and the side and rear walls are wing tiles only. Set footprint lengths to exactly `center + 2·k·wing` and adjust the footprints given in this brief to the nearest such length. Until the art exists, the placeholder box uses the same footprint.
 - Every content key used in `LOTS` must exist. Missing art means an empty `facade` and a plain box in `placeholder_color` at the right height.
 - Map current art where it fits:
   - Panel facades and `_panel_block` → `panel_5` / `panel_9`.

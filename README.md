@@ -11,12 +11,16 @@ A learning project for exploring Godot and gradually building an original 2D gra
 ## Setting and Tone (Provisional)
 
 - This campaign is the first chapter of the larger grand strategy game.
-- Setting: a fictional city in a small fictional Slavic post-Soviet republic during the 1990s, with the full mix of the era: some good and a lot of rot. Society is deeply divided, but there is no civil war.
-- The outside world is background context in the first chapter. If the starting city is a border city, neighboring states may become an active factor.
+- Setting: a fictional city in a small fictional Slavic post-Soviet republic during the 1990s, with the full mix of the era: some good and a lot of rot. Society is deeply divided, but there is no civil war in our country. A war breaks out in the neighboring republic later (see Story Arc).
+- The outside world is background context in the first chapter, with quiet foreshadowing of the later war (see Story Arc). The starting city is a border city, so neighboring states become an active factor in the war chapter.
 - The first chapter takes place in the 1990s: it starts in late August 1997 and ends by the year 2000 at the latest.
 - The starting city has about 250,000–300,000 inhabitants, large enough to support many mechanics and factions.
-- Tone: pragmatic realism with dark humor, not grim horror.
-- The player is the protagonist. A backstory may exist but is secondary.
+- Tone: in the first chapter, pragmatic realism with dark humor, not grim horror. The tone changes radically when the war reaches the city (see Story Arc).
+- The protagonist is a specific person with a biography, motivation, and voice, as in *Suzerain*; the player makes the decisions, with no morality meter. The hero may react to what was done in their own inner lines without the game judging it. The concrete biography is still open. Questions to answer first, derived from the leitmotif:
+  - For whom is he ready to dirty his hands at the start: family, a specific person, the city?
+  - What in his past makes him a clean slate for the boss?
+  - What is he most afraid to lose?
+  - The answers define his circle and who can become a witness.
 - Core fantasy: climbing to power and reshaping the system according to the player's own vision, with methods the player chooses.
 
 ## The City (Provisional)
@@ -94,7 +98,24 @@ A border trade city on a river that lives on trade and transit rather than on a 
   - Instant: sudden events such as a fire, a picket, or an accident appear in the middle of the week as overlays.
   - Gradual: slow changes such as a new housing block change lot states only between weeks, at the start of the next week, alongside the consequences of the previous one. Long projects pass through visible intermediate stages over several weeks (fence, foundation, frame) rather than appearing out of nowhere.
 - Provisional target: about 35–40 weeks per chapter at roughly 3–4 minutes each. Exact numbers are tuned in the prototype, and day length is a configuration value.
+- Prototype pacing: at ×1, one game hour takes four real seconds (48 seconds per working day; four minutes per five-day live week, excluding pauses). ×2 and ×4 multiply that simulation rate; pause stops it. The base rate and supported speeds live in `init/scripts/data/settings.gd`.
 - The shift to this core loop needs deliberate balancing.
+
+## Player Mobility and Personal Money (Provisional)
+
+Mobility and money are both scarce for a junior aide, which is part of what makes the map matter.
+
+- **Transport is a privilege, not a default.** The protagonist starts on foot or with a bicycle. The black Volga belongs to the boss. The administration's driver (Tolik) drives the boss and only gives the player a lift when the player has earned some goodwill and the Volga is free.
+  - Modes: on foot, bicycle (about twice as fast, can use yard paths), bus (stops, fixed routes, waiting), taxi (paid, fast), a lift from Tolik (free, conditional).
+  - The boss's car is busy in random time windows (not an authored schedule). A lift is possible only outside a window and with enough standing with the boss; the exact threshold is tuned in the prototype.
+- **Sending people works only from the executive committee** (the office phone), as already stated in the calls rule above. There are no payphones. Away from the office the player can act only in person. Results of people already sent and new requests are visible at once; that is a game convention, not a rule to simulate. Mobile phones and pagers remain career rewards that lift the office restriction.
+- **Personal money.** The player has a small personal reserve, shown plainly in the UI. Unlike influence, the player cannot yet take from the budget, so money is scarce and bribes carry real weight.
+  - Money sinks: taxi fares (the fare is shown before the player chooses, an explicit exception to the rule that numbers stay hidden), bribes the story requires (some situations can only be settled with a payoff, or offer it as an option), and rent at the end of each month.
+  - Income: a small salary. Amounts are tuned in the prototype.
+  - Missing the rent starts a pressure meter of collectors or bandits that fills over time; a full meter is a severe failure. The player can reduce it by paying.
+  - Where the protagonist lives and housing upgrades are out of scope for now.
+- Future idea, not in the first prototype: poor standing has consequences for the bicycle. Each key building has its own resident person or group (guards, regulars, local toughs). If the player's standing with a faction is very bad and they arrive there by bicycle, there is a chance the bicycle is damaged or stolen, with a mocking note left behind, and the player pays for repair or a new one. The player is warned once, in advance and separately (a contact's remark, a message, a newspaper note), when standing drops to a dangerous level. There are no repeated warnings at the building itself: the player is expected to remember and decide.
+- The map is deliberately large and slow so that travel and waiting carry the weight of every decision (see Starting District Layout).
 
 ## Player Actions and Requests (Provisional)
 
@@ -120,6 +141,39 @@ A border trade city on a river that lives on trade and transit rather than on a 
 - It works both ways: the rival is also building a dossier on the player. The player sees hints but does not know how much the rival has. Because promotion requires being active rather than lying low, this pressure keeps growing over time.
 - Open: how a target notices the player digging and reacts (striking first, covering tracks). This needs its own mechanic.
 
+## Story Arc (Provisional)
+
+The campaign has a peaceful arc and a war arc, and the second changes what the first was about. The turn is far into the story.
+
+- **Peaceful arc: a decent city.** By the standards of the 1990s the city is good. It is full of decent, kind people. There are kickbacks, there are thugs, and people live poorly, but in other regions things are far worse and here it is stable. Its tone is pragmatic realism with dark humor.
+  - Chapter one: the climb from aide to mayor, with the heating season as the opening (this document).
+  - Chapter two: the player is mayor and passes a series of smaller crises (to be written separately). The player may come to think the hard part is over.
+- **The turn: near the end of chapter two.** Then the war comes. The rival and the boss are resolved before this point and are not part of the turn.
+- **Foreshadowing is gradual,** never a sudden jump: press items, radio, the first refugees, border incidents, building up well before the turn. It can start as early as chapter one.
+  - Border side quests and events later in the peaceful arc (odd cargo at customs, unusual buyers, quiet deals around weapon stocks) hint that someone is preparing for something. They read as ordinary 1990s border business at the time and make sense only in hindsight.
+- **War chapter: a separate chapter.** A war starts in the neighboring "brotherly" republic. Our country officially stays neutral, but the border city is hit hard.
+  - Spillover, not a front line: a migration crisis, smuggling (weapons and worse), and random strikes.
+  - Some forces profit from the war. Our country has large stocks of weapons and ammunition and even factories, so there is money in selling them.
+  - The player is the mayor or even governs the region. This is a different scene with different emphases from the district-level game, not a soldier's view of the front.
+  - The tone changes radically. There will be genuinely heavy scenes of the border region at war.
+  - The war changes the player and the hero, above all their choices and their role in events.
+- **Complicity.** The war's machinery is partly assembled by the player during the peaceful chapters: weapon stocks they ignored, smugglers they spared, a customs officer they promoted, money they took. The border hints of the peaceful arc are the player's own compromises coming back.
+- **Dirty choices during play, not only at the end.** Situations repeatedly force a choice about people who know too much. An honest option exists in every situation, but not in all of them at once; some wrongdoing over the arc is unavoidable. Example: kill a worker who might talk and ruin everyone in the player's circle, or brutally frighten him into leaving the country.
+- **The truth always surfaces later.** What the player tried to bury comes out regardless. Choices do not decide whether it surfaces; they decide the moral context, relationships, and who pays the price.
+- **Dirty work spreads complicity.** The player can do it personally (present, exposed) or send a contact. A contact sent to do it becomes a witness and an accomplice too, so dirt spreads through the player's circle systemically, through the same "whom to send where" loop.
+- **The war chapter is the big test.** Almost everything there is dirty. The real choice is for whose good: one's own and one's circle, or the common good. There are always people who will not support the player.
+- **Agency.** The player cannot stop or prevent the war. They shape what kind of city meets it and who survives.
+- **Losses follow choices.** Losses depend on the player's earlier choices and relationships, not on scripted deaths alone. Contacts are persistent, as in the core loop, so the city and its people carry the drama.
+- **Why the district map fits.** The checkpoint, port, bridges, freight station, and truck stop that drive peacetime smuggling are the same places that carry refugees, arms, and strikes in the war. Lot states (market to refugee camp, school to shelter, reserve block to tent camp) show the change on the map.
+- **After the war: the ending.** If the player comes through the war crises well, many forces stand behind them, and the way opens to the top, possibly head of state. There is no planned gameplay between leading a city or region and leading the country. The game may end on the hero's choice, and both outcomes are tragic and dignified:
+  - Accept: the hero can do a lot of good (for whom is beside the point), but blood will be spilled.
+  - Refuse and stay: sooner or later the sharks devour him. Perhaps deservedly.
+  - Staying a hero in the eyes of the region and the country may require removing the witnesses of his dark deeds, most of them scum by then. Where the line is, is the question. The game may end abruptly at that moment, in the spirit of Outlast's *Whistleblower*.
+- **The city is the ledger.** Because the truth always surfaces and both endings are tragic, the difference between playthroughs lives in the city and its people: who survived, who stayed close, who curses the player, who left, what was built and what it became in the war. This is why the city map, its residents per building, its condition layers, and its lot states matter so much: the map carries the consequences of the whole game.
+- **Leitmotif:** there are no clean hands; the question is for whom you dirty them.
+- **Story scenes** are sequences of still paintings in the window-art oil manner with text, not animated cutscenes. Voice acting is deferred; if added later, only for a few key moments and only if the quality holds.
+- **Open:** exact calendar dates of chapter two and the turn. The first chapter still ends by 2000 at the latest.
+
 ## Endings and Pacing (Provisional)
 
 - Victory: the player becomes mayor, and the kind of mayor depends on the path: the mafia's man, business's puppet, the people's mayor, or a puppet of superiors.
@@ -139,6 +193,7 @@ A border trade city on a river that lives on trade and transit rather than on a 
 - A detailed, good-looking city map is a key priority.
 - Visual direction: the playable map is a stylized 3D scene seen from above at an angle (similar to *Smuggler*), so the whole area can be shown at a consistent scale and stay alive: moving traffic and people, day and night, weather, construction stages, smoke, pickets, and fire through the engine rather than redrawn art.
 - Buildings are simple 3D shapes dressed with generated painted facade textures, matching the mood of `art/concepts/isometric-city-direction-v2.png`. Key locations get distinct, recognizable models.
+- Lada cars on streets, at the polyclinic and in the House 5 courtyard use the shared Blender V2 GLB at real scale, with actual 3D orientation and shadows. Editable source and rebuild instructions are in `art/models/lada/README.md`.
 - The district executive committee is a prominent civic landmark, larger in mass than an ordinary five-storey Khrushchev-era block: a broad facade, high ceilings and a formal entrance facing the square. The church should have a substantial body and an easily recognizable silhouette. (Merchant houses belong to the old city center, which is not part of the starting district; see Starting District Layout.)
 - Everything shown in windows is 2D painted art in the same mood: location scenes, event illustrations, contact portraits, and story scenes.
 - The playable area grows with the career: the aide's micro-district first, then the district, then the city, each as its own map.
@@ -175,6 +230,30 @@ The starting district is an outskirt, not the city center. The center lies far b
 - The district executive committee is a late-Soviet modernist building, built together with the district in the 1980s, not a Stalinist one.
 - The medical facility is a mid-size polyclinic, not a hospital complex.
 - Open: how many superblocks the first version has (four planned, room for two more in the west).
+
+## Natural Landmarks
+
+- Approved: a small irregular pond beside the old village, with reeds, footpaths and two fishing seats; a distinct wooded area west of the residential superblocks, with paths and an open event clearing.
+- Both have named map locations (`pond`, `forest`) for future requests. No events are assigned to them yet.
+- The grove uses the existing seasonal tree variants. The pond freezes visually in winter; shoreline paths use the seasonal ground textures. Nature layers are named for later event changes such as litter, lighting or improvements; those event states are not implemented yet.
+
+## Residential Compaction
+
+- Approved spacing target: 12% shorter residential spacing in both map axes, while all building footprints, floors and prop sizes remain unchanged. The four-superblock pattern is retained.
+- Housing centres and core reserves contract toward the public axis / northern residential street; internal lane widths remain unchanged. The inter-block crossing moves with the housing.
+- Released space is collected into west and south housing reserves; no additional housing is placed yet. Forest access paths follow the moved western blocks.
+- The original SVG layout is a historical sketch; `district_layout.gd` is the current coordinate source.
+
+## Courtyard Detail Pilot
+
+- B1 (House 5 / Baba Nina) is the first detailed residential superblock: inhabited but neglected, with intact housing, worn play equipment, benches, entrance gardens, narrow paths, a small service loop and a few parked cars. It should not read as a dump.
+- Roads and the district skeleton remain the reference; residential buildings may move within a block when composition requires it.
+- The school/kindergarten core remains available for future development. Ground surfaces, furniture, planting and residents are grouped separately for later seasonal and event changes; additional seasonal/event variants are not yet implemented.
+
+## Heating Infrastructure Detail Pilot
+
+- House 5 has a small paired basement heating inlet, valve wheels, basement grilles and inspection covers. A short paired main on supports leaves the boiler house and descends underground. Most residential distribution remains buried.
+- These are static geometry props, slightly emphasized for map readability. They do not imply a new leak or active heating; steam, repair/damage variants and thawed winter routes are not implemented. Named groups allow later authored event states.
 
 ## Opening Scenario (Provisional)
 

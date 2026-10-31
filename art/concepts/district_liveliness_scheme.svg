@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<defs>
+ <pattern id="grass" width="35" height="35" patternUnits="userSpaceOnUse"><rect width="35" height="35" fill="#c5d1a5"/><circle cx="8" cy="10" r="1.5" fill="#aab98a"/><circle cx="26" cy="25" r="1" fill="#aab98a"/></pattern>
+ <pattern id="paving" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#ded7c3"/><path d="M0 0H18M0 9H18M9 0V9M0 9V18M18 9V18" fill="none" stroke="#c8c0ab" stroke-width="1"/></pattern>
+ <symbol id="tree" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="#728a5b"/><circle cx="15" cy="15" r="9" fill="#8aa16c"/><circle cx="25" cy="24" r="8" fill="#637e51"/></symbol>
+ <symbol id="car" viewBox="0 0 32 16"><rect x="1" y="2" width="30" height="12" rx="4" fill="#ece3cf" stroke="#655f52"/><path d="M11 3v10m11-10v10" stroke="#85918b" stroke-width="2"/></symbol>
+ <style>text{font-family:Arial,sans-serif;fill:#30382e}.title{font-size:34px;font-weight:bold}.sub{font-size:17px;fill:#61705b}.label{font-size:17px;font-weight:bold}.small{font-size:14px}.road{stroke:#6c716d;stroke-width:58;fill:none}.line{stroke:#e6dfc6;stroke-width:2;stroke-dasharray:18 12;fill:none}.walk{stroke:#eee2bd;stroke-width:17;fill:none;stroke-linecap:round;stroke-linejoin:round}.walkedge{stroke:#b8aa8a;stroke-width:20;fill:none;stroke-linecap:round;stroke-linejoin:round}.trail{stroke:#bdab84;stroke-width:6;stroke-dasharray:10 5;fill:none;stroke-linecap:round}.house{fill:#9b9181;stroke:#6b6459;stroke-width:3}.roof{fill:#706e65}.shop{fill:#bd7959;stroke:#765343;stroke-width:2}.num{fill:#f8f1df;stroke:#694f40;stroke-width:2}.numtext{font-size:16px;font-weight:bold;text-anchor:middle;dominant-baseline:central}</style>
+</defs>
+<rect width="1600" height="1100" fill="#f5f1e6"/>
+<text x="55" y="55" class="title">Живой район: схема наполнения</text><text x="55" y="83" class="sub">Концептуальная вид сверху · не финальный масштаб · дороги и пешеходные связи важнее декора</text>
+<rect x="45" y="108" width="1130" height="895" rx="12" fill="url(#grass)" stroke="#a3b096" stroke-width="2"/>
+<!-- street network -->
+<path class="road" d="M45 190H1175 M45 895H1175 M140 108V1003 M1090 108V1003"/><path class="line" d="M45 190H1175 M45 895H1175 M140 108V1003 M1090 108V1003"/>
+<path d="M175 108V1003 M1055 108V1003 M45 225H1175 M45 860H1175" stroke="#eee2bd" stroke-width="13" fill="none"/>
+<!-- crossings -->
+<g stroke="#faf5e7" stroke-width="7" stroke-dasharray="7 6"><path d="M94 300H185 M1038 355H1137 M480 145V235 M780 855V940 M90 740H184"/></g>
+<!-- paved pedestrian network -->
+<g class="walkedge"><path d="M175 330H1035 M175 665H1035 M235 225V860 M480 225V860 M760 225V860 M1005 225V860 M235 480H1005 M235 755H1005 M480 330L760 665 M760 330L480 665"/></g>
+<g class="walk"><path d="M175 330H1035 M175 665H1035 M235 225V860 M480 225V860 M760 225V860 M1005 225V860 M235 480H1005 M235 755H1005 M480 330L760 665 M760 330L480 665"/></g>
+<!-- central public square and smaller forecourt -->
+<rect x="500" y="405" width="240" height="150" rx="10" fill="url(#paving)" stroke="#bfb69e" stroke-width="2"/><rect x="815" y="695" width="145" height="95" rx="6" fill="url(#paving)" stroke="#bfb69e"/>
+<!-- residential blocks -->
+<g class="house"><rect x="270" y="260" width="165" height="46" rx="3"/><rect x="270" y="369" width="165" height="46" rx="3"/><rect x="805" y="260" width="165" height="46" rx="3"/><rect x="805" y="369" width="165" height="46" rx="3"/><rect x="270" y="535" width="165" height="46" rx="3"/><rect x="270" y="705" width="165" height="46" rx="3"/><rect x="805" y="535" width="165" height="46" rx="3"/><rect x="525" y="705" width="185" height="46" rx="3"/></g>
+<g fill="#ded4b9" font-size="13" font-family="Arial" text-anchor="middle"><text x="352" y="288">жилой дом</text><text x="352" y="397">жилой дом</text><text x="887" y="288">жилой дом</text><text x="887" y="397">жилой дом</text><text x="352" y="563">жилой дом</text><text x="352" y="733">жилой дом</text><text x="887" y="563">жилой дом</text><text x="618" y="733">жилой дом</text></g>
+<!-- public building -->
+<rect x="825" y="806" width="125" height="40" rx="3" fill="#a78c75" stroke="#765f4f" stroke-width="3"/><text x="887" y="831" text-anchor="middle" class="small" fill="#fff">администрация</text>
+<!-- shortcuts and courtyards -->
+<path class="trail" d="M235 600Q345 615 435 590T480 665 M760 330Q870 325 1005 480 M235 480Q345 442 480 480 M760 665Q870 630 1005 665 M480 755Q620 805 760 755"/>
+<g fill="#d9c49a" stroke="#a89470"><rect x="315" y="425" width="78" height="33" rx="8"/><rect x="842" y="425" width="88" height="33" rx="8"/><rect x="313" y="605" width="85" height="37" rx="8"/></g>
+<g stroke="#ac745a" stroke-width="3" fill="none"><path d="M330 452l12-20 12 20m-21-9h18 M862 451v-20h25v20m-25-11h25 M326 630h52m-42-15v15m32-15v15"/></g>
+<!-- trees in groups -->
+<g><use href="#tree" x="200" y="250" width="30" height="30"/><use href="#tree" x="195" y="390" width="35" height="35"/><use href="#tree" x="213" y="550" width="33" height="33"/><use href="#tree" x="196" y="795" width="34" height="34"/><use href="#tree" x="438" y="425" width="29" height="29"/><use href="#tree" x="405" y="603" width="34" height="34"/><use href="#tree" x="253" y="620" width="33" height="33"/><use href="#tree" x="503" y="245" width="38" height="38"/><use href="#tree" x="560" y="275" width="31" height="31"/><use href="#tree" x="645" y="240" width="36" height="36"/><use href="#tree" x="705" y="278" width="32" height="32"/><use href="#tree" x="520" y="584" width="35" height="35"/><use href="#tree" x="675" y="595" width="38" height="38"/><use href="#tree" x="928" y="610" width="34" height="34"/><use href="#tree" x="966" y="235" width="31" height="31"/><use href="#tree" x="965" y="780" width="31" height="31"/><use href="#tree" x="515" y="795" width="32" height="32"/><use href="#tree" x="695" y="805" width="34" height="34"/></g>
+<!-- kiosks, bus stops and cars -->
+<g class="shop"><rect x="505" y="235" width="34" height="22"/><rect x="549" y="235" width="34" height="22"/><rect x="940" y="458" width="29" height="20"/><rect x="265" y="825" width="32" height="22"/></g>
+<g fill="#c1d4d2" stroke="#4c6965" stroke-width="3"><rect x="665" y="205" width="65" height="16" rx="2"/><rect x="365" y="864" width="65" height="16" rx="2"/><rect x="1040" y="550" width="16" height="60" rx="2"/></g>
+<g><use href="#car" x="295" y="165" width="32" height="16"/><use href="#car" x="770" y="193" width="32" height="16"/><use href="#car" x="520" y="907" width="32" height="16"/><use href="#car" x="895" y="907" width="32" height="16"/><use href="#car" x="385" y="315" width="28" height="14"/><use href="#car" x="415" y="315" width="28" height="14"/><use href="#car" x="840" y="650" width="28" height="14"/><use href="#car" x="872" y="650" width="28" height="14"/></g>
+<!-- benches / everyday detail -->
+<g stroke="#745a42" stroke-width="4" stroke-linecap="round"><path d="M525 422h27 M685 535h27 M290 461h24 M945 508h24 M557 680h24 M908 777h24"/></g>
+<circle cx="620" cy="480" r="15" fill="#8b8879" stroke="#69675b" stroke-width="3"/><text x="620" y="510" text-anchor="middle" class="small">площадь</text>
+<!-- numbered callouts -->
+<g><circle class="num" cx="700" cy="230" r="15"/><text class="numtext" x="700" y="230">1</text><circle class="num" cx="590" cy="257" r="15"/><text class="numtext" x="590" y="257">2</text><circle class="num" cx="355" cy="445" r="15"/><text class="numtext" x="355" y="445">3</text><circle class="num" cx="740" cy="560" r="15"/><text class="numtext" x="740" y="560">4</text><circle class="num" cx="630" cy="364" r="15"/><text class="numtext" x="630" y="364">5</text><circle class="num" cx="949" cy="720" r="15"/><text class="numtext" x="949" y="720">6</text><circle class="num" cx="410" cy="597" r="15"/><text class="numtext" x="410" y="597">7</text></g>
+<!-- legend -->
+<rect x="1200" y="108" width="355" height="895" rx="12" fill="#fffdf6" stroke="#ded8c9"/>
+<text x="1230" y="153" class="label">Как читать схему</text>
+<path d="M1232 184h68" stroke="#6c716d" stroke-width="19"/><text x="1314" y="190" class="small">улица для машин</text>
+<path d="M1232 224h68" stroke="#eee2bd" stroke-width="15"/><text x="1314" y="220" class="small">пешеходная дорожка;</text><text x="1314" y="238" class="small">можно проехать на велосипеде</text>
+<path d="M1232 267h68" class="trail"/><text x="1314" y="273" class="small">протоптанная короткая тропа</text>
+<rect x="1232" y="297" width="68" height="20" fill="url(#paving)" stroke="#bfb69e"/><text x="1314" y="313" class="small">небольшая мощёная площадь</text>
+<rect x="1232" y="339" width="25" height="18" class="shop"/><text x="1271" y="354" class="small">киоск / ларёк</text>
+<rect x="1232" y="380" width="50" height="13" fill="#c1d4d2" stroke="#4c6965" stroke-width="2"/><text x="1295" y="391" class="small">автобусная остановка</text>
+<text x="1230" y="452" class="label">Что оживляет район</text>
+<g class="small"><text x="1230" y="486">1  Остановки у переходов и маршрутов</text><text x="1230" y="526">2  Ларьки рядом с потоком людей</text><text x="1230" y="566">3  Разные дворы: площадка, лавки,</text><text x="1250" y="585">    бельё, контейнеры, деревья</text><text x="1230" y="625">4  Общая площадь и места встреч</text><text x="1230" y="665">5  Прямые маршруты через квартал,</text><text x="1250" y="684">    а не только вдоль улиц</text><text x="1230" y="724">6  Компактный входной двор</text><text x="1250" y="743">    администрации и велопарковка</text><text x="1230" y="783">7  Неофициальные срезы через газон</text></g>
+<path d="M1230 819h295" stroke="#ded8c9"/><text x="1230" y="849" class="small">Деревья и лавки группируются у мест,</text><text x="1230" y="870" class="small">где люди действительно проходят</text><text x="1230" y="891" class="small">или задерживаются. Открытые поля</text><text x="1230" y="912" class="small">остаются там, где они нужны.</text>
+<text x="55" y="1041" class="sub">Схема показывает принцип планировки одного фрагмента, а не предлагает полностью перестроить карту.</text>
+</svg>
