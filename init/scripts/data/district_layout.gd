@@ -36,13 +36,17 @@ const LOTS := {
 	"b2_n": {"type": "W", "rect": Rect2(-153, 91.92, 90, 24), "content": "panel_5", "condition": "kept", "facing": "s"},
 	"b2_s": {"type": "W", "rect": Rect2(-153, 225.68, 90, 24), "content": "panel_5", "condition": "kept", "facing": "n"},
 	"b2_w": {"type": "W", "rect": Rect2(-195.68, 125.8, 24, 90), "content": "panel_9", "condition": "kept", "facing": "e"},
-	"b2_e": {"type": "W", "rect": Rect2(-44.32, 125.8, 24, 90), "content": "panel_5", "condition": "kept", "facing": "w"},
 	"b2_k": {"type": "K", "rect": Rect2(-152, 135.6, 88, 70.4), "content": "yard", "condition": "kept", "facing": "s"},
-	"police": {"type": "G", "rect": Rect2(20, -75, 115, 45), "content": "police", "condition": "kept", "facing": "w"},
-	"polyclinic": {"type": "G", "rect": Rect2(20, -20, 115, 60), "content": "polyclinic", "condition": "kept", "facing": "w"},
-	"ispolkom": {"type": "G", "rect": Rect2(20, 50, 115, 85), "content": "ispolkom", "condition": "kept", "facing": "w"},
-	"g_axis_1": {"type": "G", "rect": Rect2(20, 145, 115, 55), "content": "empty_lot", "condition": "kept", "facing": "w"},
-	"g_axis_2": {"type": "G", "rect": Rect2(20, 210, 115, 55), "content": "empty_lot", "condition": "kept", "facing": "w"},
+	"police": {"type": "G", "rect": Rect2(-44, -75, 24, 32), "content": "police", "condition": "kept", "facing": "e"},
+	"polyclinic": {"type": "G", "rect": Rect2(-45, 135, 28, 42), "content": "polyclinic", "condition": "kept", "facing": "e"},
+	"ispolkom": {"type": "G", "rect": Rect2(25, 22, 115, 108), "content": "ispolkom", "condition": "kept", "facing": "w"},
+	"tower_e1": {"type": "W", "rect": Rect2(30, -60, 40, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
+	"department_store": {"type": "G", "rect": Rect2(30, -15, 45, 30), "content": "department_store", "condition": "kept", "facing": "w"},
+	"city_park": {"type": "N", "rect": Rect2(82, -72, 54, 84), "content": "city_park", "condition": "kept", "facing": "e"},
+	"tower_e2": {"type": "W", "rect": Rect2(30, 140, 40, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
+	"tower_e3": {"type": "W", "rect": Rect2(82, 140, 40, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
+	"slab_1": {"type": "W", "rect": Rect2(22, 190, 110, 14), "content": "admin_slab", "condition": "kept", "facing": "s"},
+	"slab_2": {"type": "W", "rect": Rect2(22, 232, 110, 14), "content": "admin_slab", "condition": "kept", "facing": "n"},
 	"church": {"type": "X", "rect": Rect2(245, 80, 60, 50), "content": "church", "condition": "fading", "facing": "w"},
 	"g_south": {"type": "G", "rect": Rect2(-430, 315, 200, 70), "content": "empty_lot", "condition": "worked", "facing": "n"},
 	"market": {"type": "X", "rect": Rect2(-215, 315, 185, 70), "content": "market", "condition": "worked", "facing": "n"},
@@ -79,9 +83,12 @@ const ROADS := [
 	{"rect": Rect2(140, -80, 10, 380), "kind": "asphalt"},
 	{"rect": Rect2(-398.4, 82.2, 381.4, 10), "kind": "yard"}, # ends at the axis edge (x -17): a gap lets the graph miss the junction
 	{"rect": Rect2(-205.4, -80, 10, 380), "kind": "yard"},
-	# Temporary footpath through the gap under the executive committee, from the axis to the village street.
-	# The block around it will be rebuilt; move the path with it.
-	{"rect": Rect2(7, 138, 133, 4), "kind": "yard"},
+	# Civic square / southern tower connection, and the lane between the two slabs.
+	{"rect": Rect2(7, 136, 133, 4), "kind": "yard"},
+	{"rect": Rect2(7, 209, 133, 5), "kind": "asphalt", "walk": 1.5},
+	# Short avenue links serving the northern and southern tower groups.
+	{"rect": Rect2(7, -8, 20, 3), "kind": "yard"},
+	{"rect": Rect2(7, 172, 20, 3), "kind": "yard"},
 	# Village dirt roads form closed loops: H1 north, V1 west, H2 around the church,
 	# V2 east, H4 south, plus an east lane joining the ends of H1 and H3.
 	{"rect": Rect2(150, -45, 237.5, 5), "kind": "dirt"},
@@ -152,6 +159,10 @@ const DISTRICTS := {
 			"admin_park": {"rect": Rect2(82, -72, 54, 84), "foot": 0.9, "cars": 0.0, "hours": "leisure"},
 			"admin_shops": {"rect": Rect2(30, -15, 45, 30), "foot": 2.2, "hours": "market"},
 			"admin_elite": {"rect": Rect2(30, -60, 40, 38), "residents": 450, "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
+			"admin_elite_e2": {"rect": Rect2(30, 140, 40, 38), "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
+			"admin_elite_e3": {"rect": Rect2(82, 140, 40, 38), "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
+			"admin_slab_1": {"rect": Rect2(22, 190, 110, 14), "hours": "commute"},
+			"admin_slab_2": {"rect": Rect2(22, 232, 110, 14), "hours": "commute"},
 		},
 	},
 	"transport": {
