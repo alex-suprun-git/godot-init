@@ -1,6 +1,6 @@
 ---
 id: elite-towers
-status: draft   # draft | ready | in-progress | review | blocked | done  (draft: waiting for the user's go and for the D4 plan to be approved)
+status: ready   # draft | ready | in-progress | review | blocked | done. Stage 1 needs no approval; stages 2 and 3 wait for the user.
 worker: codex
 branch: task/elite-towers
 ---

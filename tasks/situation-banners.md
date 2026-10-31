@@ -1,6 +1,6 @@
 ---
 id: situation-banners
-status: ready   # ready | in-progress | review | blocked | done
+status: review   # ready | in-progress | review | blocked | done
 worker: codex
 branch: task/situation-banners
 ---
@@ -29,8 +29,10 @@ Read first, in order:
 - Characters with an established look in `art/PROMPTS.md` must match it. New characters get a short established look added to `PROMPTS.md` (see Outputs).
 - 1990s only: Ladas, Volgas, UAZ, ZIL, rotary phones, no phones in pockets, no modern cars.
 - Quiet dark humor in small details, grounded and a little melancholic, never cartoonish.
+- User review update (2026-10-31): an inhabited, functioning city, with modest wear and ordinary upkeep; no pervasive ruin, mud, rust or broken glazing. The courtyard proposal contains exactly two small NEW kiosks with freshly painted metal, not stacks of rusty frames. For `envelope`, reuse the existing empty summer office without a visitor. No Lenin portraits or real-world national flags.
+- Further review: daytime lamps are off, windows have natural light rather than artificial orange glow, and summer coat hooks have no heavy clothing. `fuel_offer` keeps the storekeeper with his closed ledger, but uses a quiet depot background with fixed tanks, a small storehouse and barrels; no transfer process, truck, railway wagon, hoses or other workers.
 
-## The ten pictures
+## The eleven pictures
 
 Each is saved as `init/assets/events/<id>.png` (the id is the request id in `week1.gd`). Prompts below are what the picture must show; write the final prompt as `[Window style block] ...` and record it in `art/PROMPTS.md`.
 
@@ -52,19 +54,20 @@ Each is saved as `init/assets/events/<id>.png` (the id is the request id in `wee
 
 Write only to these paths:
 
-- `art/source_images/situation_banners/<id>_v1.png`: the untouched originals (create the folder).
+- `art/source_images/situation_banners/<id>_v<n>.png`: untouched, versioned originals (create the folder); retain superseded drafts and identify the selected version in the report.
 - `init/assets/events/<id>.png`: the prepared game copies, produced with `uv run tools/optimize_asset.py ... --profile scene --approved` as in `art/ASSET_PIPELINE.md`. Do not overwrite `pipe_burst.png`.
 - `art/optimization_reports/<id>.json`: written by the optimizer.
+- `art/source_images/situation_banners/contact_sheet.png` and `center_crop_sheet.png`: overview of selected full images and their 3.5:1 card crops.
 - `art/PROMPTS.md`: add a section "Situation banners" with each final prompt, and add "Established looks" entries for the new characters (Father Georgiy, the watchman, the storekeeper, the market woman trader, the militiaman, the foreman) so later art matches.
 
 ## Acceptance criteria
 
-- [ ] Ten images exist under `init/assets/events/`, one per id above, each backed by an original under `art/source_images/situation_banners/` and an optimizer report.
-- [ ] Each image is wide (about 2.4 : 1, or 16 : 9 with the central-band rule) and its key content survives a center crop to 3.5 : 1. Check by cropping each one yourself and reading the crop.
-- [ ] No readable text or lettering in any image.
-- [ ] Late-August season in every image; established characters match their portraits.
-- [ ] A contact sheet of all ten at reduced size, saved to `art/source_images/situation_banners/contact_sheet.png`, to check they look like one series.
-- [ ] `art/PROMPTS.md` updated as above.
+- [x] Eleven images exist under `init/assets/events/`, one per id above, each backed by an original under `art/source_images/situation_banners/` and an optimizer report.
+- [x] Each image is wide (about 2.4 : 1, or 16 : 9 with the central-band rule) and its key content survives a center crop to 3.5 : 1. Check by cropping each one yourself and reading the crop.
+- [x] No readable text or lettering in any image.
+- [x] Late-August season in every image; established characters match their portraits.
+- [x] A contact sheet of all eleven at reduced size, saved to `art/source_images/situation_banners/contact_sheet.png`, to check they look like one series.
+- [x] `art/PROMPTS.md` updated as above.
 
 ## Stop and ask
 
@@ -76,13 +79,12 @@ Stop with `status: blocked` and explain in the report when:
 
 ## Report
 
-_Filled in by the worker._
-
-- **Status summary:**
-- **Files created or changed:**
-- **Measurements / previews:**
-- **Open questions:**
-- **Requests for the integrator:** (the lead adds the `"image"` field to each request in `week1.gd`.)
+- **Status summary:** All eleven prepared banners are ready for final creative review, including the user's in-chat corrections. Produced in the main session on 2026-10-31; no worker dispatch, commit or push. The final fuel-depot image has a quiet stationary background, with no pumping process. The user has directed individual revisions; this report does not imply blanket final visual sign-off.
+- **Files created or changed:** Versioned originals in `art/source_images/situation_banners/`; eleven optimized game PNGs under `init/assets/events/`; reports under `art/optimization_reports/<id>.json`; prompts and character appearances in `art/PROMPTS.md`. `pipe_burst.png` is untouched.
+- **Measurements / previews:** Ten selected generated scenes have 1942×809 originals and 1920×800 game copies. The user-selected reused office is 1672×941. Selected game PNGs total 27.11 MiB. Both `contact_sheet.png` (full images) and `center_crop_sheet.png` (3.5:1 card previews) are current and visually inspected. Main faces and story actions remain readable in the crops. Godot 4.7.1 headless import completed with exit 0 and imported the final fuel texture. The sandbox emitted macOS certificate and external editor-settings save diagnostics; no texture import failure was reported. No automated tests or gameplay playthrough were run; request wiring remains the integrator's step.
+- **Open questions:** Final visual review is pending. The teal/ochre/ivory flag is a fictional visual proposal, not finalized worldbuilding.
+- **Requests for the integrator:** Once review finishes, add `"image": "res://assets/events/<id>.png"` to all eleven request dictionaries in `week1.gd`, replacing the hot-water stand-in. No gameplay scripts or scenes have been edited by this art task. `envelope` intentionally uses the existing empty summer office rather than a visitor scene, per user review.
+- **Selected originals:** `hot_water_v4`, `contractor_v4`, `envelope_v3` (reused office), `church_heat_v1`, `coal_theft_v2`, `wasteland_stalls_v3`, `market_cops_v1`, `fuel_offer_v6`, `residents_meeting_v3`, `journalist_v3`, `boss_report_v2` (all `.png`). Superseded versions are preserved; the current selection table and complete prompts are in `art/PROMPTS.md`.
 
 ## Review notes
 
