@@ -116,9 +116,9 @@ const SEASONS := {
 
 # Camera targets and rendering geometry use metres directly.
 const BOUNDS := Rect2(-620, -460, 1070, 880)
-const ZOOM_MIN := 80.0
-const ZOOM_MAX := 1550.0
-const ZOOM_DEFAULT := 350.0
+const ZOOM_DEFAULT := 350.0 # Camera distance that the zoom readout calls 100 %.
+const ZOOM_MIN := ZOOM_DEFAULT / 1.25 # Closest view: 125 %.
+const ZOOM_MAX := ZOOM_DEFAULT / 0.30 # Widest view: 30 %.
 const DEFAULT_TARGET := Vector3(30, 0, 105)
 const PAN_SPEED := 1.1 # Fraction of the zoom distance per second for keyboard panning.
 
@@ -289,10 +289,6 @@ func focus_on(lot: String) -> void:
 
 func zoom_by(factor: float) -> void:
 	_zoom = clampf(_zoom * factor, ZOOM_MIN, ZOOM_MAX)
-
-
-func zoom_percent() -> int:
-	return roundi(ZOOM_DEFAULT / _zoom * 100.0)
 
 
 func reset_view() -> void:
@@ -568,14 +564,14 @@ func _build_sidewalks() -> void:
 
 
 # The strip minus every other road it runs into, as a list of rects.
-func _strip_pieces(strip: Rect2, along_x: bool, own: Dictionary) -> Array[Rect2]:
+func _strip_pieces(strip: Rect2, along_x: bool, own: Dictionary, margin: float = 0.0) -> Array[Rect2]:
 	var cuts: Array[Vector2] = []
 	for other in DistrictLayout.ROADS:
 		if other == own:
 			continue
 		var rect: Rect2 = other["rect"]
 		if rect.intersects(strip):
-			cuts.append(Vector2(rect.position.x, rect.end.x) if along_x else Vector2(rect.position.y, rect.end.y))
+			cuts.append(Vector2(rect.position.x - margin, rect.end.x + margin) if along_x else Vector2(rect.position.y - margin, rect.end.y + margin))
 	cuts.sort_custom(func(a: Vector2, b: Vector2) -> bool: return a.x < b.x)
 	var pieces: Array[Rect2] = []
 	var from := strip.position.x if along_x else strip.position.y
@@ -859,6 +855,12 @@ func _build_road_markings() -> void:
 		var length := maxf(rect.size.x, rect.size.y)
 		var width := minf(rect.size.x, rect.size.y)
 		var start := rect.position + (Vector2(0, width / 2) if along_x else Vector2(width / 2, 0))
+		if road.get("look", "") == "highway":
+			_highway_lines(road)
+			continue
+		if road.has("median"):
+			_boulevard_median(road)
+			continue
 		for i in range(1, int(length / 8.0)):
 			var at := start + (Vector2(i * 8, 0) if along_x else Vector2(0, i * 8))
 			var junction := false
@@ -877,6 +879,41 @@ func _build_road_markings() -> void:
 			if rect.size.x > rect.size.y and road["kind"] == "asphalt" and rect.intersects(axis_rect):
 				for side in [-1.0, 1.0]:
 					_crosswalk(Vector2(axis_rect.get_center().x, rect.get_center().y + side * (rect.size.y / 2 + 3)), axis_rect.size.x, true, 0.145)
+
+
+# Highway markings: solid edge lines and a solid double centre line, in 8 m pieces
+# that stop short of every junction.
+func _highway_lines(road: Dictionary) -> void:
+	var rect: Rect2 = road["rect"]
+	var cy := rect.get_center().y
+	var offsets := [-rect.size.y / 2.0 + 0.9, rect.size.y / 2.0 - 0.9, -0.25, 0.25]
+	for i in range(1, int(rect.size.x / 8.0)):
+		var x := rect.position.x + i * 8.0
+		var junction := false
+		for other in DistrictLayout.ROADS:
+			if other != road and other["rect"].grow(8).has_point(Vector2(x, cy)):
+				junction = true
+		if junction:
+			continue
+		for offset in offsets:
+			_paint_patch(Vector2(8.0, 0.16), Vector2(x, cy + offset), 0.145)
+
+
+# A boulevard: a kerbed green strip down the middle with trees, broken at every
+# crossing so the crosswalks and turns stay free.
+func _boulevard_median(road: Dictionary) -> void:
+	var rect: Rect2 = road["rect"]
+	var width: float = road["median"]
+	var strip := Rect2(rect.get_center().x - width / 2.0, rect.position.y, width, rect.size.y)
+	for piece in _strip_pieces(strip, false, road, 7.0):
+		if piece.size.y < 6.0:
+			continue
+		_box(Vector3(piece.size.x + 0.5, 0.25, piece.size.y), _ground(piece.get_center()) + Vector3.UP * 0.2, Color("b3afa0"))
+		_ground_quad(piece.get_center(), piece.size, 0.33, _season["grass"], 22.0, false, _season["grass_tint"])
+		var z := piece.position.y + 7.0
+		while z < piece.end.y - 3.0:
+			_tree(_ground(Vector2(piece.get_center().x, z)) + Vector3.UP * 0.3)
+			z += 14.0
 
 
 const SIDEWALK_PLACEHOLDER := Color("8f8b80")
@@ -1071,7 +1108,17 @@ func _tree(at: Vector3) -> Sprite3D:
 
 
 func _ground(at: Vector2) -> Vector3:
-	return Vector3(at.x, 0.0, at.y)
+	return Vector3(at.x, _bridge_height(at), at.y)
+
+
+# Deck height under a map point: zero on land, rising along the ramps of the road bridge.
+func _bridge_height(at: Vector2) -> float:
+	for bridge in DistrictLayout.BRIDGES:
+		var rect: Rect2 = bridge["rect"]
+		if rect.has_point(at):
+			var ramp: float = bridge["ramp"]
+			return float(bridge["height"]) * clampf(minf(at.y - rect.position.y, rect.end.y - at.y) / ramp, 0.0, 1.0)
+	return 0.0
 
 
 # A painted prop standing on the ground: cars, kiosks, tents, scaffolding. It

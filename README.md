@@ -207,6 +207,14 @@ The campaign has a peaceful arc and a war arc, and the second changes what the f
 - The player mainly thinks about resource management and long-term decisions.
 - Technical approach: the city is divided into lots (forest, yard, square, wasteland, factory). Each lot has states with their own 3D models (forest → clearing → construction → housing block; square → kiosks → market). Temporary overlays sit on top (pickets, garbage, a police van, the rival's advertising). Player decisions change lot states.
 
+## Far-Bank City and Visual Comparison (Provisional)
+
+- User direction: the city across the border river in the brotherly republic should have a distinct visual identity. As our district changes over time, the player may want to compare it with other places or NPC-run areas. The comparison mechanic and progression rules remain undecided.
+- First art proposal: an older riverside town with compact masonry streets, pitched terracotta roofs, a modest market square and an inhabited promenade, sharing the same post-Soviet past and 1997 visual world. This contrasts with our late-Soviet transport district through urban form, not a predetermined wealth or moral ranking. It is an exploratory direction, not approved architecture or a new map implementation.
+- Concept: `art/concepts/far-bank-city-direction-v1.png`; exact prompt and review notes: `art/concepts/far-bank-city-v1.prompt.md`. The near bank, river and two existing crossings are retained from the border concept.
+- Proposed approach for future comparisons: keep the viewpoint and recognisable landmarks stable; show matched seasons/weather on both banks, and changes through repairs, construction, market activity and waterfront use. Compare equivalent functions where possible: a historic town centre and a transport yard are not direct evidence of better or worse management.
+- Open implementation option: authored stages of change in the neighbouring town can provide visible independent progress. Whether it needs a deeper NPC simulation, what is visible from our map, and how much changes independently of the player are still open.
+
 ## Starting District Layout (Provisional)
 
 The starting district is an outskirt, not the city center. The center lies far beyond the map and is not part of the first version.
@@ -223,7 +231,11 @@ The starting district is an outskirt, not the city center. The center lies far b
   - K, core lot: the center of every residential superblock (four W lots around one K lot), reserved for a school or kindergarten. Until then it is a yard, sports ground, or wasteland ("a school was supposed to stand here").
   - G, street lot: small public or commercial buildings along a street (police, polyclinic, pharmacy, exchange office, cafe, garages).
   - X, large lot: transport and industry (ATP, truck stop, checkpoint and customs, port, boiler house, market, station).
-  - D, village plot: irregular, with a garden, reached by dirt roads.
+  - D, village plot: a large farmstead plot with a garden, reached by dirt roads. The old village has 17 of them, each about 38 m deep and 38–50 m wide (about 15–20 sotok), with the house near the street and the garden behind; old villages have no shortage of space. Plan: `art/concepts/village_plot_plan_v1.svg`; the lot data in `district_layout.gd` follows it. Only 2 of the 17 plots are abandoned: the village is emptying slowly, not ruined.
+  - Each village plot is fenced and filled by condition (`VILLAGE_FILL` in `building_catalog.gd`): tidy plots have a whole fence, vegetable beds, an orchard and a shed; fading ones have a patchy fence, one bed and a few trees; abandoned ones have a half-fallen fence and nothing planted. Fences and beds are drawn as procedural boxes; they are placeholders until real models replace them.
+  - The old village cemetery lies directly west of the church (lot `cemetery`, about 35 × 46 m): a fenced field with a gate on the north street, rows of mounds with mostly wooden, leaning crosses and a few stone stelae, a central path and old trees. The church faces west toward it.
+  - Village dirt roads form closed loops (north street, west street, the road around the church, the east street, the south street and an east lane); no dead ends. The deep plot d_13 south of the church is an old orchard farmstead facing the south street.
+  - Open idea, not decided: the old village may have been a collective farm (kolkhoz) in the early Soviet years, leaving an office or club, a cattle yard or a barn as ruins on some plots.
   - R, reserve: a whole empty block.
   - Ground floors of panel blocks can host small public places (district police officer, pharmacy, savings bank) by swapping the facade only.
 - Layout, north to south: the neighboring "western" country; the border river with a road bridge and a separate railway bridge; a transport band along the embankment (ATP, truck stop, checkpoint and customs with a truck holding area, port with fuel depot and freight transfer station); a highway along the river; a reserve band (boiler house, garages, empty reserve block); four residential superblocks in the west; a public axis from the bridge to the station; the old village with the church in the east; the market, the passenger station, and the bus station in the south; a double-track passenger line along the south edge; and a freight line along the east edge to the railway bridge.

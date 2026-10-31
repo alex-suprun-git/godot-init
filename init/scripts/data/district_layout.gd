@@ -47,18 +47,24 @@ const LOTS := {
 	"g_south": {"type": "G", "rect": Rect2(-430, 315, 200, 70), "content": "empty_lot", "condition": "worked", "facing": "n"},
 	"market": {"type": "X", "rect": Rect2(-215, 315, 185, 70), "content": "market", "condition": "worked", "facing": "n"},
 	"station": {"type": "X", "rect": Rect2(15, 315, 215, 70), "content": "station", "condition": "worked", "facing": "n"},
-	"d_01": {"type": "D", "rect": Rect2(165, -60, 30, 35), "content": "house_kept", "condition": "kept", "facing": "w"},
-	"d_02": {"type": "D", "rect": Rect2(215, -55, 30, 35), "content": "house_poor", "condition": "fading", "facing": "w"},
-	"d_03": {"type": "D", "rect": Rect2(275, -65, 35, 35), "content": "house_kept", "condition": "kept", "facing": "w"},
-	"d_04": {"type": "D", "rect": Rect2(335, -55, 30, 40), "content": "house_abandoned", "condition": "abandoned", "facing": "w"},
-	"d_05": {"type": "D", "rect": Rect2(170, 10, 30, 40), "content": "house_kept", "condition": "kept", "facing": "w"},
-	"d_06": {"type": "D", "rect": Rect2(345, 5, 35, 40), "content": "house_poor", "condition": "fading", "facing": "w"},
-	"d_07": {"type": "D", "rect": Rect2(175, 160, 30, 40), "content": "house_kept", "condition": "kept", "facing": "w"},
-	"d_08": {"type": "D", "rect": Rect2(230, 175, 30, 35), "content": "house_abandoned", "condition": "abandoned", "facing": "w"},
-	"d_09": {"type": "D", "rect": Rect2(330, 150, 35, 40), "content": "house_kept", "condition": "kept", "facing": "w"},
-	"d_10": {"type": "D", "rect": Rect2(170, 240, 30, 40), "content": "house_poor", "condition": "fading", "facing": "w"},
-	"d_11": {"type": "D", "rect": Rect2(290, 235, 35, 40), "content": "house_kept", "condition": "kept", "facing": "w"},
-	"d_12": {"type": "D", "rect": Rect2(350, 240, 35, 40), "content": "house_abandoned", "condition": "abandoned", "facing": "w"},
+	"cemetery": {"type": "N", "rect": Rect2(209, 84.5, 35, 46), "content": "cemetery", "condition": "fading", "facing": "n"},
+	"d_01": {"type": "D", "rect": Rect2(156.5, -40, 42, 38), "content": "house_poor", "condition": "fading", "facing": "n"},
+	"d_02": {"type": "D", "rect": Rect2(334.5, -40, 50, 38), "content": "house_kept", "condition": "kept", "facing": "n"},
+	"d_03": {"type": "D", "rect": Rect2(164.5, -0.5, 38, 38), "content": "house_kept", "condition": "kept", "facing": "e"},
+	"d_04": {"type": "D", "rect": Rect2(164.5, 37.5, 38, 46), "content": "house_poor", "condition": "fading", "facing": "e"},
+	"d_05": {"type": "D", "rect": Rect2(164.5, 83.5, 38, 38), "content": "house_kept", "condition": "kept", "facing": "e"},
+	"d_06": {"type": "D", "rect": Rect2(164.5, 121.5, 38, 46), "content": "house_kept", "condition": "kept", "facing": "e"},
+	"d_07": {"type": "D", "rect": Rect2(164.5, 167.5, 38, 38), "content": "house_poor", "condition": "fading", "facing": "e"},
+	"d_08": {"type": "D", "rect": Rect2(164.5, 205.5, 38, 42), "content": "house_abandoned", "condition": "abandoned", "facing": "e"},
+	"d_09": {"type": "D", "rect": Rect2(207.5, 133.5, 38, 50), "content": "house_kept", "condition": "kept", "facing": "w"},
+	"d_10": {"type": "D", "rect": Rect2(207.5, 231.5, 38, 50), "content": "house_kept", "condition": "kept", "facing": "n"},
+	"d_11": {"type": "D", "rect": Rect2(284.5, 134, 38, 42), "content": "house_poor", "condition": "fading", "facing": "e"},
+	"d_12": {"type": "D", "rect": Rect2(284.5, 176, 38, 46), "content": "house_kept", "condition": "kept", "facing": "e"},
+	"d_13": {"type": "D", "rect": Rect2(247.5, 134, 35, 91), "content": "house_kept", "condition": "kept", "facing": "s"},
+	"d_14": {"type": "D", "rect": Rect2(327.5, 80, 38, 38), "content": "house_abandoned", "condition": "abandoned", "facing": "w"},
+	"d_15": {"type": "D", "rect": Rect2(327.5, 118, 38, 38), "content": "house_poor", "condition": "fading", "facing": "w"},
+	"d_16": {"type": "D", "rect": Rect2(327.5, 156, 38, 38), "content": "house_poor", "condition": "fading", "facing": "w"},
+	"d_17": {"type": "D", "rect": Rect2(327.5, 220, 38, 50), "content": "house_kept", "condition": "kept", "facing": "n"},
 }
 
 # Asphalt roads get a pavement on both sides (SIDEWALK_WIDTH); a road may override it
@@ -66,32 +72,40 @@ const LOTS := {
 const SIDEWALK_WIDTH := 2.5
 
 const ROADS := [
-	{"id": "highway", "rect": Rect2(-450, -195, 875, 15), "kind": "asphalt", "walk": 0.0},
+	{"id": "highway", "rect": Rect2(-450, -197.5, 875, 20), "kind": "asphalt", "walk": 0.0, "look": "highway"},
 	{"rect": Rect2(-450, -90, 875, 10), "kind": "asphalt"},
 	{"rect": Rect2(-450, 300, 875, 10), "kind": "asphalt"},
-	{"id": "axis", "rect": Rect2(-20, -330, 30, 642), "kind": "asphalt"},
+	{"id": "axis", "rect": Rect2(-17, -330, 24, 642), "kind": "asphalt", "median": 4.0},
 	{"rect": Rect2(140, -80, 10, 380), "kind": "asphalt"},
 	{"rect": Rect2(-398.4, 82.2, 378.4, 10), "kind": "yard"},
 	{"rect": Rect2(-205.4, -80, 10, 380), "kind": "yard"},
-	{"rect": Rect2(150, -42.5, 57.5, 5), "kind": "dirt"},
-	{"rect": Rect2(202.5, -40, 5, 272.5), "kind": "dirt"},
+	# Village dirt roads form closed loops: H1 north, V1 west, H2 around the church,
+	# V2 east, H4 south, plus an east lane joining the ends of H1 and H3.
+	{"rect": Rect2(150, -45, 237.5, 5), "kind": "dirt"},
+	{"rect": Rect2(202.5, -42.5, 5, 275), "kind": "dirt"},
 	{"rect": Rect2(205, 77.5, 122.5, 5), "kind": "dirt"},
-	{"rect": Rect2(322.5, 80, 5, 142.5), "kind": "dirt"},
-	{"rect": Rect2(325, 217.5, 70, 5), "kind": "dirt"},
-	{"rect": Rect2(205, 227.5, 75, 5), "kind": "dirt"},
+	{"rect": Rect2(322.5, 80, 5, 150), "kind": "dirt"},
+	{"rect": Rect2(325, 215, 70, 5), "kind": "dirt"},
+	{"rect": Rect2(205, 225, 122.5, 5), "kind": "dirt"},
+	{"rect": Rect2(382.5, -42.5, 5, 262.5), "kind": "dirt"},
 ]
 
 # The passenger tracks turn north into the eastern freight corridor.
 const RAILS := [
-	[Vector2(-450, 395), Vector2(410, 395), Vector2(410, -405)],
-	[Vector2(-450, 405), Vector2(420, 405), Vector2(420, -405)],
+	[Vector2(-450, 395), Vector2(410, 395), Vector2(410, -495)],
+	[Vector2(-450, 405), Vector2(420, 405), Vector2(420, -495)],
 	[Vector2(410, -230), Vector2(395, -245), Vector2(150, -245)],
 ]
-const WATER := Rect2(-450, -400, 900, 70)
-const FOREIGN_BANK := Rect2(-450, -460, 900, 60)
+# A wide river: barges pass under both bridges, whose decks rise to a hump over the water.
+const WATER := Rect2(-450, -440, 900, 110)
+const FOREIGN_BANK := Rect2(-450, -500, 900, 60)
 const BRIDGES := [
-	{"rect": Rect2(-12, -405, 14, 80), "height": 1.2, "kind": "road"},
-	{"rect": Rect2(405, -405, 20, 80), "height": 1.2, "kind": "rail"},
+	# The road bridge ends at the water's edge on the town side; its deck climbs to
+	# `height` over `ramp` metres at both ends, so cars and people ride on it.
+	# Same x range as the civic axis (-17..7), so the boulevard carries straight onto the bridge.
+	{"rect": Rect2(-17, -445, 24, 115), "height": 6.0, "ramp": 40.0, "kind": "road"},
+	# The railway climbs an embankment on land, 50 m each side of the river.
+	{"rect": Rect2(405, -495, 20, 215), "height": 6.0, "ramp": 50.0, "kind": "rail"},
 ]
 const AREAS := {
 	"village": {"rect": Rect2(155, -75, 240, 370), "ground": "grass_dry", "condition": "fading"},

@@ -43,7 +43,6 @@ var _money_label: Label
 var _start_button: Button
 var _tasks_button: Button
 var _map_controls: PanelContainer
-var _zoom_label: Label
 var _speed_buttons := {}
 var _season_buttons := {}
 var _season_controls: HBoxContainer
@@ -167,6 +166,7 @@ func set_speed(speed: float) -> void:
 	if phase == "live":
 		_phase_label.text = "ПАУЗА" if is_zero_approx(speed) else "ЖИВАЯ НЕДЕЛЯ · ×%d" % speed
 
+
 const DAY_FULL_NAMES := ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
 const MONTHS_GENITIVE := ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"]
 const DAY_CARD_SECONDS := 3.0 # How long the night takes to pass on the map behind the card.
@@ -233,7 +233,6 @@ func continue_day() -> void:
 	done.call()
 
 
-
 func show_week_two(changes: Array[String]) -> void:
 	set_phase("week2")
 	var lines: Array[String] = []
@@ -267,7 +266,6 @@ func _process(_delta: float) -> void:
 	)
 	_toast_box.visible = not _card.visible and not overlay_open
 	_map_controls.visible = not overlay_open and not _card.visible
-	_zoom_label.text = "%d%%" % map.zoom_percent()
 
 
 # People stand where the map says; the token's feet are the spot on the ground.
@@ -330,41 +328,36 @@ func _build_map_controls() -> void:
 	_map_controls = _panel(INK)
 	_map_controls.add_theme_stylebox_override("panel", OfficeTheme.box(INK, OfficeTheme.EDGE.darkened(0.35), 7))
 	_map_controls.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	_map_controls.offset_left = -173
-	_map_controls.offset_right = 173
-	_map_controls.offset_top = -62
-	_map_controls.offset_bottom = -16
+	_map_controls.offset_left = -112
+	_map_controls.offset_right = 112
+	_map_controls.offset_top = -50
+	_map_controls.offset_bottom = -14
 	_root.add_child(_map_controls)
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 5)
+	row.add_theme_constant_override("separation", 4)
 	_map_controls.add_child(row)
 	var out := Button.new()
 	out.text = "−"
 	out.tooltip_text = "Отдалить карту · колесо вниз или −"
-	out.custom_minimum_size = Vector2(34, 34)
+	out.custom_minimum_size = Vector2(28, 28)
 	out.pressed.connect(map.zoom_by.bind(1.25))
 	row.add_child(out)
-	_zoom_label = _label("100%", 14, PAPER)
-	_zoom_label.custom_minimum_size.x = 48
-	_zoom_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_zoom_label.tooltip_text = "Масштаб карты · колесо мыши или щипок на трекпаде"
-	row.add_child(_zoom_label)
 	var closer := Button.new()
 	closer.text = "+"
 	closer.tooltip_text = "Приблизить карту · колесо вверх или +"
-	closer.custom_minimum_size = Vector2(34, 34)
+	closer.custom_minimum_size = Vector2(28, 28)
 	closer.pressed.connect(map.zoom_by.bind(0.8))
 	row.add_child(closer)
 	var home := Button.new()
 	home.text = "К себе"
 	home.tooltip_text = "Вернуться к ГГ и обычному масштабу · Home"
-	home.add_theme_font_size_override("font_size", 14)
+	home.add_theme_font_size_override("font_size", 13)
 	home.pressed.connect(map.reset_view)
 	row.add_child(home)
 	var overview := Button.new()
 	overview.text = "Район"
 	overview.tooltip_text = "Показать весь район"
-	overview.add_theme_font_size_override("font_size", 14)
+	overview.add_theme_font_size_override("font_size", 13)
 	overview.pressed.connect(map.show_overview)
 	row.add_child(overview)
 
