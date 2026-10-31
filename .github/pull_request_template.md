@@ -1,5 +1,7 @@
 ## Summary
 
+Closes #<issue number>  <!-- every PR belongs to a backlog issue; use "Refs #n" if it only partly finishes it -->
+
 <!-- One or two sentences: what changes for the player or the project, and why. -->
 
 ## Scope

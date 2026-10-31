@@ -2,6 +2,7 @@
 id: d4-rebuild
 status: ready   # draft | ready | in-progress | review | blocked | done
 worker: codex
+issue: "#3"
 branch: task/d4-rebuild
 ---
 

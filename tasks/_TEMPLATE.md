@@ -2,6 +2,7 @@
 id: <short-kebab-id>
 status: ready   # ready | in-progress | review | blocked | done
 worker: codex
+issue: "#<n>"   # the backlog issue this brief serves
 branch: task/<short-kebab-id>
 ---
 
