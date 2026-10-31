@@ -29,6 +29,14 @@ Use `call TOOL --json arguments.json` for other MCP operations. Image results ar
 
 Keep short scene queries and edits synchronous. Queue baking/rendering with `start`; scripts can call `job_checkpoint('running', stage='bake')` before an expensive stage. Job completion means that script returned; separately queued child operations need their own completion signal. First-time Cycles Metal compilation took several minutes on this Mac. A client timeout does not cancel Blender: inspect job state and outputs before retrying. If native tool discovery is unavailable, use the client instead of repeatedly restarting apps or clicking UI.
 
+## Vehicle shape and revisions
+
+For original vehicle modelling or body-shape revisions, read
+[references/vehicle-modeling.md](references/vehicle-modeling.md). It covers
+reference-led body/roof/glazing construction, silhouette-first budgets and
+matched before/after inspection, with the verified Volga workflow as an example.
+Reuse its helpers and stages without inheriting another vehicle's proportions.
+
 ## Build and export
 
 - Decide the silhouette, intended camera distance, units and geometry/material/texture budgets first. Inspect a cheap multi-angle preview before expensive finishing.

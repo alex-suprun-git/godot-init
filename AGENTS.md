@@ -40,6 +40,13 @@
 - For new or replaced generated raster art, follow `art/ASSET_PIPELINE.md`: preserve the original outside `init/`, review and obtain the applicable visual approval, run `uv run tools/optimize_asset.py` as a separate preparation step, then integrate the optimized copy into Godot. Do not bypass optimization or retroactively bulk-process existing assets without a migration task.
 - Do not commit or push unless explicitly asked.
 
+## Roles and Parallel Work
+
+- The main session is the lead and integrator: it builds mechanics, writes briefs, reviews results and wires assets into scenes and scripts.
+- Parallel work (sprites, 3D models, other assets) is handed to workers, currently Codex, as briefs in `tasks/`. Read `tasks/README.md` for the lifecycle, file ownership and shared-resource rules.
+- When executing a brief, work in its worktree, write only to its *Outputs*, and never edit `init/scripts/`, scenes, `sprite_anchors.gd`, `README.md` or `AGENTS.md`. Record needed integration changes in the brief's report instead.
+- `tools/dispatch_task.sh <id>` starts a brief with `codex exec` in `../godot-worktrees/<id>`; `--status` shows its progress.
+
 ## Blender and 3D Assets
 
 - Use the project skill at `.agents/skills/blender-godot-assets/SKILL.md` for Blender modeling, export and Godot integration. The reusable MCP client is `tools/blender_mcp.py`; prefer the working API over repeated UI attempts.

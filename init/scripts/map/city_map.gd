@@ -98,7 +98,7 @@ const SEASONS := {
 		"sky_top": Color(0.5, 0.55, 0.62), "sky_horizon": Color(0.78, 0.72, 0.64),
 		"sun_rotation": Vector3(-42.0, -30.0, 0.0), "sun_color": Color(1.0, 0.9, 0.78), "sun_energy": 1.15,
 		"ambient": 0.55, "fog_color": Color(0.8, 0.76, 0.7), "fog_density": 0.00025,
-		"saturation": 1.0, "contrast": 1.1, "weather": "leaves",
+		"saturation": 1.0, "contrast": 1.1, "weather": "",
 	},
 	"winter": {
 		"label": "Зима",
@@ -110,7 +110,7 @@ const SEASONS := {
 		"sky_top": Color(0.5, 0.56, 0.66), "sky_horizon": Color(0.74, 0.78, 0.84),
 		"sun_rotation": Vector3(-30.0, -30.0, 0.0), "sun_color": Color(0.9, 0.94, 1.0), "sun_energy": 1.15,
 		"ambient": 0.5, "fog_color": Color(0.78, 0.82, 0.88), "fog_density": 0.0003,
-		"saturation": 0.8, "contrast": 1.22, "weather": "snow",
+		"saturation": 0.8, "contrast": 1.22, "weather": "",
 	},
 }
 
@@ -539,7 +539,8 @@ func _build_traffic() -> void:
 			# A car's centre sits 0.95 m inside the road edge: parked at the kerb.
 			var at := rect.position + (Vector2(i * 100, rect.size.y - 0.95) if along_x else Vector2(rect.size.x - 0.95, i * 100))
 			var look := i * 5 + int(length) + i * 977
-			_vehicle(VehicleModels.traffic_model(look), _ground(at) + Vector3.UP * 0.14, 4.3, "x" if along_x else "z", null, look)
+			var model := VehicleModels.traffic_model(look)
+			_vehicle(model, _ground(at) + Vector3.UP * 0.14, VehicleModels.map_length(model), "x" if along_x else "z", null, look)
 
 
 # Pavements are derived from the roads: a strip on each side, cut wherever another
@@ -729,7 +730,7 @@ func _build_tokens() -> void:
 		var start: Vector2 = sim.actors[id]["pos"]
 		token.position = Vector3(start.x, 0, start.y + 6)
 		_tokens[id] = token
-	_hero_car = _vehicle("lada", Vector3.ZERO, 4.3, "z", null, 2)
+	_hero_car = _vehicle("volga", Vector3.ZERO, VehicleModels.map_length("volga"), "z", null, VehicleModels.PAINT_BLACK)
 	_hero_car.visible = false
 
 
@@ -939,7 +940,8 @@ func _build_ambient() -> void:
 		if agent.is_empty():
 			break
 		var seed_value := look.randi()
-		agent["visual"] = _vehicle(VehicleModels.traffic_model(seed_value), _ground(agent["pos"]) + Vector3.UP * 0.14, 4.3, "z", null, seed_value)
+		var model := VehicleModels.traffic_model(seed_value)
+		agent["visual"] = _vehicle(model, _ground(agent["pos"]) + Vector3.UP * 0.14, VehicleModels.map_length(model), "z", null, seed_value)
 
 
 func _move_ambient(delta: float) -> void:
@@ -1117,7 +1119,8 @@ func _bridge_height(at: Vector2) -> float:
 		var rect: Rect2 = bridge["rect"]
 		if rect.has_point(at):
 			var ramp: float = bridge["ramp"]
-			return float(bridge["height"]) * clampf(minf(at.y - rect.position.y, rect.end.y - at.y) / ramp, 0.0, 1.0)
+			var south: float = INF if bridge.get("flat_end", false) else rect.end.y - at.y
+			return float(bridge["height"]) * clampf(minf(at.y - rect.position.y, south) / ramp, 0.0, 1.0)
 	return 0.0
 
 

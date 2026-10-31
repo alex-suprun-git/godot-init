@@ -98,6 +98,8 @@ func _build_ground() -> void:
 	for line in Layout.RAILS:
 		for i in line.size() - 1:
 			_rail_segment(line[i], line[i + 1])
+	_build_embankment()
+	_build_siding_ramp()
 	map._build_road_markings()
 
 
@@ -119,7 +121,15 @@ func _rail_segment(from: Vector2, to: Vector2) -> void:
 			for z in [deck.position.y, deck.end.y]:
 				if z > minf(from.y, to.y) and z < maxf(from.y, to.y):
 					points.append(Vector2(from.x, z))
+		for z in [float(Layout.EMBANKMENT["from"]), float(Layout.EMBANKMENT["to"])]:
+			if z > minf(from.y, to.y) and z < maxf(from.y, to.y) and Layout.EMBANKMENT["tracks"].has(from.x):
+				points.append(Vector2(from.x, z))
 		points.sort_custom(func(a, b): return a.y < b.y)
+	elif is_equal_approx(from.y, to.y) and is_equal_approx(from.y, float(Layout.SIDING_RAMP["z"])):
+		var split: float = Layout.SIDING_RAMP["x_from"]
+		if split > minf(from.x, to.x) and split < maxf(from.x, to.x):
+			points.append(Vector2(split, from.y))
+		points.sort_custom(func(a, b): return a.x < b.x)
 	for i in points.size() - 1:
 		var a := points[i]
 		var b := points[i + 1]
@@ -128,8 +138,13 @@ func _rail_segment(from: Vector2, to: Vector2) -> void:
 		for bridge in Layout.BRIDGES:
 			if bridge["kind"] == "rail" and bridge["rect"].has_point(center):
 				on_bridge = true
+		var embankment := Rect2(Layout.EMBANKMENT["cx"] - 15.0, Layout.EMBANKMENT["from"], 30.0, Layout.EMBANKMENT["to"] - Layout.EMBANKMENT["from"])
+		if embankment.has_point(center):
+			on_bridge = true
+		if is_equal_approx(center.y, float(Layout.SIDING_RAMP["z"])) and center.x > float(Layout.SIDING_RAMP["x_from"]):
+			on_bridge = true # The siding ramp draws its own ballast and rails.
 		if on_bridge:
-			continue # The bridge draws its own embankment, deck and rails.
+			continue # The bridge or the embankment draws its own ground, ballast and rails.
 		var mesh := QuadMesh.new()
 		mesh.size = Vector2(a.distance_to(b), 3.8)
 		var material := StandardMaterial3D.new()
@@ -438,7 +453,7 @@ func _build_bridge(bridge: Dictionary) -> void:
 	if bridge["kind"] == "road":
 		_road_bridge(rect, float(bridge["height"]), float(bridge["ramp"]))
 	else:
-		_rail_bridge(rect, float(bridge["height"]), float(bridge["ramp"]))
+		_rail_bridge(rect, float(bridge["height"]), float(bridge["ramp"]), bridge.get("flat_end", false))
 	map._occupy(rect.get_center(), rect.size)
 
 
@@ -517,15 +532,17 @@ func _road_bridge(rect: Rect2, height: float, ramp: float) -> void:
 
 # Railway on an embankment that climbs on land, then a steel through-truss over the
 # river with concrete piers; one truss pair per track.
-func _rail_bridge(rect: Rect2, height: float, ramp: float) -> void:
+func _rail_bridge(rect: Rect2, height: float, ramp: float, bridge_flat_end: bool = false) -> void:
 	var cx := rect.get_center().x
 	var water: Rect2 = Layout.WATER
 	var z0 := rect.position.y
 	var z1 := rect.end.y
 	var tracks: Array[float] = [410.0, 420.0]
 	# Level deck from the first to the last point at full height.
+	# `flat_end`: the deck stays at full height to the south end, where the embankment takes over.
+	var flat_end: bool = bridge_flat_end
 	var flat_from := z0 + ramp
-	var flat_to := z1 - ramp
+	var flat_to := z1 if flat_end else z1 - ramp
 	var flat_center := (flat_from + flat_to) / 2.0
 	var flat_length := flat_to - flat_from
 	map._box(Vector3(rect.size.x, 0.8, flat_length), Vector3(cx, height - 0.4, flat_center), CONCRETE)
@@ -539,6 +556,8 @@ func _rail_bridge(rect: Rect2, height: float, ramp: float) -> void:
 	# Embankments: solid gravel wedges with ballast and rails on top.
 	var length := sqrt(ramp * ramp + height * height)
 	for north in [true, false]:
+		if not north and flat_end:
+			continue
 		var root := _ramp_root(rect, cx, height, ramp, north)
 		var dir := 1.0 if north else -1.0
 		map._box(Vector3(rect.size.x, height, length), Vector3(0, -height / 2.0, dir * length / 2.0), Color("7b766a"), root)
@@ -593,6 +612,186 @@ func _rail_quad(at: Vector3, length: float, parent: Node3D) -> void:
 	rail.rotate_y(-PI / 2.0)
 	rail.position = at
 	(parent if parent != null else map).add_child(rail)
+
+
+# --- Eastern embankment ------------------------------------------------------
+
+# Cross-section of the embankment at height `h`: slope foot, shoulder, shoulder, foot.
+func _embankment_section(cx: float, top: float, h: float) -> Array[Vector2]:
+	return [Vector2(cx - top - 1.5 * h, 0.0), Vector2(cx - top, h), Vector2(cx + top, h), Vector2(cx + top + 1.5 * h, 0.0)]
+
+
+func _embankment_height(z: float) -> float:
+	var e: Dictionary = Layout.EMBANKMENT
+	var from_ramp: float = e.get("ramp_from", e["ramp"])
+	var up := (z - float(e["from"])) / from_ramp if from_ramp > 0.0 else INF
+	return float(e["height"]) * clampf(minf(up, (float(e["to"]) - z) / float(e["ramp"])), 0.0, 1.0)
+
+
+# A grassed railway embankment with ramps at both ends. Where a road crosses it the
+# earth stops and a concrete deck carries the track over a short tunnel.
+func _build_embankment() -> void:
+	var e: Dictionary = Layout.EMBANKMENT
+	var cx: float = e["cx"]
+	var top: float = e["top"]
+	var peak: float = e["height"]
+	var gap: float = e["gap"]
+	# Stations along z: the ends of the ramps, and the two edges of every tunnel.
+	var spans: Array[Vector2] = []
+	var cursor := float(e["from"])
+	var cuts: Array[Vector2] = []
+	for z in e["tunnels"]:
+		cuts.append(Vector2(z - gap / 2.0, z + gap / 2.0))
+	for cut in cuts:
+		spans.append(Vector2(cursor, cut.x))
+		cursor = cut.y
+	spans.append(Vector2(cursor, e["to"]))
+	var surface := SurfaceTool.new()
+	surface.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var ballast: Array[SurfaceTool] = []
+	for track in e["tracks"]:
+		var strip := SurfaceTool.new()
+		strip.begin(Mesh.PRIMITIVE_TRIANGLES)
+		ballast.append(strip)
+	for span in spans:
+		# Break the span where a ramp meets the plateau, so heights stay straight lines.
+		var marks: Array[float] = [span.x]
+		for z in [float(e["from"]) + float(e.get("ramp_from", e["ramp"])), float(e["to"]) - float(e["ramp"])]:
+			if z > span.x and z < span.y:
+				marks.append(z)
+		marks.append(span.y)
+		for i in marks.size() - 1:
+			var za: float = marks[i]
+			var zb: float = marks[i + 1]
+			var a := _embankment_section(cx, top, _embankment_height(za))
+			var b := _embankment_section(cx, top, _embankment_height(zb))
+			for side in [[0, 1], [2, 3]]:
+				_strip_quad(surface, Vector3(a[side[0]].x, a[side[0]].y, za), Vector3(a[side[1]].x, a[side[1]].y, za), Vector3(b[side[1]].x, b[side[1]].y, zb), Vector3(b[side[0]].x, b[side[0]].y, zb))
+			_strip_quad(surface, Vector3(a[1].x, a[1].y, za), Vector3(a[2].x, a[2].y, za), Vector3(b[2].x, b[2].y, zb), Vector3(b[1].x, b[1].y, zb))
+			for k in e["tracks"].size():
+				var x: float = e["tracks"][k]
+				var ha := a[1].y + 0.04
+				var hb := b[1].y + 0.04
+				var strip: SurfaceTool = ballast[k]
+				var quad := [Vector3(x - 1.9, ha, za), Vector3(x + 1.9, ha, za), Vector3(x + 1.9, hb, zb), Vector3(x - 1.9, hb, zb)]
+				var uvs := [Vector2(za / 3.8, 0), Vector2(za / 3.8, 1), Vector2(zb / 3.8, 1), Vector2(zb / 3.8, 0)]
+				for index in [0, 1, 2, 0, 2, 3]:
+					strip.set_uv(uvs[index])
+					strip.add_vertex(quad[index])
+		# Vertical end faces at the tunnels (not at the tips of the ramps).
+		for z in [span.x, span.y]:
+			if _embankment_height(z) > 0.1 and z != float(e["from"]):
+				var s := _embankment_section(cx, top, _embankment_height(z))
+				for index in [0, 1, 2, 0, 2, 3]:
+					surface.set_uv(Vector2(s[index].x / 10.0, z / 10.0))
+					surface.add_vertex(Vector3(s[index].x, s[index].y, z))
+	surface.generate_normals()
+	var earth := StandardMaterial3D.new()
+	earth.albedo_texture = map._season["grass"]
+	earth.albedo_color = map._season["grass_tint"] * Color(0.85, 0.85, 0.8)
+	earth.roughness = 1.0
+	earth.cull_mode = BaseMaterial3D.CULL_DISABLED
+	earth.uv1_scale = Vector3(0.45, 0.45, 1.0)
+	var node := MeshInstance3D.new()
+	node.name = "RailEmbankment"
+	node.mesh = surface.commit()
+	node.material_override = earth
+	map.add_child(node)
+	var rails := StandardMaterial3D.new()
+	rails.albedo_texture = map._season["rail"]
+	rails.roughness = 1.0
+	rails.cull_mode = BaseMaterial3D.CULL_DISABLED
+	for strip in ballast:
+		strip.generate_normals()
+		var strip_node := MeshInstance3D.new()
+		strip_node.mesh = strip.commit()
+		strip_node.material_override = rails
+		strip_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		map.add_child(strip_node)
+	# Tunnels: concrete abutments, a deck under the ballast, rails on top.
+	for cut in cuts:
+		var length := cut.y - cut.x
+		var middle := (cut.x + cut.y) / 2.0
+		map._box(Vector3(top * 2.0 + 1.0, 1.2, length), Vector3(cx, peak - 0.6, middle), CONCRETE)
+		for end in [cut.x, cut.y]:
+			var inward := 1.0 if end == cut.x else -1.0
+			map._box(Vector3(top * 2.0 + 1.0, peak - 0.6, 0.8), Vector3(cx, (peak - 0.6) / 2.0, end + inward * 0.4), CONCRETE_DARK)
+		for track in e["tracks"]:
+			_rail_quad(Vector3(track, peak + 0.04, middle), length, null)
+	map._occupy(Vector2(cx, (float(e["from"]) + float(e["to"])) / 2.0), Vector2(36, float(e["to"]) - float(e["from"])))
+
+
+# The port siding comes down off the elevated main line: an earth ramp from deck
+# height at the junction to ground level, with ballast and rails following it.
+func _build_siding_ramp() -> void:
+	var r: Dictionary = Layout.SIDING_RAMP
+	var z0: float = r["z"]
+	var top: float = r["top"]
+	var peak: float = r["height"]
+	var xa: float = r["x_from"]
+	var xb: float = r["x_to"]
+	var xc := xb + 6.0 # Runs a little into the main embankment so the two merge.
+	var marks: Array[float] = [xa, xb, xc]
+	var earth := SurfaceTool.new()
+	earth.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var ballast := SurfaceTool.new()
+	ballast.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for i in marks.size() - 1:
+		var x0: float = marks[i]
+		var x1: float = marks[i + 1]
+		var h0: float = peak * clampf((x0 - xa) / (xb - xa), 0.0, 1.0)
+		var h1: float = peak * clampf((x1 - xa) / (xb - xa), 0.0, 1.0)
+		var a: Array[Vector2] = [Vector2(z0 - top - 1.5 * h0, 0.0), Vector2(z0 - top, h0), Vector2(z0 + top, h0), Vector2(z0 + top + 1.5 * h0, 0.0)]
+		var b: Array[Vector2] = [Vector2(z0 - top - 1.5 * h1, 0.0), Vector2(z0 - top, h1), Vector2(z0 + top, h1), Vector2(z0 + top + 1.5 * h1, 0.0)]
+		for side in [[0, 1], [1, 2], [2, 3]]:
+			var p: int = side[0]
+			var q: int = side[1]
+			var quad: Array[Vector3] = [Vector3(x0, a[p].y, a[p].x), Vector3(x0, a[q].y, a[q].x), Vector3(x1, b[q].y, b[q].x), Vector3(x1, b[p].y, b[p].x)]
+			for index in [0, 1, 2, 0, 2, 3]:
+				earth.set_uv(Vector2(quad[index].x / 10.0, quad[index].z / 10.0))
+				earth.add_vertex(quad[index])
+		var strip: Array[Vector3] = [Vector3(x0, h0 + 0.04, z0 - 1.9), Vector3(x0, h0 + 0.04, z0 + 1.9), Vector3(x1, h1 + 0.04, z0 + 1.9), Vector3(x1, h1 + 0.04, z0 - 1.9)]
+		for index in [0, 1, 2, 0, 2, 3]:
+			ballast.set_uv(Vector2(strip[index].x / 3.8, 0.0 if strip[index].z < z0 else 1.0))
+			ballast.add_vertex(strip[index])
+	# The short bend where the siding leaves the main track, at deck height.
+	var bend: Array = Layout.RAILS[2]
+	var from: Vector2 = bend[0]
+	var to: Vector2 = bend[1]
+	var across := Vector2(-(to - from).y, (to - from).x).normalized() * 1.9
+	var corners: Array[Vector3] = [Vector3(from.x - across.x, peak + 0.04, from.y - across.y), Vector3(from.x + across.x, peak + 0.04, from.y + across.y), Vector3(to.x + across.x, peak + 0.04, to.y + across.y), Vector3(to.x - across.x, peak + 0.04, to.y - across.y)]
+	for index in [0, 1, 2, 0, 2, 3]:
+		ballast.set_uv(Vector2(corners[index].x / 3.8, 0.0))
+		ballast.add_vertex(corners[index])
+	earth.generate_normals()
+	ballast.generate_normals()
+	var grass := StandardMaterial3D.new()
+	grass.albedo_texture = map._season["grass"]
+	grass.albedo_color = map._season["grass_tint"] * Color(0.85, 0.85, 0.8)
+	grass.roughness = 1.0
+	grass.cull_mode = BaseMaterial3D.CULL_DISABLED
+	grass.uv1_scale = Vector3(0.45, 0.45, 1.0)
+	var earth_node := MeshInstance3D.new()
+	earth_node.name = "SidingRamp"
+	earth_node.mesh = earth.commit()
+	earth_node.material_override = grass
+	map.add_child(earth_node)
+	var rails := StandardMaterial3D.new()
+	rails.albedo_texture = map._season["rail"]
+	rails.roughness = 1.0
+	rails.cull_mode = BaseMaterial3D.CULL_DISABLED
+	var rail_node := MeshInstance3D.new()
+	rail_node.mesh = ballast.commit()
+	rail_node.material_override = rails
+	rail_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	map.add_child(rail_node)
+	map._occupy(Vector2((xa + xc) / 2.0, z0), Vector2(xc - xa, top * 2.0 + 12.0))
+
+
+func _strip_quad(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, d: Vector3) -> void:
+	for point in [a, b, c, a, c, d]:
+		st.set_uv(Vector2(point.x / 10.0, point.z / 10.0))
+		st.add_vertex(point)
 
 
 # One box as a transform: `size` is the box extent, `tilt` turns it around the X axis
@@ -677,7 +876,7 @@ func _build_rail_poles() -> void:
 	if texture == null:
 		return
 	for z in range(-200, 380, 55):
-		var at := Vector2(432.0, z)
+		var at := Vector2(441.0, z)
 		if not map._is_occupied(at, 0.5):
 			map._sprite(texture, map._ground(at), 8.0)
 	for x in range(-420, 400, 55):
@@ -790,8 +989,6 @@ func _build_train_stock() -> void:
 	var station := Layout.lot_center("station")
 	var platform := Geometry2D.get_closest_point_to_segment(station, passenger[0], passenger[1])
 	map._prop(stock, Vector3(platform.x, 0.2, platform.y), 60.0, "x")
-	var freight: Vector2 = passenger[1].lerp(passenger[2], 0.6)
-	map._prop(stock, Vector3(freight.x, 0.2, freight.y), 55.0, "z")
 	var siding: Array = Layout.RAILS[2]
 	var transfer: Vector2 = siding[-2].lerp(siding[-1], 0.5)
 	map._prop(stock, Vector3(transfer.x, 0.2, transfer.y), 40.0, "x")

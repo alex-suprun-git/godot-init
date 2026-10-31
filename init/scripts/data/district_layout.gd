@@ -73,8 +73,8 @@ const SIDEWALK_WIDTH := 2.5
 
 const ROADS := [
 	{"id": "highway", "rect": Rect2(-450, -197.5, 875, 20), "kind": "asphalt", "walk": 0.0, "look": "highway"},
-	{"rect": Rect2(-450, -90, 875, 10), "kind": "asphalt"},
-	{"rect": Rect2(-450, 300, 875, 10), "kind": "asphalt"},
+	{"rect": Rect2(-450, -90, 890, 10), "kind": "asphalt"},
+	{"rect": Rect2(-450, 300, 890, 10), "kind": "asphalt"},
 	{"id": "axis", "rect": Rect2(-17, -330, 24, 642), "kind": "asphalt", "median": 4.0},
 	{"rect": Rect2(140, -80, 10, 380), "kind": "asphalt"},
 	{"rect": Rect2(-398.4, 82.2, 378.4, 10), "kind": "yard"},
@@ -94,9 +94,19 @@ const ROADS := [
 const RAILS := [
 	[Vector2(-450, 395), Vector2(410, 395), Vector2(410, -495)],
 	[Vector2(-450, 405), Vector2(420, 405), Vector2(420, -495)],
-	[Vector2(410, -230), Vector2(395, -245), Vector2(150, -245)],
+	# The port siding leaves the elevated main line at deck height and climbs down on its own ramp.
+	[Vector2(410, -250), Vector2(402, -245), Vector2(150, -245)],
 ]
 # A wide river: barges pass under both bridges, whose decks rise to a hump over the water.
+# The eastern freight line runs on an embankment past the village: it climbs over
+# `ramp` metres at both ends and the two E-W roads pass under it in short tunnels
+# centred on `tunnels` (z), each `gap` metres long along the track.
+const EMBANKMENT := {
+	"cx": 415.0, "tracks": [410.0, 420.0], "top": 10.0, "height": 6.0,
+	# Starts at the rail bridge's south end at deck height (ramp_from 0), then descends to the south.
+	"from": -280.0, "to": 375.0, "ramp": 90.0, "ramp_from": 0.0, "tunnels": [-85.0, 305.0], "gap": 13.0,
+}
+const SIDING_RAMP := {"z": -245.0, "x_from": 315.0, "x_to": 402.0, "height": 6.0, "top": 3.5}
 const WATER := Rect2(-450, -440, 900, 110)
 const FOREIGN_BANK := Rect2(-450, -500, 900, 60)
 const BRIDGES := [
@@ -105,7 +115,7 @@ const BRIDGES := [
 	# Same x range as the civic axis (-17..7), so the boulevard carries straight onto the bridge.
 	{"rect": Rect2(-17, -445, 24, 115), "height": 6.0, "ramp": 40.0, "kind": "road"},
 	# The railway climbs an embankment on land, 50 m each side of the river.
-	{"rect": Rect2(405, -495, 20, 215), "height": 6.0, "ramp": 50.0, "kind": "rail"},
+	{"rect": Rect2(405, -495, 20, 215), "height": 6.0, "ramp": 50.0, "kind": "rail", "flat_end": true},
 ]
 const AREAS := {
 	"village": {"rect": Rect2(155, -75, 240, 370), "ground": "grass_dry", "condition": "fading"},

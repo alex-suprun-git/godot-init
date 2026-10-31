@@ -14,3 +14,6 @@ Thumbs.db
 *.blend[1-9]
 *.job.json
 *.job.json.tmp
+
+# Background task dispatch logs
+/tasks/logs/
