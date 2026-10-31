@@ -33,3 +33,7 @@ exec(compile(p.read_text(), str(p), 'exec'), {'__name__': '__main__', '__file__'
 ```
 
 The first Cycles Metal bake can spend several minutes compiling shaders. An MCP timeout does not cancel Blender's operation; check the output files before retrying. `finish_lada.py` writes `render_status.json` while producing the studio preview.
+
+## Wagon variant (2026-10-31)
+
+A station-wagon body derived from the V2 sedan by copying its scripts: `build_lada_wagon.py` (longer roof, vertical tailgate glass, roof rails, one-piece rear side window), `finish_lada_wagon.py` (paint bake + export) and `export_lada_wagon.py`. Source: `lada_wagon.blend` (scene `Lada_Studio_Wagon`); game asset `init/assets/models/vehicles/lada_wagon.glb` (21.5k triangles, paint atlas `lada_wagon_paint.png`); report `asset_report_wagon.json`. Run build, then finish, exactly like the sedan. Used for roughly one in three background and parked cars via `VehicleModels.traffic_model`. Verified in Blender previews (side and rear) only; not yet inspected in a Godot frame next to the sedan.

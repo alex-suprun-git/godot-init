@@ -159,6 +159,20 @@ People follow the scale notes in `scripts/data/prop_dimensions.gd`.
 | E2 | `sprites/tower_crane_abandoned.png` | sprite | abandoned | 4 m base, 40 m high | A rusting tower crane left on site, jib along the rising axis. |
 | E3 | `sprites/construction_fence.png` | sprite | abandoned | 12 m segment | A concrete slab fence, leaning, with gaps. |
 
+## Batch F: pavements and street furniture
+
+Godot derives pavements from the road data: a strip `2.5 m` wide on each side of every asphalt road, cut at crossings. The highway along the river has no pavement and no pedestrian zone. Until `ground_sidewalk.png` exists a flat placeholder colour is used; the file is picked up automatically, no code change.
+
+| Id | File | Kind | Cond. | Real size | Content |
+|---|---|---|---|---|---|
+| F1 | `textures/ground_sidewalk.png` | ground, tileable both ways | worked | 4×4 m | Concrete pavement slabs about 1×1 m, hairline cracks, a few patched joins, thin weeds in some seams. Even light, from above. |
+| F2 | `textures/ground_kerb.png` | ground, tileable along the long side | worked | 4 m long, 0.4 m wide | A concrete kerb stone strip from above, chipped edge, a darker road-side edge. |
+| F3 | `sprites/street_bin.png` | sprite | worked | 0.5 m | A concrete or steel litter bin on a post, dented. |
+| F4 | `sprites/bench_street.png` | sprite | worked | 1.8 m | A street bench: wooden slats on concrete ends, paint worn. |
+| F5 | `sprites/sign_pole.png` | sprite | kept | 3 m high | A road sign pole with a plain symbol sign, no text. |
+| F6 | `sprites/fence_concrete_panel.png` | sprite | worked | 6 m segment | A grey concrete panel fence with a dark top edge, a few stains. |
+| F7 | `sprites/fence_picket_village.png` | sprite | fading | 4 m segment | A village picket fence, some boards missing or leaning. |
+
 ## Retire or downgrade
 
 Do not delete files. They are noted here so nobody spends effort on them:

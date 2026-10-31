@@ -61,8 +61,12 @@ const LOTS := {
 	"d_12": {"type": "D", "rect": Rect2(350, 240, 35, 40), "content": "house_abandoned", "condition": "abandoned", "facing": "w"},
 }
 
+# Asphalt roads get a pavement on both sides (SIDEWALK_WIDTH); a road may override it
+# with "walk": 0.0. The highway along the river has no pedestrian zone.
+const SIDEWALK_WIDTH := 2.5
+
 const ROADS := [
-	{"rect": Rect2(-450, -195, 875, 15), "kind": "asphalt"},
+	{"id": "highway", "rect": Rect2(-450, -195, 875, 15), "kind": "asphalt", "walk": 0.0},
 	{"rect": Rect2(-450, -90, 875, 10), "kind": "asphalt"},
 	{"rect": Rect2(-450, 300, 875, 10), "kind": "asphalt"},
 	{"id": "axis", "rect": Rect2(-20, -330, 30, 642), "kind": "asphalt"},
@@ -92,6 +96,10 @@ const BRIDGES := [
 const AREAS := {
 	"village": {"rect": Rect2(155, -75, 240, 370), "ground": "grass_dry", "condition": "fading"},
 }
+
+
+static func sidewalk_width(road: Dictionary) -> float:
+	return road.get("walk", SIDEWALK_WIDTH) if road["kind"] == "asphalt" else 0.0
 
 
 static func lot_rect(id: String) -> Rect2:

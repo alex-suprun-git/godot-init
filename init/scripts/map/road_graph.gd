@@ -15,8 +15,9 @@ const MODES := {
 const SNAP_TOLERANCE := 0.05
 
 var points := PackedVector2Array()
-var edges: Array[Dictionary] = [] # {a, b, kind, length, half, road, scale}
+var edges: Array[Dictionary] = [] # {a, b, kind, length, half, road, walk, scale}
 var entrances := {} # lot id (or "bridge_road") -> node id
+var doorsteps := {} # lot id -> point in front of the building door; the last leg after the entrance
 
 var _adjacent := {} # node id -> Array[int] of edge indices
 var _searches := {} # mode -> ModeSearch
@@ -59,19 +60,44 @@ func entrance_position(lot: String) -> Vector2:
 	return points[entrances[lot]]
 
 
-# Full polyline from `from` to the lot's entrance. The first point is `from`.
+# Registers where people stand once they reach a lot's building: the route
+# continues from the entrance to this point, and leaving starts by going back.
+func set_doorstep(lot: String, point: Vector2) -> void:
+	doorsteps[lot] = point
+	_cache.clear()
+
+
+# Full polyline from `from` to the lot's entrance, then on to its doorstep if
+# it has one. The first point is `from`.
 func route(from: Vector2, to_lot: String, mode: String) -> PackedVector2Array:
 	if not entrances.has(to_lot):
 		push_error("RoadGraph: no entrance for '%s'" % to_lot)
 		return PackedVector2Array([from])
 	var key := "%d,%d|%s|%s" % [roundi(from.x * 10.0), roundi(from.y * 10.0), to_lot, mode]
 	if not _cache.has(key):
-		var path := _compute_route(from, entrances[to_lot], mode)
+		var door_lot := _doorstep_lot(from)
+		if door_lot == to_lot:
+			_cache[key] = PackedVector2Array([from])
+			return _cache[key]
+		# Standing at a doorstep: walk back to the entrance first, then route as usual.
+		var origin := entrance_position(door_lot) if door_lot != "" else from
+		var path := _compute_route(origin, entrances[to_lot], mode)
 		# Cut off for this mode (no road leads there): finish on foot.
 		if path.size() < 2 and mode != "foot":
-			path = _compute_route(from, entrances[to_lot], "foot")
+			path = _compute_route(origin, entrances[to_lot], "foot")
+		if door_lot != "":
+			path = PackedVector2Array([from]) + path
+		if doorsteps.has(to_lot):
+			path.append(doorsteps[to_lot])
 		_cache[key] = path
 	return _cache[key]
+
+
+func _doorstep_lot(point: Vector2) -> String:
+	for lot in doorsteps:
+		if doorsteps[lot].distance_to(point) < 0.5:
+			return lot
+	return ""
 
 
 # Remaining length of a polyline from `from`, starting at path[index].
@@ -113,6 +139,7 @@ func _centerlines() -> Array[Dictionary]:
 		segments.append({
 			"horizontal": horizontal, "kind": road["kind"], "road": i,
 			"half": (rect.size.y if horizontal else rect.size.x) / 2.0,
+			"walk": DistrictLayout.sidewalk_width(road),
 			# lo/hi are coordinates along the running axis; `fixed` is the other one.
 			"fixed": center.y if horizontal else center.x,
 			"lo": rect.position.x if horizontal else rect.position.y,
@@ -207,7 +234,7 @@ func _make_edges(segments: Array[Dictionary]) -> void:
 		for i in stops.size() - 1:
 			if stops[i + 1] - stops[i] > 0.01:
 				_add_edge(_node(_point_of(segment, stops[i])), _node(_point_of(segment, stops[i + 1])),
-					segment["kind"], segment["half"], segment["road"])
+					segment["kind"], segment["half"], segment["road"], segment["walk"])
 
 
 func _make_access_edges(links: Array[Dictionary]) -> void:
@@ -217,7 +244,7 @@ func _make_access_edges(links: Array[Dictionary]) -> void:
 			entrances[link["id"]] = hook
 			continue
 		var node := _node(link["entrance"])
-		_add_edge(node, hook, "access", 1.0, -1)
+		_add_edge(node, hook, "access", 1.0, -1, 0.0)
 		entrances[link["id"]] = node
 
 
@@ -229,8 +256,8 @@ func _node(point: Vector2) -> int:
 	return _node_at[key]
 
 
-func _add_edge(a: int, b: int, kind: String, half: float, road: int) -> void:
-	edges.append({"a": a, "b": b, "kind": kind, "half": half, "road": road,
+func _add_edge(a: int, b: int, kind: String, half: float, road: int, walk: float) -> void:
+	edges.append({"a": a, "b": b, "kind": kind, "half": half, "road": road, "walk": walk,
 		"length": points[a].distance_to(points[b]), "scale": 1.0})
 	var index := edges.size() - 1
 	for node in [a, b]:

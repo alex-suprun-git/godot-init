@@ -5,6 +5,7 @@ extends Node
 
 var main
 var shots_dir := ""
+var _drive_shot_taken := false
 var _crisis_handled := false
 var _picket_shot_taken := false
 var _leave_water_unfixed := false
@@ -80,6 +81,12 @@ func _run() -> void:
 			_picket_shot_taken = true
 			main.set_speed(0.0)
 			await _map_shot("5_picket", main.hud.Week1.location_position("block5"), 250.0)
+			main.set_speed(4.0)
+		var me: Dictionary = main.sim.actors["me"]
+		if not _drive_shot_taken and me["state"] == "travel" and me["driver"] and me["path_index"] >= 2:
+			_drive_shot_taken = true
+			main.set_speed(0.0)
+			await _map_shot("5_drive", me["pos"], 120.0)
 			main.set_speed(4.0)
 		if not live_shot_taken and main.sim.t >= 3.0:
 			live_shot_taken = true

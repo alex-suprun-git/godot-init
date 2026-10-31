@@ -42,6 +42,7 @@ const CONTENTS := {
 	"empty_lot": {"kind": "open", "footprint": Vector2.ZERO, "ground": "grass", "label": "Свободный участок", "dressing": []},
 	"ispolkom": {
 		"kind": "building", "footprint": Vector2(30, 25), "height": 15.0,
+		"doorstep": 3.0, # metres in front of the facade where people stand on arrival
 		"center_width": 30.0, "wing_width": 30.0, "wings": 0,
 		"facade_center": "res://assets/textures/facade_ispolkom_front.png",
 		"facade_wing": "res://assets/textures/facade_ispolkom_side.png",

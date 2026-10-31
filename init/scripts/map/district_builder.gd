@@ -128,7 +128,7 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 	var kind: String = entry["kind"]
 	match kind:
 		"panel", "building":
-			_building(lot, entry, center)
+			_building(lot, entry, center, id)
 		"group":
 			for part in entry.get("parts", []):
 				var recipe: Dictionary = part.duplicate()
@@ -171,7 +171,7 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 	labels.add_child(label)
 
 
-func _building(lot: Dictionary, entry: Dictionary, desired: Vector2) -> void:
+func _building(lot: Dictionary, entry: Dictionary, desired: Vector2, lot_id: String = "") -> void:
 	var size: Vector2 = entry["footprint"]
 	var facing: String = lot["facing"]
 	var yaw: float = {"s": 0.0, "n": PI, "e": PI / 2, "w": -PI / 2}[facing]
@@ -209,6 +209,9 @@ func _building(lot: Dictionary, entry: Dictionary, desired: Vector2) -> void:
 	if entry.get("kind", "") == "panel":
 		map._panel_overlays(entry, size, height, group)
 	map._occupy(center, footprint)
+	if entry.has("doorstep") and lot_id != "":
+		var out: Vector2 = {"s": Vector2.DOWN, "n": Vector2.UP, "e": Vector2.RIGHT, "w": Vector2.LEFT}[facing]
+		map.sim.graph.set_doorstep(lot_id, center + out * (size.y / 2.0 + float(entry["doorstep"])))
 
 
 # Keep all footprints out of roads/railways, including village roads through plots.

@@ -144,6 +144,8 @@ var _occupied: Array[Rect2] = [] # Ground taken by buildings and roads; trees av
 var _road_paint_material: ShaderMaterial
 var _lot_labels: Node3D
 var _ambient: AmbientLife # Background pedestrians and cars wandering the road graph.
+var _hero_car: Node3D # The administration car; shown while you ride with Tolik.
+var _token_discs := {} # actor id -> disc under the token, hidden while riding.
 var _graph_overlay: Node3D # Dev view of the road graph and active routes (F10).
 var _route_mesh: ImmediateMesh
 var _materials := {}
@@ -163,7 +165,14 @@ func setup(week_sim) -> void:
 	var builder := DistrictBuilder.new()
 	builder.build(self)
 	_lot_labels = builder.labels
+	# Whoever starts at a lot with a doorstep stands there, not at the entrance.
+	for id in sim.actors:
+		var actor: Dictionary = sim.actors[id]
+		var layout: String = Week1.LOTS[actor["lot"]]["layout"]
+		if sim.graph.doorsteps.has(layout) and actor["pos"] == sim.graph.entrance_position(layout):
+			actor["pos"] = sim.graph.doorsteps[layout]
 	_build_traffic()
+	_build_sidewalks()
 	_build_street_furniture()
 	_build_ambient()
 	_build_graph_overlay()
@@ -185,6 +194,7 @@ func _process(delta: float) -> void:
 	_camera_target = _camera_target.lerp(_camera_goal, min(1.0, delta * 8.0))
 	_update_camera()
 	_move_tokens()
+	_update_hero_car(delta)
 	_move_ambient(delta)
 	if _graph_overlay.visible:
 		_draw_routes()
@@ -472,8 +482,60 @@ func _build_traffic() -> void:
 		var along_x := rect.size.x > rect.size.y
 		var length := maxf(rect.size.x, rect.size.y)
 		for i in range(1, int(length / 100.0)):
-			var at := rect.position + (Vector2(i * 100, rect.size.y * 0.9) if along_x else Vector2(rect.size.x * 0.9, i * 100))
-			_vehicle("lada", _ground(at) + Vector3.UP * 0.14, 4.3, "x" if along_x else "z")
+			# A car's centre sits 0.95 m inside the road edge: parked at the kerb.
+			var at := rect.position + (Vector2(i * 100, rect.size.y - 0.95) if along_x else Vector2(rect.size.x - 0.95, i * 100))
+			var look := i * 5 + int(length) + i * 977
+			_vehicle(VehicleModels.traffic_model(look), _ground(at) + Vector3.UP * 0.14, 4.3, "x" if along_x else "z", null, look)
+
+
+# Pavements are derived from the roads: a strip on each side, cut wherever another
+# road crosses. A ground_sidewalk.png texture replaces the placeholder colour.
+func _build_sidewalks() -> void:
+	var texture_path := "res://assets/textures/ground_sidewalk.png"
+	var texture: Texture2D = load(texture_path) if ResourceLoader.exists(texture_path) else null
+	for road in DistrictLayout.ROADS:
+		var width := DistrictLayout.sidewalk_width(road)
+		if width <= 0.0:
+			continue
+		var rect: Rect2 = road["rect"]
+		var along_x := rect.size.x > rect.size.y
+		for side in [-1.0, 1.0]:
+			var strip: Rect2
+			if along_x:
+				strip = Rect2(rect.position.x, rect.position.y - width if side < 0 else rect.end.y, rect.size.x, width)
+			else:
+				strip = Rect2(rect.position.x - width if side < 0 else rect.end.x, rect.position.y, width, rect.size.y)
+			for piece in _strip_pieces(strip, along_x, road):
+				_ground_quad(piece.get_center(), piece.size, 0.15, texture, 4.0, false, Color.WHITE if texture != null else SIDEWALK_PLACEHOLDER)
+
+
+# The strip minus every other road it runs into, as a list of rects.
+func _strip_pieces(strip: Rect2, along_x: bool, own: Dictionary) -> Array[Rect2]:
+	var cuts: Array[Vector2] = []
+	for other in DistrictLayout.ROADS:
+		if other == own:
+			continue
+		var rect: Rect2 = other["rect"]
+		if rect.intersects(strip):
+			cuts.append(Vector2(rect.position.x, rect.end.x) if along_x else Vector2(rect.position.y, rect.end.y))
+	cuts.sort_custom(func(a: Vector2, b: Vector2) -> bool: return a.x < b.x)
+	var pieces: Array[Rect2] = []
+	var from := strip.position.x if along_x else strip.position.y
+	var to := strip.end.x if along_x else strip.end.y
+	var cursor := from
+	for cut in cuts:
+		if cut.x - cursor > 0.5:
+			pieces.append(_strip_piece(strip, along_x, cursor, minf(cut.x, to)))
+		cursor = maxf(cursor, cut.y)
+	if to - cursor > 0.5:
+		pieces.append(_strip_piece(strip, along_x, cursor, to))
+	return pieces
+
+
+func _strip_piece(strip: Rect2, along_x: bool, from: float, to: float) -> Rect2:
+	if along_x:
+		return Rect2(from, strip.position.y, to - from, strip.size.y)
+	return Rect2(strip.position.x, from, strip.size.x, to - from)
 
 
 func _build_street_furniture() -> void:
@@ -562,10 +624,32 @@ func _build_tokens() -> void:
 		var disc_color := Color(0.85, 0.36, 0.27) if id == "me" else Color(0.12, 0.13, 0.12)
 		var disc := _cylinder(2.2, 0.4, Vector3(0, 0.2, 0), disc_color, token)
 		disc.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		_token_discs[id] = disc
 		# The face itself is drawn by the HUD, crisp and unaffected by map lighting.
 		var start: Vector2 = sim.actors[id]["pos"]
 		token.position = Vector3(start.x, 0, start.y + 6)
 		_tokens[id] = token
+	_hero_car = _vehicle("lada", Vector3.ZERO, 4.3, "z", null, 2)
+	_hero_car.visible = false
+
+
+# When you travel with Tolik you sit in the car: it drives the route and the
+# discs under both of you disappear. On foot there is no car.
+func _update_hero_car(delta: float) -> void:
+	var me: Dictionary = sim.actors["me"]
+	var riding: bool = me["state"] == "travel" and me["driver"]
+	_hero_car.visible = riding
+	_token_discs["me"].visible = not riding
+	_token_discs["tolik"].visible = not riding
+	if not riding:
+		return
+	var pos: Vector2 = me["pos"]
+	var path: PackedVector2Array = me["path"]
+	var index: int = me["path_index"]
+	_hero_car.position = Vector3(pos.x, 0.14, pos.y)
+	if index < path.size() and pos.distance_to(path[index]) > 0.01:
+		var heading := path[index] - pos
+		_hero_car.rotation.y = lerp_angle(_hero_car.rotation.y, atan2(heading.x, heading.y), minf(1.0, delta * 8.0))
 
 
 func _move_tokens() -> void:
@@ -691,25 +775,30 @@ func _build_road_markings() -> void:
 					_crosswalk(Vector2(axis_rect.get_center().x, rect.get_center().y + side * (rect.size.y / 2 + 3)), axis_rect.size.x, true, 0.145)
 
 
+const SIDEWALK_PLACEHOLDER := Color("8f8b80")
 const AMBIENT_WALKERS := 36
-const AMBIENT_CARS := 12
+const AMBIENT_CARS := 60
 
 
 func _build_ambient() -> void:
 	_ambient = AmbientLife.new(sim.graph, 1997)
+	# Their own RNG: the look of background life must not shift the trees built later.
+	var look := RandomNumberGenerator.new()
+	look.seed = 2026
 	for i in AMBIENT_WALKERS:
-		var agent := _ambient.add(false, _rng.randf_range(1.6, 2.4))
+		var agent := _ambient.add(false, look.randf_range(1.6, 2.4))
 		if agent.is_empty():
 			break
-		var person: Dictionary = PEOPLE[_rng.randi() % PEOPLE.size()]
+		var person: Dictionary = PEOPLE[look.randi() % PEOPLE.size()]
 		var sprite := _sprite(person["texture"], _ground(agent["pos"]), person["width"])
 		agent["visual"] = sprite
 		agent["lift"] = sprite.position.y
 	for i in AMBIENT_CARS:
-		var agent := _ambient.add(true, _rng.randf_range(7.0, 12.0))
+		var agent := _ambient.add(true, look.randf_range(7.0, 12.0))
 		if agent.is_empty():
 			break
-		agent["visual"] = _vehicle("lada", _ground(agent["pos"]) + Vector3.UP * 0.14, 4.3, "z")
+		var seed_value := look.randi()
+		agent["visual"] = _vehicle(VehicleModels.traffic_model(seed_value), _ground(agent["pos"]) + Vector3.UP * 0.14, 4.3, "z", null, seed_value)
 
 
 func _move_ambient(delta: float) -> void:
@@ -907,8 +996,8 @@ func _sprite(texture: Texture2D, at: Vector3, width: float, parent: Node = null,
 
 
 # Real vehicle meshes rotate along world axes and share the imported GLB.
-func _vehicle(model_id: String, at: Vector3, length: float, axis: String, parent: Node = null) -> Node3D:
-	var vehicle := VehicleModels.create(model_id, at, length, axis)
+func _vehicle(model_id: String, at: Vector3, length: float, axis: String, parent: Node = null, paint: int = -1) -> Node3D:
+	var vehicle := VehicleModels.create(model_id, at, length, axis, paint)
 	(parent if parent != null else self).add_child(vehicle)
 	return vehicle
 

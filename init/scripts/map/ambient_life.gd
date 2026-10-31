@@ -24,7 +24,7 @@ func add(is_car: bool, speed: float) -> Dictionary:
 	var kinds: Array = CAR_KINDS if is_car else WALKER_KINDS
 	var choices: Array[int] = []
 	for i in _graph.edges.size():
-		if _graph.edges[i]["kind"] in kinds:
+		if _usable(is_car, kinds, _graph.edges[i]):
 			choices.append(i)
 	if choices.is_empty():
 		return {}
@@ -57,11 +57,16 @@ func step(delta: float) -> void:
 		_place(agent, delta)
 
 
+# Walkers keep to pavements: an asphalt road without one (the highway) is for cars only.
+func _usable(is_car: bool, kinds: Array, edge: Dictionary) -> bool:
+	return edge["kind"] in kinds and (is_car or edge["kind"] != "asphalt" or edge["walk"] > 0.0)
+
+
 # Keep going; turn back only at a dead end.
 func _next_edge(agent: Dictionary, node: int) -> int:
 	var options: Array[int] = []
 	for candidate in _graph.adjacent_edges(node):
-		if candidate != agent["edge"] and _graph.edges[candidate]["kind"] in agent["kinds"]:
+		if candidate != agent["edge"] and _usable(agent["is_car"], agent["kinds"], _graph.edges[candidate]):
 			options.append(candidate)
 	if options.is_empty():
 		return agent["edge"]
@@ -79,7 +84,7 @@ func _place(agent: Dictionary, delta: float) -> void:
 	if agent["is_car"]:
 		target = clampf(half * 0.35, 1.5, 4.0)
 	else:
-		target = agent["side"] * (half + 0.8 if edge["kind"] == "asphalt" else half * 0.6)
+		target = agent["side"] * (half + edge["walk"] / 2.0 if edge["kind"] == "asphalt" else half * 0.6)
 	agent["target_lateral"] = target
 	# Ease sideways at junctions so the change of lane is not a jump.
 	agent["lateral"] = move_toward(agent["lateral"], target, 4.0 * delta)
