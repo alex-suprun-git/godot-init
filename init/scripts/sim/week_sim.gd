@@ -3,6 +3,7 @@
 extends RefCounted
 
 const Week1 = preload("res://scripts/data/week1.gd")
+const RoadGraph = preload("res://scripts/map/road_graph.gd")
 
 signal time_changed
 signal request_opened(id: String)
@@ -28,7 +29,8 @@ var factions_at_start := {}
 var flags := {}
 var requests := {} # id -> {data, status: pending|open|assigned|closed, promised}
 var request_order: Array[String] = []
-var actors := {} # id -> {pos, lot, state: idle|travel|work|driving, request, option, work_left, driver}
+var actors := {} # id -> {pos, lot, state: idle|travel|work|driving, request, option, work_left, driver, path, path_index}
+var graph: RoadGraph # Roads derived from the layout; people travel along it.
 var promises: Array[Dictionary] = []
 var entries: Array[Dictionary] = [] # Wire: {time, text}
 var outcomes: Array[String] = [] # Notable results for the week summary.
@@ -45,11 +47,16 @@ func _init(seed_value: int = 1997) -> void:
 	for id in Week1.FACTIONS:
 		factions[id] = Week1.FACTIONS[id]["value"]
 	factions_at_start = factions.duplicate()
+	var layout_lots: Array = []
+	for id in Week1.LOTS:
+		layout_lots.append(Week1.LOTS[id]["layout"])
+	graph = RoadGraph.new(layout_lots)
 	for id in Week1.ACTORS:
 		var lot: String = Week1.ACTORS[id]["start_lot"]
 		actors[id] = {
-			"pos": Week1.location_position(lot), "lot": lot, "state": "idle",
+			"pos": graph.entrance_position(Week1.LOTS[lot]["layout"]), "lot": lot, "state": "idle",
 			"request": "", "option": {}, "work_left": 0.0, "driver": false,
+			"path": PackedVector2Array(), "path_index": 0,
 		}
 	for data in Week1.REQUESTS:
 		requests[data["id"]] = {"data": data, "status": "pending", "promised": false}
@@ -149,6 +156,18 @@ func actor_target_lot(id: String) -> String:
 	return ""
 
 
+# The way still ahead: the actor's position followed by the remaining route.
+func actor_route(id: String) -> PackedVector2Array:
+	var actor: Dictionary = actors[id]
+	if actor["state"] == "driving":
+		return actor_route("me")
+	var route := PackedVector2Array([actor["pos"]])
+	if actor["state"] == "travel":
+		for i in range(actor["path_index"], actor["path"].size()):
+			route.append(actor["path"][i])
+	return route
+
+
 # Game hours until an actor arrives (travelling) or finishes (working).
 func actor_eta_hours(id: String) -> float:
 	var actor: Dictionary = actors[id]
@@ -156,10 +175,8 @@ func actor_eta_hours(id: String) -> float:
 		"driving":
 			return actor_eta_hours("me")
 		"travel":
-			var target: Vector2 = Week1.location_position(_request_lot(actor["request"]))
 			var speed: float = Week1.ACTORS["tolik" if actor["driver"] else id]["speed"]
-			var pos: Vector2 = actor["pos"]
-			return pos.distance_to(target) / speed
+			return RoadGraph.length(actor["path"], actor["pos"], actor["path_index"]) / speed
 		"work":
 			return actor["work_left"]
 	return 0.0
@@ -231,6 +248,9 @@ func choose(request_id: String, option_id: String) -> void:
 			if option["actor"] == "me" and actors["tolik"]["state"] == "idle":
 				actor["driver"] = true
 				actors["tolik"]["state"] = "driving"
+			# By car when Tolik drives, otherwise on foot; the route is fixed at the start.
+			actor["path"] = graph.route(actor["pos"], Week1.LOTS[_request_lot(request_id)]["layout"], "car" if actor["driver"] else "foot")
+			actor["path_index"] = 1
 			request["status"] = "assigned"
 			request_changed.emit(request_id)
 	state_changed.emit()
@@ -294,11 +314,24 @@ func _move_actors(step: float) -> void:
 	for id in actors:
 		var actor: Dictionary = actors[id]
 		if actor["state"] == "travel":
-			var target: Vector2 = Week1.location_position(_request_lot(actor["request"]))
 			var speed: float = Week1.ACTORS["tolik" if actor["driver"] else id]["speed"]
+			# Spend the step's distance along the route; leftovers carry over junctions.
+			var budget: float = speed * step
+			var path: PackedVector2Array = actor["path"]
+			var index: int = actor["path_index"]
 			var pos: Vector2 = actor["pos"]
-			actor["pos"] = pos.move_toward(target, speed * step)
-			if actor["pos"].distance_to(target) < 0.01:
+			while index < path.size() and budget > 0.0:
+				var leg := pos.distance_to(path[index])
+				if leg <= budget:
+					budget -= leg
+					pos = path[index]
+					index += 1
+				else:
+					pos = pos.move_toward(path[index], budget)
+					budget = 0.0
+			actor["pos"] = pos
+			actor["path_index"] = index
+			if index >= path.size():
 				actor["state"] = "work"
 				actor["lot"] = _request_lot(actor["request"])
 		elif actor["state"] == "work":

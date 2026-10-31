@@ -5,7 +5,7 @@ extends Control
 const YELLOW := Color(0.98, 0.78, 0.46)
 const INK := Color(0.11, 0.12, 0.11)
 
-var paths: Array[Dictionary] = [] # each: {from: Vector2, to: Vector2}
+var paths: Array[PackedVector2Array] = [] # screen-space polylines, start to destination
 
 
 func _ready() -> void:
@@ -14,12 +14,14 @@ func _ready() -> void:
 
 func _draw() -> void:
 	for path in paths:
-		var from: Vector2 = path["from"]
-		var to: Vector2 = path["to"]
-		if from.distance_to(to) < 24.0:
+		if path.size() < 2 or path[0].distance_to(path[path.size() - 1]) < 24.0:
 			continue
-		draw_dashed_line(from, to, INK, 6.0, 12.0)
-		draw_dashed_line(from, to, YELLOW, 3.0, 12.0)
-		var direction := (to - from).normalized()
+		for i in path.size() - 1:
+			draw_dashed_line(path[i], path[i + 1], INK, 6.0, 12.0)
+		for i in path.size() - 1:
+			draw_dashed_line(path[i], path[i + 1], YELLOW, 3.0, 12.0)
+		var to := path[path.size() - 1]
+		var before := path[path.size() - 2]
+		var direction := (to - before).normalized()
 		var side := direction.orthogonal()
 		draw_colored_polygon(PackedVector2Array([to, to - direction * 14.0 + side * 8.0, to - direction * 14.0 - side * 8.0]), YELLOW)

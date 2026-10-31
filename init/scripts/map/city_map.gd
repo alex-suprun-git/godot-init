@@ -10,6 +10,7 @@ const Settings = preload("res://scripts/data/settings.gd")
 const SpriteAnchors = preload("res://scripts/data/sprite_anchors.gd")
 const GroundedProps = preload("res://scripts/map/grounded_props.gd")
 const VehicleModels = preload("res://scripts/map/vehicle_models.gd")
+const AmbientLife = preload("res://scripts/map/ambient_life.gd")
 const GarageModel = preload("res://scripts/map/garage_model.gd")
 const PropDimensions = preload("res://scripts/data/prop_dimensions.gd")
 
@@ -142,7 +143,9 @@ var _lot_states := {} # lot -> {state -> Node3D}
 var _occupied: Array[Rect2] = [] # Ground taken by buildings and roads; trees avoid it.
 var _road_paint_material: ShaderMaterial
 var _lot_labels: Node3D
-var _walkers: Array[Dictionary] = [] # Pedestrians walking back and forth along a street.
+var _ambient: AmbientLife # Background pedestrians and cars wandering the road graph.
+var _graph_overlay: Node3D # Dev view of the road graph and active routes (F10).
+var _route_mesh: ImmediateMesh
 var _materials := {}
 var _grounded_props := GroundedProps.new()
 var _garage_model := GarageModel.new()
@@ -162,7 +165,8 @@ func setup(week_sim) -> void:
 	_lot_labels = builder.labels
 	_build_traffic()
 	_build_street_furniture()
-	_build_pedestrians()
+	_build_ambient()
+	_build_graph_overlay()
 	_build_overlays()
 	_build_trees()
 	_build_bushes()
@@ -181,7 +185,9 @@ func _process(delta: float) -> void:
 	_camera_target = _camera_target.lerp(_camera_goal, min(1.0, delta * 8.0))
 	_update_camera()
 	_move_tokens()
-	_move_walkers(delta)
+	_move_ambient(delta)
+	if _graph_overlay.visible:
+		_draw_routes()
 	if _weather != null:
 		_weather.global_position = _camera_target + Vector3(0, 80, 0)
 
@@ -208,6 +214,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		_lot_labels.visible = not _lot_labels.visible
 		get_viewport().set_input_as_handled()
 		return
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F10:
+		_graph_overlay.visible = not _graph_overlay.visible
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F2:
 		Settings.camera_mode = "front" if Settings.camera_mode == "iso" else "iso"
 		return
@@ -230,6 +240,11 @@ func _unhandled_input(event: InputEvent) -> void:
 func lot_screen_position(lot: String, height: float = 16.0) -> Vector2:
 	var pos: Vector2 = Week1.location_position(lot)
 	return camera.unproject_position(Vector3(pos.x, height, pos.y))
+
+
+# Screen position of a ground point given in map metres.
+func ground_screen_position(at: Vector2, height: float = 0.0) -> Vector2:
+	return camera.unproject_position(Vector3(at.x, height, at.y))
 
 
 # Where a person stands on screen (their feet), for the HUD to draw the token.
@@ -457,7 +472,7 @@ func _build_traffic() -> void:
 		var along_x := rect.size.x > rect.size.y
 		var length := maxf(rect.size.x, rect.size.y)
 		for i in range(1, int(length / 100.0)):
-			var at := rect.position + (Vector2(i * 100, rect.size.y * 0.72) if along_x else Vector2(rect.size.x * 0.72, i * 100))
+			var at := rect.position + (Vector2(i * 100, rect.size.y * 0.9) if along_x else Vector2(rect.size.x * 0.9, i * 100))
 			_vehicle("lada", _ground(at) + Vector3.UP * 0.14, 4.3, "x" if along_x else "z")
 
 
@@ -676,36 +691,105 @@ func _build_road_markings() -> void:
 					_crosswalk(Vector2(axis_rect.get_center().x, rect.get_center().y + side * (rect.size.y / 2 + 3)), axis_rect.size.x, true, 0.145)
 
 
-func _build_pedestrians() -> void:
-	for road in DistrictLayout.ROADS:
-		var rect: Rect2 = road["rect"]
-		var along_x := rect.size.x > rect.size.y
-		var length := maxf(rect.size.x, rect.size.y)
-		for i in range(1, int(length / 55.0)):
-			var start := rect.position + (Vector2(i * 55, -2) if along_x else Vector2(-2, i * 55))
-			var direction := Vector2.RIGHT if along_x else Vector2.DOWN
-			var person: Dictionary = PEOPLE[_rng.randi() % PEOPLE.size()]
-			var sprite := _sprite(person["texture"], _ground(start), person["width"])
-			_walkers.append({"sprite": sprite, "from": start, "to": start + direction * 32,
-				"t": _rng.randf(), "dir": 1.0, "speed": _rng.randf_range(1.0, 1.5), "lift": sprite.position.y})
+const AMBIENT_WALKERS := 36
+const AMBIENT_CARS := 12
 
 
-func _move_walkers(delta: float) -> void:
-	for walker in _walkers:
-		var from: Vector2 = walker["from"]
-		var to: Vector2 = walker["to"]
-		var length: float = from.distance_to(to)
-		walker["t"] += walker["dir"] * walker["speed"] * delta / length
-		if walker["t"] > 1.0 or walker["t"] < 0.0:
-			walker["t"] = clamp(walker["t"], 0.0, 1.0)
-			walker["dir"] = -walker["dir"]
-		var pos: Vector2 = from.lerp(to, walker["t"])
-		var sprite: Sprite3D = walker["sprite"]
-		sprite.position = Vector3(pos.x, walker["lift"], pos.y)
-		var heading: Vector2 = (to - from) * walker["dir"]
-		# Face the way they walk as seen on screen.
-		var right := _view_right()
-		sprite.flip_h = heading.x * right.x + heading.y * right.z < 0.0
+func _build_ambient() -> void:
+	_ambient = AmbientLife.new(sim.graph, 1997)
+	for i in AMBIENT_WALKERS:
+		var agent := _ambient.add(false, _rng.randf_range(1.6, 2.4))
+		if agent.is_empty():
+			break
+		var person: Dictionary = PEOPLE[_rng.randi() % PEOPLE.size()]
+		var sprite := _sprite(person["texture"], _ground(agent["pos"]), person["width"])
+		agent["visual"] = sprite
+		agent["lift"] = sprite.position.y
+	for i in AMBIENT_CARS:
+		var agent := _ambient.add(true, _rng.randf_range(7.0, 12.0))
+		if agent.is_empty():
+			break
+		agent["visual"] = _vehicle("lada", _ground(agent["pos"]) + Vector3.UP * 0.14, 4.3, "z")
+
+
+func _move_ambient(delta: float) -> void:
+	_ambient.step(delta)
+	var right := _view_right()
+	for agent in _ambient.agents:
+		var at: Vector2 = agent["pos"]
+		var heading: Vector2 = agent["heading"]
+		if agent["is_car"]:
+			var car: Node3D = agent["visual"]
+			car.position = Vector3(at.x, 0.14, at.y)
+			car.rotation.y = lerp_angle(car.rotation.y, atan2(heading.x, heading.y), minf(1.0, delta * 6.0))
+		else:
+			var sprite: Sprite3D = agent["visual"]
+			sprite.position = Vector3(at.x, agent["lift"], at.y)
+			# Face the way they walk as seen on screen.
+			sprite.flip_h = heading.x * right.x + heading.y * right.z < 0.0
+
+
+# --- Dev overlay: the road graph (F10, or --graph) -----------------------------
+
+const GRAPH_COLORS := {
+	"asphalt": Color(0.35, 0.8, 1.0), "dirt": Color(1.0, 0.6, 0.2),
+	"yard": Color(0.4, 0.9, 0.4), "access": Color(1.0, 0.3, 0.9),
+}
+
+
+func _build_graph_overlay() -> void:
+	_graph_overlay = Node3D.new()
+	_graph_overlay.name = "RoadGraphOverlay"
+	_graph_overlay.visible = OS.get_cmdline_user_args().has("--graph")
+	add_child(_graph_overlay)
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.vertex_color_use_as_albedo = true
+	material.no_depth_test = true
+	material.render_priority = 10
+	var graph_mesh := ImmediateMesh.new()
+	graph_mesh.surface_begin(Mesh.PRIMITIVE_TRIANGLES, material)
+	for edge in sim.graph.edges:
+		_ribbon(graph_mesh, sim.graph.points[edge["a"]], sim.graph.points[edge["b"]], 1.2, GRAPH_COLORS[edge["kind"]], 0.5)
+	for point in sim.graph.points:
+		_ribbon(graph_mesh, point - Vector2(2, 0), point + Vector2(2, 0), 4.0, Color.WHITE, 0.6)
+	graph_mesh.surface_end()
+	var graph_node := MeshInstance3D.new()
+	graph_node.mesh = graph_mesh
+	graph_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_graph_overlay.add_child(graph_node)
+	_route_mesh = ImmediateMesh.new()
+	var route_node := MeshInstance3D.new()
+	route_node.mesh = _route_mesh
+	route_node.material_override = material
+	route_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	_graph_overlay.add_child(route_node)
+
+
+func _draw_routes() -> void:
+	_route_mesh.clear_surfaces()
+	var any := false
+	for id in sim.actors:
+		if id == "tolik":
+			continue
+		var route: PackedVector2Array = sim.actor_route(id)
+		if route.size() < 2:
+			continue
+		if not any:
+			_route_mesh.surface_begin(Mesh.PRIMITIVE_TRIANGLES)
+			any = true
+		for i in route.size() - 1:
+			_ribbon(_route_mesh, route[i], route[i + 1], 2.4, Color(1.0, 0.9, 0.2), 0.8)
+	if any:
+		_route_mesh.surface_end()
+
+
+func _ribbon(mesh: ImmediateMesh, from: Vector2, to: Vector2, width: float, color: Color, y: float) -> void:
+	var side := (to - from).normalized().orthogonal() * width * 0.5
+	var corners := [from - side, from + side, to + side, to - side]
+	for index in [0, 1, 2, 0, 2, 3]:
+		mesh.surface_set_color(color)
+		mesh.surface_add_vertex(Vector3(corners[index].x, y, corners[index].y))
 
 
 # A panel volume has exact 3 m storeys; surfaces are resolved by the catalog.

@@ -1,0 +1,8 @@
+{
+  "sprite": {"max_edge": 1024},
+  "portrait": {"max_edge": 1024},
+  "scene": {"max_edge": 1920},
+  "surface": {"max_edge": 1024},
+  "facade": {"max_edge": 2048},
+  "ui": {"max_edge": 1024}
+}

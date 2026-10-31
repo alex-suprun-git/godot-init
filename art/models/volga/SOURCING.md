@@ -1,0 +1,27 @@
+# Volga sourcing review
+
+Checked: 2026-10-31. Stage: metadata research only. No model has been downloaded, visually approved or integrated.
+
+## Brief
+
+`art/PROMPTS.md` specifies the administration's clean black GAZ-24 sedan, approximately 4.7 m long, 1.8 m wide and 1.5 m tall. It should read as a long, low, dignified car in the painted 1997 city. Match the existing Blender Lada under the actual map camera. The GAZ-3102 and other variants are not interchangeable with the current brief.
+
+Provisional game-copy target: roughly 5–25k triangles, few materials and 1–2K textures where sufficient. These are working budgets, not acceptance thresholds; retain a lighter candidate if its silhouette and finish hold up at the intended zoom. Detailed interiors are a lower priority than body shape, chrome, windows and wheels.
+
+## Candidates
+
+| Candidate and author | Listing evidence | Disposition |
+| --- | --- | --- |
+| [GAZ-24 Volga Black — eightismore](https://sketchfab.com/3d-models/gaz-24-volga-black-ac19841adca7495586838a0f8d52e209) | Indexed author listing advertises download, approximately 4k triangles / 2.1k vertices and CC Attribution. Exact license version, archive formats and textures not verified. | First candidate for acquisition and visual inspection: exact black GAZ-24 subject and a light mesh. Material quality and body detail remain unknown. |
+| [Gaz 24 Volga — assg709](https://sketchfab.com/3d-models/gaz-24-volga-6e87cb4fa6aa4a85b6afd4623a0c2dfb) | Indexed author listing advertises download, approximately 71k triangles / 39.2k vertices and CC Attribution. Formats and exact license version not verified. | Backup if the lighter model's shape/detail is insufficient; evaluate simplification rather than assuming the heavier mesh is better. |
+| [1971 GAZ-24 Volga (LP) — KrStolorz](https://krsto.artstation.com/projects/4brmVW) | Author portfolio describes free download and two updated textured versions with corrected topology, last changed May 15, 2026. Reuse license and triangle count not verified. | Further lead if needed; "free download" alone is insufficient for selection. |
+| [Gaz 24 Volga — korchevskytea](https://sketchfab.com/3d-models/gaz-24-volga-e608a61a15de4eb4b1667eb811b1744a) | Indexed listing states CC Attribution-NonCommercial and about 64k triangles. | Exclude from the default reusable game asset path due to NC terms. |
+| [Volga GAZ-24 — car-b-uncle](https://free3d.com/3d-model/volga-gaz-24-88347.html) | Direct listing states Personal Use License and `.blend`; lacks useful geometry/material metadata. | Exclude from the default reusable game asset path. |
+
+Search routes included Sketchfab vehicle listings, the author's ArtStation portfolio, Free3D and a targeted GitHub search. No suitable author-maintained Volga asset repository was identified in this search. Sketchfab direct page fetches returned HTTP 403 in the research tool; the two shortlisted listings' metadata comes from search-indexed author pages, not inspection of downloaded files. Current download access, price and exact terms must be rechecked at acquisition.
+
+## Decision
+
+**Investigate adapting eightismore's black GAZ-24 before building another original car.** It matches the subject and is economical enough to justify a quick inspection. This is a technical sourcing recommendation, not a claim that the model's visual quality is accepted.
+
+Next, when model implementation is requested: acquire through the normal download flow; retain the exact license and attribution; verify materials, silhouette, wheels and actual counts in Blender; compare with the approved Lada in Godot. Use assg709's model as the backup. Build an original model if acquisition/terms fail or adaptation cannot meet the visual target economically.

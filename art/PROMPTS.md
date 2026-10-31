@@ -39,6 +39,8 @@ Canonical appearance from the chosen portraits. Later variants of these characte
 
 ## Rules
 
+- Required preparation workflow: `art/ASSET_PIPELINE.md`. Save generated originals outside `init/`; after the applicable visual approval, run `uv run tools/optimize_asset.py` before saving/integrating the game copy. The paths in prompts below are final optimized destinations, not generation-output paths.
+
 - The game starts in late August 1997, and every prompt states its month. Late August: summer greenery with the first yellow leaves. September: early autumn, mostly yellow trees. October: heavy leaf fall, half-bare trees, first cold. Keep foliage and clothing consistent with the stated month.
 - Do not render readable text, signs, or UI inside images. Generators garble Cyrillic; labels are added in Godot.
 - Save game-ready images to the exact path in each prompt, under `init/assets/` (Godot only sees `init/`). Save explorations and rejected variants to `art/concepts/`.

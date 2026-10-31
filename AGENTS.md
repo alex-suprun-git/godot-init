@@ -37,6 +37,7 @@
 - Every run writes a playtest log (JSON lines plus a week summary with waiting time, request latency and contact utilization) to `~/Library/Application Support/Godot/app_userdata/Init/playtests/`; files ending in `_player.jsonl` are real plays, `_autoplay.jsonl` come from the dev autoplay, and `--no-log` turns it off. When asked to analyze a playtest, read the latest `_player` log first, find where the week drags or stalls, and only then compare with the user's own feedback.
 - After sprites are added or redrawn, run `Godot --headless --path init --script res://scripts/dev/measure_sprite_anchors.gd` to refresh `scripts/data/sprite_anchors.gd` (where each sprite touches the ground and which map axis it is drawn along).
 - Generated art is described in `art/PROMPTS.md`; game-ready images live under `init/assets/`, concepts under `art/concepts/`.
+- For new or replaced generated raster art, follow `art/ASSET_PIPELINE.md`: preserve the original outside `init/`, review and obtain the applicable visual approval, run `uv run tools/optimize_asset.py` as a separate preparation step, then integrate the optimized copy into Godot. Do not bypass optimization or retroactively bulk-process existing assets without a migration task.
 - Do not commit or push unless explicitly asked.
 
 ## Blender and 3D Assets

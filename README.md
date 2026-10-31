@@ -99,6 +99,7 @@ A border trade city on a river that lives on trade and transit rather than on a 
   - Gradual: slow changes such as a new housing block change lot states only between weeks, at the start of the next week, alongside the consequences of the previous one. Long projects pass through visible intermediate stages over several weeks (fence, foundation, frame) rather than appearing out of nowhere.
 - Provisional target: about 35–40 weeks per chapter at roughly 3–4 minutes each. Exact numbers are tuned in the prototype, and day length is a configuration value.
 - Prototype pacing: at ×1, one game hour takes four real seconds (48 seconds per working day; four minutes per five-day live week, excluding pauses). ×2 and ×4 multiply that simulation rate; pause stops it. The base rate and supported speeds live in `init/scripts/data/settings.gd`.
+- During the live week, Space toggles pause and resumes the last selected running speed, including after a crisis pauses the game. Holding Space does not repeatedly toggle it.
 - The shift to this core loop needs deliberate balancing.
 
 ## Player Mobility and Personal Money (Provisional)

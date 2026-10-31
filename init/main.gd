@@ -18,6 +18,7 @@ var audio_debug
 var play_log
 var phase := "planning"
 var speed := 1.0
+var _resume_speed := 1.0
 
 
 func _ready() -> void:
@@ -72,6 +73,20 @@ func _process(delta: float) -> void:
 		sim.advance(delta * speed / Settings.GAME_HOUR_SECONDS)
 
 
+func _input(event: InputEvent) -> void:
+	if phase != "live" or not event is InputEventKey or event.keycode != KEY_SPACE:
+		return
+	var focus := get_viewport().gui_get_focus_owner()
+	if focus is LineEdit or focus is TextEdit:
+		return
+	# Consume both edges before GUI input so Space never activates a focused
+	# request/choice button as well. Holding it must not repeatedly toggle.
+	get_viewport().set_input_as_handled()
+	if event.pressed and not event.echo:
+		set_speed(_resume_speed if is_zero_approx(speed) else 0.0)
+		audio.play("speed_click")
+
+
 func start_week() -> void:
 	phase = "live"
 	if play_log != null:
@@ -86,6 +101,8 @@ func set_speed(value: float) -> void:
 	if not Settings.TIME_SPEEDS.has(value):
 		return
 	speed = value
+	if value > 0.0:
+		_resume_speed = value
 	hud.set_speed(value)
 	if play_log != null:
 		play_log.note_speed(value)

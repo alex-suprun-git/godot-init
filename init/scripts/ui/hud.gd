@@ -206,7 +206,7 @@ func _process(_delta: float) -> void:
 
 # People stand where the map says; the token's feet are the spot on the ground.
 func _update_tokens() -> void:
-	var paths: Array[Dictionary] = []
+	var paths: Array[PackedVector2Array] = []
 	for id in _tokens:
 		var token: Control = _tokens[id]
 		var actor: Dictionary = sim.actors[id]
@@ -217,10 +217,13 @@ func _update_tokens() -> void:
 		token.eta_text = ""
 		if actor["state"] in ["travel", "driving"]:
 			token.eta_text = _eta_text(sim.actor_eta_hours(id))
-			var lot: String = sim.actor_target_lot(id)
-			# Tolik rides with you, so only your path is drawn.
-			if lot != "" and id != "tolik":
-				paths.append({"from": feet - Vector2(0, 50), "to": map.lot_screen_position(lot, 0.0)})
+			# Tolik rides with you, so only your path is drawn: the road still ahead.
+			if id != "tolik":
+				var route: PackedVector2Array = sim.actor_route(id)
+				var line := PackedVector2Array([feet - Vector2(0, 50)])
+				for i in range(1, route.size()):
+					line.append(map.ground_screen_position(route[i]))
+				paths.append(line)
 	_path_layer.paths = paths
 	_path_layer.queue_redraw()
 
@@ -346,7 +349,7 @@ func _build_top_bar() -> void:
 		button.toggle_mode = true
 		button.button_group = speed_group
 		button.custom_minimum_size = Vector2(46, 44)
-		button.tooltip_text = "Пауза" if speed == 0.0 else "Скорость времени: ×%d" % speed
+		button.tooltip_text = "Пауза / продолжить · Space" if speed == 0.0 else "Скорость времени: ×%d" % speed
 		button.pressed.connect(speed_selected.emit.bind(speed))
 		button.pressed.connect(_sfx.bind("speed_click"))
 		time_controls.add_child(button)

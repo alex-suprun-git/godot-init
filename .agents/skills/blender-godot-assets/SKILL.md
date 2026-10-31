@@ -1,11 +1,15 @@
 ---
 name: blender-godot-assets
-description: Create, revise and integrate Blender 3D assets for this Godot project's city map, including MCP execution, GLB export and visual inspection in the game.
+description: Find and evaluate reusable 3D models, or create, revise and integrate Blender assets for this Godot project's city map, including MCP execution, GLB export and visual inspection in the game.
 ---
 
 # Blender to Godot Assets
 
 Run commands from the repository root. Read `art/PROMPTS.md` and the relevant asset README for its reference, current version and approval state. Existing Lada source scripts are in `art/models/lada/`; reuse a suitable asset before rebuilding it.
+
+## Find before building
+
+For sourcing an asset or deciding whether to reuse one, read [references/asset-sourcing.md](references/asset-sourcing.md). Search and shortlist within the user's task; a research request alone does not authorize replacing game assets. Record candidates, evidence and a concrete adapt/build decision under `art/models/<asset>/SOURCING.md`. The first worked example is `art/models/volga/SOURCING.md`.
 
 ## Connect and execute
 
