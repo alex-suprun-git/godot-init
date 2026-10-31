@@ -1,0 +1,101 @@
+name: CI
+
+on:
+  pull_request:
+    # `edited` re-runs the description lint when the body is changed, not only on pushes.
+    types: [opened, edited, synchronize, reopened]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# A new push to a PR cancels the older run of the same PR; main runs are never cancelled.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  pr-lint:
+    # Every PR belongs to a backlog issue and uses the template (see AGENTS.md).
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the PR description
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          fail=0
+          if ! printf '%s' "$PR_BODY" | grep -Eiq '(closes|fixes|refs) #[0-9]+|no issue'; then
+            echo "::error::The description needs 'Closes #n', 'Refs #n' or 'No issue: <reason>'."; fail=1
+          fi
+          if printf '%s' "$PR_BODY" | grep -Eq '^(Closes|Refs) #<issue number>'; then
+            echo "::error::Replace the '#<issue number>' placeholder from the template."; fail=1
+          fi
+          for section in '## Summary' '## Scope' '## How to verify' '## Not verified'; do
+            if ! printf '%s' "$PR_BODY" | grep -qF "$section"; then
+              echo "::error::Missing template section: $section"; fail=1
+            fi
+          done
+          exit $fail
+
+  changes:
+    # Godot only needs to run when the game or the workflow itself changed (docs-only PRs skip it).
+    runs-on: ubuntu-latest
+    outputs:
+      game: ${{ steps.diff.outputs.game }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: diff
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          # No usable base (first push, new branch): run everything.
+          if [ -z "$BASE" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            echo "game=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if git diff --name-only "$BASE" "$GITHUB_SHA" | grep -Eq '^(init/|\.github/workflows/)'; then
+            echo "game=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "game=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  godot-checks:
+    needs: changes
+    if: needs.changes.outputs.game == 'true'
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: 4.7.1-stable
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache Godot
+        id: godot-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/godot
+          key: godot-${{ env.GODOT_VERSION }}-linux
+
+      - name: Download Godot
+        if: steps.godot-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/godot
+          curl -fsSL -o /tmp/godot.zip "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_linux.x86_64.zip"
+          unzip -q /tmp/godot.zip -d ~/godot
+          mv ~/godot/Godot_v${GODOT_VERSION}_linux.x86_64 ~/godot/godot
+          chmod +x ~/godot/godot
+
+      - name: Import assets
+        run: ~/godot/godot --headless --path init --import 2>&1 | tail -n 20
+
+      - name: Load the project and fail on script errors
+        run: |
+          ~/godot/godot --headless --path init --quit 2>&1 | tee /tmp/load.log
+          if grep -E 'SCRIPT ERROR|Parse Error|Compile Error' /tmp/load.log; then
+            echo "::error::Script errors while loading the project."; exit 1
+          fi
+
+      - name: Check district and lot data
+        run: ~/godot/godot --headless --path init --script res://scripts/dev/check_data.gd
