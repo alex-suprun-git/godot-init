@@ -102,6 +102,13 @@ A border trade city on a river that lives on trade and transit rather than on a 
 - During the live week, Space toggles pause and resumes the last selected running speed, including after a crisis pauses the game. Holding Space does not repeatedly toggle it.
 - The shift to this core loop needs deliberate balancing.
 
+## City Audio (Prototype)
+
+- The first audio layer is a continuous, non-positional city-outskirts recording, selected by the user as an initial ambience trial. It starts with the map and fades in over two seconds. It keeps its natural playback speed during pause, planning, summary, and simulation speed changes; camera movement does not affect it yet.
+- A dedicated `CityAmbience` player uses the `Ambience` bus independently of the short sound-event pool. Default gain is 50% (about -6 dB); F3 exposes a 0–100% slider, with zero muting without restarting the recording. This audition setting lasts for the current run only.
+- The 7:46.790 source is prepared as a 7:42.790 Ogg Vorbis loop with a four-second equal-power overlap. The Desktop WAV is preserved outside the game; only the prepared Ogg is imported. Asset provenance, attribution, preparation, and verification are recorded in `art/audio/city/SOURCING.md`; the bundled attribution is in `init/assets/audio/ATTRIBUTION.md` and linked in F3.
+- This is a first listening trial, not an approved final soundscape. Localized sources, night/weather layers, music, persistent audio preferences, and automatic pause ducking are not implemented.
+
 ## Player Mobility and Personal Money (Provisional)
 
 Mobility and money are both scarce for a junior aide, which is part of what makes the map matter.
