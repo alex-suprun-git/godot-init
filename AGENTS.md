@@ -43,7 +43,14 @@
 ## Blender and 3D Assets
 
 - Use the project skill at `.agents/skills/blender-godot-assets/SKILL.md` for Blender modeling, export and Godot integration. The reusable MCP client is `tools/blender_mcp.py`; prefer the working API over repeated UI attempts.
+- For downloaded models, read the skill's `references/asset-sourcing.md`: it records acquisition, automated inspection, adaptation, previews and the division of work with the user. Handle routine technical work independently; involve the user for meaningful creative choices or a concrete acquisition blocker.
+- Resume asset work from `art/models/<asset>/SOURCING.md` and its asset README, not from assumed chat memory. The Volga shortlist and pending acquisition are recorded in `art/models/volga/SOURCING.md`.
 - Match the reference and intended map camera. Inspect the silhouette from several angles before expensive detailing, baking or rendering; show an actual Godot frame when reporting in-game results.
 - Choose geometry, material and texture budgets for the intended viewing distance before detailing. Keep the editable Blender source separate from its game export.
 - Keep build, material bake, export and preview as resumable stages. Record progress for long operations; an MCP timeout does not cancel Blender work, so check status and outputs before retrying.
 - Verify uncertain API names against the installed application. Scope glTF exports explicitly to the asset scene or collection and inspect the exported contents.
+
+## Durable Project Context
+
+- Keep agreed workflows and actionable handoff state in the repository before ending a task that establishes them. Gameplay decisions belong in `README.md`, repeatable asset procedures in the project skill, and asset-specific decisions/progress beside that asset.
+- Record what actually exists, what was inspected, remaining blockers and the next action. Distinguish planned automation from implemented scripts and verified results. Update the existing source of truth rather than maintaining duplicate chat summaries.

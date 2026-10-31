@@ -11,6 +11,8 @@ Run commands from the repository root. Read `art/PROMPTS.md` and the relevant as
 
 For sourcing an asset or deciding whether to reuse one, read [references/asset-sourcing.md](references/asset-sourcing.md). Search and shortlist within the user's task; a research request alone does not authorize replacing game assets. Record candidates, evidence and a concrete adapt/build decision under `art/models/<asset>/SOURCING.md`. The first worked example is `art/models/volga/SOURCING.md`.
 
+Read the same reference for downloaded-model inspection and adaptation: it defines what Codex handles independently, when the user is involved, which previews to produce, and how to preserve a resumable handoff across chats.
+
 ## Connect and execute
 
 Prefer native Blender MCP tools when exposed. Otherwise use the persistent project client, which reads the configured `blender` STDIO server from Codex without hardcoding a uv cache or Python installation path:

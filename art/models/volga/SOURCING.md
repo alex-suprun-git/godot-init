@@ -25,3 +25,11 @@ Search routes included Sketchfab vehicle listings, the author's ArtStation portf
 **Investigate adapting eightismore's black GAZ-24 before building another original car.** It matches the subject and is economical enough to justify a quick inspection. This is a technical sourcing recommendation, not a claim that the model's visual quality is accepted.
 
 Next, when model implementation is requested: acquire through the normal download flow; retain the exact license and attribution; verify materials, silhouette, wheels and actual counts in Blender; compare with the approved Lada in Godot. Use assg709's model as the backup. Build an original model if acquisition/terms fail or adaptation cannot meet the visual target economically.
+
+## Handoff checkpoint
+
+- The latest request is to preserve the working agreement in documentation; downloading or integrating the Volga has not yet been requested.
+- No archive, Blender inspection report, Volga-specific scripts, previews or GLB exist from this sourcing task. The reusable Blender MCP execution client already exists at `tools/blender_mcp.py`; a generic downloaded-model inspection script has not been implemented.
+- On an implementation request, first attempt to acquire eightismore's model independently. Ask for help only if the normal download requires user login/purchase or remains inaccessible. Research-tool HTTP 403 does not establish whether the normal browser download works.
+- The current brief remains a clean black GAZ-24. Recolouring, glass/tint changes, simple interior work and simplification are supported adaptation options discussed with the user, not approved specific changes to this model.
+- Follow `.agents/skills/blender-godot-assets/references/asset-sourcing.md` for the agreed inspection, preview, adaptation and review process. Create and retain the asset-specific scripts during implementation so later variants can reuse them.

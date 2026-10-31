@@ -29,6 +29,26 @@ Inspect the file in Blender: dimensions/axes, actual mesh/triangle/material coun
 
 The reusable skill directs the agent's search, evidence recording and decision; it is not a background crawler. Use available web tools for discovery, supported provider APIs where practical, and Blender MCP/scripts for inspection, conversion, optimization and previews. Do not promise universal unattended downloads: providers differ in authentication, purchase and API availability.
 
+## Working agreement: downloaded model to game asset
+
+When the user requests implementation, Codex first attempts legitimate acquisition independently. Do not send the user to download the file before trying an available normal download route. If login, purchase or inaccessible download controls prevent acquisition, identify the exact model and remaining step; the user can complete the login/download or provide the archive. A purchase still needs an authorized budget. A sourcing discussion does not itself mean implementation has been requested.
+
+Codex handles technical preparation, initial inspection, previews and routine corrections without asking the user to approve each operation. Ask the user about meaningful creative choices, such as paint colour, condition, tint or a change of vehicle variant, when the brief does not already answer them. First prepare concrete comparable previews where possible, and continue independent work while a preference is pending. Reuse approved style decisions instead of asking the same questions again.
+
+Use the following stages, saving outputs as work progresses:
+
+1. **Inspect:** use Blender MCP/Python to collect object names and hierarchy, evaluated triangle counts, material and texture inventory, missing resources, dimensions, transforms/axes, UV availability and whether wheels/windows/body are separate. Save a machine-readable report beside the asset. A valid import is not visual approval.
+2. **Preview and review:** create consistent front, side, rear and three-quarter renders plus a view matching the game camera. Codex inspects the images for silhouette, shading defects, missing textures and transparency issues. Surface counts alone cannot detect these problems.
+3. **Adapt:** preserve the original and edit an independent game copy. Typical changes include paint colour/roughness, dirt/wear, glass tint/opacity/reflections, wheels/lights/bumpers and removal of hidden geometry. If transparent windows expose an empty shell, add a simple interior or use suitable tint; do not blindly lower opacity. If parts/materials are merged or colour is baked into one atlas, inspect and separate/repaint as needed before promising an easy edit.
+4. **Optimize:** reduce geometry, material slots or texture sizes where they materially help. Preserve the body silhouette, visible wheel arches and details that survive the intended map zoom. Compare before/after previews; do not pursue a triangle target at the expense of the approved appearance.
+5. **Integrate:** export a portable GLB, import into Godot and inspect at real scale under the map's camera/light beside existing vehicles. Follow the main skill's export and grounding instructions. Report the visible result and any unresolved limitation.
+
+Inspection reports, preview cameras/renders and export can be scripted. Visual judgement and unusual repairs still require agent inspection and asset-specific edits. Save reusable inspection/adaptation/export scripts beside the asset when created; make their paths and prerequisites explicit. After the first pass, use these scripts for recolours and re-exports rather than rebuilding the workflow manually. Do not describe a generic inspector or one-click pipeline as available until it has actually been implemented and run.
+
+## Resume across chats
+
+Before handing off, update the asset record with its current stage, original/download and working-copy paths (where terms permit), implemented script paths and commands, report/preview/export paths, approved choices, unresolved decisions, blockers and the next concrete action. On continuation, read that record and inspect existing files before downloading, rebuilding or asking again. Preserve completed work and check long-job status before rerunning it.
+
 Poly Haven has an official API and CC0 assets; API-specific terms are separate from the asset license. See https://github.com/Poly-Haven/Public-API and https://polyhaven.com/license. Kenney's asset terms are documented at https://kenney.nl/support. Verify other providers' current per-asset terms.
 
 ## Research record
