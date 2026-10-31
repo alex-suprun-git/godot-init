@@ -16,11 +16,12 @@ signal lot_state_changed(lot: String, state: String)
 signal promise_resolved(status: String) # "kept" or "broken"
 signal option_chosen(request_id: String, option_id: String, actor: String)
 signal week_ended
+signal day_started(day: int) # A new working day began; everyone is back at their start lot.
 
 const WEEK_HOURS := Week1.HOURS_PER_DAY * Week1.DAYS_PER_WEEK
 const STEP := 0.25 # Simulation step in game hours; keeps event ordering stable at high speed.
 
-var t := 0.0 # Working hours since Monday 08:00 of the current week.
+var t := 0.0 # Working hours since Monday 07:00 of the current week; nights are not counted.
 var week := 1
 var money: int = Week1.START_MONEY
 var traces := 0
@@ -70,9 +71,15 @@ func begin() -> void:
 
 func advance(hours: float) -> void:
 	while hours > 0.0 and not ended:
-		var step: float = min(hours, STEP)
+		# Never step across midnight-equivalent: the day boundary is an event of its own.
+		var day_end := (floorf(t / Week1.HOURS_PER_DAY) + 1.0) * Week1.HOURS_PER_DAY
+		var step: float = minf(minf(hours, STEP), day_end - t)
 		hours -= step
 		_tick(step)
+		if is_equal_approx(t, day_end) and not ended:
+			t = day_end # Exact, so the next day's boundary is computed from here.
+			_start_new_day()
+			break # The view pauses for the night; the rest of this frame's time is dropped.
 	time_changed.emit()
 
 
@@ -84,6 +91,12 @@ static func to_hours(when: Dictionary) -> float:
 
 func day_index() -> int:
 	return min(int(t / Week1.HOURS_PER_DAY), Week1.DAYS_PER_WEEK - 1)
+
+
+# Where an actor starts each day: the doorstep of their start lot, or its entrance.
+func home_position(id: String) -> Vector2:
+	var layout: String = Week1.LOTS[Week1.ACTORS[id]["start_lot"]]["layout"]
+	return graph.doorsteps.get(layout, graph.entrance_position(layout))
 
 
 # Clock hour as a float (08:30 is 8.5), the same time clock_text() shows.
@@ -101,13 +114,18 @@ func clock_text() -> String:
 func date_text(day: int = -1) -> String:
 	if day < 0:
 		day = day_index()
-	var first: int = Week1.FIRST_DAY + (week - 1) * 7
-	var date := first + day
+	var date := day_date(day)
+	return "%s %02d.%02d.%d" % [Week1.DAY_NAMES[day], date.x, date.y, Week1.YEAR]
+
+
+# Day of month and month (x, y) of a weekday in the current week.
+func day_date(day: int) -> Vector2i:
+	var date: int = Week1.FIRST_DAY + (week - 1) * 7 + day
 	var month: int = Week1.MONTH
 	if date > 31:
 		date -= 31
 		month += 1
-	return "%s %02d.%02d.%d" % [Week1.DAY_NAMES[day], date, month, Week1.YEAR]
+	return Vector2i(date, month)
 
 
 func when_text(when: Dictionary) -> String:
@@ -299,6 +317,23 @@ func _tick(step: float) -> void:
 	if t >= WEEK_HOURS:
 		ended = true
 		week_ended.emit()
+
+
+# The night: everyone goes back to their start lot. Unfinished jobs are kept;
+# in the morning the assignee sets off again and finishes the remaining work.
+func _start_new_day() -> void:
+	for id in actors:
+		var actor: Dictionary = actors[id]
+		actor["pos"] = home_position(id)
+		actor["lot"] = Week1.ACTORS[id]["start_lot"]
+		if actor["state"] in ["travel", "work"]:
+			var target: String = Week1.LOTS[_request_lot(actor["request"])]["layout"]
+			actor["state"] = "travel"
+			actor["path"] = graph.route(actor["pos"], target, "car" if actor["driver"] else "foot")
+			actor["path_index"] = 1
+	if actors["me"]["driver"]:
+		actors["tolik"]["pos"] = actors["me"]["pos"]
+	day_started.emit(day_index())
 
 
 func _open_due_requests() -> void:

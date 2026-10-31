@@ -98,7 +98,7 @@ A border trade city on a river that lives on trade and transit rather than on a 
   - Instant: sudden events such as a fire, a picket, or an accident appear in the middle of the week as overlays.
   - Gradual: slow changes such as a new housing block change lot states only between weeks, at the start of the next week, alongside the consequences of the previous one. Long projects pass through visible intermediate stages over several weeks (fence, foundation, frame) rather than appearing out of nowhere.
 - Provisional target: about 35–40 weeks per chapter at roughly 3–4 minutes each. Exact numbers are tuned in the prototype, and day length is a configuration value.
-- Prototype pacing: at ×1, one game hour takes four real seconds (48 seconds per working day; four minutes per five-day live week, excluding pauses). ×2 and ×4 multiply that simulation rate; pause stops it. The base rate and supported speeds live in `init/scripts/data/settings.gd`.
+- Prototype pacing: at ×1, one game hour takes four real seconds (60 seconds per working day; five minutes per five-day live week, excluding pauses). ×2 and ×4 multiply that simulation rate; pause stops it. The base rate and supported speeds live in `init/scripts/data/settings.gd`.
 - During the live week, Space toggles pause and resumes the last selected running speed, including after a crisis pauses the game. Holding Space does not repeatedly toggle it.
 - The shift to this core loop needs deliberate balancing.
 
@@ -185,7 +185,8 @@ The campaign has a peaceful arc and a war arc, and the second changes what the f
   - Live phase: the week plays out in real time (with pause and speed-up). The city lives, and crises pop up that need quick answers.
   - Summary: the results of the week, including consequences that arrived.
 - Risk: weeks can feel monotonous if they are too similar, so authored events, deadlines, and crises must vary their rhythm.
-- Undecided: whether time of day still matters inside the live phase.
+- Working day: requests can be handled from 07:00 to 22:00. At 22:00 the game pauses and a large tear-off calendar sheet for the next day appears at the centre while the night passes on the map; "Продолжить" starts the morning at ×1. Overnight the player and all contacts return to their start lots (administration; Baba Nina to House 5). Unfinished jobs are kept: in the morning the assignee sets off again and finishes the remaining hours. In week one the night itself is only a time skip.
+- Lighting follows the clock and the season (sunrise and sunset differ by season); windows and street lamps light up at dusk. Purely visual for now.
 - Feeling the city and the player's impact on it matters more than covering many calendar years. The first chapter therefore covers a short period of about 1–2 years, ending by 2000 at the latest. It starts in late August 1997; the end date is open.
 - Undecided: whether the protagonist has stats or perks.
 

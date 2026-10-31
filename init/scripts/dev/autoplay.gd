@@ -6,6 +6,7 @@ extends Node
 var main
 var shots_dir := ""
 var _drive_shot_taken := false
+var _day_card_shot_taken := false
 var _crisis_handled := false
 var _picket_shot_taken := false
 var _leave_water_unfixed := false
@@ -96,6 +97,16 @@ func _run() -> void:
 			await _wait(0.5)
 			await _shot("8_audio_panel")
 			main.audio_debug.visible = false
+			main.set_speed(4.0)
+		if main._night:
+			# Between days: shoot the first calendar card once the night has passed,
+			# then press "Продолжить" and keep the pace.
+			if not _day_card_shot_taken:
+				_day_card_shot_taken = true
+				await _wait(1.4)
+				await _shot("5_day_card")
+			await _wait(main.hud.DAY_CARD_SECONDS)
+			main.hud.continue_day()
 			main.set_speed(4.0)
 		if main.speed == 0.0:
 			# A crisis paused the game: shoot the first one, then answer it.

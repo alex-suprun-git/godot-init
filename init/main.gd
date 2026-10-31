@@ -19,6 +19,7 @@ var play_log
 var phase := "planning"
 var speed := 1.0
 var _resume_speed := 1.0
+var _night := false # Between two days: time is held while the day card shows.
 
 
 func _ready() -> void:
@@ -53,6 +54,7 @@ func _ready() -> void:
 		Settings.season = key
 		get_tree().reload_current_scene())
 	sim.week_ended.connect(_on_week_ended)
+	sim.day_started.connect(_on_day_started)
 	# Crises pause the game, as in Frostpunk: decide first, then resume.
 	sim.crisis_started.connect(func(_id): set_speed(0.0))
 	# Sounds for things that happen in the world. The sim knows nothing about
@@ -69,12 +71,12 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if phase == "live" and speed > 0.0:
+	if phase == "live" and speed > 0.0 and not _night:
 		sim.advance(delta * speed / Settings.GAME_HOUR_SECONDS)
 
 
 func _input(event: InputEvent) -> void:
-	if phase != "live" or not event is InputEventKey or event.keycode != KEY_SPACE:
+	if phase != "live" or _night or not event is InputEventKey or event.keycode != KEY_SPACE:
 		return
 	var focus := get_viewport().gui_get_focus_owner()
 	if focus is LineEdit or focus is TextEdit:
@@ -114,6 +116,17 @@ func go_to_next_week() -> void:
 	audio.begin_week()
 	audio.play("week_two_morning")
 	hud.show_week_two(changes)
+
+
+# The night between working days: pause, flip the calendar while the map runs
+# through the night; "Продолжить" starts the morning at normal speed.
+func _on_day_started(day: int) -> void:
+	_night = true
+	set_speed(0.0)
+	map.play_night(hud.DAY_CARD_SECONDS)
+	hud.show_day_card(day, func():
+		_night = false
+		set_speed(1.0))
 
 
 func _on_week_ended() -> void:

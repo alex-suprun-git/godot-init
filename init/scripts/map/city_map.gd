@@ -161,6 +161,7 @@ var _environment: Environment
 var _window_materials: Array[ShaderMaterial] = [] # Facades whose windows glow at night.
 var _lamp_glow := {} # "head" / "pool" -> shared additive material.
 var _night := -1.0
+var _night_hour := -1.0 # While the night plays between days: the hour shown (22..31).
 var _debug_hour := -1.0 # Dev: --hour=18.5 pins the clock for lighting checks.
 var _weather: CPUParticles3D # Snow or falling leaves, following the camera.
 
@@ -408,9 +409,19 @@ func _build_environment() -> void:
 
 	camera = Camera3D.new()
 	camera.fov = 32.0
+# Plays the night between two working days: the light runs from 22:00 to 07:00.
+func play_night(seconds: float) -> void:
+	_night_hour = 22.0
+	var tween := create_tween()
+	tween.tween_property(self, "_night_hour", 31.0, seconds).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_callback(func(): _night_hour = -1.0)
+
+
 	camera.far = 5000.0
 	add_child(camera)
 
+	if _night_hour >= 0.0:
+		hour = fmod(_night_hour, 24.0)
 
 # The light follows the clock on screen: sun height, warmth, sky and ambient.
 func _update_daylight() -> void:

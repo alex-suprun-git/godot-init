@@ -167,6 +167,72 @@ func set_speed(speed: float) -> void:
 	if phase == "live":
 		_phase_label.text = "ПАУЗА" if is_zero_approx(speed) else "ЖИВАЯ НЕДЕЛЯ · ×%d" % speed
 
+const DAY_FULL_NAMES := ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
+const MONTHS_GENITIVE := ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"]
+const DAY_CARD_SECONDS := 3.0 # How long the night takes to pass on the map behind the card.
+
+var _day_card: PanelContainer
+var _day_card_done := Callable()
+
+
+# A new day: a big calendar sheet flips in at the centre while the night passes on
+# the map. Time stays paused until "Продолжить"; then the sheet falls away and
+# `done` runs.
+func show_day_card(day: int, done: Callable) -> void:
+	var date: Vector2i = sim.day_date(day)
+	var sheet := _paper_panel()
+	sheet.anchor_left = 0.5
+	sheet.anchor_right = 0.5
+	sheet.anchor_top = 0.5
+	sheet.anchor_bottom = 0.5
+	sheet.offset_left = -260
+	sheet.offset_right = 260
+	sheet.offset_top = -170
+	sheet.offset_bottom = 170
+	_root.add_child(sheet)
+	var column := VBoxContainer.new()
+	column.alignment = BoxContainer.ALIGNMENT_CENTER
+	column.add_theme_constant_override("separation", 4)
+	sheet.add_child(column)
+	for line in [
+		[DAY_FULL_NAMES[day].to_upper(), 22, OfficeTheme.SECONDARY, false],
+		[str(date.x), 110, OfficeTheme.BURGUNDY, true],
+		["%s %d" % [MONTHS_GENITIVE[date.y - 1], Week1.YEAR], 26, OfficeTheme.TEXT, true],
+	]:
+		var label := _heading(line[0], line[1], line[2]) if line[3] else _paper_label(line[0], line[1], line[2])
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		column.add_child(label)
+	var button := _primary_button("Продолжить")
+	button.custom_minimum_size = Vector2(220, 44)
+	button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	button.pressed.connect(continue_day)
+	column.add_child(button)
+	_day_card = sheet
+	_day_card_done = done
+	# Flip in from the top edge like a tear-off calendar.
+	sheet.pivot_offset = Vector2(260, 0)
+	sheet.scale = Vector2(1, 0)
+	sheet.create_tween().tween_property(sheet, "scale", Vector2.ONE, 0.45).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	button.grab_focus.call_deferred()
+
+
+# Closes the day card: the sheet drops and fades, then the day starts.
+func continue_day() -> void:
+	if _day_card == null:
+		return
+	var sheet := _day_card
+	var done := _day_card_done
+	_day_card = null
+	_day_card_done = Callable()
+	_sfx("card_open")
+	var tween := sheet.create_tween()
+	tween.tween_property(sheet, "offset_top", -110.0, 0.35).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property(sheet, "offset_bottom", 230.0, 0.35).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property(sheet, "modulate:a", 0.0, 0.35)
+	tween.tween_callback(sheet.queue_free)
+	done.call()
+
+
 
 func show_week_two(changes: Array[String]) -> void:
 	set_phase("week2")

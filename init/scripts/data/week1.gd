@@ -10,8 +10,8 @@ const YEAR := 1997
 const MONTH := 8
 const FIRST_DAY := 25 # Monday, 25 August 1997
 const DAY_NAMES := ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
-const WORK_START_HOUR := 8
-const HOURS_PER_DAY := 12 # Working day 08:00–20:00; nights and the weekend are skipped.
+const WORK_START_HOUR := 7
+const HOURS_PER_DAY := 15 # Working day 07:00–22:00; the night is a short transition, the weekend is skipped.
 const DAYS_PER_WEEK := 5
 
 const START_MONEY := 1_200_000
@@ -116,7 +116,7 @@ const REQUESTS := [
 		"id": "hot_water", "type": "plea", "lot": "block5", "asker": "nina",
 		"title": "Нет горячей воды с четверга",
 		"text": "Баба Нина от имени подъезда: «Третий раз за год, а год ещё молодой».",
-		"appear": {"day": 0, "hour": 8}, "expire": {"day": 4, "hour": 20},
+		"appear": {"day": 0, "hour": 7}, "expire": {"day": 4, "hour": 22},
 		"expire_effects": {"residents": -10, "log": "Горячую воду в доме 5 так и не дали. Подъезд сделал выводы."},
 		"options": [
 			{
@@ -150,7 +150,7 @@ const REQUESTS := [
 		"id": "contractor", "type": "conflict", "lot": "boiler", "asker": "",
 		"title": "Два подрядчика на одну котельную",
 		"text": "Гусев и «Стройремонт» оба уверены, что ремонт котельной — их. Решать вам, на месте.",
-		"appear": {"day": 0, "hour": 8}, "expire": {"day": 3, "hour": 20},
+		"appear": {"day": 0, "hour": 7}, "expire": {"day": 3, "hour": 22},
 		"expire_effects": {"boss": -20, "log": "Подрядчика так и не выбрали. Котельная стоит, Пётр Петрович мрачнеет."},
 		"options": [
 			{
@@ -171,7 +171,7 @@ const REQUESTS := [
 		"id": "envelope", "type": "offer", "lot": "office", "asker": "",
 		"title": "Посетитель с конвертом",
 		"text": "Гусев кладёт на стол толстый конверт: «Это просто за понимание. С Петровичем всё согласовано».",
-		"appear": {"day": 0, "hour": 10}, "expire": {"day": 2, "hour": 20},
+		"appear": {"day": 0, "hour": 10}, "expire": {"day": 2, "hour": 22},
 		"expire_effects": {"business": -5, "log": "Гусев забрал конверт и ушёл, не прощаясь."},
 		"options": [
 			{
@@ -192,7 +192,7 @@ const REQUESTS := [
 		"id": "church_heat", "type": "plea", "lot": "church", "asker": "",
 		"title": "Протопить храм к зиме",
 		"text": "Отец Георгий просит включить храм в график отопления: «Прихожане молятся в пальто».",
-		"appear": {"day": 1, "hour": 9}, "expire": {"day": 4, "hour": 20},
+		"appear": {"day": 1, "hour": 9}, "expire": {"day": 4, "hour": 22},
 		"expire_effects": {"church": -5, "log": "Отец Георгий так и не дождался ответа."},
 		"options": [
 			{
@@ -242,7 +242,7 @@ const REQUESTS := [
 		"id": "wasteland_stalls", "type": "offer", "lot": "wasteland", "asker": "",
 		"title": "Гусев хочет ларьки на пустыре",
 		"text": "«Всё равно там одни берёзы и бутылки. Я даже забор поставлю». Нужно решить на месте.",
-		"appear": {"day": 1, "hour": 14}, "expire": {"day": 3, "hour": 20},
+		"appear": {"day": 1, "hour": 14}, "expire": {"day": 3, "hour": 22},
 		"expire_effects": {"business": -4, "log": "Гусев не дождался ответа и поставил ларьки сам. Никто не заметил, как."},
 		"options": [
 			{
@@ -306,7 +306,7 @@ const REQUESTS := [
 		"id": "residents_meeting", "type": "plea", "lot": "block5", "asker": "nina",
 		"title": "Жильцы просят собрание",
 		"text": "Баба Нина: «Пусть кто-нибудь придёт и скажет людям, что будет. Мы же не слепые».",
-		"appear": {"day": 3, "hour": 8}, "expire": {"day": 4, "hour": 20},
+		"appear": {"day": 3, "hour": 7}, "expire": {"day": 4, "hour": 22},
 		"expire_effects": {"residents": -6, "log": "Собрание в доме 5 прошло без вас. Баба Нина записала всё, что вы не сказали."},
 		"options": [
 			{
