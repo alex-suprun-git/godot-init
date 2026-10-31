@@ -409,6 +409,10 @@ func _build_environment() -> void:
 
 	camera = Camera3D.new()
 	camera.fov = 32.0
+	camera.far = 5000.0
+	add_child(camera)
+
+
 # Plays the night between two working days: the light runs from 22:00 to 07:00.
 func play_night(seconds: float) -> void:
 	_night_hour = 22.0
@@ -417,15 +421,11 @@ func play_night(seconds: float) -> void:
 	tween.tween_callback(func(): _night_hour = -1.0)
 
 
-	camera.far = 5000.0
-	add_child(camera)
-
-	if _night_hour >= 0.0:
-		hour = fmod(_night_hour, 24.0)
-
 # The light follows the clock on screen: sun height, warmth, sky and ambient.
 func _update_daylight() -> void:
 	var hour: float = _debug_hour if _debug_hour >= 0.0 else sim.clock_hour()
+	if _night_hour >= 0.0:
+		hour = fmod(_night_hour, 24.0)
 	var look := Daylight.sample(Settings.season, _season, hour)
 	_sun.rotation_degrees = look["sun_rotation"]
 	_sun.light_color = look["sun_color"]

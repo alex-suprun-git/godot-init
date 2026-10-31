@@ -5,6 +5,9 @@ extends RefCounted
 const Layout = preload("res://scripts/data/district_layout.gd")
 const Catalog = preload("res://scripts/data/building_catalog.gd")
 const OfficeTheme = preload("res://scripts/ui/office_theme.gd")
+const PitchedRoof = preload("res://scripts/map/pitched_roof.gd")
+
+const YARD_ROAD_TINT := Color(1.18, 1.12, 1.02)
 
 var map
 var labels: Node3D
@@ -20,6 +23,8 @@ func build(city_map) -> void:
 	_build_ground()
 	for id in Layout.LOTS:
 		_build_lot(id, Layout.LOTS[id])
+	_build_border_fence()
+	_build_rail_poles()
 	preload("res://scripts/map/residential_court.gd").new().build(self)
 	preload("res://scripts/map/nature_places.gd").new().build(self)
 	preload("res://scripts/map/heating_details.gd").new().build(map)
@@ -61,8 +66,10 @@ func _build_ground() -> void:
 		_patch(lot["rect"], ground, 0.025, condition["tint"])
 	for road in Layout.ROADS:
 		var rect: Rect2 = road["rect"]
-		var ground: String = {"asphalt": "asphalt", "yard": "courtyard", "dirt": "dirt"}[road["kind"]]
-		_patch(rect, ground, 0.14)
+		# Housing-estate roads are asphalt too, just a lighter, warmer tone than the main roads.
+		var ground: String = {"asphalt": "asphalt", "yard": "asphalt", "dirt": "dirt"}[road["kind"]]
+		var yard: bool = road["kind"] == "yard"
+		_patch(rect, ground, 0.135 if yard else 0.14, YARD_ROAD_TINT if yard else Color.WHITE)
 		map._occupy(rect.get_center(), rect.size)
 	for bridge in Layout.BRIDGES:
 		var rect: Rect2 = bridge["rect"]
@@ -190,9 +197,16 @@ func _building(lot: Dictionary, entry: Dictionary, desired: Vector2, lot_id: Str
 		map._panel_block(size, entry["floors"], color, group)
 	else:
 		map._box(Vector3(size.x, height, size.y), Vector3(0, height / 2, 0), color, group)
-		map._box(Vector3(size.x + 0.6, 0.4, size.y + 0.6), Vector3(0, height + 0.2, 0), map.PANEL_ROOF, group)
+		if not entry.has("pitched"):
+			map._box(Vector3(size.x + 0.6, 0.4, size.y + 0.6), Vector3(0, height + 0.2, 0), map.PANEL_ROOF, group)
 	var roof: Texture2D = _texture(entry.get("roof", "res://assets/textures/roof_tar.png"))
-	if roof != null:
+	if roof != null and entry.has("pitched"):
+		# Gabled roof with eaves; the ridge runs along the building's long side.
+		var gable := PitchedRoof.create(Vector2(size.x + 0.8, size.y + 0.8), float(entry["pitched"]), roof)
+		gable.position.y = height
+		gable.material_override.albedo_color = Catalog.CONDITIONS[lot["condition"]]["tint"]
+		group.add_child(gable)
+	elif roof != null:
 		map._roof(Vector2(size.x + 0.6, size.y + 0.6), Vector3(0, height + 0.41, 0), 12.0, roof, group)
 	if entry.has("facade_center"):
 		var center_texture := _texture(entry["facade_center"])
@@ -212,6 +226,90 @@ func _building(lot: Dictionary, entry: Dictionary, desired: Vector2, lot_id: Str
 		map._panel_overlays(entry, size, height, group)
 	map._occupy(center, footprint)
 	_register_doorstep(lot_id, lot, entry, center, size.y)
+
+
+# Chain-link fence along the river bank of the border strip, with gaps for the two
+# bridges and the port quay. Posts are one MultiMesh; the mesh is a single alpha-cut
+# quad per run with a generated diamond pattern.
+const BORDER_FENCE_Z := -322.0
+const BORDER_FENCE_HEIGHT := 2.4
+const BORDER_FENCE_GAPS := [Vector2(-16, 6), Vector2(125, 295), Vector2(400, 430)]
+
+
+func _build_border_fence() -> void:
+	var runs: Array[Vector2] = []
+	var from := -430.0
+	for gap in BORDER_FENCE_GAPS:
+		runs.append(Vector2(from, gap.x))
+		from = gap.y
+	runs.append(Vector2(from, 395.0))
+	var posts := MultiMesh.new()
+	posts.transform_format = MultiMesh.TRANSFORM_3D
+	var post_mesh := BoxMesh.new()
+	post_mesh.size = Vector3(0.4, BORDER_FENCE_HEIGHT + 0.3, 0.4)
+	posts.mesh = post_mesh
+	var spots: Array[Vector3] = []
+	var net := _chainlink_material()
+	for run in runs:
+		var length := run.y - run.x
+		if length < 4.0:
+			continue
+		var quad := QuadMesh.new()
+		quad.size = Vector2(length, BORDER_FENCE_HEIGHT)
+		var material: StandardMaterial3D = net.duplicate()
+		material.uv1_scale = Vector3(length / 1.2, BORDER_FENCE_HEIGHT / 1.2, 1.0)
+		var wire := MeshInstance3D.new()
+		wire.mesh = quad
+		wire.material_override = material
+		wire.position = Vector3((run.x + run.y) / 2.0, BORDER_FENCE_HEIGHT / 2.0, BORDER_FENCE_Z)
+		wire.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		map.add_child(wire)
+		var x := run.x
+		while x <= run.y + 0.01:
+			spots.append(Vector3(x, (BORDER_FENCE_HEIGHT + 0.3) / 2.0, BORDER_FENCE_Z))
+			x += 6.0
+	posts.instance_count = spots.size()
+	for i in spots.size():
+		posts.set_instance_transform(i, Transform3D(Basis.IDENTITY, spots[i]))
+	var instance := MultiMeshInstance3D.new()
+	instance.name = "BorderFencePosts"
+	instance.multimesh = posts
+	instance.material_override = map._material(Color("b4b0a3"))
+	map.add_child(instance)
+
+
+# A tileable chain-link pattern drawn once: two sets of diagonal wires on transparency.
+func _chainlink_material() -> StandardMaterial3D:
+	var size := 48
+	var image := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		for x in size:
+			var d1 := absi(((x + y) % (size / 2)) - size / 4)
+			var d2 := absi((((x - y) % (size / 2)) + size / 2) % (size / 2) - size / 4)
+			# A faint veil everywhere keeps the net readable from far away; wires are denser.
+			var wire := minf(d1, d2) > size / 4 - 4
+			image.set_pixel(x, y, Color(0.66, 0.68, 0.66, 0.85 if wire else 0.2))
+	var material := StandardMaterial3D.new()
+	material.albedo_texture = ImageTexture.create_from_image(image)
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	material.roughness = 0.8
+	return material
+
+
+# Power poles along the two railway lines, as in the concept art.
+func _build_rail_poles() -> void:
+	var texture := _texture("res://assets/sprites/power_pole.png")
+	if texture == null:
+		return
+	for z in range(-200, 380, 55):
+		var at := Vector2(432.0, z)
+		if not map._is_occupied(at, 0.5):
+			map._sprite(texture, map._ground(at), 8.0)
+	for x in range(-420, 400, 55):
+		var at := Vector2(x, 418.0)
+		if not map._is_occupied(at, 0.5):
+			map._sprite(texture, map._ground(at), 8.0)
 
 
 # Where people stand on arrival: `entry.doorstep` metres in front of the facade
@@ -251,7 +349,8 @@ func _prop(lot: Dictionary, entry: Dictionary, desired: Vector2) -> void:
 	if entry.has("model"):
 		var model_footprint: Vector2 = entry["footprint"]
 		var model_center := _fit(lot, desired, model_footprint)
-		map._vehicle(entry["model"], map._ground(model_center) + Vector3.UP * 0.025, float(entry["length"]), entry.get("axis", "z"))
+		var lift: float = entry.get("lift", 0.0)
+		map._vehicle(entry["model"], map._ground(model_center) + Vector3.UP * (0.025 + lift), float(entry["length"]), entry.get("axis", "z"), null, int(entry.get("paint", -1)))
 		map._occupy(model_center, model_footprint)
 		return
 	var path: String = "res://assets/sprites/%s.png" % entry["sprite"]
