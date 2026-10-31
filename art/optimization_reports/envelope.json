@@ -1,0 +1,33 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/situation_banners/envelope_v3.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/events/envelope.png",
+  "source_sha256": "42d7a5497fe0b37ae4456d918d12d8b28b6f7e108095879ad7cd8435df9bc600",
+  "profile": "scene",
+  "max_edge": 1920,
+  "override_reason": null,
+  "approved": true,
+  "before": {
+    "size": [
+      1672,
+      941
+    ],
+    "bytes": 2177712,
+    "estimated_rgba_bytes": 6293408
+  },
+  "after": {
+    "size": [
+      1672,
+      941
+    ],
+    "estimated_rgba_bytes": 6293408,
+    "bytes": 2086201,
+    "sha256": "3b80bef02b1ab4b91284bee1c8bc29541a696fc13fbc6759d1f718caa4a9ee89"
+  },
+  "has_alpha": false,
+  "source_alpha_extrema": null,
+  "output_alpha_extrema": null,
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}

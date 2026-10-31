@@ -1,0 +1,33 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/situation_banners/residents_meeting_v3.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/events/residents_meeting.png",
+  "source_sha256": "9a649641a181c13c248194b1de0ea30368914c79d32f841c7bde9e1c6a71ee1c",
+  "profile": "scene",
+  "max_edge": 1920,
+  "override_reason": null,
+  "approved": true,
+  "before": {
+    "size": [
+      1942,
+      809
+    ],
+    "bytes": 3124836,
+    "estimated_rgba_bytes": 6284312
+  },
+  "after": {
+    "size": [
+      1920,
+      800
+    ],
+    "estimated_rgba_bytes": 6144000,
+    "bytes": 2901314,
+    "sha256": "d66f356057d3541d704aeb3339eadd02e09e534bc291c936de597e91c61dc0e3"
+  },
+  "has_alpha": false,
+  "source_alpha_extrema": null,
+  "output_alpha_extrema": null,
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}

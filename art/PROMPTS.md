@@ -45,12 +45,25 @@ Canonical appearance from the chosen portraits. Later variants of these characte
 - Baba Nina (`baba_nina.png`): woman in her seventies, floral headscarf, glasses on a cord, brown knitted cardigan, floral dress, green notebook held to her chest.
 - The boss (`boss.png`): heavy man in his early sixties, grey swept-back hair, heavy tired eyes, oversized grey suit, loosened burgundy striped tie.
 
+- Gusev (`gusev.png`): man in his late thirties, swept-back wavy dark hair, confident asymmetric grin, burgundy double-breasted jacket, cream shirt, patterned tie and gold chain.
+- Father Georgiy: about fifty, narrow long face, receding brown hair, grey-streaked brown beard, black cassock and a plain wooden cross.
+- Boiler-house watchman: lean man about sixty, drooping grey moustache, navy cap and faded olive work jacket; same face in the contractor and coal-theft scenes.
+- Storekeeper: wiry man about fifty-five, thin greying hair, small grey moustache, watchful hooded eyes; stained brown padded vest over a pale blue shirt with rolled sleeves; closed worn ledger.
+- Market woman trader: broad woman about fifty, round determined face, auburn hair in a bun, patterned teal blouse and plain dark apron.
+- District militiaman: man about forty-five, long clean-shaven face, short sandy hair, grey 1990s uniform, cap pushed back, small notebook; no identifiable real-world national insignia.
+- Contractor foreman: stocky man about fifty, bulldog-like face, cropped greying hair, navy work jacket over a pale shirt.
+
 ## Rules
 
 - Required preparation workflow: `art/ASSET_PIPELINE.md`. Save generated originals outside `init/`; after the applicable visual approval, run `uv run tools/optimize_asset.py` before saving/integrating the game copy. The paths in prompts below are final optimized destinations, not generation-output paths.
 
 - The game starts in late August 1997, and every prompt states its month. Late August: summer greenery with the first yellow leaves. September: early autumn, mostly yellow trees. October: heavy leaf fall, half-bare trees, first cold. Keep foliage and clothing consistent with the stated month.
 - Do not render readable text, signs, or UI inside images. Generators garble Cyrillic; labels are added in Godot.
+- This is a fictional post-Soviet republic: no Lenin portraits, recognizable Soviet leaders, or real-world national flags. Use landscapes or a pale patch where an old portrait was removed. When flags are needed, use an explicitly fictional design; the situation-banner draft uses a muted teal field, a narrow ochre diagonal stripe and a small ivory disc (an art proposal, not a finalized national identity).
+- User review direction (2026-10-31): portray an inhabited, functioning city with modest age and ordinary maintenance. Avoid pervasive decay, flaking paint, rust, broken windows, wrecked vehicles, rubble and mud. Buildings and working equipment should be intact; new goods, especially the two proposed courtyard kiosks, must look new. Apply this to all future art prompts. Historical prompt transcripts below are provenance, not overrides of this direction.
+- In daylight scenes, lamps are off and apartment/office windows have natural daylight or reflections, not artificial orange illumination. Summer office coat hooks have no heavy coats or warm hats. Check people and vehicles against one coherent perspective and scale before selecting an image.
+- Color review direction (2026-10-31, in-game House 5 card): future window illustrations should have slightly reduced saturation, restrained brightness and softer contrast to sit naturally beside the map. Use subdued olive/sage greens, neutral concrete and modest warm accents; avoid vivid yellow-green foliage, pervasive orange/golden grading, glowing highlights and glossy color. Preserve readable faces and natural skin tones. Compare new art inside an actual card against the current map before selecting it. This is guidance for future art; the existing banner files were not recolored in this review.
+- Existing event banners now receive a reversible display grade in `init/assets/shaders/event_banner_grade.gdshader`, applied by `HUD._card_banner()`: saturation 0.76, contrast 0.96, brightness 0.96, RGB balance (0.98, 1.0, 1.02). This gently subdues color and reduces the orange cast. Originals and optimized PNGs stay unchanged; source contact sheets show the ungraded art. Future art should already follow the muted palette above; revisit the shared grade when new art naturally matches the map.
 - Save game-ready images to the exact path in each prompt, under `init/assets/` (Godot only sees `init/`). Save explorations and rejected variants to `art/concepts/`.
 - If a result breaks a technical rule below, report it and retry; do not save it as a game asset.
 - After each batch, list the saved files and note any that drifted from the style.
@@ -84,11 +97,11 @@ Map buildings need visible material on every roof plane; do not leave broad top 
 
 Map style block (textures and sprites):
 
-> Painted illustration texture in the style of a detailed hand-painted 1990s post-Soviet provincial city: worn concrete, rusted metal, peeling paint, water stains, autumn grime. Muted realistic palette with warm accents. Rich surface detail without clutter.
+> Painted illustration texture in the style of a detailed hand-painted 1990s provincial city in a fictional post-Soviet republic: intact concrete and masonry, painted metal, ordinary maintenance and modest everyday wear. An inhabited, functioning city, with no pervasive ruin, heavy rust, flaking paint, rubble or mud. New structures and goods look new. Muted realistic palette with warm accents. Rich surface detail without clutter; foliage and clothing match the stated season.
 
 Window style block (portraits, scenes, events):
 
-> Painterly oil illustration with visible brushwork and a warm textured background, 1990s post-Soviet provincial city in a fictional Slavic border republic, in the season stated by the prompt. Muted realistic palette with warm accents, soft natural light. Grounded, slightly melancholic, with quiet dark humor in small details. No fantasy, no modern 2020s cars or phones; cars are Ladas, Volgas, UAZ vans, ZIL and GAZ trucks.
+> Painterly oil illustration with visible brushwork and a subtly textured background, 1990s post-Soviet provincial city in a fictional Slavic border republic, in the season stated by the prompt. Subdued realistic colors matched to the in-game map: slightly reduced saturation, restrained brightness, soft contrast, muted olive/sage greens and neutral concrete, modest warm accents, natural skin tones and readable faces. Soft natural light, gentle highlights; no vivid yellow-green foliage, pervasive orange/golden grading or glossy oversaturation. Grounded, slightly melancholic, with quiet dark humor in small details. An inhabited, functioning, ordinarily maintained city: modest age and wear, intact buildings, glazing and equipment, serviceable vehicles. No pervasive rust, flaking paint, ruin, rubble or mud; new goods look new. No Lenin portraits, recognizable Soviet leaders or real-world national flags. No fantasy, no modern 2020s cars or phones; cars are Ladas, Volgas, UAZ vans, ZIL and GAZ trucks.
 
 ## T: Test batch for the 3D map
 
@@ -452,3 +465,252 @@ Selected built-in ImageGen outputs are now saved and connected:
 - `init/assets/sprites/station_v3.png` (from `station_candidate.png`): station building, with its own source-axis calibration.
 
 Vehicle dimensions and source-axis correction are in `prop_dimensions.gd`; the bus's positive source long-axis direction is handled explicitly by the existing sprite renderer. Original and concept files are preserved. The dimensioned 3D platform canopy remains in use. Anchor metadata was regenerated and a graphical scene inspection was performed.
+
+## Situation banners — 2026-10-31
+
+Eleven banners: ten missing scenes plus the hot-water replacement. Built-in ImageGen was used for new images and edits, with existing portraits as identity/style references. The user authorized the established window-art direction and requested specific revisions in chat. Optimizer approval records this scoped batch direction, not a claim that the user approved every finished pixel. All untouched originals and superseded drafts remain under `art/source_images/situation_banners/`. Game copies use the `scene` optimizer profile and separate reports.
+
+User review overrides the original envelope brief: use the existing empty summer office, with no visitor. Fictional republic art must not contain Lenin portraits or real national flags. The boss's flag revision is a proposed fictional teal/ochre/ivory motif, not a finalized national identity.
+
+All original generation prompts below expand the existing window style block. Portrait references: Baba Nina for `hot_water` and `residents_meeting`; Gusev for `contractor`, the rejected envelope scenes and `wasteland_stalls`; boss and protagonist for `boss_report`.
+
+### Situation banner: hot_water
+
+Original generation: `art/source_images/situation_banners/hot_water_v1.png`.
+
+> Painterly oil illustration with visible brushwork and a warm textured background, 1990s post-Soviet provincial city in a fictional Slavic border republic, in the season stated by the prompt. Muted realistic palette with warm accents, soft natural light. Grounded, slightly melancholic, with quiet dark humor in small details. No fantasy, no modern 2020s cars or phones; cars are Ladas, Volgas, UAZ vans, ZIL and GAZ trucks.
+> Wide single painted scene, canvas approximately 2.4:1. Composition must survive a center crop to 3.5:1: place ALL faces, hands, key storytelling objects within y=25%-75% of image height. Zoom out to fit this. Upper and lower fifth are expendable setting only. Late August 25-29, 1997, green trees with only first yellow leaves, warm weather and summer clothes with occasional light jacket. No readable text, lettering, logos, signatures or watermarks anywhere. Not a collage, no borders.
+> Late August evening in the courtyard of a five-storey panel building. Residents carry kettles and saucepans of heated water across the yard from a ground-floor open window where a neighbor boils water on a hot plate; Baba Nina stands in the middle counting people with her open green notebook. A boy holds a basin nearby; a cold radiator pipe is visible through a low basement window. Tired, slightly absurd, everyday mutual aid. Nina must match reference portrait: woman in her seventies, floral cream headscarf, rectangular glasses on a black cord, brown knitted cardigan, floral dress, lined round face. Reference is character identity and oil-paint manner only; create a new wide outdoor scene, not a portrait.
+
+### Situation banner: contractor
+
+Original generation: `art/source_images/situation_banners/contractor_v1.png`.
+
+> Painterly oil illustration with visible brushwork and a warm textured background, 1990s post-Soviet provincial city in a fictional Slavic border republic, in the season stated by the prompt. Muted realistic palette with warm accents, soft natural light. Grounded, slightly melancholic, with quiet dark humor in small details. No fantasy, no modern 2020s cars or phones; cars are Ladas, Volgas, UAZ vans, ZIL and GAZ trucks.
+> Wide single painted scene, canvas approximately 2.4:1. Composition must survive a center crop to 3.5:1: place ALL faces, hands, key storytelling objects within y=25%-75% of image height. Zoom out to fit this. Upper and lower fifth are expendable setting only. Late August 25-29, 1997, green trees with only first yellow leaves, warm weather and summer clothes with occasional light jacket. No readable text, lettering, logos, signatures or watermarks anywhere. Not a collage, no borders.
+> The yard of a red-brick boiler house with one tall cold smokeless chimney, coal heaps, rusty gate, broken windows. Gusev (match reference identity: late thirties, slick dark wavy hair, confident grin, burgundy double-breasted jacket, gold chain) and a bulldog-faced stocky foreman aged fifty, cropped greying hair, navy work jacket over pale shirt argue nose to nose, gesturing with hands. Next to them a new-looking dark boxy 1990s jeep and an old olive UAZ. Between them in the middle distance, a sleepy lean watchman aged sixty with drooping grey moustache, navy cap and faded olive jacket in a little booth turns up a small radio. All main faces and hands and the radio inside central horizontal crop band. Reference portrait supplies Gusev identity and oil brushwork only; create new wide scene.
+
+### Situation banner: envelope
+
+Original generation: `art/source_images/situation_banners/envelope_v1.png`.
+
+> Painterly oil illustration with visible brushwork and a warm textured background, 1990s post-Soviet provincial city in a fictional Slavic border republic, in the season stated by the prompt. Muted realistic palette with warm accents, soft natural light. Grounded, slightly melancholic, with quiet dark humor in small details. No fantasy, no modern 2020s cars or phones; cars are Ladas, Volgas, UAZ vans, ZIL and GAZ trucks.
+> Wide single painted scene, canvas approximately 2.4:1. Composition must survive a center crop to 3.5:1: place ALL faces, hands, key storytelling objects within y=25%-75% of image height. Zoom out to fit this. Upper and lower fifth are expendable setting only. Late August 25-29, 1997, green trees with only first yellow leaves, warm weather and summer clothes with occasional light jacket. No readable text, lettering, logos, signatures or watermarks anywhere. Not a collage, no borders.
+> Across the aide's worn desk in a cramped administration office, Gusev slides a thick unmarked buff envelope with TWO fingers toward the viewer, smiling; his eyes in shadow. Match reference identity: man late thirties, slick dark wavy hair, burgundy double-breasted jacket, gold chain, unbuttoned cream shirt, patterned dark tie. Black rotary phone, tea glass in metal holder and cardboard folders. Envelope, hand, smile, phone and tea all in middle horizontal band. Dusty late-August window light, green trees outside. View from aide's side, intimate uneasy encounter. Reference portrait for Gusev identity and painterly manner only, no mobile phone.
+
+### Situation banner: church_heat
+
+Original generation: `art/source_images/situation_banners/church_heat_v1.png`.
+
+> Painterly oil illustration with visible brushwork and a warm textured background, 1990s post-Soviet provincial city in a fictional Slavic border republic, in the season stated by the prompt. Muted realistic palette with warm accents, soft natural light. Grounded, slightly melancholic, with quiet dark humor in small details. No fantasy, no modern 2020s cars or phones; cars are Ladas, Volgas, UAZ vans, ZIL and GAZ trucks.
+> Wide single painted scene, canvas approximately 2.4:1. Composition must survive a center crop to 3.5:1: place ALL faces, hands, key storytelling objects within y=25%-75% of image height. Zoom out to fit this. Upper and lower fifth are expendable setting only. Late August 25-29, 1997, green trees with only first yellow leaves, warm weather and summer clothes with occasional light jacket. No readable text, lettering, logos, signatures or watermarks anywhere. Not a collage, no borders.
+> Inside a small whitewashed Orthodox church. Father Georgiy, about fifty, long narrow face with a grey-streaked brown beard, receding brown hair, black cassock, plain wooden cross stands beside a cold cast iron radiator under a window, resting one hand on its iron pipe as if apologizing for it. Behind him exactly four elderly women in headscarves and light coats despite August stand before a painted icon, one holding a thermos. Dusty sunlight through a high window, warm outside with green foliage. Heads, hand on pipe, radiator and thermos fit middle band; medium wide shot zoomed out. No lettering on icon, no inscriptions.
+
+### Situation banner: coal_theft
+
+Original generation: `art/source_images/situation_banners/coal_theft_v1.png`.
+
+> Painterly oil illustration with visible brushwork and a warm textured background, 1990s post-Soviet provincial city in a fictional Slavic border republic, in the season stated by the prompt. Muted realistic palette with warm accents, soft natural light. Grounded, slightly melancholic, with quiet dark humor in small details. No fantasy, no modern 2020s cars or phones; cars are Ladas, Volgas, UAZ vans, ZIL and GAZ trucks.
+> Wide single painted scene, canvas approximately 2.4:1. Composition must survive a center crop to 3.5:1: place ALL faces, hands, key storytelling objects within y=25%-75% of image height. Zoom out to fit this. Upper and lower fifth are expendable setting only. Late August 25-29, 1997, green trees with only first yellow leaves, warm weather and summer clothes with occasional light jacket. No readable text, lettering, logos, signatures or watermarks anywhere. Not a collage, no borders.
+> Mid-morning, bright and wrong. Open gate of a red-brick boiler house yard; a blue 1990s ZIL truck WITHOUT license plates, canvas tarpaulin drawn back, men with shovels loading coal from a heap. Lean sixty-year-old watchman with drooping grey moustache, navy cap and faded olive work jacket sleeps in his small booth, with unlabelled bottle on sill and small radio. Dead smokeless brick chimney behind, green trees. Medium distant eye level, urgent and darkly funny; heads, shovel action, truck loading bed and sleeping watchman all in central crop strip. Plain unlabelled vehicles, avoid any legible badge.
+
+### Situation banner: wasteland_stalls
+
+Original generation: `art/source_images/situation_banners/wasteland_stalls_v1.png`.
+
+> Painterly oil illustration with visible brushwork and a warm textured background, 1990s post-Soviet provincial city in a fictional Slavic border republic, in the season stated by the prompt. Muted realistic palette with warm accents, soft natural light. Grounded, slightly melancholic, with quiet dark humor in small details. No fantasy, no modern 2020s cars or phones; cars are Ladas, Volgas, UAZ vans, ZIL and GAZ trucks.
+> Wide single painted scene, canvas approximately 2.4:1. Composition must survive a center crop to 3.5:1: place ALL faces, hands, key storytelling objects within y=25%-75% of image height. Zoom out to fit this. Upper and lower fifth are expendable setting only. Late August 25-29, 1997, green trees with only first yellow leaves, warm weather and summer clothes with occasional light jacket. No readable text, lettering, logos, signatures or watermarks anywhere. Not a collage, no borders.
+> Wasteland between five-storey panel buildings: green birches with first few yellow leaves, glass bottles in grass, a rusty swing frame. Gusev, pleased, gestures at it as if showing a luxury showroom; a surveyor stake with ribbon; behind him a trailer stacked with welded metal kiosk frames. In background residents' windows, a few faces watching. Match Gusev reference identity: late thirties, swept-back dark wavy hair, smug grin, burgundy double-breasted jacket, gold chain, cream shirt and patterned tie. He is shown at medium distance so his whole head, gesturing hand and kiosk frames remain within y25%-75%. Reference is identity/style only, no mobile phone.
+
+### Situation banner: market_cops
+
+Original generation: `art/source_images/situation_banners/market_cops_v1.png`.
+
+> Painterly oil illustration with visible brushwork and a warm textured background, 1990s post-Soviet provincial city in a fictional Slavic border republic, in the season stated by the prompt. Muted realistic palette with warm accents, soft natural light. Grounded, slightly melancholic, with quiet dark humor in small details. No fantasy, no modern 2020s cars or phones; cars are Ladas, Volgas, UAZ vans, ZIL and GAZ trucks.
+> Wide single painted scene, canvas approximately 2.4:1. Composition must survive a center crop to 3.5:1: place ALL faces, hands, key storytelling objects within y=25%-75% of image height. Zoom out to fit this. Upper and lower fifth are expendable setting only. Late August 25-29, 1997, green trees with only first yellow leaves, warm weather and summer clothes with occasional light jacket. No readable text, lettering, logos, signatures or watermarks anywhere. Not a collage, no borders.
+> Market beside a provincial railway station: rows of faded tarp-covered stalls and folding tables, striped plastic shuttle traders' bags. Center: district militiaman aged forty-five with long clean-shaven face and sandy short hair, grey 1990s uniform, cap pushed back and small notebook, faces a broad woman trader aged fifty with round determined face, auburn hair in a bun, patterned teal blouse and plain dark apron over summer clothes. They stand on opposite sides of table piled with unbranded jeans, each pointing at something different. Other traders crowd behind her; station building in haze. Heads, hands, notebook and jeans all inside middle horizontal band, zoomed-out medium wide. No writing on uniform or stalls, plain patches and no logos.
+
+### Situation banner: fuel_offer
+
+Original generation: `art/source_images/situation_banners/fuel_offer_v1.png`.
+
+> Painterly oil illustration with visible brushwork and a warm textured background, 1990s post-Soviet provincial city in a fictional Slavic border republic, in the season stated by the prompt. Muted realistic palette with warm accents, soft natural light. Grounded, slightly melancholic, with quiet dark humor in small details. No fantasy, no modern 2020s cars or phones; cars are Ladas, Volgas, UAZ vans, ZIL and GAZ trucks.
+> Wide single painted scene, canvas approximately 2.4:1. Composition must survive a center crop to 3.5:1: place ALL faces, hands, key storytelling objects within y=25%-75% of image height. Zoom out to fit this. Upper and lower fifth are expendable setting only. Late August 25-29, 1997, green trees with only first yellow leaves, warm weather and summer clothes with occasional light jacket. No readable text, lettering, logos, signatures or watermarks anywhere. Not a collage, no borders.
+> Fuel depot with white cylindrical storage tanks and pipe manifolds, rusty barrels. A wiry male storekeeper about fifty-five with thin greying hair, small grey moustache, watchful hooded eyes and stained brown padded vest over rolled-sleeve pale blue work shirt holds a thick CLOSED unmarked ledger against his chest and looks past viewer. A railway tank wagon behind him, hose running to a period 1990s GAZ truck whose license plates are covered by a rag. Sunlight and rainbow oil sheen on ground, sly and calm. Medium distant composition with face, ledger and arms and visible hose-truck connection in central crop band. No modern tech, no writing or number labels on tanks.
+
+### Situation banner: residents_meeting
+
+Original generation: `art/source_images/situation_banners/residents_meeting_v1.png`.
+
+> Painterly oil illustration with visible brushwork and a warm textured background, 1990s post-Soviet provincial city in a fictional Slavic border republic, in the season stated by the prompt. Muted realistic palette with warm accents, soft natural light. Grounded, slightly melancholic, with quiet dark humor in small details. No fantasy, no modern 2020s cars or phones; cars are Ladas, Volgas, UAZ vans, ZIL and GAZ trucks.
+> Wide single painted scene, canvas approximately 2.4:1. Composition must survive a center crop to 3.5:1: place ALL faces, hands, key storytelling objects within y=25%-75% of image height. Zoom out to fit this. Upper and lower fifth are expendable setting only. Late August 25-29, 1997, green trees with only first yellow leaves, warm weather and summer clothes with occasional light jacket. No readable text, lettering, logos, signatures or watermarks anywhere. Not a collage, no borders.
+> Late-August evening courtyard of house 5, a five-storey panel apartment building. About fifteen residents stand and sit in rough half circle on benches and curb stones before entrance. Baba Nina stands in front, open green notebook held in her crossed arms, cream floral headscarf, rectangular glasses on black cord, brown knitted cardigan and floral dress, seventy-year-old round lined face matching reference. Men with cigarettes at back, woman holding baby, boy on bicycle at edge. One small EMPTY wooden stool in middle awaits an official. Green trees, summer clothing, warm tired light. Wide medium distant shot, faces and Nina's notebook and the empty stool all remain inside middle horizontal crop band. Reference for identity and painterly oil manner only.
+
+### Situation banner: journalist
+
+Original generation: `art/source_images/situation_banners/journalist_v1.png`.
+
+> Painterly oil illustration with visible brushwork and a warm textured background, 1990s post-Soviet provincial city in a fictional Slavic border republic, in the season stated by the prompt. Muted realistic palette with warm accents, soft natural light. Grounded, slightly melancholic, with quiet dark humor in small details. No fantasy, no modern 2020s cars or phones; cars are Ladas, Volgas, UAZ vans, ZIL and GAZ trucks.
+> Wide single painted scene, canvas approximately 2.4:1. Composition must survive a center crop to 3.5:1: place ALL faces, hands, key storytelling objects within y=25%-75% of image height. Zoom out to fit this. Upper and lower fifth are expendable setting only. Late August 25-29, 1997, green trees with only first yellow leaves, warm weather and summer clothes with occasional light jacket. No readable text, lettering, logos, signatures or watermarks anywhere. Not a collage, no borders.
+> Aide's cramped office seen from behind desk, ONLY hands visible, NO face. One male hand rests on receiver of a black rotary telephone, cord stretched across a folded local newspaper whose columns and headline are grey abstract brush shapes ONLY. Notepad with abstract illegible marks, tea glass in metal holder. Through window green late-August trees; pale rectangular patch on wall where portrait once hung. A feeling of being listened to, quiet uneasy sunlight. Desk arrangement low eye-level with phone, hand, newspaper and tea glass all within central horizontal crop band, spare room setting above and below. No letters, no digits on telephone dial, no readable text whatsoever.
+
+### Situation banner: boss_report
+
+Original generation: `art/source_images/situation_banners/boss_report_v1.png`.
+
+> Painterly oil illustration with visible brushwork and a warm textured background, 1990s post-Soviet provincial city in a fictional Slavic border republic, in the season stated by the prompt. Muted realistic palette with warm accents, soft natural light. Grounded, slightly melancholic, with quiet dark humor in small details. No fantasy, no modern 2020s cars or phones; cars are Ladas, Volgas, UAZ vans, ZIL and GAZ trucks.
+> Wide single painted scene, canvas approximately 2.4:1. Composition must survive a center crop to 3.5:1: place ALL faces, hands, key storytelling objects within y=25%-75% of image height. Zoom out to fit this. Upper and lower fifth are expendable setting only. Late August 25-29, 1997, green trees with only first yellow leaves, warm weather and summer clothes with occasional light jacket. No readable text, lettering, logos, signatures or watermarks anywhere. Not a collage, no borders.
+> Boss's office seen from padded doorway over shoulder of protagonist, only his grey suit sleeve and shoulder at edge. Pyotr Petrovich sits beyond at a vast desk with cardboard folders spread in fan. Match boss reference: heavy man early sixties, grey swept-back hair, heavy tired eyes and broad lined face, oversized grey suit and loosened burgundy striped tie. He looks up with exhausted patience of man who has done this many times. Plain muted flag in corner without any symbols or letters, window onto provincial town hall square with green late-August trees. Head, shoulders, hands and desk folders all within middle horizontal crop strip, medium distant view. Reference portraits for character identities and oil painting manner only; no floating portraits in scene.
+
+### Envelope review history
+
+`envelope_v1.png` was rejected for a visible visitor, a Lenin portrait and unsuitable crop. `envelope_v2.png` explored a wider crop and removed the portrait; it is also superseded because the user requested no person. The selected `envelope_v3.png` is a byte-for-byte source copy of the existing `init/assets/locations/summer_day_office_v3.png`, per the user's explicit instruction. It is reused rather than regenerated, then separately optimized to `init/assets/events/envelope.png`.
+
+Envelope v2 edit prompt (superseded):
+
+> Painterly oil illustration with visible brushwork and a warm textured background, 1990s post-Soviet provincial city in a fictional Slavic border republic, in the season stated by the prompt. Muted realistic palette with warm accents, soft natural light. Grounded, slightly melancholic, with quiet dark humor in small details. No fantasy, no modern 2020s cars or phones; cars are Ladas, Volgas, UAZ vans, ZIL and GAZ trucks.
+> Edit the supplied envelope illustration ONLY to fix its panoramic composition. Preserve Gusev's face identity, burgundy jacket, oil-painted manner, late-August office and the action of sliding a thick unmarked envelope with two fingers. Zoom OUT and recompose: the entire top of Gusev's hair must be BELOW y=23% of total canvas height, his eyes at y=38%, chin at y=49%, fingers and the complete envelope between y=52% and y=71%. Make him smaller, viewed from slightly farther back. Put extra expendable wall above and desk foreground below. Rotary phone and tea glass on either side must also fit y=30%-73%. Darken his eyes into subtle shadow but retain small smile. Wide 2.4:1 canvas. The FULL scene action must survive a center crop to 3.5:1. Remove the framed portrait from wall, leave a pale rectangle instead. No text, lettering, logos or watermarks. Do not add people.
+
+### First review revisions (superseded by later passes)
+
+First-pass sources (superseded below): `hot_water_v2.png`, `contractor_v2.png`, `envelope_v3.png`, `boss_report_v2.png`, `fuel_offer_v2.png`, `wasteland_stalls_v2.png`; all other scenes use v1. Version 1 drafts are preserved and excluded from the final contact sheet. `hot_water` removes duplicate residents, an unclear background figure, malformed cars and the confused pot interaction; `contractor` redraws the jeep; `boss_report` replaces the real-looking flag and political statue; `fuel_offer` fixes the head crop; `wasteland_stalls` removes a generated signature-like mark.
+
+#### hot_water v2 edit prompt
+
+> Painterly oil illustration, preserve established style.
+> Edit this existing wide oil painting, preserving Baba Nina's face, headscarf, glasses, green notebook, the boy with blue basin, building, warm August light and wide framing. Correct these exact defects: (1) keep the foreground woman at far LEFT in her floral dress, but REMOVE the near-identical curly-haired woman immediately behind the boy at x68% and REMOVE the near-identical woman at far RIGHT x96%. Replace their spaces naturally with yard/bench/grass. Keep the two distinct men at x75% and x82%, give them natural separate arms and believable kettle/pot handles. (2) REMOVE the tiny confusing partly hidden person directly behind the boy at x57%, y36%; replace with open quiet courtyard. (3) REMOVE ALL distant cars and trucks, especially the mangled car at far right edge, replace with simple empty yard. (4) Fix water distribution at x21%, y36%: the woman IN the window stands clearly behind a stable electric hotplate with one large saucepan; no floating utensils or fire. The man outside stands beside window holding a DIFFERENT saucepan by two well-defined handles with both hands, no merged bodies/hands/pots, no impossible interaction. Distinct faces, clothing and hair for all remaining adults. No additional people. No text or signatures. Keep whole Nina face and notebook, boy face and basin in central band y23%-77%.
+
+#### contractor v2 edit prompt
+
+> Painterly oil illustration, preserve established style.
+> Edit ONLY the malformed dark jeep at the LEFT side of the existing painting. Replace it with an anatomically/mechanically coherent boxy 1990s dark charcoal off-road jeep, parked in same location facing lower-left. Correct bonnet, grille, headlights, windshield, side windows, doors, bumpers and round wheels with consistent single perspective and axle alignment. No squeezed or melted panels or doubled wheels; rear may be naturally occluded behind Gusev. Preserve EXACTLY the two arguing men, faces, gestures and clothes, sleepy watchman and booth, old UAZ on right, brick boiler house, greenery, oil paint style, canvas ratio, lighting and scene composition. No text, readable badges or logos, no signature.
+
+#### boss_report v2 edit prompt
+
+> Painterly oil illustration, preserve established style.
+> Edit the existing boss office illustration only as follows. Replace the real-world-looking tricolor at x39% with an ORIGINAL fictional republic flag: dark muted teal cloth field, one narrow warm ochre DIAGONAL stripe running from upper hoist to lower fly and one small ivory disc in upper fly corner. NOT horizontal tricolor, no recognizable real national flag, no letters, no emblems. Flag should be physically coherent folded cloth on same pole. Outside window replace the human political statue with a modest abstract stone civic monument with simple geometric arch, no identifiable real historical person. Preserve boss face/clothes, aide's shoulder, desk, documents, setting, oil brushwork, warm August daylight, composition. No Lenin, Soviet leader portrait, hammer and sickle, real-world political symbols, lettering, signature or watermark anywhere.
+
+#### fuel_offer v2 edit prompt
+
+> Painterly oil illustration, preserve established style.
+> Preserve this fuel depot oil painting's storekeeper identity, clothing, closed ledger, tank wagon, tanks, hose, oil sheen and rag covering truck plates. Fix composition by zooming out mildly and moving the storekeeper lower: entire top of his hair must be at y25% of canvas, eyes at y36%, closed ledger and both hands within y50%-73%. Full head must survive center crop to 3.5:1. Keep wide 2.4:1 aspect. Preserve plausible proportions and consistent truck construction. No text, insignia, signatures or watermark.
+
+#### wasteland_stalls v2 edit prompt
+
+> Painterly oil illustration, preserve established style.
+> Edit only the tiny signature-like scribble at bottom RIGHT: remove it completely and replace with naturally continuous painted grass/dirt. Preserve everything else exactly, including Gusev, his face, clothes and gestures, kiosk frames, truck, birch trees, swing and bottles, wide composition and oil-paint style. No text, lettering, signature, logo or watermark.
+
+
+### Maintenance review pass (supersedes earlier selections)
+
+The user requested a functioning, inhabited city with less general decay across all images. The following edits preserve scene content while removing excessive rust, peeling surfaces, broken glazing and mud. In `wasteland_stalls`, replace the many rusty frames with exactly two new compact kiosks. This count is the banner composition agreed in review.
+
+#### hot_water v3 maintenance edit
+
+Input: `hot_water_v2.png`; untouched output: `hot_water_v3.png`.
+
+> Edit this existing oil-painted illustration to match a functioning, normally maintained provincial city in August 1997. Modest ordinary wear only. Remove excessive rust, crumbling/peeling surfaces, ruin, rubble and mud. The setting is inhabited and serviceable. Maintain the same oil brushwork, warm light, palette, people, faces, poses, clothes, story action, and wide canvas composition. Keep ALL main faces, hands and key story props inside y20%-78% for a 3.5:1 center crop. Preserve 1990s technology, green late-August foliage, and grounded quiet humor. No text, letters, logos, signature, watermark, Lenin, identifiable political leaders or real national flags. This is NOT a glossy modern renovation: ordinary cared-for older buildings.
+> Keep exactly the same seven distinct people from this corrected version, no extra people and no cars. Baba Nina, boy, pots and window interaction unchanged. Repair panel facade to intact light-grey concrete with subtle seams and only minor stains; repaint basement window surround and bench to serviceable finish, little paint loss. Tidy yard with dry paths and healthy grass. Kettles and basin clean but used. Preserve the removed clones and removed background figure as absent.
+
+#### contractor v3 maintenance edit
+
+Input: `contractor_v2.png`; untouched output: `contractor_v3.png`.
+
+> Edit this existing oil-painted illustration to match a functioning, normally maintained provincial city in August 1997. Modest ordinary wear only. Remove excessive rust, crumbling/peeling surfaces, ruin, rubble and mud. The setting is inhabited and serviceable. Maintain the same oil brushwork, warm light, palette, people, faces, poses, clothes, story action, and wide canvas composition. Keep ALL main faces, hands and key story props inside y20%-78% for a 3.5:1 center crop. Preserve 1990s technology, green late-August foliage, and grounded quiet humor. No text, letters, logos, signature, watermark, Lenin, identifiable political leaders or real national flags. This is NOT a glossy modern renovation: ordinary cared-for older buildings.
+> Repair brick boiler-house facade: intact glazed windows, no shattered panes, sound masonry. Left metal fence/gate uniformly painted muted blue-grey with a few small scuffs, no spreading orange rust. Watchman's booth has intact pale painted siding, sound roof and clear glass. Yard compact dry gravel/asphalt, remove muddy pools and debris. Dark jeep must look like relatively new well-kept 1990s vehicle with clean intact dark paint and correct geometry, round aligned wheels. Old UAZ remains older but clean/serviceable olive paint, only subtle wear and no rust perforation. Preserve both men's identity/gestures and watchman with radio, all three characters unchanged.
+
+#### coal_theft v2 maintenance edit
+
+Input: `coal_theft_v1.png`; untouched output: `coal_theft_v2.png`.
+
+> Edit this existing oil-painted illustration to match a functioning, normally maintained provincial city in August 1997. Modest ordinary wear only. Remove excessive rust, crumbling/peeling surfaces, ruin, rubble and mud. The setting is inhabited and serviceable. Maintain the same oil brushwork, warm light, palette, people, faces, poses, clothes, story action, and wide canvas composition. Keep ALL main faces, hands and key story props inside y20%-78% for a 3.5:1 center crop. Preserve 1990s technology, green late-August foliage, and grounded quiet humor. No text, letters, logos, signature, watermark, Lenin, identifiable political leaders or real national flags. This is NOT a glossy modern renovation: ordinary cared-for older buildings.
+> Preserve coal theft: sleeping watchman, bottle/radio, men actively shoveling coal, ZIL without license plate, covered truck bed. Make watchman's booth sound and neatly painted pale grey-blue, intact wood and glazing, remove severe peeling/rust. Brick gate piers and boiler house maintained; gates painted dark grey with modest scuffs. Working blue ZIL has serviceable intact blue paint and coherent body/wheels, no wrecked rusted appearance. Keep coal heap and some realistic coal dust, but yard mostly dry hardstanding, no swampy mud/rubble.
+
+#### wasteland_stalls v3 maintenance edit
+
+Input: `wasteland_stalls_v2.png`; untouched output: `wasteland_stalls_v3.png`.
+
+> Edit this existing oil-painted illustration to match a functioning, normally maintained provincial city in August 1997. Modest ordinary wear only. Remove excessive rust, crumbling/peeling surfaces, ruin, rubble and mud. The setting is inhabited and serviceable. Maintain the same oil brushwork, warm light, palette, people, faces, poses, clothes, story action, and wide canvas composition. Keep ALL main faces, hands and key story props inside y20%-78% for a 3.5:1 center crop. Preserve 1990s technology, green late-August foliage, and grounded quiet humor. No text, letters, logos, signature, watermark, Lenin, identifiable political leaders or real national flags. This is NOT a glossy modern renovation: ordinary cared-for older buildings.
+> Replace the entire huge truckload of many rusty kiosk frames with EXACTLY TWO small compact NEW prefabricated kiosks, each roughly 2m wide and 2m deep, on ONE modest 1990s flatbed truck/trailer. This is a tiny residential courtyard proposal, not a market complex. The two kiosks should be individually clear, simple finished units with clean muted blue-grey painted sheet steel, straight clean frames, a single closed serving hatch, no rust anywhere, no lettering. No additional stacked frames or loose panels; remove all extra kiosk skeletons and reduce truck bulk to match just two small units. Keep Gusev and gesture, birches, stake and ribbon. Surrounding apartment facades intact and lived-in with modest age, swing frame freshly maintained with only small wear. A few bottles in grass remain as story detail, no rubbish dump.
+
+#### fuel_offer v3 maintenance edit
+
+Input: `fuel_offer_v2.png`; untouched output: `fuel_offer_v3.png`.
+
+> Edit this existing oil-painted illustration to match a functioning, normally maintained provincial city in August 1997. Modest ordinary wear only. Remove excessive rust, crumbling/peeling surfaces, ruin, rubble and mud. The setting is inhabited and serviceable. Maintain the same oil brushwork, warm light, palette, people, faces, poses, clothes, story action, and wide canvas composition. Keep ALL main faces, hands and key story props inside y20%-78% for a 3.5:1 center crop. Preserve 1990s technology, green late-August foliage, and grounded quiet humor. No text, letters, logos, signature, watermark, Lenin, identifiable political leaders or real national flags. This is NOT a glossy modern renovation: ordinary cared-for older buildings.
+> Keep the fuel transaction, storekeeper with closed ledger, workers, hose, tank wagon and rag hiding truck plate. Make truck a working cared-for light blue-grey period tanker with intact paint and coherent construction, minor grime but no flaking wreck. White storage tanks kept painted white, minor stains at pipe fittings only. Railway tank wagon uniform dark brown paint with light wear instead of heavy orange rust. Barrels have intact muted paint. Ground is dry service yard with ONE small restrained oil-sheen patch near hose, not flooded oil swamp; remove all pervasive mud and spilled rainbow pools. Keep full storekeeper head safely inside crop.
+
+#### residents_meeting v2 maintenance edit
+
+Input: `residents_meeting_v1.png`; untouched output: `residents_meeting_v2.png`.
+
+> Edit this existing oil-painted illustration to match a functioning, normally maintained provincial city in August 1997. Modest ordinary wear only. Remove excessive rust, crumbling/peeling surfaces, ruin, rubble and mud. The setting is inhabited and serviceable. Maintain the same oil brushwork, warm light, palette, people, faces, poses, clothes, story action, and wide canvas composition. Keep ALL main faces, hands and key story props inside y20%-78% for a 3.5:1 center crop. Preserve 1990s technology, green late-August foliage, and grounded quiet humor. No text, letters, logos, signature, watermark, Lenin, identifiable political leaders or real national flags. This is NOT a glossy modern renovation: ordinary cared-for older buildings.
+> Preserve residents meeting, Nina, mother/baby, boy/bike and empty stool, same people/count and no clones. Repair entrance facade to intact pale painted render/concrete with only minor age and faint stains, sound entrance canopy and painted handrails, working ordinary entrance lamp. Benches well-kept painted wood, clean dry paving and maintained grass. Serviceable parked older cars, no wrecks. Keep warm inhabited courtyard and everyday clothes. Nina's notebook can remain held as pictured.
+
+#### journalist v2 maintenance edit
+
+Input: `journalist_v1.png`; untouched output: `journalist_v2.png`.
+
+> Edit this existing oil-painted illustration to match a functioning, normally maintained provincial city in August 1997. Modest ordinary wear only. Remove excessive rust, crumbling/peeling surfaces, ruin, rubble and mud. The setting is inhabited and serviceable. Maintain the same oil brushwork, warm light, palette, people, faces, poses, clothes, story action, and wide canvas composition. Keep ALL main faces, hands and key story props inside y20%-78% for a 3.5:1 center crop. Preserve 1990s technology, green late-August foliage, and grounded quiet humor. No text, letters, logos, signature, watermark, Lenin, identifiable political leaders or real national flags. This is NOT a glossy modern renovation: ordinary cared-for older buildings.
+> Preserve ONLY male hand on receiver, rotary phone and stretched cord, tea glass, newspaper made of grey abstract shapes, desk and green view. Repaint office wall intact warm off-white above clean muted sage wainscot, modest surface age only, no cracked flaking plaster. Sound painted window frames, intact clean door and filing cabinet, tidy but paper-filled lived-in desk. Preserve pale empty rectangle from removed wall portrait, no replacement leader portrait. Retain uneasy atmosphere through composition/light, not dilapidation.
+
+
+### Daylight, seasonal props and perspective review
+
+Daytime lamps and glowing windows were removed; the journalist office has bare coat hooks without heavy clothing. Fuel transfer versions v1–v4 were rejected for incoherent spatial scale. Per the user's final direction, the selected fuel-depot scene keeps the storekeeper and replaces the entire background with stationary tanks, a depot office and barrels; no pumping process, truck, railway wagon, hoses or other workers. v5 established the new background; v6 removes an accidentally generated door lamp.
+
+#### journalist v3 edit
+
+Input: `journalist_v2.png`; output: `journalist_v3.png`.
+
+> Edit ONLY these details in this existing wide oil painting. REMOVE the green desk lamp at the far RIGHT entirely; replace that area naturally with the existing office/desk background, no new lamp or light fixture. REMOVE the heavy coat and dark hat hanging in upper LEFT; leave a few bare simple coat hooks on the otherwise intact wall. It is warm August daytime: only natural window daylight, no illuminated lamps or artificial light anywhere. Preserve EXACTLY the hand on rotary phone, desk, tea glass, newspaper, window, summer greenery, sound walls, soft oil-paint style, color palette and wide composition. No new people, text, signature or logos.
+
+#### residents_meeting v3 edit
+
+Input: `residents_meeting_v2.png`; output: `residents_meeting_v3.png`.
+
+> Edit ONLY artificial lighting in this oil painting of a summer residents meeting. Turn OFF the round lamp under entrance canopy: an unlit dull cream/glass bulb, no yellow halo and no light spill. All apartment windows including the three marked areas behind seated residents and at top edge must show neutral shaded interiors or natural daylight reflections, absolutely no orange/yellow luminous interior illumination. Doorway interior dim in ordinary natural shade, no glowing yellow lamps. Keep warm low SUNLIGHT on people, trees and facade. Preserve EXACTLY all people/faces/clothes, Nina, baby, bicycle, empty stool, maintained building, cars and full wide composition. No new text, signatures or emblems.
+
+#### hot_water v4 edit
+
+Input: `hot_water_v3.png`; output: `hot_water_v4.png`.
+
+> Edit ONLY illumination inside ALL apartment windows in this wide oil painting. The open kitchen window with the woman cooking at upper LEFT must have an ordinary neutral daylight interior with pale walls and dim natural shade, NO golden/orange glowing room, no artificial lights. Keep woman, saucepan and electric HOTPLATE (needed to boil water); hotplate is cooking equipment, do not remove it. The distant windows at RIGHT also show natural grey/blue daylight reflections or dim neutral rooms, no luminous orange squares. All other windows neutral daylight, ALL lamps off. Preserve warm late afternoon SUNLIGHT outside, every person, Nina face/notebook, boy/basin, all pots, flower beds, improved facade, removed duplicate people and absent cars. Keep framing and oil paint style, no text or signatures.
+
+#### contractor v4 edit
+
+Input: `contractor_v3.png`; output: `contractor_v4.png`.
+
+> Edit ONLY lighting inside the watchman's booth. The small hanging lamp directly above the watchman must be OFF: no luminous yellow bulb, no glow, no artificial light spill. Booth interior naturally shaded in daylight with neutral pale walls. Preserve EXACTLY everything else: arguing men faces, clothes and gestures, watchman and radio, clean dark jeep, olive UAZ, maintained brick boiler house, painted gate, dry courtyard, green foliage and wide oil-painted composition. No new text or logos, no signatures.
+
+#### fuel_offer v4 edit
+
+Input: `fuel_offer_v3.png`; output: `fuel_offer_v4.png` (superseded).
+
+> Correct the inconsistent spatial scale and perspective in this fuel depot oil painting. Recompose the railway tank wagon on LEFT and tanker truck on RIGHT as two coherent full-size vehicles in the SAME midground depth, behind the foreground storekeeper. Show the railway wagon farther back than currently so its complete tank and undercarriage fit comfortably in frame; no gigantic near-camera cropped cylinder. Wagon and truck should have approximately SIMILAR APPARENT overall height, railway tank only modestly larger than road tanker, never twice its height. Both workers are ordinary adult men with approximately the SAME apparent body height at this depth; match workers to vehicle door/handrail sizes and wheel diameters. Single consistent eye-level horizon and ground plane, visible rails at left converge correctly, truck wheels sit firmly on same yard plane. Keep the truck closer than wagon, both clearly readable with mechanically coherent wheels, axles, cab and cylindrical tanks. Keep storekeeper identity, whole face below y24%, ledger and hands in middle band, maintained white storage tanks, clean dry yard, one small oil sheen, hose running clearly between wagon and road tanker, rag hiding truck plate. Ordinary maintained 1997 depot, moderate wear, no massive rust or ruin. All outdoor lights OFF in daylight. Preserve oil-painted style, warm sunlight and panoramic 2.4:1 framing; all key faces/hands within central crop band. No readable text, letters, badges, signatures or watermark.
+
+#### fuel_offer v5 edit
+
+> Edit the supplied panoramic oil-painted illustration. KEEP THE FOREGROUND STOREKEEPER EXACTLY: same man, face identity, grey hair and moustache, position near the center, gaze, body, hands holding closed ledger, stained brown vest, pale rolled-sleeve work shirt, same size and full head inside central banner band. Completely replace ALL background and side scenery. Create a simple quiet functioning provincial fuel depot in August 1997: three modest WHITE fixed cylindrical storage tanks in the middle distance behind a low maintained perimeter fence, a small single-storey pale brick depot office/storehouse to one side, several neatly arranged clean painted barrels, dry flat service yard, green late-summer trees and a small distant town skyline. Coherent restrained eye-level perspective, one ground plane, ordinary scale. NO railway wagon, NO rails, NO truck, NO road tanker, NO workers, NO hoses, NO pumping or unloading process, NO active machinery anywhere. Only this one man in the scene. The background tells 'fuel depot' through stationary storage tanks alone. No excessive rust, peeling surfaces, decay or mud. All lights off in daylight, natural warm afternoon sun. Preserve painterly oil brushwork and muted realistic warm palette of reference, not photorealism. Wide 2.4:1 frame, man and ledger entirely within middle 60% of height for 3.5:1 center crop. No readable text, numbers, lettering, logos, political symbols, signatures or watermark.
+
+#### fuel_offer v6 edit
+
+> Make exactly ONE tiny correction to this supplied oil-painted fuel depot image: REMOVE the small glowing yellow wall lamp mounted above the office door on the far LEFT, around x13%, y38%. Remove the lamp fixture AND all yellow glow, filling its spot with plain naturally shaded brick wall under the existing canopy. No replacement light fixture. Everything else must stay EXACTLY unchanged: the storekeeper with ledger, face, clothing, pose and scale, three stationary white tanks, fence, barrel groups, office architecture, yard, trees, skyline, sunlight, oil-painted style and panorama. No trucks, wagons, hoses, workers or pumping process. No artificial lamps or glowing windows, no readable text, no signatures. Preserve 2.4:1 canvas.
+
+### Current selected sources
+
+This table supersedes the earlier selection notes. All game files are separately prepared with `tools/optimize_asset.py --profile scene --approved`, with reports at `art/optimization_reports/<id>.json`. Creative review of the finished series remains with the user; batch authorization and requested corrections are recorded above.
+
+| Event | Selected original | Game copy |
+|---|---|---|
+| `hot_water` | `art/source_images/situation_banners/hot_water_v4.png` | `init/assets/events/hot_water.png` |
+| `contractor` | `art/source_images/situation_banners/contractor_v4.png` | `init/assets/events/contractor.png` |
+| `envelope` | `art/source_images/situation_banners/envelope_v3.png` | `init/assets/events/envelope.png` |
+| `church_heat` | `art/source_images/situation_banners/church_heat_v1.png` | `init/assets/events/church_heat.png` |
+| `coal_theft` | `art/source_images/situation_banners/coal_theft_v2.png` | `init/assets/events/coal_theft.png` |
+| `wasteland_stalls` | `art/source_images/situation_banners/wasteland_stalls_v3.png` | `init/assets/events/wasteland_stalls.png` |
+| `market_cops` | `art/source_images/situation_banners/market_cops_v1.png` | `init/assets/events/market_cops.png` |
+| `fuel_offer` | `art/source_images/situation_banners/fuel_offer_v6.png` | `init/assets/events/fuel_offer.png` |
+| `residents_meeting` | `art/source_images/situation_banners/residents_meeting_v3.png` | `init/assets/events/residents_meeting.png` |
+| `journalist` | `art/source_images/situation_banners/journalist_v3.png` | `init/assets/events/journalist.png` |
+| `boss_report` | `art/source_images/situation_banners/boss_report_v2.png` | `init/assets/events/boss_report.png` |

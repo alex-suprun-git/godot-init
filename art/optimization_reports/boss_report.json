@@ -1,0 +1,33 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/situation_banners/boss_report_v2.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/events/boss_report.png",
+  "source_sha256": "8ff332fe6d1be3514e2aa5396ba967f7a0fec78d81df9c880d47629a501879d4",
+  "profile": "scene",
+  "max_edge": 1920,
+  "override_reason": null,
+  "approved": true,
+  "before": {
+    "size": [
+      1942,
+      809
+    ],
+    "bytes": 2341578,
+    "estimated_rgba_bytes": 6284312
+  },
+  "after": {
+    "size": [
+      1920,
+      800
+    ],
+    "estimated_rgba_bytes": 6144000,
+    "bytes": 2220261,
+    "sha256": "5388de3d16ceb2023357ee91bd1f9a5f01350255bc59371c68a39304149d6211"
+  },
+  "has_alpha": false,
+  "source_alpha_extrema": null,
+  "output_alpha_extrema": null,
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}

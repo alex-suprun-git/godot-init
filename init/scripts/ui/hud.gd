@@ -506,7 +506,9 @@ func _build_week_panel() -> void:
 	var task_column := _folder_page("Поручения")
 	task_column.add_child(_paper_label("ГЛАВНАЯ ЦЕЛЬ · ДО " + Week1.WEEKLY_MANDATE["deadline"].to_upper(), 12, OfficeTheme.BURGUNDY))
 	task_column.add_child(_heading(Week1.WEEKLY_MANDATE["title"], 28))
-	task_column.add_child(_paper_label(Week1.WEEKLY_MANDATE["description"], 16, OfficeTheme.SECONDARY))
+	var mandate_text := _paper_label(Week1.WEEKLY_MANDATE["description"], 16, OfficeTheme.SECONDARY)
+	mandate_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	task_column.add_child(mandate_text)
 	var signature := _heading("П. Петрович", 17, OfficeTheme.LINK)
 	signature.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	task_column.add_child(signature)
@@ -1028,18 +1030,23 @@ func _refresh_card() -> void:
 
 
 const BANNER_COLORS := {"plea": STEEL, "conflict": AMBER, "crisis": RUST, "offer": OfficeTheme.LINK}
+const BANNER_GRADE := preload("res://assets/shaders/event_banner_grade.gdshader")
 
 
-# The picture at the top of a situation: its own image when it has one,
-# otherwise a colored band that names the place.
+# The picture at the top of a situation: assets/events/<id>.png (or an explicit
+# "image" path) when it exists, otherwise a colored band that names the place.
 func _card_banner(data: Dictionary) -> Control:
 	var height := 190
-	if data.has("image"):
+	var image_path: String = data.get("image", "res://assets/events/%s.png" % data["id"])
+	if ResourceLoader.exists(image_path):
 		var picture := TextureRect.new()
-		picture.texture = load(data["image"])
+		picture.texture = load(image_path)
 		picture.custom_minimum_size = Vector2(0, height)
 		picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		var grade := ShaderMaterial.new()
+		grade.shader = BANNER_GRADE
+		picture.material = grade
 		return picture
 	var band := PanelContainer.new()
 	band.custom_minimum_size = Vector2(0, 74)

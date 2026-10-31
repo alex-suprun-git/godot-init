@@ -10,7 +10,7 @@ the main project's `init/assets/models/vehicles/volga_gaz24.glb` and loaded by
 `vehicle_models.gd`. Civilian ambient/parked selection is approximately 1/15;
 six shared colour variants replace only the black lacquer through
 `vehicle_paint.gdshader`. The administration car retains the original black.
-See root README for the agreed traffic palette. Do not overwrite these game
+The updated palette excludes burgundy/red and uses bottle green instead of olive, with light/mid-tone colours weighted at 85% and dark colours at 15%. See root README for the agreed traffic palette. Do not overwrite these game
 changes when integrating the earlier asset worktree's scripts.
 
 Godot import and the graphical vehicle autoplay completed successfully.

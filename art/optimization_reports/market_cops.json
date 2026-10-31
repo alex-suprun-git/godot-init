@@ -1,0 +1,33 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/situation_banners/market_cops_v1.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/events/market_cops.png",
+  "source_sha256": "13ba1857085f99b3aca2bc803e0eb4edd63e17aa2651e26f7b2f6a1f52352f8d",
+  "profile": "scene",
+  "max_edge": 1920,
+  "override_reason": null,
+  "approved": true,
+  "before": {
+    "size": [
+      1942,
+      809
+    ],
+    "bytes": 2954275,
+    "estimated_rgba_bytes": 6284312
+  },
+  "after": {
+    "size": [
+      1920,
+      800
+    ],
+    "estimated_rgba_bytes": 6144000,
+    "bytes": 2701933,
+    "sha256": "f9dfe5fbedc70c73e3e75c31974453e92551ee78fb792766b18500ef830ad837"
+  },
+  "has_alpha": false,
+  "source_alpha_extrema": null,
+  "output_alpha_extrema": null,
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}

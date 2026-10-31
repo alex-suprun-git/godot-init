@@ -1,0 +1,33 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/situation_banners/fuel_offer_v6.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/events/fuel_offer.png",
+  "source_sha256": "363ffc65059247574026cac35d112dc68042dcff83d0ad5054c334b24df1b6f8",
+  "profile": "scene",
+  "max_edge": 1920,
+  "override_reason": null,
+  "approved": true,
+  "before": {
+    "size": [
+      1942,
+      809
+    ],
+    "bytes": 2931306,
+    "estimated_rgba_bytes": 6284312
+  },
+  "after": {
+    "size": [
+      1920,
+      800
+    ],
+    "estimated_rgba_bytes": 6144000,
+    "bytes": 2752949,
+    "sha256": "a34da4abe25ad87c277966bcec34b86a5358be6e16814fbccfcfe2280ca8410e"
+  },
+  "has_alpha": false,
+  "source_alpha_extrema": null,
+  "output_alpha_extrema": null,
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}

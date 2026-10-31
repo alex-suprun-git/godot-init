@@ -14,14 +14,16 @@ const VOLGA_SOURCE_LENGTH := 4.905458 # Measured from volga_gaz24.glb.
 const LADA_MAP_LENGTH := 4.3
 const VOLGA_TRAFFIC_SHARE := 1.0 / 15.0
 const VOLGA_PAINT_SHADER := preload("res://assets/shaders/vehicle_paint.gdshader")
+# Curated period-inspired palette; red/pink and vivid colours excluded by art direction.
 const VOLGA_PAINTS := [
 	Color(0.76, 0.74, 0.65), # ivory
 	Color(0.62, 0.65, 0.65), # grey
-	Color(0.31, 0.42, 0.50), # muted blue
-	Color(0.34, 0.43, 0.34), # olive green
-	Color(0.39, 0.14, 0.16), # burgundy
+	Color(0.38, 0.49, 0.56), # muted grey-blue
 	Color(0.65, 0.55, 0.40), # beige
+	Color(0.16, 0.28, 0.20), # bottle green
+	Color(0.16, 0.23, 0.34), # dark blue
 ]
+const VOLGA_PAINT_WEIGHTS := [24, 22, 22, 17, 9, 6]
 const PAINT_BLACK := -2 # Only for the Volga: the traffic palette has no black.
 const BLACK_PAINT := Color(0.035, 0.035, 0.045)
 const LENGTHS := {"lada": 4.37, "lada_wagon": 4.37, "kamaz_semi": 16.5, "zil_flatbed": 7.4, "container_20ft": 6.06}
@@ -33,28 +35,26 @@ const TARP_PAINTS := [
 	Color(0.32, 0.40, 0.28), # green
 ]
 const TRUCK_CAB_PAINTS := [
-	Color(0.31, 0.42, 0.29), Color(0.20, 0.33, 0.52), Color(0.62, 0.20, 0.16),
-	Color(0.80, 0.60, 0.18), Color(0.55, 0.57, 0.58), Color(0.38, 0.24, 0.16),
+	Color(0.31, 0.42, 0.29), Color(0.20, 0.33, 0.52), Color(0.70, 0.69, 0.59),
+	Color(0.63, 0.55, 0.33), Color(0.55, 0.57, 0.58), Color(0.38, 0.24, 0.16),
 ]
 const CONTAINER_PAINTS := [
 	Color(0.60, 0.24, 0.17), Color(0.16, 0.28, 0.45), Color(0.20, 0.38, 0.27),
 	Color(0.72, 0.50, 0.17), Color(0.45, 0.47, 0.47), Color(0.52, 0.19, 0.20),
 ]
-# 1990s Russian car paints, none white or black: the ivory body takes the tint.
+# Calm light/mid-tone passenger cars dominate; dark shades total 15%.
+# The subdued ochre accent is only 2%, not a bright mustard traffic colour.
 const PAINTS := [
-	Color(0.55, 0.10, 0.14), # cherry
-	Color(0.14, 0.32, 0.20), # dark green
-	Color(0.12, 0.20, 0.45), # dark blue
-	Color(0.45, 0.65, 0.85), # sky blue
-	Color(0.82, 0.70, 0.45), # sand
-	Color(0.85, 0.68, 0.15), # mustard
-	Color(0.42, 0.26, 0.16), # brown
-	Color(0.55, 0.57, 0.58), # silver grey
-	Color(0.85, 0.42, 0.12), # orange
-	Color(0.40, 0.45, 0.20), # olive
-	Color(0.75, 0.14, 0.12), # red
-	Color(0.55, 0.75, 0.55), # mint
+	Color(0.83, 0.82, 0.74), # warm ivory
+	Color(0.62, 0.64, 0.63), # plain grey, not metallic
+	Color(0.40, 0.55, 0.66), # muted blue
+	Color(0.70, 0.62, 0.47), # sand beige
+	Color(0.43, 0.48, 0.29), # subdued olive
+	Color(0.67, 0.57, 0.32), # rare muted ochre
+	Color(0.17, 0.29, 0.20), # dark green
+	Color(0.17, 0.25, 0.36), # dark blue
 ]
+const PAINT_WEIGHTS := [18, 16, 23, 18, 8, 2, 9, 6]
 
 static var _paint_materials := {}
 
@@ -107,14 +107,27 @@ static func create(model_id: String, at: Vector3, length: float, axis: String, p
 	vehicle.scale = Vector3.ONE * (length / _source_length(model_id))
 	if model_id == "volga" and has_volga_model():
 		if paint >= 0:
-			_repaint_volga(vehicle, posmod(hash("%d:volga-paint" % paint), VOLGA_PAINTS.size()))
+			_repaint_volga(vehicle, _weighted_paint(paint, VOLGA_PAINT_WEIGHTS, "volga-paint"))
 	elif paint == PAINT_BLACK:
 		_repaint(vehicle, PAINT_BLACK)
 	elif paint >= 0:
-		_repaint(vehicle, paint % PAINTS.size())
+		_repaint(vehicle, _weighted_paint(paint, PAINT_WEIGHTS, "lada-paint") if model_id in ["lada", "lada_wagon"] else paint)
 	vehicle.add_to_group("vehicle_models")
 	vehicle.add_to_group("vehicle_%s" % model_id)
 	return vehicle
+
+
+# Independent deterministic draw: changing model frequency does not select its colour.
+static func _weighted_paint(seed_value: int, weights: Array, salt: String) -> int:
+	var total := 0
+	for weight in weights:
+		total += int(weight)
+	var ticket := posmod(hash("%d:%s" % [seed_value, salt]), total)
+	for index in weights.size():
+		ticket -= int(weights[index])
+		if ticket < 0:
+			return index
+	return weights.size() - 1
 
 
 # Cache one material per civilian body colour, retaining the shared maps.
@@ -143,11 +156,12 @@ static func _repaint(vehicle: Node3D, paint: int) -> void:
 		for surface in mesh.mesh.get_surface_count():
 			var base: Material = mesh.mesh.surface_get_material(surface)
 			if base is BaseMaterial3D and "paint" in base.resource_name:
-				var key := "%s|%d" % [base.resource_name, paint]
+				var palette := _palette_for(base.resource_name)
+				var colour_index := PAINT_BLACK if paint == PAINT_BLACK else posmod(paint, palette.size())
+				var key := "%s|%d" % [base.resource_name, colour_index]
 				if not _paint_materials.has(key):
 					var tinted: BaseMaterial3D = base.duplicate()
-					var palette := _palette_for(base.resource_name)
-					tinted.albedo_color = BLACK_PAINT if paint == PAINT_BLACK and palette == PAINTS else palette[paint % palette.size()]
+					tinted.albedo_color = BLACK_PAINT if colour_index == PAINT_BLACK and palette == PAINTS else palette[posmod(colour_index, palette.size())]
 					_paint_materials[key] = tinted
 				mesh.set_surface_override_material(surface, _paint_materials[key])
 
