@@ -112,6 +112,31 @@ static func length(path: PackedVector2Array, from: Vector2 = Vector2.INF, index:
 
 # Makes every edge of a road costlier (e.g. 1000.0 behaves like a closure) and
 # drops cached routes. This is the hook for roadworks, queues and mud.
+# Sideways shift from the centerline for someone travelling along `heading`: a
+# walker keeps to the pavement of the asphalt road under them, a car to its lane,
+# both on the right-hand side. Zero off asphalt and on roads without a pavement.
+func lane_shift(point: Vector2, heading: Vector2, is_car: bool) -> Vector2:
+	if heading.length_squared() < 0.0001:
+		return Vector2.ZERO
+	var best := INF
+	var edge := {}
+	for candidate in edges:
+		if candidate["kind"] != "asphalt":
+			continue
+		var gap := point.distance_to(Geometry2D.get_closest_point_to_segment(point, points[candidate["a"]], points[candidate["b"]]))
+		if gap < best:
+			best = gap
+			edge = candidate
+	if edge.is_empty() or best > edge["half"] + 1.0:
+		return Vector2.ZERO
+	var right := Vector2(-heading.y, heading.x).normalized()
+	if is_car:
+		return right * clampf(edge["half"] * 0.35, 1.5, 4.0)
+	if edge["walk"] <= 0.0:
+		return Vector2.ZERO
+	return right * (edge["half"] + edge["walk"] / 2.0)
+
+
 func set_road_penalty(road: int, factor: float) -> void:
 	_penalties[road] = maxf(factor, 1.0)
 	_refresh_scales()

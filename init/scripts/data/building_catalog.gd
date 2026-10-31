@@ -9,9 +9,19 @@ const CONDITIONS := {
 	"abandoned": {"tint": Color(0.82, 0.80, 0.73), "dry_ground": true, "garbage": true},
 }
 
+# What fills a village plot around its house, by lot condition. `fence` is the share of
+# fence pieces still standing, `beds` the vegetable beds, `orchard` the fruit trees and
+# `shed` an outbuilding at the back. `fence_color` is the weathered paling colour.
+const VILLAGE_FILL := {
+	"kept": {"fence": 1.0, "beds": 3, "orchard": 5, "shed": true, "fence_color": Color("a08f68")},
+	"fading": {"fence": 0.85, "beds": 1, "orchard": 3, "shed": false, "fence_color": Color("7c6c50")},
+	"abandoned": {"fence": 0.5, "beds": 0, "orchard": 0, "shed": false, "fence_color": Color("5f5547")},
+}
+
 const CONTENTS := {
 	"housing_reserve": {"kind": "open", "ground": "grass", "label": "Резерв жилой застройки", "dressing": []},
 	"forest_clearing": {"kind": "open", "ground": "grass_dry", "label": "Лесная поляна", "dressing": []},
+	"cemetery": {"kind": "open", "ground": "grass_dry", "label": "Старое кладбище", "dressing": []},
 	"pond_bank": {"kind": "open", "ground": "grass", "label": "Пруд у посёлка", "dressing": []},
 	"panel_5": {
 		"kind": "panel", "footprint": Vector2(84, 11), "floors": 5,
@@ -49,7 +59,6 @@ const CONTENTS := {
 		"roof": "res://assets/textures/roof_tar.png", "placeholder_color": Color("d5d1c2"),
 		"ground": "paving", "label": "Райисполком", "dressing": [
 			{"sprite": "monument", "at": Vector2(-40, 0), "width": 7.0, "footprint": Vector2(6, 6)},
-			{"sprite": "car_volga_black_v3", "at": Vector2(-32, 25), "width": 5.0, "footprint": Vector2(5, 2), "axis": "z"},
 		],
 	},
 	"police": {
@@ -59,7 +68,6 @@ const CONTENTS := {
 		"facade_wing": "res://assets/textures/facade_police_side.png",
 		"roof": "res://assets/textures/roof_tar.png", "placeholder_color": Color("aab5b5"),
 		"ground": "paving", "label": "Райотдел милиции", "dressing": [
-			{"sprite": "van_uaz_police", "at": Vector2(-28, 8), "width": 5.2, "footprint": Vector2(5, 2), "axis": "z"},
 		],
 	},
 	"polyclinic": {
@@ -69,8 +77,6 @@ const CONTENTS := {
 		"facade_wing": "res://assets/textures/facade_polyclinic.png",
 		"roof": "res://assets/textures/roof_tar.png", "placeholder_color": Color("cbd6d0"),
 		"ground": "paving", "label": "Поликлиника", "dressing": [
-			{"model": "lada", "at": Vector2(-30, -16), "length": 4.3, "footprint": Vector2(2.2, 5), "axis": "z"},
-			{"model": "lada", "at": Vector2(-30, -5), "length": 4.3, "footprint": Vector2(2.2, 5), "axis": "z"},
 		],
 	},
 	"boiler_house": {
@@ -126,7 +132,7 @@ const CONTENTS := {
 		{"at": Vector2(0, -23), "footprint": Vector2(65, 22), "height": 8.0, "pitched": 3.2, "roof": "res://assets/textures/roof_rusty_metal.png",  "facade": "res://assets/textures/facade_warehouse.png", "placeholder_color": Color("998c77")},
 		{"at": Vector2(12, 40), "footprint": Vector2(40, 12), "height": 6.0, "pitched": 2.2, "roof": "res://assets/textures/roof_rusty_metal.png",  "facade": "res://assets/textures/facade_warehouse.png", "placeholder_color": Color("a49377")},
 	], "dressing": [
-		{"sprite": "barge", "at": Vector2(0, -83), "width": 42.0, "footprint": Vector2(43, 10), "axis": "x", "water": true},
+		{"sprite": "barge", "at": Vector2(0, -83), "width": 42.0, "footprint": Vector2(43, 10), "axis": "x", "water": true, "lift": -3.4},
 		{"sprite": "portal_crane", "at": Vector2(-50, 10), "width": 22.0, "footprint": Vector2(10, 10)},
 		{"model": "container_20ft", "at": Vector2(44, 4), "length": 6.06, "footprint": Vector2(2.5, 6.1), "axis": "z", "paint": 0},
 		{"model": "container_20ft", "at": Vector2(47.4, 4), "length": 6.06, "footprint": Vector2(2.5, 6.1), "axis": "z", "paint": 1},

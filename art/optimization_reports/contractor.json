@@ -1,0 +1,33 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/situation_banners/contractor_v4.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/events/contractor.png",
+  "source_sha256": "59fd488985ac258ddb9cf6ec3a6710920faec45009401036e7e1b729d4c66dad",
+  "profile": "scene",
+  "max_edge": 1920,
+  "override_reason": null,
+  "approved": true,
+  "before": {
+    "size": [
+      1942,
+      809
+    ],
+    "bytes": 2665798,
+    "estimated_rgba_bytes": 6284312
+  },
+  "after": {
+    "size": [
+      1920,
+      800
+    ],
+    "estimated_rgba_bytes": 6144000,
+    "bytes": 2513822,
+    "sha256": "53e8071f944f897a97efabb074084c8b2dce24b77e5ed71b370622a3b045021e"
+  },
+  "has_alpha": false,
+  "source_alpha_extrema": null,
+  "output_alpha_extrema": null,
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}

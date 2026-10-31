@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1000" viewBox="-460 -520 880 940" font-family="sans-serif">
+<rect x="-460" y="-520" width="880" height="940" fill="#fafaf7"/>
+<text x="-450" y="-500" font-size="16" font-weight="bold" fill="#2c2c2a">District areas v1: two levels (draft)</text>
+<text x="-450" y="-482" font-size="9" fill="#5f5e5a">1 unit = 1 m. Solid = level 1 district, dashed = level 2 subzone. Numbers and fleets are open questions, not data.</text>
+<rect x="-450" y="-460" width="870" height="60" fill="#e3e6dc"/><text x="-440" y="-425" font-size="11" fill="#444441">Western country</text>
+<rect x="-450" y="-400" width="870" height="70" fill="#b5d4f4"/><text x="-440" y="-360" font-size="11" fill="#0c447c">Border river</text>
+<rect x="-450" y="-197.5" width="875" height="20" fill="#8a8a85"/><text x="-440" y="-183" font-size="8" fill="#fff">highway (cars only)</text>
+<rect x="-440" y="-325" width="835" height="130" fill="#faeeda" stroke="#854f0b" stroke-width="2"/>
+<text x="-436" y="-313" font-size="11" font-weight="bold" fill="#854f0b">D1 Transport band</text>
+<rect x="-430" y="-320" width="140" height="120" fill="none" stroke="#854f0b" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="-360.0" y="-246.0" font-size="8" text-anchor="middle" fill="#854f0b">ATP depot</text>
+<rect x="-280" y="-320" width="140" height="120" fill="none" stroke="#854f0b" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="-210.0" y="-246.0" font-size="8" text-anchor="middle" fill="#854f0b">Truck stop</text>
+<rect x="-130" y="-320" width="250" height="120" fill="none" stroke="#854f0b" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="-5.0" y="-246.0" font-size="8" text-anchor="middle" fill="#854f0b">Border crossing + customs</text>
+<rect x="130" y="-320" width="160" height="120" fill="none" stroke="#854f0b" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="210.0" y="-246.0" font-size="8" text-anchor="middle" fill="#854f0b">River port</text>
+<rect x="300" y="-320" width="95" height="120" fill="none" stroke="#854f0b" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="347.5" y="-246.0" font-size="8" text-anchor="middle" fill="#854f0b">Fuel depot</text>
+<rect x="-440" y="-172" width="835" height="80" fill="#f1efe8" stroke="#5f5e5a" stroke-width="2"/>
+<text x="-436" y="-160" font-size="11" font-weight="bold" fill="#5f5e5a">D2 Service belt</text>
+<rect x="-430" y="-170" width="100" height="75" fill="none" stroke="#5f5e5a" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="-380.0" y="-118.5" font-size="8" text-anchor="middle" fill="#5f5e5a">Boiler house</text>
+<rect x="-320" y="-170" width="290" height="75" fill="none" stroke="#5f5e5a" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="-175.0" y="-118.5" font-size="8" text-anchor="middle" fill="#5f5e5a">Garage cooperative</text>
+<rect x="15" y="-170" width="380" height="75" fill="none" stroke="#5f5e5a" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="205.0" y="-118.5" font-size="8" text-anchor="middle" fill="#5f5e5a">Wasteland reserve</text>
+<rect x="-440" y="-78" width="420" height="376" fill="#d3d1c7" stroke="#444441" stroke-width="2"/>
+<text x="-436" y="-66" font-size="11" font-weight="bold" fill="#444441">D3 Panel housing</text>
+<rect x="-380" y="-75" width="175" height="157" fill="none" stroke="#444441" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="-292.5" y="17.5" font-size="8" text-anchor="middle" fill="#444441">Superblock A1</text>
+<rect x="-196" y="-75" width="176" height="157" fill="none" stroke="#444441" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="-108.0" y="17.5" font-size="8" text-anchor="middle" fill="#444441">Superblock B1</text>
+<rect x="-380" y="92" width="175" height="158" fill="none" stroke="#444441" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="-292.5" y="185.0" font-size="8" text-anchor="middle" fill="#444441">Superblock A2</text>
+<rect x="-196" y="92" width="176" height="158" fill="none" stroke="#444441" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="-108.0" y="185.0" font-size="8" text-anchor="middle" fill="#444441">Superblock B2</text>
+<rect x="-440" y="255" width="420" height="40" fill="none" stroke="#444441" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="-230.0" y="289.0" font-size="8" text-anchor="middle" fill="#444441">Housing reserves W/S</text>
+<rect x="-17" y="-80" width="157" height="350" fill="#eeedfe" stroke="#534ab7" stroke-width="2"/>
+<text x="-13" y="-68" font-size="11" font-weight="bold" fill="#534ab7">D4 Civic axis</text>
+<rect x="20" y="-75" width="115" height="115" fill="none" stroke="#534ab7" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="77.5" y="-3.5" font-size="8" text-anchor="middle" fill="#534ab7">Police + polyclinic</text>
+<rect x="20" y="50" width="115" height="85" fill="none" stroke="#534ab7" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="77.5" y="106.5" font-size="8" text-anchor="middle" fill="#534ab7">Executive committee</text>
+<rect x="20" y="145" width="115" height="120" fill="none" stroke="#534ab7" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="77.5" y="219.0" font-size="8" text-anchor="middle" fill="#534ab7">Free street lots</text>
+<rect x="150" y="-80" width="245" height="375" fill="#eaf3de" stroke="#3b6d11" stroke-width="2"/>
+<text x="154" y="-68" font-size="11" font-weight="bold" fill="#3b6d11">D5 Old village</text>
+<rect x="155" y="-40" width="235" height="118" fill="none" stroke="#3b6d11" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="272.5" y="33.0" font-size="8" text-anchor="middle" fill="#3b6d11">Farmsteads north</text>
+<rect x="209" y="80" width="96" height="50" fill="none" stroke="#3b6d11" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="257.0" y="119.0" font-size="8" text-anchor="middle" fill="#3b6d11">Church + cemetery</text>
+<rect x="155" y="135" width="235" height="95" fill="none" stroke="#3b6d11" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="272.5" y="196.5" font-size="8" text-anchor="middle" fill="#3b6d11">Farmsteads south</text>
+<rect x="265" y="-20" width="24" height="10" fill="none" stroke="#3b6d11" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="277.0" y="-1.0" font-size="8" text-anchor="middle" fill="#3b6d11">Pond</text>
+<rect x="-430" y="312" width="660" height="76" fill="#e6f1fb" stroke="#0c447c" stroke-width="2"/>
+<text x="-426" y="324" font-size="11" font-weight="bold" fill="#0c447c">D6 South hub</text>
+<rect x="-430" y="315" width="200" height="70" fill="none" stroke="#0c447c" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="-330.0" y="364.0" font-size="8" text-anchor="middle" fill="#0c447c">Free street lots</text>
+<rect x="-215" y="315" width="185" height="70" fill="none" stroke="#0c447c" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="-122.5" y="364.0" font-size="8" text-anchor="middle" fill="#0c447c">Market</text>
+<rect x="15" y="315" width="215" height="70" fill="none" stroke="#0c447c" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="122.5" y="364.0" font-size="8" text-anchor="middle" fill="#0c447c">Station + bus station</text>
+<rect x="-17" y="-330" width="24" height="642" fill="none" stroke="#888" stroke-dasharray="2 2"/><text x="-14" y="-340" font-size="8" fill="#555">civic axis road</text>
+<text x="-450" y="410" font-size="9" fill="#5f5e5a">West forest clearing lies outside this drawing (x -537). Not shown: rails along the south and east edges.</text></svg>

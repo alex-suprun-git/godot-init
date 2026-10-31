@@ -16,6 +16,7 @@ var audio
 var _panel: PanelContainer
 var _header: Label
 var _quiet_button: Button
+var _ambience_status: Label
 var _rows := {} # event id -> {name, count, rate, last}
 var _refresh_left := 0.0
 
@@ -38,6 +39,26 @@ func setup(audio_manager) -> void:
 	_panel.add_child(column)
 	_header = _label("", 14, AMBER)
 	column.add_child(_header)
+	_ambience_status = _label("", 13, PAPER)
+	column.add_child(_ambience_status)
+	var ambience_level := HSlider.new()
+	ambience_level.min_value = 0
+	ambience_level.max_value = 100
+	ambience_level.step = 1
+	ambience_level.value = audio.city_ambience.level * 100.0
+	ambience_level.custom_minimum_size.x = 300
+	ambience_level.tooltip_text = "Громкость городского фона · 0 — выключить · настройка на этот запуск"
+	ambience_level.value_changed.connect(func(value): audio.city_ambience.set_level(value / 100.0))
+	column.add_child(ambience_level)
+	var credit := RichTextLabel.new()
+	credit.bbcode_enabled = true
+	credit.fit_content = true
+	credit.scroll_active = false
+	credit.add_theme_font_size_override("normal_font_size", 12)
+	credit.add_theme_color_override("default_color", MUTED)
+	credit.text = "Фон: [url=https://freesound.org/people/klankbeeld/sounds/641255/]klankbeeld / Freesound[/url] · CC BY 4.0 · loop edit"
+	credit.meta_clicked.connect(func(url): OS.shell_open(str(url)))
+	column.add_child(credit)
 	_quiet_button = Button.new()
 	_quiet_button.pressed.connect(_cycle_quiet_mode)
 	column.add_child(_quiet_button)
@@ -83,6 +104,10 @@ func _process(delta: float) -> void:
 		return
 	_refresh_left = 0.25
 	_header.text = "ЗВУКОВЫЕ СОБЫТИЯ · сыграно %s · F3 скрыть" % _clock(audio.minutes_played())
+	_ambience_status.text = "Фон города · %d%% · %s / %s" % [
+		roundi(audio.city_ambience.level * 100.0),
+		_clock(audio.city_ambience.get_playback_position() / 60.0),
+		_clock(audio.city_ambience.stream.get_length() / 60.0)]
 	var now := Time.get_ticks_msec()
 	for id in _rows:
 		var row: Dictionary = _rows[id]

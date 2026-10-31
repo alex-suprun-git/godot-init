@@ -5,6 +5,7 @@
 extends Node
 
 const AudioEvents = preload("res://scripts/data/audio_events.gd")
+const CityAmbience = preload("res://scripts/audio/city_ambience.gd")
 
 signal event_fired(id: String)
 
@@ -19,11 +20,14 @@ var _last_variant := {} # event id -> index of the last played variant
 var _last_played_msec := {} # event id -> when it last actually played
 var _streams := {} # path -> loaded stream
 var _rng := RandomNumberGenerator.new()
+var city_ambience
 
 
 func _ready() -> void:
 	_rng.randomize()
 	_ensure_buses()
+	city_ambience = CityAmbience.new()
+	add_child(city_ambience)
 	for i in POOL_SIZE:
 		var player := AudioStreamPlayer.new()
 		add_child(player)

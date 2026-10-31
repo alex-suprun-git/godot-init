@@ -1,0 +1,16 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+Metal 4.0 - Forward+ - Using Device #0: Apple - Apple M3 Pro (Apple9)
+
+3D Lada instances: 65
+3D vehicles by model: total 121, lada 65, wagon 23, volga 4 (real mesh: true)
+Moving civilian Volgas: 3 / 60 (target share 1/15)
+Civilian Volga paint variant: volga|Volga paint body.009|1
+Civilian Volga paint variant: volga|Volga paint body.009|0
+shot: lada_courtyard
+shot: lada_street_x
+shot: lada_street_z
+shot: lada_clinic_perspective
+shot: volga_first
+shot: volga_traffic_0
+shot: volga_traffic_1
+shot: volga_traffic_2

@@ -1,0 +1,33 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/situation_banners/hot_water_v4.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/events/hot_water.png",
+  "source_sha256": "e7f73682f1a740ff8fd2c2ff37f95ffed0ad6a7bbeca5b79019f04b5d57bf052",
+  "profile": "scene",
+  "max_edge": 1920,
+  "override_reason": null,
+  "approved": true,
+  "before": {
+    "size": [
+      1942,
+      809
+    ],
+    "bytes": 3007439,
+    "estimated_rgba_bytes": 6284312
+  },
+  "after": {
+    "size": [
+      1920,
+      800
+    ],
+    "estimated_rgba_bytes": 6144000,
+    "bytes": 2813568,
+    "sha256": "6c8ae5047a42c4b2cc252430a9bc2f3c5f82369884eab6b0c1e7810a1acbe90a"
+  },
+  "has_alpha": false,
+  "source_alpha_extrema": null,
+  "output_alpha_extrema": null,
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}

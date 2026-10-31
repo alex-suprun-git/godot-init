@@ -102,6 +102,13 @@ A border trade city on a river that lives on trade and transit rather than on a 
 - During the live week, Space toggles pause and resumes the last selected running speed, including after a crisis pauses the game. Holding Space does not repeatedly toggle it.
 - The shift to this core loop needs deliberate balancing.
 
+## City Audio (Prototype)
+
+- The first audio layer is a continuous, non-positional city-outskirts recording, selected by the user as an initial ambience trial. It starts with the map and fades in over two seconds. It keeps its natural playback speed during pause, planning, summary, and simulation speed changes; camera movement does not affect it yet.
+- A dedicated `CityAmbience` player uses the `Ambience` bus independently of the short sound-event pool. Default gain is 50% (about -6 dB); F3 exposes a 0–100% slider, with zero muting without restarting the recording. This audition setting lasts for the current run only.
+- The 7:46.790 source is prepared as a 7:42.790 Ogg Vorbis loop with a four-second equal-power overlap. The Desktop WAV is preserved outside the game; only the prepared Ogg is imported. Asset provenance, attribution, preparation, and verification are recorded in `art/audio/city/SOURCING.md`; the bundled attribution is in `init/assets/audio/ATTRIBUTION.md` and linked in F3.
+- This is a first listening trial, not an approved final soundscape. Localized sources, night/weather layers, music, persistent audio preferences, and automatic pause ducking are not implemented.
+
 ## Player Mobility and Personal Money (Provisional)
 
 Mobility and money are both scarce for a junior aide, which is part of what makes the map matter.
@@ -122,12 +129,30 @@ Mobility and money are both scarce for a junior aide, which is part of what make
 
 - Besides answering requests, the player can act on their own initiative: call the right person (spend influence), give or take a bribe (money), arrange a meeting between two sides (compromise), leak information to the press, and make promises.
 - Promises are the signature mechanic: they cost nothing now and become a debt later. Broken promises surface as consequences on the map, such as pickets.
-- At most 3–4 requests are active on the map at the same time. How long each one stays open is undecided.
+- At most 3–4 requests are active on the map at the same time.
+- How long a request stays open follows from its situation, not from a hand-set date. Each request has an urgency class:
+  - Now (about 3 hours): people stand on the spot and wait (a conflict at the market, coal being stolen, a visitor in the office).
+  - Today (until 20:00): a deal that goes to someone else in the evening (the storekeeper's fuel, Gusev's stalls, a meeting tonight).
+  - Days (about two days): a complaint that can wait (the pipes, the church).
+  - Week (until Friday): the week's tasks (the contractor, the report).
+- The request card states the fiction, not a bare time: "Waiting for you at the station, about 3 h left" rather than "until Fri 12:00".
+- Requests that can wait escalate while unanswered instead of only expiring: the pipe complaint turns into a letter to the newspaper and then a picket. Waiting is allowed but grows more expensive. A promise pauses a request's deadline and escalation until the promised date.
+- Urgent requests combine with the office-only dispatch rule: leaving the office means missing what is urgent, which is the price of going out.
 - Request types:
   - Plea: a person or group asks for help; ignoring it hurts the relationship.
   - Conflict: two sides clash and the player picks one; someone is always offended.
   - Crisis: a timer runs; missing it has serious consequences such as fires, accidents, or riots.
   - Offer: someone proposes a deal, money, or an alliance; the player may refuse.
+
+## Week Summary (Provisional)
+
+The end-of-week summary is organized, not a chronological wall of text. The outcome texts themselves stay short and flavorful.
+
+1. Top: relations. A compact strip of faction standings with their direction this week (for example "Residents: Distrust → Discontent, down").
+2. Middle: what happened, grouped by place on the map, not by time. Each line is marked done, missed, or escalated. The weightiest come first; minor items collapse into "and N minor things".
+3. Bottom: threads into next week. What is unfinished and will come back (a stalled boiler house, a remembered license plate, stalls Gusev set up on his own, an open promise).
+
+A boss's one-line reaction with portrait and a newspaper clipping when the press wrote about the player are planned accents. Later, the middle list can become pins on the map with the same grouping.
 
 ## Compromising Material (Provisional)
 
@@ -196,6 +221,9 @@ The campaign has a peaceful arc and a war arc, and the second changes what the f
 - Visual direction: the playable map is a stylized 3D scene seen from above at an angle (similar to *Smuggler*), so the whole area can be shown at a consistent scale and stay alive: moving traffic and people, day and night, weather, construction stages, smoke, pickets, and fire through the engine rather than redrawn art.
 - Buildings are simple 3D shapes dressed with generated painted facade textures, matching the mood of `art/concepts/isometric-city-direction-v2.png`. Key locations get distinct, recognizable models.
 - Lada cars on streets, at the polyclinic and in the House 5 courtyard use the shared Blender V2 GLB at real scale, with actual 3D orientation and shadows. Editable source and rebuild instructions are in `art/models/lada/README.md`.
+- Civilian Volgas use the reviewed GAZ-24 GLB, with approximately one in fifteen passenger cars selected deterministically in ambient/parked traffic. The administration's Volga retains its original black lacquer. Paint variants share materials and preserve glass/chrome/rubber finishes.
+- Public transport model direction: both LiAZ-5256 and PAZ-3205 buses, with versions appropriate to 1997, and an ER2 commuter train with the angular, square-front cab. The square cab supersedes the initial round-cab choice. These assets are planned; reference and implementation progress lives in `art/models/public_transport/PLAN.md`.
+- Traffic paint direction is historically inspired and deliberately curated rather than a complete factory catalogue: no red, burgundy, pink, mint or vivid orange cars. Calm light and mid-tone cars are favoured over dark ones. Lada sedan/wagon weights: warm ivory 18%, plain grey 16%, muted blue 23%, sand beige 18%, subdued olive 8%, muted ochre 2%, dark green 9%, dark blue 6%. Civilian Volga weights: ivory 24%, grey 22%, grey-blue 22%, beige 17%, bottle green 9%, dark blue 6%. Thus dark shades total 15% for either passenger-car family, with rare subdued accents. These are sampling weights, not exact quotas in each scene. Truck cabs also exclude red; freight container colours remain separate.
 - The district executive committee is a prominent civic landmark, larger in mass than an ordinary five-storey Khrushchev-era block: a broad facade, high ceilings and a formal entrance facing the square. The church should have a substantial body and an easily recognizable silhouette. (Merchant houses belong to the old city center, which is not part of the starting district; see Starting District Layout.)
 - Everything shown in windows is 2D painted art in the same mood: location scenes, event illustrations, contact portraits, and story scenes.
 - The playable area grows with the career: the aide's micro-district first, then the district, then the city, each as its own map.
@@ -206,6 +234,14 @@ The campaign has a peaceful arc and a war arc, and the second changes what the f
 - Panels and tabs show details such as the satisfaction of factions and individuals and the request backlog.
 - The player mainly thinks about resource management and long-term decisions.
 - Technical approach: the city is divided into lots (forest, yard, square, wasteland, factory). Each lot has states with their own 3D models (forest → clearing → construction → housing block; square → kiosks → market). Temporary overlays sit on top (pickets, garbage, a police van, the rival's advertising). Player decisions change lot states.
+
+## Far-Bank City and Visual Comparison (Provisional)
+
+- User direction: the city across the border river in the brotherly republic should have a distinct visual identity. As our district changes over time, the player may want to compare it with other places or NPC-run areas. The comparison mechanic and progression rules remain undecided.
+- First art proposal: an older riverside town with compact masonry streets, pitched terracotta roofs, a modest market square and an inhabited promenade, sharing the same post-Soviet past and 1997 visual world. This contrasts with our late-Soviet transport district through urban form, not a predetermined wealth or moral ranking. It is an exploratory direction, not approved architecture or a new map implementation.
+- Concept: `art/concepts/far-bank-city-direction-v1.png`; exact prompt and review notes: `art/concepts/far-bank-city-v1.prompt.md`. The near bank, river and two existing crossings are retained from the border concept.
+- Proposed approach for future comparisons: keep the viewpoint and recognisable landmarks stable; show matched seasons/weather on both banks, and changes through repairs, construction, market activity and waterfront use. Compare equivalent functions where possible: a historic town centre and a transport yard are not direct evidence of better or worse management.
+- Open implementation option: authored stages of change in the neighbouring town can provide visible independent progress. Whether it needs a deeper NPC simulation, what is visible from our map, and how much changes independently of the player are still open.
 
 ## Starting District Layout (Provisional)
 
@@ -223,7 +259,11 @@ The starting district is an outskirt, not the city center. The center lies far b
   - K, core lot: the center of every residential superblock (four W lots around one K lot), reserved for a school or kindergarten. Until then it is a yard, sports ground, or wasteland ("a school was supposed to stand here").
   - G, street lot: small public or commercial buildings along a street (police, polyclinic, pharmacy, exchange office, cafe, garages).
   - X, large lot: transport and industry (ATP, truck stop, checkpoint and customs, port, boiler house, market, station).
-  - D, village plot: irregular, with a garden, reached by dirt roads.
+  - D, village plot: a large farmstead plot with a garden, reached by dirt roads. The old village has 17 of them, each about 38 m deep and 38–50 m wide (about 15–20 sotok), with the house near the street and the garden behind; old villages have no shortage of space. Plan: `art/concepts/village_plot_plan_v1.svg`; the lot data in `district_layout.gd` follows it. Only 2 of the 17 plots are abandoned: the village is emptying slowly, not ruined.
+  - Each village plot is fenced and filled by condition (`VILLAGE_FILL` in `building_catalog.gd`): tidy plots have a whole fence, vegetable beds, an orchard and a shed; fading ones have a patchy fence, one bed and a few trees; abandoned ones have a half-fallen fence and nothing planted. Fences and beds are drawn as procedural boxes; they are placeholders until real models replace them.
+  - The old village cemetery lies directly west of the church (lot `cemetery`, about 35 × 46 m): a fenced field with a gate on the north street, rows of mounds with mostly wooden, leaning crosses and a few stone stelae, a central path and old trees. The church faces west toward it.
+  - Village dirt roads form closed loops (north street, west street, the road around the church, the east street, the south street and an east lane); no dead ends. The deep plot d_13 south of the church is an old orchard farmstead facing the south street.
+  - Open idea, not decided: the old village may have been a collective farm (kolkhoz) in the early Soviet years, leaving an office or club, a cattle yard or a barn as ruins on some plots.
   - R, reserve: a whole empty block.
   - Ground floors of panel blocks can host small public places (district police officer, pharmacy, savings bank) by swapping the facade only.
 - Layout, north to south: the neighboring "western" country; the border river with a road bridge and a separate railway bridge; a transport band along the embankment (ATP, truck stop, checkpoint and customs with a truck holding area, port with fuel depot and freight transfer station); a highway along the river; a reserve band (boiler house, garages, empty reserve block); four residential superblocks in the west; a public axis from the bridge to the station; the old village with the church in the east; the market, the passenger station, and the bus station in the south; a double-track passenger line along the south edge; and a freight line along the east edge to the railway bridge.
@@ -232,6 +272,8 @@ The starting district is an outskirt, not the city center. The center lies far b
 - The district executive committee is a late-Soviet modernist building, built together with the district in the 1980s, not a Stalinist one.
 - The medical facility is a mid-size polyclinic, not a hospital complex.
 - Open: how many superblocks the first version has (four planned, room for two more in the west).
+- Planned rework of the civic area (agreed in discussion, not yet in `district_layout.gd`; draft plan `art/concepts/district_areas_v2.svg`): the narrow stack of police, polyclinic and executive committee is replaced by an administrative centre. The executive committee stands behind a paved square open to the avenue. Three elite towers stand around the square (E1 north, E2 and E3 side by side south of it): late-Soviet "improved layout" blocks of 12-14 storeys with tan brick, glazed loggia packets, brick pilasters rising above the roofline as a stepped crown, and shops on the ground floor. The second tower may be a lighter variant (pale brick or panel). Police move to a small two-storey building with a yard on the west corner by the cross street; the polyclinic (a separate building of about 40 x 28 m, three storeys, with a small ambulance yard) replaces the southern of the two long houses that stand end-on to the avenue on its west side, and the rest of that house's plot becomes a yard and parking. This knowingly breaks the tidy housing quarter, as the police move does. The empty ground behind the department store, away from the avenue, becomes a small city park. The rest of the strip gets smaller lots: a department store, two narrow slabs end-on to the avenue, simpler blocks, extra footpaths and a short lane. Nothing is final until the plan is approved.
+- Data model (implemented in `district_layout.gd` as `DISTRICTS`, `HOURS` and the lookups `district_at`, `subzone_at`, `profile_at`, `crowd_at`; nothing in the game reads it yet, and the lots have not been moved to the new D4 plan): two-level areas. A district (several rects allowed) sets residents, foot and car density, vehicle mix and an hourly profile; a subzone inside it overrides only the fields it names. The axis and highway belong to no district. Passenger cars are one class with several models.
 
 ## Natural Landmarks
 

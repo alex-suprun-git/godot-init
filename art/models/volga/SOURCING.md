@@ -1,3 +1,26 @@
+# Current implementation checkpoint (2026-10-31)
+
+The download research below is historical and superseded. The project now uses
+an original procedural GAZ-24 derived from the Lada workflow. Editable sources
+and build documentation remain in
+`../godot-worktrees/volga-gaz24-model/art/models/volga/README.md`.
+
+The latest rounded-body GLB (7,775 triangles, three materials) is copied into
+the main project's `init/assets/models/vehicles/volga_gaz24.glb` and loaded by
+`vehicle_models.gd`. Civilian ambient/parked selection is approximately 1/15;
+six shared colour variants replace only the black lacquer through
+`vehicle_paint.gdshader`. The administration car retains the original black.
+The updated palette excludes burgundy/red and uses bottle green instead of olive, with light/mid-tone colours weighted at 85% and dark colours at 15%. See root README for the agreed traffic palette. Do not overwrite these game
+changes when integrating the earlier asset worktree's scripts.
+
+Godot import and the graphical vehicle autoplay completed successfully.
+The current deterministic scene selected 3 Volgas among 60 moving cars;
+1/15 is a probability, not an exact quota for each small sample. Grey and ivory
+variants were inspected on actual streets. Screenshots/log: `traffic_review/`.
+No automated tests were added or run; no commit or push was made.
+
+---
+
 # Volga sourcing review
 
 Checked: 2026-10-31. Stage: metadata research only. No model has been downloaded, visually approved or integrated.

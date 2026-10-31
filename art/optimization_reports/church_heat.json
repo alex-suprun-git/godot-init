@@ -1,0 +1,33 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/situation_banners/church_heat_v1.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/events/church_heat.png",
+  "source_sha256": "e7fd6da9401e7533101ad40cd0b7881919469299177f3337c89ccc3cdae89aa1",
+  "profile": "scene",
+  "max_edge": 1920,
+  "override_reason": null,
+  "approved": true,
+  "before": {
+    "size": [
+      1942,
+      809
+    ],
+    "bytes": 2693692,
+    "estimated_rgba_bytes": 6284312
+  },
+  "after": {
+    "size": [
+      1920,
+      800
+    ],
+    "estimated_rgba_bytes": 6144000,
+    "bytes": 2502524,
+    "sha256": "1e913f0eb5054b6477d3c995b6392cffd9d7d11ac5cd8d84772af5fbbf54ebb1"
+  },
+  "has_alpha": false,
+  "source_alpha_extrema": null,
+  "output_alpha_extrema": null,
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}

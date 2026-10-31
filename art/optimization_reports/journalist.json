@@ -1,0 +1,33 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/situation_banners/journalist_v3.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/events/journalist.png",
+  "source_sha256": "fc09150cc705b5268ffe7bd853216b8e344967734ecfebe26ffbc0b04918c81f",
+  "profile": "scene",
+  "max_edge": 1920,
+  "override_reason": null,
+  "approved": true,
+  "before": {
+    "size": [
+      1942,
+      809
+    ],
+    "bytes": 2282258,
+    "estimated_rgba_bytes": 6284312
+  },
+  "after": {
+    "size": [
+      1920,
+      800
+    ],
+    "estimated_rgba_bytes": 6144000,
+    "bytes": 2158444,
+    "sha256": "4725c49499e54e72035ca41a5fc0d0d0696251f51c7c1a539f036ae5d84f02f4"
+  },
+  "has_alpha": false,
+  "source_alpha_extrema": null,
+  "output_alpha_extrema": null,
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}

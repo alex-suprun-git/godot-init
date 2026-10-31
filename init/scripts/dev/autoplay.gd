@@ -20,6 +20,8 @@ func _ready() -> void:
 			shots_dir = arg.substr("--shots=".length())
 	if OS.get_cmdline_user_args().has("--vehicles-only"):
 		_run_vehicle_review()
+	elif OS.get_cmdline_user_args().has("--render-cost"):
+		_run_render_cost()
 	else:
 		_run()
 
@@ -168,6 +170,19 @@ func _run_vehicle_review() -> void:
 	main.hud._continue_to_tasks()
 	main.hud._close_week_panel()
 	print("3D Lada instances: ", get_tree().get_nodes_in_group("vehicle_lada").size())
+	print("3D vehicles by model: total ", get_tree().get_nodes_in_group("vehicle_models").size(), ", lada ", get_tree().get_nodes_in_group("vehicle_lada").size(), ", wagon ", get_tree().get_nodes_in_group("vehicle_lada_wagon").size(), ", volga ", get_tree().get_nodes_in_group("vehicle_volga").size(), " (real mesh: ", main.map.VehicleModels.has_volga_model(), ")")
+	var moving_cars := 0
+	var moving_volgas := 0
+	for agent in main.map._ambient.agents:
+		if not agent["is_car"]:
+			continue
+		moving_cars += 1
+		if agent["visual"].is_in_group("vehicle_volga"):
+			moving_volgas += 1
+	print("Moving civilian Volgas: ", moving_volgas, " / ", moving_cars, " (target share 1/15)")
+	for key in main.map.VehicleModels._paint_materials:
+		if str(key).begins_with("volga|"):
+			print("Civilian Volga paint variant: ", key)
 	var courtyard: Vector2 = main.map.DistrictLayout.lot_center("b1_k") + Vector2(25, -55) * main.map.DistrictLayout.HOUSING_SPACING
 	await _map_shot("lada_courtyard", courtyard, 65.0)
 	await _map_shot("lada_street_x", Vector2(-350, -184.2), 60.0)
@@ -176,6 +191,21 @@ func _run_vehicle_review() -> void:
 	main.map.Settings.camera_mode = "front"
 	var clinic: Vector2 = main.map.DistrictLayout.lot_center("polyclinic") + Vector2(-30, -10)
 	await _map_shot("lada_clinic_perspective", clinic, 65.0)
+	var volgas := get_tree().get_nodes_in_group("vehicle_volga")
+	if not volgas.is_empty():
+		var v: Node3D = volgas[0]
+		main.map.Settings.camera_mode = previous_view
+		await _map_shot("volga_first", Vector2(v.position.x, v.position.z), 45.0)
+	# Capture real moving Volgas, rather than relying on a parked-car view.
+	var volga_shots := 0
+	for agent in main.map._ambient.agents:
+		if not agent["is_car"] or not agent["visual"].is_in_group("vehicle_volga"):
+			continue
+		var at: Vector2 = agent["pos"]
+		await _map_shot("volga_traffic_%d" % volga_shots, at, 35.0)
+		volga_shots += 1
+		if volga_shots >= 3:
+			break
 	main.map.Settings.camera_mode = previous_view
 	if OS.get_cmdline_user_args().has("--keep-open"):
 		main.map._camera_goal = Vector3(courtyard.x, 0, courtyard.y)
@@ -183,6 +213,53 @@ func _run_vehicle_review() -> void:
 		main.map._zoom = main.map.ZOOM_MIN
 		return
 	get_tree().quit()
+
+
+# Prints what the 3D vehicles cost per frame at the closest, default and widest
+# zoom: with automatic mesh LOD, with LOD off, and with the vehicles hidden.
+func _run_render_cost() -> void:
+	await _wait(1.5)
+	main.hud._continue_to_tasks()
+	main.hud._close_week_panel()
+	var vehicles := get_tree().get_nodes_in_group("vehicle_models")
+	print("render-cost: vehicle instances ", vehicles.size())
+	var viewport := get_viewport()
+	RenderingServer.viewport_set_measure_render_time(viewport.get_viewport_rid(), true)
+	var default_threshold := viewport.mesh_lod_threshold
+	for zoom in [main.map.ZOOM_MIN, main.map.ZOOM_DEFAULT, main.map.ZOOM_MAX]:
+		main.map._camera_goal = main.map.DEFAULT_TARGET
+		main.map._camera_target = main.map._camera_goal
+		main.map._zoom = zoom
+		await _wait(0.5)
+		var rows := {}
+		for mode in ["lod", "no_lod", "hidden"]:
+			viewport.mesh_lod_threshold = 0.0 if mode == "no_lod" else default_threshold
+			for vehicle in vehicles:
+				vehicle.visible = mode != "hidden"
+			await _wait(0.3)
+			rows[mode] = await _render_info()
+		await _shot("render_cost_%d" % int(zoom))
+		print("render-cost zoom %d: %s" % [int(zoom), JSON.stringify(rows)])
+	viewport.mesh_lod_threshold = default_threshold
+	get_tree().quit()
+
+
+func _render_info() -> Dictionary:
+	# Average the measured render time over a few frames; single frames are noisy.
+	var rid := get_viewport().get_viewport_rid()
+	var cpu := 0.0
+	var gpu := 0.0
+	for i in 20:
+		await RenderingServer.frame_post_draw
+		cpu += RenderingServer.viewport_get_measured_render_time_cpu(rid)
+		gpu += RenderingServer.viewport_get_measured_render_time_gpu(rid)
+	return {
+		"cpu_ms": snappedf(cpu / 20.0, 0.01),
+		"gpu_ms": snappedf(gpu / 20.0, 0.01),
+		"primitives": RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME),
+		"draw_calls": RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME),
+		"objects": RenderingServer.get_rendering_info(RenderingServer.RENDERING_INFO_TOTAL_OBJECTS_IN_FRAME),
+	}
 
 
 func _map_shot(name: String, center: Vector2, zoom: float) -> void:

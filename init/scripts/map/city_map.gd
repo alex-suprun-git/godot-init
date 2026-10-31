@@ -98,7 +98,7 @@ const SEASONS := {
 		"sky_top": Color(0.5, 0.55, 0.62), "sky_horizon": Color(0.78, 0.72, 0.64),
 		"sun_rotation": Vector3(-42.0, -30.0, 0.0), "sun_color": Color(1.0, 0.9, 0.78), "sun_energy": 1.15,
 		"ambient": 0.55, "fog_color": Color(0.8, 0.76, 0.7), "fog_density": 0.00025,
-		"saturation": 1.0, "contrast": 1.1, "weather": "leaves",
+		"saturation": 1.0, "contrast": 1.1, "weather": "",
 	},
 	"winter": {
 		"label": "Зима",
@@ -110,15 +110,15 @@ const SEASONS := {
 		"sky_top": Color(0.5, 0.56, 0.66), "sky_horizon": Color(0.74, 0.78, 0.84),
 		"sun_rotation": Vector3(-30.0, -30.0, 0.0), "sun_color": Color(0.9, 0.94, 1.0), "sun_energy": 1.15,
 		"ambient": 0.5, "fog_color": Color(0.78, 0.82, 0.88), "fog_density": 0.0003,
-		"saturation": 0.8, "contrast": 1.22, "weather": "snow",
+		"saturation": 0.8, "contrast": 1.22, "weather": "",
 	},
 }
 
 # Camera targets and rendering geometry use metres directly.
 const BOUNDS := Rect2(-620, -460, 1070, 880)
-const ZOOM_MIN := 80.0
-const ZOOM_MAX := 1550.0
-const ZOOM_DEFAULT := 350.0
+const ZOOM_DEFAULT := 350.0 # Camera distance that the zoom readout calls 100 %.
+const ZOOM_MIN := ZOOM_DEFAULT / 1.25 # Closest view: 125 %.
+const ZOOM_MAX := ZOOM_DEFAULT / 0.30 # Widest view: 30 %.
 const DEFAULT_TARGET := Vector3(30, 0, 105)
 const PAN_SPEED := 1.1 # Fraction of the zoom distance per second for keyboard panning.
 
@@ -289,10 +289,6 @@ func focus_on(lot: String) -> void:
 
 func zoom_by(factor: float) -> void:
 	_zoom = clampf(_zoom * factor, ZOOM_MIN, ZOOM_MAX)
-
-
-func zoom_percent() -> int:
-	return roundi(ZOOM_DEFAULT / _zoom * 100.0)
 
 
 func reset_view() -> void:
@@ -543,7 +539,8 @@ func _build_traffic() -> void:
 			# A car's centre sits 0.95 m inside the road edge: parked at the kerb.
 			var at := rect.position + (Vector2(i * 100, rect.size.y - 0.95) if along_x else Vector2(rect.size.x - 0.95, i * 100))
 			var look := i * 5 + int(length) + i * 977
-			_vehicle(VehicleModels.traffic_model(look), _ground(at) + Vector3.UP * 0.14, 4.3, "x" if along_x else "z", null, look)
+			var model := VehicleModels.traffic_model(look)
+			_vehicle(model, _ground(at) + Vector3.UP * 0.14, VehicleModels.map_length(model), "x" if along_x else "z", null, look)
 
 
 # Pavements are derived from the roads: a strip on each side, cut wherever another
@@ -568,14 +565,14 @@ func _build_sidewalks() -> void:
 
 
 # The strip minus every other road it runs into, as a list of rects.
-func _strip_pieces(strip: Rect2, along_x: bool, own: Dictionary) -> Array[Rect2]:
+func _strip_pieces(strip: Rect2, along_x: bool, own: Dictionary, margin: float = 0.0) -> Array[Rect2]:
 	var cuts: Array[Vector2] = []
 	for other in DistrictLayout.ROADS:
 		if other == own:
 			continue
 		var rect: Rect2 = other["rect"]
 		if rect.intersects(strip):
-			cuts.append(Vector2(rect.position.x, rect.end.x) if along_x else Vector2(rect.position.y, rect.end.y))
+			cuts.append(Vector2(rect.position.x - margin, rect.end.x + margin) if along_x else Vector2(rect.position.y - margin, rect.end.y + margin))
 	cuts.sort_custom(func(a: Vector2, b: Vector2) -> bool: return a.x < b.x)
 	var pieces: Array[Rect2] = []
 	var from := strip.position.x if along_x else strip.position.y
@@ -733,7 +730,7 @@ func _build_tokens() -> void:
 		var start: Vector2 = sim.actors[id]["pos"]
 		token.position = Vector3(start.x, 0, start.y + 6)
 		_tokens[id] = token
-	_hero_car = _vehicle("lada", Vector3.ZERO, 4.3, "z", null, 2)
+	_hero_car = _vehicle("volga", Vector3.ZERO, VehicleModels.map_length("volga"), "z", null, VehicleModels.PAINT_BLACK)
 	_hero_car.visible = false
 
 
@@ -750,10 +747,20 @@ func _update_hero_car(delta: float) -> void:
 	var pos: Vector2 = me["pos"]
 	var path: PackedVector2Array = me["path"]
 	var index: int = me["path_index"]
-	_hero_car.position = Vector3(pos.x, 0.14, pos.y)
+	var lane := _lane_shift(me, true)
+	_hero_car.position = Vector3(pos.x + lane.x, 0.14, pos.y + lane.y)
 	if index < path.size() and pos.distance_to(path[index]) > 0.01:
 		var heading := path[index] - pos
 		_hero_car.rotation.y = lerp_angle(_hero_car.rotation.y, atan2(heading.x, heading.y), minf(1.0, delta * 8.0))
+
+
+# Where the actor stands relative to the route's centerline while travelling.
+func _lane_shift(actor: Dictionary, is_car: bool) -> Vector2:
+	var path: PackedVector2Array = actor["path"]
+	var index: int = actor["path_index"]
+	if actor["state"] != "travel" or index >= path.size():
+		return Vector2.ZERO
+	return sim.graph.lane_shift(actor["pos"], path[index] - actor["pos"], is_car)
 
 
 func _move_tokens() -> void:
@@ -768,7 +775,10 @@ func _move_tokens() -> void:
 	for key in groups:
 		var ids: Array = groups[key]
 		for i in ids.size():
-			var pos: Vector2 = sim.actors[ids[i]]["pos"]
+			var actor: Dictionary = sim.actors[ids[i]]
+			var pos: Vector2 = actor["pos"]
+			if not actor["driver"]:
+				pos += _lane_shift(actor, false)
 			# Spread along the screen's horizontal so faces never overlap, whatever
 			# the camera angle.
 			var origin := _ground(pos)
@@ -859,6 +869,12 @@ func _build_road_markings() -> void:
 		var length := maxf(rect.size.x, rect.size.y)
 		var width := minf(rect.size.x, rect.size.y)
 		var start := rect.position + (Vector2(0, width / 2) if along_x else Vector2(width / 2, 0))
+		if road.get("look", "") == "highway":
+			_highway_lines(road)
+			continue
+		if road.has("median"):
+			_boulevard_median(road)
+			continue
 		for i in range(1, int(length / 8.0)):
 			var at := start + (Vector2(i * 8, 0) if along_x else Vector2(0, i * 8))
 			var junction := false
@@ -879,9 +895,46 @@ func _build_road_markings() -> void:
 					_crosswalk(Vector2(axis_rect.get_center().x, rect.get_center().y + side * (rect.size.y / 2 + 3)), axis_rect.size.x, true, 0.145)
 
 
+# Highway markings: solid edge lines and a solid double centre line, in 8 m pieces
+# that stop short of every junction.
+func _highway_lines(road: Dictionary) -> void:
+	var rect: Rect2 = road["rect"]
+	var cy := rect.get_center().y
+	var offsets := [-rect.size.y / 2.0 + 0.9, rect.size.y / 2.0 - 0.9, -0.25, 0.25]
+	for i in range(1, int(rect.size.x / 8.0)):
+		var x := rect.position.x + i * 8.0
+		var junction := false
+		for other in DistrictLayout.ROADS:
+			if other != road and other["rect"].grow(8).has_point(Vector2(x, cy)):
+				junction = true
+		if junction:
+			continue
+		for offset in offsets:
+			_paint_patch(Vector2(8.0, 0.16), Vector2(x, cy + offset), 0.145)
+
+
+# A boulevard: a kerbed green strip down the middle with trees, broken at every
+# crossing so the crosswalks and turns stay free.
+func _boulevard_median(road: Dictionary) -> void:
+	var rect: Rect2 = road["rect"]
+	var width: float = road["median"]
+	var strip := Rect2(rect.get_center().x - width / 2.0, rect.position.y, width, rect.size.y)
+	for piece in _strip_pieces(strip, false, road, 7.0):
+		if piece.size.y < 6.0:
+			continue
+		_box(Vector3(piece.size.x + 0.5, 0.25, piece.size.y), _ground(piece.get_center()) + Vector3.UP * 0.2, Color("b3afa0"))
+		_ground_quad(piece.get_center(), piece.size, 0.33, _season["grass"], 22.0, false, _season["grass_tint"])
+		var z := piece.position.y + 7.0
+		while z < piece.end.y - 3.0:
+			_tree(_ground(Vector2(piece.get_center().x, z)) + Vector3.UP * 0.3)
+			z += 14.0
+
+
 const SIDEWALK_PLACEHOLDER := Color("8f8b80")
-const AMBIENT_WALKERS := 36
-const AMBIENT_CARS := 60
+# Pools: how many are shown depends on district and hour (see AmbientLife), so a pool
+# several times the typical crowd is needed.
+const AMBIENT_WALKERS := 240
+const AMBIENT_CARS := 130
 
 
 func _build_ambient() -> void:
@@ -902,10 +955,12 @@ func _build_ambient() -> void:
 		if agent.is_empty():
 			break
 		var seed_value := look.randi()
-		agent["visual"] = _vehicle(VehicleModels.traffic_model(seed_value), _ground(agent["pos"]) + Vector3.UP * 0.14, 4.3, "z", null, seed_value)
+		var model := VehicleModels.model_for_class(agent["class"], seed_value)
+		agent["visual"] = _vehicle(model, _ground(agent["pos"]) + Vector3.UP * 0.14, VehicleModels.map_length(model), "z", null, seed_value)
 
 
 func _move_ambient(delta: float) -> void:
+	_ambient.hour = sim.clock_hour()
 	_ambient.step(delta)
 	var right := _view_right()
 	for agent in _ambient.agents:
@@ -913,10 +968,12 @@ func _move_ambient(delta: float) -> void:
 		var heading: Vector2 = agent["heading"]
 		if agent["is_car"]:
 			var car: Node3D = agent["visual"]
+			car.visible = agent["visible"]
 			car.position = Vector3(at.x, 0.14, at.y)
 			car.rotation.y = lerp_angle(car.rotation.y, atan2(heading.x, heading.y), minf(1.0, delta * 6.0))
 		else:
 			var sprite: Sprite3D = agent["visual"]
+			sprite.visible = agent["visible"]
 			sprite.position = Vector3(at.x, agent["lift"], at.y)
 			# Face the way they walk as seen on screen.
 			sprite.flip_h = heading.x * right.x + heading.y * right.z < 0.0
@@ -1071,7 +1128,18 @@ func _tree(at: Vector3) -> Sprite3D:
 
 
 func _ground(at: Vector2) -> Vector3:
-	return Vector3(at.x, 0.0, at.y)
+	return Vector3(at.x, _bridge_height(at), at.y)
+
+
+# Deck height under a map point: zero on land, rising along the ramps of the road bridge.
+func _bridge_height(at: Vector2) -> float:
+	for bridge in DistrictLayout.BRIDGES:
+		var rect: Rect2 = bridge["rect"]
+		if rect.has_point(at):
+			var ramp: float = bridge["ramp"]
+			var south: float = INF if bridge.get("flat_end", false) else rect.end.y - at.y
+			return float(bridge["height"]) * clampf(minf(at.y - rect.position.y, south) / ramp, 0.0, 1.0)
+	return 0.0
 
 
 # A painted prop standing on the ground: cars, kiosks, tents, scaffolding. It
