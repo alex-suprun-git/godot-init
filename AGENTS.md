@@ -54,3 +54,15 @@
 
 - Keep agreed workflows and actionable handoff state in the repository before ending a task that establishes them. Gameplay decisions belong in `README.md`, repeatable asset procedures in the project skill, and asset-specific decisions/progress beside that asset.
 - Record what actually exists, what was inspected, remaining blockers and the next action. Distinguish planned automation from implemented scripts and verified results. Update the existing source of truth rather than maintaining duplicate chat summaries.
+
+## Git and Pull Requests
+
+These rules extend and, where they differ, replace "Do not commit or push unless explicitly asked" in Workflow.
+
+- **Never commit or push to `main`.** Everything reaches `main` through a pull request that the user merges. Never enable auto-merge.
+- **Ask before committing new feature work.** Before the first commit of any feature, fix or art change, ask the user which branch it belongs on, or propose a branch name and wait for a yes. Do not decide silently and do not commit "to be safe". Committing is allowed only when the user asks for it.
+- **One feature or one coherent update per branch and per PR, no hurry.** Do not pile unrelated work into one branch. If the working tree mixes topics, stop and split it: stage by path (never `git add -A` across topics) and use a separate branch per topic. Leave changes that are not yours uncommitted and tell the user.
+- **Do not start a second feature on a branch that already has an open PR.** Branch from `main` (or ask what to stack on) instead.
+- **Branch names:** `feat/<slug>`, `fix/<slug>`, `art/<slug>`, `docs/<slug>`, `chore/<slug>`; briefs for workers use `task/<id>` (see `tasks/README.md`).
+- **Pull requests** use `.github/pull_request_template.md`: summary, scope, what changed, screenshots per feature, how to verify, risks and what was not verified. The title says what the PR does in one line; the body is English. Follow `docs/PR_WORKFLOW.md` for the screenshots.
+- A worker's result (`task/<id>` branch) is integrated by the lead through its own PR, one PR per brief or per coherent group the user approves.
