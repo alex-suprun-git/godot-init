@@ -17,6 +17,16 @@ from PIL import Image
 OUT = Path(__file__).resolve().parent
 SIZE = 256
 
+# Screen scale the features are sized for: pixels per metre at the 125 % zoom
+# (3.66 at the default zoom). Rule: the smallest intended detail covers >= 3 px.
+# Feature widths below were tuned at REFERENCE_PX_PER_M; changing PX_PER_M scales
+# them (a closer camera allows finer detail, a wider one needs coarser). Repeat
+# lengths stay in district_builder.gd (`metres` in _bridge_material).
+REFERENCE_PX_PER_M = 4.58
+PX_PER_M = 4.58
+MIN_DETAIL_M = 3.0 / PX_PER_M
+FEATURE = REFERENCE_PX_PER_M / PX_PER_M  # multiplier for tuned feature sizes in metres
+
 
 def noise(rng, cells, size=SIZE):
     """Tileable smooth noise in 0..1 with `cells` features across the tile."""
@@ -50,8 +60,8 @@ def concrete(rng):
     # Slab joints: 0.6 m dark soft bands every 4 m, both directions.
     joint = np.zeros((SIZE, SIZE))
     for c in (0.0, 4.0):
-        joint = np.maximum(joint, band(SIZE, tile_m, c, 0.5, 0.25)[:, None])
-        joint = np.maximum(joint, band(SIZE, tile_m, c, 0.5, 0.25)[None, :])
+        joint = np.maximum(joint, band(SIZE, tile_m, c, 0.5 * FEATURE, 0.25 * FEATURE)[:, None])
+        joint = np.maximum(joint, band(SIZE, tile_m, c, 0.5 * FEATURE, 0.25 * FEATURE)[None, :])
     img *= (1 - 0.38 * joint)[..., None]
     # Dirt: darker streaks running along one axis, ~1.5 m wide.
     dirt = noise(rng, 5)
@@ -68,11 +78,12 @@ def ballast(rng):
     warm = noise(rng, 4)
     img += (warm[..., None] - 0.5) * np.array([14.0, 3.0, -12.0])
     # Oily dark strip along the track axis (v direction) with soft sides.
-    img *= (1 - 0.35 * band(SIZE, tile_m, 3.0, 1.2, 0.7)[None, :, None])
+    img *= (1 - 0.35 * band(SIZE, tile_m, 3.0, 1.2 * FEATURE, 0.7 * FEATURE)[None, :, None])
     # Sleeper hint: dark bands across the track (along z = rows) every 1.5 m, 0.6 m wide.
     stripes = np.zeros(SIZE)
-    for c in np.arange(0.0, tile_m, 1.5):
-        stripes = np.maximum(stripes, band(SIZE, tile_m, c, 0.6, 0.2))
+    count = max(1, round(tile_m / (1.5 * FEATURE)))  # whole number of bands keeps the tile seamless
+    for c in np.arange(count) * tile_m / count:
+        stripes = np.maximum(stripes, band(SIZE, tile_m, c, 0.6 * FEATURE, 0.2 * FEATURE))
     img *= (1 - 0.30 * stripes)[:, None, None]
     return to_image(img)
 
