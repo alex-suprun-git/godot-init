@@ -18,7 +18,7 @@ Thumbs.db
 # Background task dispatch logs
 /tasks/logs/
 
-# Local review captures and logs (curated frames go to docs/pr-assets/)
+# Local review captures and logs (PR images are uploaded as GitHub attachments)
 /art/bridges/*/
 /art/bridges/*.log
 /art/bridges/materials.png
@@ -28,6 +28,11 @@ Thumbs.db
 /art/sidewalks/*.log
 /art/sidewalks/*.png
 /art/city_park/in-game-*.png
-# Local railway review captures; curated PR JPEGs live in docs/pr-assets/.
+# Local railway review captures; selected frames become GitHub PR attachments.
 art/railway/*.png
 art/models/public_transport/er2/previews/
+
+# Local PR media and generated optimizer reports. Existing tracked files remain tracked.
+/.local/
+/docs/pr-assets/
+/art/optimization_reports/

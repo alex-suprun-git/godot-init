@@ -56,7 +56,7 @@ Tokens are the scarcest resource; spend them on the result, not on ceremony.
 - Start a new chat per task. Long chats re-send the whole history, including every image, on each step.
 - Reuse existing frames before capturing new ones; if the frame you need does not exist, take it once with the narrowest `--only=` scenario and `--turbo`.
 - Look at no more than two or three images per task. Judge visuals from the default game camera, not from isolated tiles; a night, alternate-camera or material-preview frame is taken only when the change concerns it or the user asks.
-- Map screenshots and capture logs are not repository content: keep them in the scratchpad or an ignored folder (`art/bridges/`, `art/sidewalks/` and similar are in `.gitignore`). Only the three to six curated JPEGs per PR go to `docs/pr-assets/<slug>/`, as described in `docs/PR_WORKFLOW.md`.
+- Map screenshots and capture logs are not repository content: keep them in the scratchpad or an ignored folder (`art/bridges/`, `art/sidewalks/` and similar are in `.gitignore`). Upload selected PR images as GitHub attachments with `gh pr create/edit --attach`; keep prepared JPEGs in ignored `.local/pr-assets/<slug>/`. Do not commit new review images. Existing tracked `docs/pr-assets/` images stay until the separately authorized later cleanup; see `docs/PR_WORKFLOW.md`.
 - Documentation stays short: one section in one existing README per feature. No byte counts, no copied logs, no repeated status in several files.
 - Visual rules and art targets are written into docs only after the user has approved a live in-game example of them.
 
