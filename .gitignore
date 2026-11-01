@@ -22,3 +22,9 @@ Thumbs.db
 /art/bridges/*/
 /art/bridges/*.log
 /art/bridges/materials.png
+
+# Review captures of the sidewalk work and park (same policy as bridges)
+/art/sidewalks/*/
+/art/sidewalks/*.log
+/art/sidewalks/*.png
+/art/city_park/in-game-*.png
