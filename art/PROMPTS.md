@@ -1,5 +1,10 @@
 # Image Prompts: First Week
 
+## Railway track texture refresh (2026-11-01)
+
+- Built-in ImageGen edit of the existing G7 track texture, using bridge ballast as a material reference and a current Godot frame as map context. Preserved source: `art/source_images/railway/ground-rail-v2.png`; exact prompt: `art/source_images/railway/ground-rail-v2.prompt.md`.
+- The user requested refreshed 2D artwork within the maintained-city direction: intact timber, clearer steel running surfaces, reduced rust and vegetation, neutral grey-brown ballast. The old G7 wording below is historical provenance and is superseded for the current texture. Optimized copy replaces `init/assets/textures/ground_rail.png`; final appearance review is pending. Actual game frames, limitations and preparation record: `art/railway/README.md`.
+
 ## Compact station market concept (2026-11-01)
 
 - Current integrated revision: `art/source_images/market_hub/market_hub_v7.png` → `init/assets/sprites/market_hub_v7.png`. Exact revision prompts: `art/market_hub/REVISIONS.md`; current calibration and in-game review: `art/market_hub/README.md`. Implements user corrections to fencing, planting, relative sizes, station gap and the straight railway-side boundary; both tracks remain free.
