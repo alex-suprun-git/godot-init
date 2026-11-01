@@ -5,6 +5,7 @@ const MODELS := {
 	"lada": preload("res://assets/models/vehicles/lada_sedan_v2.glb"),
 	"lada_wagon": preload("res://assets/models/vehicles/lada_wagon.glb"),
 	"kamaz_semi": preload("res://assets/models/vehicles/truck_kamaz_semi.glb"),
+	"zil_food": preload("res://assets/models/vehicles/truck_zil_food.glb"),
 	"zil_flatbed": preload("res://assets/models/vehicles/truck_zil_flatbed.glb"),
 	"container_20ft": preload("res://assets/models/vehicles/container_20ft.glb"),
 }
@@ -26,7 +27,7 @@ const VOLGA_PAINTS := [
 const VOLGA_PAINT_WEIGHTS := [24, 22, 22, 17, 9, 6]
 const PAINT_BLACK := -2 # Only for the Volga: the traffic palette has no black.
 const BLACK_PAINT := Color(0.035, 0.035, 0.045)
-const LENGTHS := {"lada": 4.37, "lada_wagon": 4.37, "kamaz_semi": 16.5, "zil_flatbed": 7.4, "container_20ft": 6.06}
+const LENGTHS := {"lada": 4.37, "lada_wagon": 4.37, "kamaz_semi": 16.98521423, "zil_flatbed": 7.06033731, "zil_food": 7.15875745, "container_20ft": 6.06}
 # Tarpaulins, shipping containers and truck cabs have their own palettes.
 const TARP_PAINTS := [
 	Color(0.49, 0.48, 0.37), # khaki
@@ -65,6 +66,8 @@ static func has_volga_model() -> bool:
 
 # Map length in metres: every car keeps the Lada's 4.37 -> 4.3 scale factor.
 static func map_length(model_id: String) -> float:
+	if model_id in ["kamaz_semi", "zil_flatbed", "zil_food"]:
+		return _source_length(model_id) * LADA_MAP_LENGTH / float(LENGTHS["lada"])
 	if model_id == "volga" and has_volga_model():
 		return VOLGA_SOURCE_LENGTH * LADA_MAP_LENGTH / float(LENGTHS["lada"])
 	return LADA_MAP_LENGTH
@@ -89,7 +92,7 @@ static func _source_length(model_id: String) -> float:
 # model yet and run as cars until they do.
 static func model_for_class(vehicle_class: String, seed_value: int) -> String:
 	if vehicle_class == "truck":
-		return "kamaz_semi" if (abs(seed_value) >> 4) % 3 == 0 else "zil_flatbed"
+		return ["kamaz_semi", "zil_flatbed", "zil_food"][(abs(seed_value) >> 4) % 3]
 	return traffic_model(seed_value)
 
 

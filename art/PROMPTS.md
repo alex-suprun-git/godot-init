@@ -768,3 +768,9 @@ Built-in ImageGen created three square top-down material sources under `art/sour
 ## Bridge material textures (2026-11-01)
 
 Built-in ImageGen created `art/source_images/bridges/bridge-concrete-v1.png`, `bridge-ballast-v1.png` and `bridge-steel-v1.png`; exact prompts are in the adjacent `.prompt.md` files. All are opaque top-down materials, not complete bridge paintings. The user approved this direction and requested integration. Separately optimized surface-profile copies are `init/assets/textures/bridge_{concrete,ballast,steel}.png`; matching reports are under `art/optimization_reports/`. Actual world scale, material repeat inspection, game screenshots and remaining appearance review are recorded in `art/bridges/README.md`. No original source was altered.
+
+## Freight truck 3D upgrade (2026-11-01)
+
+Original procedural Blender geometry follows the three existing freight turnarounds above: shared rounded ZIL cab with food/coal bodies and KamAZ with a distinct blue container. The user positively reviewed the shown visual direction. No new image generation or raster integration was performed. Current source, Volga/ER2 scale calibration, measured exports and Godot review workflow: `art/models/traffic/README.md`.
+
+Retired freight sprites: the unused KamAZ sprite was removed from `init/`; the former coal ZIL sprite is preserved as `art/models/traffic/references/zil-coal-original-sprite.png`. The coal-event overlay now uses the same 3D ZIL as traffic. Historical prompt paths above describe the original generation, not current runtime dependencies.

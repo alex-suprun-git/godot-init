@@ -3,7 +3,6 @@ extends RefCounted
 
 const PROFILES := {
 	"bus_local_1997": {"width": 8.8, "axes": Vector2(0.42, -0.52), "height_scale": 0.82, "long_axis_positive": true},
-	"truck_kamaz_semi": {"width": 16.5, "axes": Vector2(0.53, -0.45), "height_scale": 0.85},
 	"car_lada_v3": {"width": 4.3, "axes": Vector2(0.48, -0.43), "height_scale": 0.78},
 	"car_volga_black_v3": {"width": 5.0, "axes": Vector2(0.48, -0.42), "height_scale": 0.78},
 	"bus_liaz": {"width": 9.0, "axes": Vector2(0.577, -0.37), "height_scale": 0.78},

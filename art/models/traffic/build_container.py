@@ -1,17 +1,9 @@
-"""Build the border-zone trucks and the shipping container, and export one GLB each.
-
-Run in the open Blender through the MCP client, e.g.
-  uv run --python 3.11 --script tools/blender_mcp.py run art/models/traffic/build_trucks.py
-or headless, without the addon:
-  /Applications/Blender.app/Contents/MacOS/Blender --background --python art/models/traffic/build_trucks.py
-
-Source units: metres. Front: -Y in Blender (+Z in Godot). Wheels rest on z = 0.
-Every vehicle is one root empty with one mesh per material, so a vehicle costs a
-handful of draw calls. The material named "... paint" is the one Godot recolours
-(VehicleModels._repaint). Original procedural geometry, no external assets.
+"""Standalone existing 20 ft port container; no obsolete truck geometry.
+Build source by default; pass -- --export to replace its independent GLB.
 """
 from pathlib import Path
 import json
+import sys
 import math
 import bpy
 import bmesh
@@ -22,9 +14,9 @@ SOURCE = PROJECT / 'art/models/traffic'
 EXPORT = PROJECT / 'init/assets/models/vehicles'
 EXPORT.mkdir(parents=True, exist_ok=True)
 
-SCENE_NAME = 'Trucks_Studio'
+SCENE_NAME = 'Container_Studio'
 if bpy.context.window is None:
-    # Headless: blender --background --python build_trucks.py. Work in the default scene.
+    # Headless: blender --background --python build_container.py. Work in the default scene.
     scene = bpy.context.scene
     for obj in list(scene.objects):
         bpy.data.objects.remove(obj, do_unlink=True)
@@ -108,86 +100,9 @@ class Vehicle:
         return root
 
 
-def wheel(v, x, y, radius=.5, width=.34, tire=None, hub=None):
-    side = 1 if x > 0 else -1
-    v.cylinder(tire, (x, y, radius), radius, width, 'X', 20)
-    v.cylinder(hub, (x + side * width * .52, y, radius), radius * .55, .05, 'X', 16)
-
-
-# --- Materials ---------------------------------------------------------------
-rubber = material('Truck - rubber', '1c1e1d', 0, .9)
 steel = material('Truck - steel', '8d8f89', .6, .45)
 dark = material('Truck - dark metal', '2b2d2c', .3, .6)
-glass = material('Truck - glass', '3a525e', .3, .2)
-lamp = material('Truck - lamp', 'd8d3b0', .1, .3)
-red_lamp = material('Truck - tail lamp', '8d2825', .1, .35)
-wood = material('Truck - weathered boards', '8a7554', 0, .85)
-strap = material('Truck - tarpaulin straps', '3d3f37', 0, .9)
-# Painted bodies: one material each, so they can be recoloured in Godot.
-cab_paint = material('KamAZ - cab paint', '4f6a4a', .15, .5)
-tarp_paint = material('KamAZ - tarpaulin paint', '7d7a5f', 0, .85)
-zil_paint = material('ZIL - cab paint', '3f5f7a', .15, .5)
 box_paint = material('Container - paint', '9b3d2c', .1, .6)
-
-
-def build_kamaz():
-    v = Vehicle('Truck_KamAZ_Semi')
-    # Tractor chassis and cab-over cab (front is -Y).
-    v.box(dark, (0, -4.6, .78), (1.1, 7.0, .3))
-    v.box(cab_paint, (0, -7.2, 1.95), (2.4, 2.1, 1.7))
-    v.box(cab_paint, (0, -7.15, 3.0), (2.3, 1.7, .4))
-    v.box(glass, (0, -8.27, 2.5), (2.0, .06, .8))
-    for sx in (-1, 1):
-        v.box(glass, (sx * 1.21, -7.3, 2.45), (.05, 1.1, .75))
-        v.box(lamp, (sx * .85, -8.27, 1.45), (.34, .06, .22))
-        v.box(dark, (sx * 1.3, -8.0, 2.2), (.12, .3, .8))  # mirror arm
-    v.box(dark, (0, -8.3, 1.2), (1.2, .08, .5))  # grille
-    v.box(dark, (0, -8.38, .75), (2.45, .3, .28))  # bumper
-    v.box(dark, (0, -1.8, 1.05), (1.7, 1.3, .16))  # fifth wheel
-    v.cylinder(dark, (1.0, -8.25, 3.35), .07, .3, 'Z', 8)  # exhaust stack stand-in
-    # Semi-trailer with a tilt (tarpaulin) body.
-    v.box(dark, (0, 3.3, 1.12), (2.4, 9.7, .3))
-    v.box(tarp_paint, (0, 3.3, 2.55), (2.5, 9.6, 2.5))
-    v.box(tarp_paint, (0, 3.3, 3.85), (2.3, 9.4, .12))
-    for y in (-0.6, 1.2, 3.0, 4.8, 6.6, 8.0):
-        v.box(strap, (0, y, 2.55), (2.54, .1, 2.54))
-    v.box(dark, (0, 8.15, 1.0), (2.2, .08, .3))
-    for sx in (-1, 1):
-        v.box(red_lamp, (sx * .95, 8.12, 1.2), (.25, .05, .18))
-    # Axles: steered front, drive tandem, trailer tandem.
-    for y in (-6.8, -3.3, -1.9, 5.6, 7.0):
-        wheel(v, -1.05, y, tire=rubber, hub=steel)
-        wheel(v, 1.05, y, tire=rubber, hub=steel)
-    for y in (-3.3, -1.9):  # duals on the drive axles
-        wheel(v, -1.42, y, tire=rubber, hub=steel)
-        wheel(v, 1.42, y, tire=rubber, hub=steel)
-    return v
-
-
-def build_zil():
-    v = Vehicle('Truck_ZIL_Flatbed')
-    v.box(dark, (0, -.2, .8), (1.1, 6.3, .28))
-    v.box(zil_paint, (0, -2.95, 1.15), (1.9, 1.25, 1.0))  # long hood
-    v.box(zil_paint, (0, -1.75, 1.85), (2.3, 1.5, 1.7))  # cab
-    v.box(glass, (0, -2.52, 2.1), (1.9, .05, .75))
-    for sx in (-1, 1):
-        v.box(glass, (sx * 1.16, -1.8, 2.1), (.05, 1.0, .7))
-        v.box(lamp, (sx * .65, -3.58, 1.2), (.32, .06, .28))
-        v.box(dark, (sx * 1.0, -3.0, .62), (.5, 1.3, .1))  # wings
-    v.box(dark, (0, -3.62, .75), (2.1, .2, .22))
-    v.box(dark, (0, -3.6, 1.1), (.9, .06, .5))
-    v.box(wood, (0, 1.75, 1.0), (2.4, 4.0, .16))
-    for sx in (-1, 1):
-        v.box(wood, (sx * 1.2, 1.75, 1.35), (.08, 4.0, .6))
-    v.box(wood, (0, -.2, 1.35), (2.4, .08, .6))
-    v.box(wood, (0, 3.72, 1.35), (2.4, .08, .6))
-    v.box(red_lamp, (-.9, 3.78, .9), (.2, .05, .16))
-    v.box(red_lamp, (.9, 3.78, .9), (.2, .05, .16))
-    for y in (-2.5, 1.9):
-        wheel(v, -1.0, y, radius=.52, width=.3, tire=rubber, hub=steel)
-        wheel(v, 1.0, y, radius=.52, width=.3, tire=rubber, hub=steel)
-    return v
-
 
 def build_container():
     v = Vehicle('Shipping_Container_20ft')
@@ -229,15 +144,14 @@ def export(root, filename):
                               export_animations=False, export_cameras=False, export_lights=False)
 
 
-collection = bpy.data.collections.new('Trucks - export')
+collection = bpy.data.collections.new('Container - export')
 scene.collection.children.link(collection)
 report = {}
-for builder, filename, offset in ((build_kamaz, 'truck_kamaz_semi.glb', -9.0),
-                                  (build_zil, 'truck_zil_flatbed.glb', 0.0),
-                                  (build_container, 'container_20ft.glb', 7.0)):
+for builder, filename, offset in ((build_container, 'container_20ft.glb', 0.0),):
     vehicle = builder()
     root = vehicle.finish(collection)
-    export(root, filename)
+    if '--export' in sys.argv:
+        export(root, filename)
     report[filename] = {'triangles': root['triangles'], 'materials': list(vehicle.parts.keys())}
     root.location = (offset, 0, 0)  # lay them side by side for the preview only
 
@@ -252,11 +166,11 @@ light = bpy.data.objects.new('Sun', bpy.data.lights.new('Sun', 'SUN'))
 light.data.energy = 3
 light.rotation_euler = (math.radians(50), 0, math.radians(35))
 scene.collection.objects.link(light)
-world = bpy.data.worlds.new('Trucks world')
+world = bpy.data.worlds.new('Container world')
 world.use_nodes = True
 next(n for n in world.node_tree.nodes if n.type == 'BACKGROUND').inputs['Color'].default_value = (.3, .35, .4, 1)
 scene.world = world
 
-(SOURCE / 'trucks_report.json').write_text(json.dumps(report, indent=2) + '\n')
-bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE / 'trucks.blend'))
+(SOURCE / 'container_report.json').write_text(json.dumps(report, indent=2) + '\n')
+bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE / 'container.blend'))
 print(json.dumps(report))

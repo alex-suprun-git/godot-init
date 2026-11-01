@@ -58,8 +58,6 @@ const ANCHORS := {
 	"tree_poplar_october": {"anchor": Vector2(0.504, 0.986), "slope": 0.18},
 	"tree_poplar_september": {"anchor": Vector2(0.502, 0.986), "slope": 0.27},
 	"tree_poplar_winter": {"anchor": Vector2(0.502, 0.988), "slope": 0.30},
-	"truck_kamaz_semi": {"anchor": Vector2(0.503, 0.756), "slope": -0.44},
-	"truck_zil_plain": {"anchor": Vector2(0.508, 0.804), "slope": -0.30},
 	"van_uaz_police": {"anchor": Vector2(0.505, 0.817), "slope": 0.31},
 	"village_house_abandoned": {"anchor": Vector2(0.504, 0.881), "slope": -0.04},
 	"village_house_kept": {"anchor": Vector2(0.511, 0.900), "slope": -0.01},

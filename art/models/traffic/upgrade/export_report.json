@@ -1,0 +1,71 @@
+{
+  "truck_zil_food.glb": {
+    "min": [
+      -1.525815486907959,
+      -3.543118715286255,
+      0.0
+    ],
+    "max": [
+      1.525815486907959,
+      3.6156387329101562,
+      3.049999952316284
+    ],
+    "length": 7.158757448196411,
+    "width": 3.051630973815918,
+    "height": 3.049999952316284,
+    "triangles": 5172,
+    "mesh_objects": 1,
+    "materials": [
+      "Truck cargo.001",
+      "Truck mechanical and trim.001",
+      "Truck opaque glass.001",
+      "ZIL_Food cab paint.001"
+    ]
+  },
+  "truck_zil_flatbed.glb": {
+    "min": [
+      -1.525815486907959,
+      -3.543118715286255,
+      0.0
+    ],
+    "max": [
+      1.525815486907959,
+      3.517218589782715,
+      2.9800000190734863
+    ],
+    "length": 7.06033730506897,
+    "width": 3.051630973815918,
+    "height": 2.9800000190734863,
+    "triangles": 6693,
+    "mesh_objects": 1,
+    "materials": [
+      "Truck cargo.002",
+      "Truck mechanical and trim.002",
+      "Truck opaque glass.002",
+      "ZIL_Coal cab paint.001"
+    ]
+  },
+  "truck_kamaz_semi.glb": {
+    "min": [
+      -1.525815486907959,
+      -8.521097183227539,
+      0.0
+    ],
+    "max": [
+      1.525815486907959,
+      8.464117050170898,
+      3.9885001182556152
+    ],
+    "length": 16.985214233398438,
+    "width": 3.051630973815918,
+    "height": 3.9885001182556152,
+    "triangles": 12796,
+    "mesh_objects": 1,
+    "materials": [
+      "KamAZ cab paint.001",
+      "Truck cargo.003",
+      "Truck mechanical and trim.003",
+      "Truck opaque glass.003"
+    ]
+  }
+}
