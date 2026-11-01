@@ -1,5 +1,9 @@
 # Image Prompts: First Week
 
+## Northern wheat field (2026-11-01)
+
+- Built-in ImageGen map edit `art/source_images/wheat_field/direction-v1.png` was approved by the user. Derived production source: `ground-wheat-v1.png`; exact generation prompts are adjacent to both images. The separately optimized surface is integrated as `init/assets/textures/ground_wheat.png`. Implementation, preparation record and Godot verification: `art/source_images/wheat_field/README.md`. The user accepted the in-game result on 2026-11-01.
+
 ## Railway track texture refresh (2026-11-01)
 
 - Built-in ImageGen edit of the existing G7 track texture, using bridge ballast as a material reference and a current Godot frame as map context. Preserved source: `art/source_images/railway/ground-rail-v2.png`; exact prompt: `art/source_images/railway/ground-rail-v2.prompt.md`.

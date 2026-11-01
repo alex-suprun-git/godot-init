@@ -15,6 +15,7 @@ const SCENARIOS := {
 	"crosswalks": "_run_crosswalk_review",
 	"traffic-lights": "_run_traffic_light_review",
 	"render-cost": "_run_render_cost",
+	"field": "_run_field_review",
 }
 const FULL_RUN := ["office", "map", "week"]
 
@@ -432,3 +433,11 @@ func _run_traffic_light_review() -> void:
 	first.set_signal("red_amber")
 	await _map_shot("signal_detail_night_red_amber", at, 28.0)
 	first.set_signal("off")
+
+
+func _run_field_review() -> void:
+	_dismiss_briefing()
+	# Compare surfaces in daylight: 07:00 is still dark in the winter preview.
+	main.map._debug_hour = 12.0
+	await _map_shot("field_context", Vector2(205, -132), 460.0)
+	await _map_shot("field_roadside", Vector2(205, -132), 180.0)

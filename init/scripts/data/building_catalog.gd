@@ -49,6 +49,7 @@ const CONTENTS := {
 		{"sprite": "garbage_pile", "at": Vector2(-20, 12), "width": 7.0, "footprint": Vector2(7, 4)},
 		{"sprite": "garbage_pile", "at": Vector2(23, -14), "width": 5.0, "footprint": Vector2(5, 3)},
 	]},
+	"wheat_field": {"kind": "wheat_field", "ground": "grass", "label": "Пшеничное поле", "dressing": []},
 	"empty_lot": {"kind": "open", "footprint": Vector2.ZERO, "ground": "grass", "label": "Свободный участок", "dressing": []},
 	"ispolkom": {
 		# Lot centre is the square; the unchanged building sits at its eastern end.

@@ -17,7 +17,7 @@ const LOTS := {
 	"fuel_depot": {"type": "X", "rect": Rect2(300, -320, 95, 120), "content": "fuel_depot", "condition": "worked", "facing": "s"},
 	"boiler": {"type": "X", "rect": Rect2(-430, -170, 100, 75), "content": "boiler_house", "condition": "worked", "facing": "s"},
 	"garages": {"type": "G", "rect": Rect2(-320, -170, 290, 75), "content": "garages", "condition": "worked", "facing": "s"},
-	"reserve": {"type": "R", "rect": Rect2(15, -170, 380, 75), "content": "wasteland", "condition": "abandoned", "facing": "s"},
+	"reserve": {"type": "R", "rect": Rect2(15, -174.5, 420, 79), "content": "wheat_field", "condition": "kept", "facing": "s"},
 	"a1_n": {"type": "W", "rect": Rect2(-337.8, -75.28, 90, 24), "content": "panel_5", "condition": "kept", "facing": "s"},
 	"a1_s": {"type": "W", "rect": Rect2(-337.8, 58.48, 90, 24), "content": "panel_5", "condition": "kept", "facing": "n"},
 	"a1_w": {"type": "W", "rect": Rect2(-380.48, -41.4, 24, 90), "content": "panel_9", "condition": "kept", "facing": "e"},
@@ -186,13 +186,13 @@ const DISTRICTS := {
 	},
 	"service": {
 		"name": "Service belt",
-		"rects": [Rect2(-440, -172, 835, 80)],
+		"rects": [Rect2(-440, -174.5, 875, 82.5)],
 		"residents": 20, "foot": 0.2, "cars": 0.5,
 		"fleet": {"car": 0.5, "truck": 0.3, "tractor": 0.2}, "hours": "office",
 		"subzones": {
 			"boiler_house": {"rect": Rect2(-430, -170, 100, 75), "foot": 0.3, "fleet": {"truck": 0.6, "car": 0.4}},
 			"garage_coop": {"rect": Rect2(-320, -170, 290, 75), "foot": 0.5, "cars": 0.8, "fleet": {"car": 1.0}, "hours": "commute"},
-			"wasteland": {"rect": Rect2(15, -170, 380, 75), "foot": 0.05, "cars": 0.1, "fleet": {"tractor": 0.7, "car": 0.3}},
+			"wheat_field": {"rect": LOTS["reserve"]["rect"], "foot": 0.05, "cars": 0.1, "fleet": {"tractor": 0.7, "car": 0.3}},
 		},
 	},
 	"panel_housing": {
