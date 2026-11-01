@@ -14,19 +14,33 @@ const CAR_KINDS := ["asphalt"]
 const CROWD_CAP := 2.0
 const MIN_DENSITY := 0.02
 const VISIBILITY_PER_FRAME := 48
+# Fast roads slow to town speed at junctions: full town speed within SLOW_NEAR metres
+# of the junction, rising to the road's speed over the next SLOW_RAMP metres.
+const JUNCTION_SLOW_NEAR := 12.0
+const JUNCTION_SLOW_RAMP := 50.0
+const SPEED_EASE_SECONDS := 1.5 # A car takes this long to change between road speed classes.
 
 var agents: Array[Dictionary] = []
 var hour := 12.0 # Clock hour, set by the view; decides who is out and about.
 
+var stats := {"exits": {}, "arrivals": {}} # Per gateway id; read by the --traffic-debug print.
+
 var _graph: RoadGraph
+var _gateways: Array[Dictionary] = []
+var _gateway_at_node := {} # graph node -> index into _gateways
 var _foot_graph := PedestrianGraph.new()
 var _rng := RandomNumberGenerator.new()
 var _cursor := 0
 
 
-func _init(graph: RoadGraph, seed_value: int) -> void:
+func _init(graph: RoadGraph, seed_value: int, gateways: Array[Dictionary] = []) -> void:
 	_graph = graph
 	_rng.seed = seed_value
+	_gateways = gateways
+	for i in gateways.size():
+		_gateway_at_node[gateways[i]["node"]] = i
+		stats["exits"][gateways[i]["id"]] = 0
+		stats["arrivals"][gateways[i]["id"]] = 0
 
 
 # Agents start on edges picked by length times district density, so crowded districts
@@ -48,7 +62,11 @@ func add(is_car: bool, speed: float) -> Dictionary:
 		"along": _rng.randf() * graph.edges[edge]["length"],
 		"side": 1.0 if is_car or _rng.randf() < 0.5 else -1.0,
 		"lateral": 0.0, "pos": Vector2.ZERO, "heading": Vector2.RIGHT, "visual": null,
-		"threshold": _rng.randf(), "visible": true, "class": _vehicle_class(edge) if is_car else "",
+		"speed_scale": 1.0, "threshold": _rng.randf(), "visible": true, "class": _fleet_class(_edge_middle(edge)) if is_car else "",
+		# Cars only: "graph" (on the roads), "out" (driving into the haze), "wait" (a slot
+		# with no car on the map) or "in" (arriving from the haze). Walkers stay "graph".
+		"state": "graph", "gateway": -1, "leg_from": Vector2.ZERO, "leg_dir": Vector2.ZERO,
+		"leg_len": 0.0, "wait": 0.0, "respawned": false,
 	}
 	agents.append(agent)
 	_place(agent, 1.0)
@@ -61,16 +79,150 @@ func add(is_car: bool, speed: float) -> Dictionary:
 func step(delta: float) -> void:
 	_refresh_visibility()
 	for agent in agents:
-		var graph = agent["graph"]
-		agent["along"] += agent["speed"] * delta
-		var edge: Dictionary = graph.edges[agent["edge"]]
-		while agent["along"] >= edge["length"]:
-			agent["along"] -= edge["length"]
-			var node: int = graph.other_end(agent["edge"], agent["from"])
-			agent["edge"] = _next_edge(agent, node)
-			agent["from"] = node
-			edge = graph.edges[agent["edge"]]
-		_place(agent, delta)
+		match agent["state"]:
+			"wait":
+				agent["wait"] -= delta
+				if agent["wait"] <= 0.0:
+					_enter(agent)
+			"out", "in":
+				_step_leg(agent, delta)
+			_:
+				_step_graph(agent, delta)
+
+
+func _step_graph(agent: Dictionary, delta: float) -> void:
+	var graph = agent["graph"]
+	var edge: Dictionary = graph.edges[agent["edge"]]
+	if agent["is_car"]:
+		# Highways run faster than town streets; ease so a turn does not jerk the car.
+		agent["speed_scale"] = move_toward(agent["speed_scale"], _wanted_speed(agent), delta / SPEED_EASE_SECONDS)
+	agent["along"] += agent["speed"] * agent["speed_scale"] * delta
+	while agent["along"] >= edge["length"]:
+		agent["along"] -= edge["length"]
+		var node: int = graph.other_end(agent["edge"], agent["from"])
+		if agent["is_car"] and _gateway_at_node.has(node):
+			_begin_exit(agent, _gateway_at_node[node])
+			return
+		agent["edge"] = _next_edge(agent, node)
+		agent["from"] = node
+		edge = graph.edges[agent["edge"]]
+	_place(agent, delta)
+
+
+func _road_speed(edge: int) -> float:
+	var road: int = _graph.edges[edge]["road"]
+	return float(DistrictLayout.ROADS[road].get("speed", 1.0)) if road >= 0 else 1.0
+
+
+# The road's speed, eased down to town speed approaching or leaving a junction; the
+# open ends of a road (gateways) keep the full speed.
+func _wanted_speed(agent: Dictionary) -> float:
+	var fast := _road_speed(agent["edge"])
+	if fast <= 1.0:
+		return fast
+	var edge: Dictionary = _graph.edges[agent["edge"]]
+	var to_start: float = agent["along"]
+	var to_end: float = float(edge["length"]) - to_start
+	var near := INF
+	for end in [[edge["a"], to_start if agent["from"] == edge["a"] else to_end], [edge["b"], to_end if agent["from"] == edge["a"] else to_start]]:
+		if not _gateway_at_node.has(end[0]):
+			near = minf(near, end[1])
+	if near == INF:
+		return fast
+	return lerpf(1.0, fast, clampf((near - JUNCTION_SLOW_NEAR) / JUNCTION_SLOW_RAMP, 0.0, 1.0))
+
+
+# The car reached the map edge: it carries on in a straight line into the haze.
+func _begin_exit(agent: Dictionary, gateway: int) -> void:
+	var gate: Dictionary = _gateways[gateway]
+	agent["state"] = "out"
+	agent["gateway"] = gateway
+	agent["leg_from"] = gate["point"]
+	agent["leg_dir"] = gate["out"]
+	agent["leg_len"] = gate["leg_length"]
+	_place_leg(agent, 1.0)
+
+
+func _step_leg(agent: Dictionary, delta: float) -> void:
+	var gate: Dictionary = _gateways[agent["gateway"]]
+	agent["speed_scale"] = move_toward(agent["speed_scale"], _road_speed(gate["edge"]), delta / SPEED_EASE_SECONDS)
+	agent["along"] += agent["speed"] * agent["speed_scale"] * delta
+	if agent["along"] < agent["leg_len"]:
+		_place_leg(agent, delta)
+		return
+	if agent["state"] == "out":
+		_park(agent)
+		return
+	# Arrived: join the graph at the gateway, heading into town.
+	agent["along"] -= agent["leg_len"]
+	agent["state"] = "graph"
+	agent["edge"] = gate["edge"]
+	agent["from"] = gate["node"]
+	_step_graph(agent, 0.0)
+
+
+# Position along the straight leg; the car keeps to its right-hand lane, so the join
+# with the road graph is continuous.
+func _place_leg(agent: Dictionary, delta: float) -> void:
+	var gate: Dictionary = _gateways[agent["gateway"]]
+	var half: float = _graph.edges[gate["edge"]]["half"]
+	var target := clampf(half * 0.35, 1.5, 4.0)
+	agent["target_lateral"] = target
+	agent["lateral"] = move_toward(agent["lateral"], target, 4.0 * delta)
+	var heading: Vector2 = agent["leg_dir"]
+	var right := Vector2(-heading.y, heading.x)
+	agent["pos"] = agent["leg_from"] + heading * agent["along"] + right * agent["lateral"]
+	agent["heading"] = heading
+
+
+# The slot is empty now: nothing exists until it is reused.
+func _park(agent: Dictionary) -> void:
+	agent["state"] = "wait"
+	agent["visible"] = false
+	agent["wait"] = _rng.randf_range(2.0, 5.0)
+	stats["exits"][_gateways[agent["gateway"]]["id"]] += 1
+
+
+# A car arrives from the haze through a gateway that is busy at this hour, preferably
+# not the one the previous car left by.
+func _enter(agent: Dictionary) -> void:
+	var weights := PackedFloat32Array()
+	var total := 0.0
+	var other_total := 0.0
+	for i in _gateways.size():
+		var weight: float = DistrictLayout.crowd_at(_gateways[i]["sample"], int(hour), true)
+		weights.append(weight)
+		total += weight
+		if i != agent["gateway"]:
+			other_total += weight
+	if other_total > 0.0:
+		weights[agent["gateway"]] = 0.0
+		total = other_total
+	if total <= 0.0:
+		agent["wait"] = 1.0
+		return
+	var roll := _rng.randf() * total
+	var chosen := weights.size() - 1
+	for i in weights.size():
+		roll -= weights[i]
+		if roll <= 0.0 and weights[i] > 0.0:
+			chosen = i
+			break
+	var gate: Dictionary = _gateways[chosen]
+	agent["gateway"] = chosen
+	agent["class"] = _fleet_class(gate["sample"])
+	agent["threshold"] = _rng.randf()
+	agent["state"] = "in"
+	agent["leg_from"] = gate["point"] + gate["out"] * gate["leg_length"]
+	agent["leg_dir"] = -gate["out"]
+	agent["leg_len"] = gate["leg_length"]
+	agent["along"] = 0.0
+	agent["speed_scale"] = _road_speed(gate["edge"])
+	agent["lateral"] = clampf(float(_graph.edges[gate["edge"]]["half"]) * 0.35, 1.5, 4.0)
+	agent["respawned"] = true
+	stats["arrivals"][gate["id"]] += 1
+	_place_leg(agent, 1.0)
+	_update_visibility(agent)
 
 
 # Each pool stays on its own network: pavements/crossings for walkers, asphalt for cars.
@@ -134,10 +286,12 @@ func _pick(options: Array[int], is_car: bool, by_length: bool, graph) -> int:
 	return options[options.size() - 1]
 
 
-func _vehicle_class(edge: int) -> String:
-	var graph = _graph
-	var middle: Vector2 = (graph.points[graph.edges[edge]["a"]] + graph.points[graph.edges[edge]["b"]]) / 2.0
-	var fleet: Dictionary = DistrictLayout.profile_at(middle)["fleet"]
+func _edge_middle(edge: int) -> Vector2:
+	return (_graph.points[_graph.edges[edge]["a"]] + _graph.points[_graph.edges[edge]["b"]]) / 2.0
+
+
+func _fleet_class(point: Vector2) -> String:
+	var fleet: Dictionary = DistrictLayout.profile_at(point)["fleet"]
 	var total := 0.0
 	for weight in fleet.values():
 		total += weight
@@ -153,10 +307,15 @@ func _vehicle_class(edge: int) -> String:
 # are at right now (district density times the hour profile); a vehicle class that the
 # district does not run (a truck among panel blocks) stays out of sight.
 func _update_visibility(agent: Dictionary) -> void:
-	var level := DistrictLayout.crowd_at(agent["pos"], int(hour), agent["is_car"]) / CROWD_CAP
+	if agent["state"] == "wait":
+		agent["visible"] = false
+		return
+	# On a leg the car is outside the districts: judge it where the gateway meets the map.
+	var at: Vector2 = agent["pos"] if agent["state"] == "graph" else _gateways[agent["gateway"]]["sample"]
+	var level := DistrictLayout.crowd_at(at, int(hour), agent["is_car"]) / CROWD_CAP
 	var shown: bool = agent["threshold"] < level
 	if shown and agent["is_car"]:
-		var fleet: Dictionary = DistrictLayout.profile_at(agent["pos"])["fleet"]
+		var fleet: Dictionary = DistrictLayout.profile_at(at)["fleet"]
 		shown = fleet.get(agent["class"], 0.0) > 0.04
 	agent["visible"] = shown
 

@@ -56,6 +56,76 @@ static func rail_continuations() -> Array[Array]:
 	return result
 
 
+# Where ambient cars leave and enter the map. "end" is which end of the road's
+# centerline ("lo" = west/north, "hi" = east/south); "side" picks the haze fade.
+const GATEWAYS := [
+	{"id": "highway_w", "road": "highway", "end": "lo", "side": "w"},
+	{"id": "highway_e", "road": "highway", "end": "hi", "side": "e"},
+	{"id": "north_street_w", "road": "north_street", "end": "lo", "side": "w"},
+	{"id": "north_street_e", "road": "north_street", "end": "hi", "side": "e"},
+	{"id": "south_street_w", "road": "south_street", "end": "lo", "side": "w"},
+	{"id": "south_street_e", "road": "south_street", "end": "hi", "side": "e"},
+	{"id": "border_bridge", "road": "axis", "end": "lo", "side": "n"},
+]
+const NODE_TOLERANCE := 0.5
+const ENTRY_SAMPLE_DISTANCE := 30.0
+
+
+# Finds each gateway's terminal graph node and the one asphalt edge that leaves it.
+# Entries: {id, node, edge, point, out (unit, off-map), leg_length, sample}. A gateway
+# that does not resolve cleanly is reported and skipped.
+static func resolve(graph) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for gateway in GATEWAYS:
+		var rect := Rect2()
+		var found := false
+		for road in Layout.ROADS:
+			if road.get("id", "") == gateway["road"]:
+				rect = road["rect"]
+				found = true
+		if not found:
+			push_warning("map gateway %s: road %s not found" % [gateway["id"], gateway["road"]])
+			continue
+		var horizontal := rect.size.x > rect.size.y
+		var lo: bool = gateway["end"] == "lo"
+		var point: Vector2
+		var out: Vector2
+		if horizontal:
+			point = Vector2(rect.position.x if lo else rect.end.x, rect.get_center().y)
+			out = Vector2.LEFT if lo else Vector2.RIGHT
+		else:
+			point = Vector2(rect.get_center().x, rect.position.y if lo else rect.end.y)
+			out = Vector2.UP if lo else Vector2.DOWN
+		var node := -1
+		for i in graph.points.size():
+			if graph.points[i].distance_to(point) <= NODE_TOLERANCE:
+				node = i
+				break
+		if node < 0:
+			push_warning("map gateway %s: no graph node near %s" % [gateway["id"], point])
+			continue
+		var asphalt: Array[int] = []
+		for candidate in graph.adjacent_edges(node):
+			if graph.edges[candidate]["kind"] == "asphalt":
+				asphalt.append(candidate)
+		if asphalt.size() != 1:
+			push_warning("map gateway %s: %d asphalt edges at the end node (need exactly 1)" % [gateway["id"], asphalt.size()])
+			continue
+		result.append({
+			"id": gateway["id"], "node": node, "edge": asphalt[0], "point": point, "out": out,
+			"leg_length": distance_to_clear_edge(point, out) + handoff_distance(gateway["side"]),
+			"sample": point - out * ENTRY_SAMPLE_DISTANCE,
+		})
+	return result
+
+
+# Metres from a point to the border of the clear area, going along `direction`.
+static func distance_to_clear_edge(point: Vector2, direction: Vector2) -> float:
+	var edge := INNER.position.x if direction.x < 0.0 else (INNER.end.x if direction.x > 0.0 else (INNER.position.y if direction.y < 0.0 else INNER.end.y))
+	var here := point.x if direction.x != 0.0 else point.y
+	return maxf((edge - here) * (direction.x if direction.x != 0.0 else direction.y), 0.0)
+
+
 # Warns about authored content that would sit under the haze.
 static func validate() -> PackedStringArray:
 	var problems := PackedStringArray()

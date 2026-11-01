@@ -646,12 +646,14 @@ func _build_embankment() -> void:
 	var top: float = e["top"]
 	var peak: float = e["height"]
 	var gap: float = e["gap"]
+	var gaps: Dictionary = e.get("gaps", {})
 	# Stations along z: the ends of the ramps, and the two edges of every tunnel.
 	var spans: Array[Vector2] = []
 	var cursor := float(e["from"])
 	var cuts: Array[Vector2] = []
 	for z in e["tunnels"]:
-		cuts.append(Vector2(z - gap / 2.0, z + gap / 2.0))
+		var half: float = float(gaps.get(z, gap)) / 2.0
+		cuts.append(Vector2(z - half, z + half))
 	for cut in cuts:
 		spans.append(Vector2(cursor, cut.x))
 		cursor = cut.y

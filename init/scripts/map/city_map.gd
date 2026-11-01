@@ -7,6 +7,7 @@ const BuildingCatalog = preload("res://scripts/data/building_catalog.gd")
 const DistrictBuilder = preload("res://scripts/map/district_builder.gd")
 const Daylight = preload("res://scripts/map/daylight.gd")
 const MapEdges = preload("res://scripts/map/map_edges.gd")
+const MapBoundaries = preload("res://scripts/data/map_boundaries.gd")
 const LIT_FACADE := preload("res://assets/shaders/lit_facade.gdshader")
 const Week1 = preload("res://scripts/data/week1.gd")
 const Settings = preload("res://scripts/data/settings.gd")
@@ -166,6 +167,9 @@ var _night_hour := -1.0 # While the night plays between days: the hour shown (22
 var _debug_hour := -1.0 # Dev: --hour=18.5 pins the clock for lighting checks.
 var _weather: CPUParticles3D # Snow or falling leaves, following the camera.
 var _edges: Node3D # Full-screen haze that hides the map edges.
+var _gateways: Array[Dictionary] = [] # Where ambient cars leave and enter the map.
+var _traffic_look := RandomNumberGenerator.new() # Model and paint of cars that re-enter the map.
+var _traffic_debug_clock := 0.0
 
 
 func setup(week_sim) -> void:
@@ -547,9 +551,14 @@ func _build_boiler_states(center: Vector2, entry: Dictionary) -> void:
 
 
 # Parked cars follow road geometry; site-specific vehicles are catalog dressing.
+# Parked cars keep clear of junctions by this many metres beyond the crossing road's edge.
+const PARKING_CLEARANCE := 25.0
+
+
 func _build_traffic() -> void:
 	for road in DistrictLayout.ROADS:
-		if road["kind"] != "asphalt":
+		# No parking on the highway at all.
+		if road["kind"] != "asphalt" or road.get("look", "") == "highway":
 			continue
 		var rect: Rect2 = road["rect"]
 		var along_x := rect.size.x > rect.size.y
@@ -557,9 +566,25 @@ func _build_traffic() -> void:
 		for i in range(1, int(length / 100.0)):
 			# A car's centre sits 0.95 m inside the road edge: parked at the kerb.
 			var at := rect.position + (Vector2(i * 100, rect.size.y - 0.95) if along_x else Vector2(rect.size.x - 0.95, i * 100))
+			if _near_junction(road, at, along_x):
+				continue
 			var look := i * 5 + int(length) + i * 977
 			var model := VehicleModels.traffic_model(look)
 			_vehicle(model, _ground(at) + Vector3.UP * 0.14, VehicleModels.map_length(model), "x" if along_x else "z", null, look)
+
+
+# True when a parking spot lies within PARKING_CLEARANCE of a road crossing or joining this one.
+func _near_junction(road: Dictionary, at: Vector2, along_x: bool) -> bool:
+	var rect: Rect2 = road["rect"]
+	for other in DistrictLayout.ROADS:
+		var crossing: Rect2 = other["rect"]
+		if other == road or along_x == (crossing.size.x > crossing.size.y) or not rect.intersects(crossing.grow(0.1)):
+			continue
+		var distance := absf(at.x - crossing.get_center().x) if along_x else absf(at.y - crossing.get_center().y)
+		var half := crossing.size.x / 2.0 if along_x else crossing.size.y / 2.0
+		if distance < half + PARKING_CLEARANCE:
+			return true
+	return false
 
 
 # Pavements are derived from the roads: a strip on each side, cut wherever another
@@ -949,7 +974,13 @@ const AMBIENT_CARS := 130
 
 
 func _build_ambient() -> void:
-	_ambient = AmbientLife.new(sim.graph, 1997)
+	_gateways = MapBoundaries.resolve(sim.graph)
+	_ambient = AmbientLife.new(sim.graph, 1997, _gateways)
+	_traffic_look.seed = 7070
+	if OS.get_cmdline_user_args().has("--traffic-debug"):
+		print("map gateways resolved: %d / %d" % [_gateways.size(), MapBoundaries.GATEWAYS.size()])
+		for gateway in _gateways:
+			print("  %s node %d edge %d at %s out %s leg %.0f m sample %s" % [gateway["id"], gateway["node"], gateway["edge"], gateway["point"], gateway["out"], gateway["leg_length"], gateway["sample"]])
 	# Their own RNG: the look of background life must not shift the trees built later.
 	var look := RandomNumberGenerator.new()
 	look.seed = 2026
@@ -973,14 +1004,18 @@ func _build_ambient() -> void:
 func _move_ambient(delta: float) -> void:
 	_ambient.hour = sim.clock_hour()
 	_ambient.step(delta)
+	if OS.get_cmdline_user_args().has("--traffic-debug"):
+		_print_traffic_stats(delta)
 	var right := _view_right()
 	for agent in _ambient.agents:
 		var at: Vector2 = agent["pos"]
 		var heading: Vector2 = agent["heading"]
 		if agent["is_car"]:
+			if agent["respawned"]:
+				_respawn_car(agent)
 			var car: Node3D = agent["visual"]
 			car.visible = agent["visible"]
-			car.position = Vector3(at.x, 0.14, at.y)
+			car.position = Vector3(at.x, _ground(at).y + 0.14, at.y)
 			car.rotation.y = lerp_angle(car.rotation.y, atan2(heading.x, heading.y), minf(1.0, delta * 6.0))
 		else:
 			var sprite: Sprite3D = agent["visual"]
@@ -988,6 +1023,36 @@ func _move_ambient(delta: float) -> void:
 			sprite.position = Vector3(at.x, agent["lift"], at.y)
 			# Face the way they walk as seen on screen.
 			sprite.flip_h = heading.x * right.x + heading.y * right.z < 0.0
+
+
+# A slot that re-entered the map gets a new car: the class follows the entry road's fleet.
+func _respawn_car(agent: Dictionary) -> void:
+	agent["respawned"] = false
+	agent["visual"].queue_free()
+	var seed_value := _traffic_look.randi()
+	var model := VehicleModels.model_for_class(agent["class"], seed_value)
+	var at: Vector2 = agent["pos"]
+	var car := _vehicle(model, _ground(at) + Vector3.UP * 0.14, VehicleModels.map_length(model), "z", null, seed_value)
+	var heading: Vector2 = agent["heading"]
+	car.rotation.y = atan2(heading.x, heading.y)
+	agent["visual"] = car
+
+
+# Dev: every 10 s of ambient time, per-gateway exits and arrivals and the slot invariant.
+func _print_traffic_stats(delta: float) -> void:
+	_traffic_debug_clock += delta
+	if _traffic_debug_clock < 10.0:
+		return
+	_traffic_debug_clock = 0.0
+	var states := {"graph": 0, "out": 0, "wait": 0, "in": 0}
+	var cars := 0
+	for agent in _ambient.agents:
+		if agent["is_car"]:
+			cars += 1
+			states[agent["state"]] += 1
+	print("traffic: exits ", _ambient.stats["exits"], " arrivals ", _ambient.stats["arrivals"], " states ", states)
+	if cars != AMBIENT_CARS or states["graph"] + states["out"] + states["wait"] + states["in"] != AMBIENT_CARS:
+		print("TRAFFIC INVARIANT BROKEN: ", cars, " cars, states ", states)
 
 
 # --- Dev overlay: the road graph (F10, or --graph) -----------------------------
