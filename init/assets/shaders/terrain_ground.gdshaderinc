@@ -10,6 +10,8 @@ uniform float macro_metres = 55.0;
 uniform float macro_strength = 0.18;
 // Measured against the flat material: the blend and macro tint came out ~8 % darker and cooler.
 uniform vec3 compensation = vec3(1.24, 1.17, 1.14);
+// Restoring detail contrast after the blend also raises saturation; pull it back toward grey.
+uniform float saturation = 0.88;
 uniform vec3 dry_shift = vec3(0.10, 0.04, -0.06);
 
 float hash(vec2 p) {
@@ -48,5 +50,6 @@ vec3 terrain_ground_colour(vec2 world_xz) {
 	ground *= 1.0 + (macro - 0.5) * 2.0 * macro_strength;
 	ground += dry_shift * smoothstep(0.55, 0.9, macro) * macro_strength * 2.0;
 
+	ground = mix(vec3(dot(ground, vec3(0.299, 0.587, 0.114))), ground, saturation);
 	return clamp(ground * compensation, 0.0, 1.0) * tint.rgb;
 }
