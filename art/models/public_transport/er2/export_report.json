@@ -1,0 +1,75 @@
+{
+  "er2_head.glb": {
+    "blender_xyz_bounds": {
+      "min": [
+        -2.0380210876464844,
+        -10.45323657989502,
+        0.0
+      ],
+      "max": [
+        2.0380210876464844,
+        10.45323657989502,
+        4.309999942779541
+      ]
+    },
+    "length": 20.90647315979004,
+    "width": 4.076042175292969,
+    "height": 4.309999942779541,
+    "triangles": 6783,
+    "mesh_objects": 1,
+    "materials": [
+      "ER2 body paint and livery.001",
+      "ER2 mechanical and trim.001",
+      "ER2 opaque blue-grey glass.001"
+    ],
+    "vertex_color_attributes": {
+      "ER2_Head.001": [
+        "Color"
+      ]
+    },
+    "bytes": 353624
+  },
+  "er2_motor.glb": {
+    "blender_xyz_bounds": {
+      "min": [
+        -2.0380210876464844,
+        -10.45323657989502,
+        0.0
+      ],
+      "max": [
+        2.0380210876464844,
+        10.45323657989502,
+        5.486000061035156
+      ]
+    },
+    "length": 20.90647315979004,
+    "width": 4.076042175292969,
+    "height": 5.486000061035156,
+    "triangles": 6708,
+    "mesh_objects": 1,
+    "materials": [
+      "ER2 body paint and livery.002",
+      "ER2 mechanical and trim.002",
+      "ER2 opaque blue-grey glass.002"
+    ],
+    "vertex_color_attributes": {
+      "ER2_Motor.001": [
+        "Color"
+      ]
+    },
+    "bytes": 350188
+  },
+  "formation": {
+    "order": [
+      "head",
+      "motor",
+      "motor reversed",
+      "head reversed"
+    ],
+    "car_spacing": 20.90647315979004,
+    "length": 83.62589263916016,
+    "common_map_factor": 0.9839816933638443,
+    "map_length": 82.28634744814386,
+    "triangles": 26982
+  }
+}

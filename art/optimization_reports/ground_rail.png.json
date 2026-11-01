@@ -1,0 +1,33 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/railway/ground-rail-v2.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/textures/ground_rail.png",
+  "source_sha256": "3135dc16c3bc2ad7643248ac20e90867f326beb48e6bc0f27671eae4077958a5",
+  "profile": "surface",
+  "max_edge": 1024,
+  "override_reason": null,
+  "approved": true,
+  "before": {
+    "size": [
+      1254,
+      1254
+    ],
+    "bytes": 3919388,
+    "estimated_rgba_bytes": 6290064
+  },
+  "after": {
+    "size": [
+      1024,
+      1024
+    ],
+    "estimated_rgba_bytes": 4194304,
+    "bytes": 2363790,
+    "sha256": "94a50165e9fa7ba6ab8345ac1bdc1bb4d53be2547d64e0e4ae86749889f1e838"
+  },
+  "has_alpha": false,
+  "source_alpha_extrema": null,
+  "output_alpha_extrema": null,
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}
