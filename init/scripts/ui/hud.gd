@@ -539,10 +539,15 @@ func _build_week_panel() -> void:
 	stamp.add_theme_stylebox_override("panel", OfficeTheme.box(OfficeTheme.PAPER, OfficeTheme.BURGUNDY, 8))
 	var stamp_text := _heading("К ИСПОЛНЕНИЮ", 17, OfficeTheme.BURGUNDY)
 	stamp_text.autowrap_mode = TextServer.AUTOWRAP_OFF
+	stamp_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	stamp_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	stamp_text.size_flags_vertical = Control.SIZE_FILL
 	stamp.add_child(stamp_text)
 	header.add_child(stamp)
 	layout.add_child(header)
 	_week_tabs = TabContainer.new()
+	# Arrow keys belong to the map; clicking a tab must not capture them.
+	_week_tabs.tab_focus_mode = Control.FOCUS_NONE
 	_week_tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(_week_tabs)
 	var task_column := _folder_page("Поручения")
@@ -569,10 +574,16 @@ func _folder_page(title: String) -> VBoxContainer:
 	scroll.name = title
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	_week_tabs.add_child(scroll)
+	# Keep signatures, deadlines and rules clear of the scrollbar on every page.
+	var inset := MarginContainer.new()
+	inset.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	inset.add_theme_constant_override("margin_right", 16)
+	inset.add_theme_constant_override("margin_bottom", 8)
+	scroll.add_child(inset)
 	var column := VBoxContainer.new()
 	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	column.add_theme_constant_override("separation", 10)
-	scroll.add_child(column)
+	inset.add_child(column)
 	return column
 
 
@@ -1492,7 +1503,7 @@ func _primary_button(text: String) -> Button:
 	button.add_theme_stylebox_override("normal", OfficeTheme.box(OfficeTheme.BURGUNDY, OfficeTheme.BURGUNDY, 12))
 	button.add_theme_stylebox_override("hover", OfficeTheme.box(OfficeTheme.BURGUNDY.lightened(0.1), OfficeTheme.BURGUNDY, 12))
 	button.add_theme_stylebox_override("pressed", OfficeTheme.box(OfficeTheme.BURGUNDY.darkened(0.1), OfficeTheme.BURGUNDY, 12))
-	for state in ["font_color", "font_hover_color", "font_pressed_color"]:
+	for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color", "font_hover_pressed_color"]:
 		button.add_theme_color_override(state, OfficeTheme.LIGHT_TEXT)
 	return button
 

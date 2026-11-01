@@ -106,17 +106,12 @@ const CONTENTS := {
 		"placeholder_color": Color("d4c5ae"), "label": "Универмаг · заглушка", "dressing": [],
 	},
 	"city_park": {
-		"kind": "open", "footprint": Vector2.ZERO, "ground": "grass", "label": "Городской сквер", "dressing": [
-			# Low boxes reuse the existing placeholder prop path; leave the central walk clear.
-			{"sprite": "d4_path_placeholder", "at": Vector2(0, 0), "footprint": Vector2(52, 3), "height": 0.08, "placeholder_color": Color("b7b2a2")},
-			{"sprite": "d4_path_placeholder", "at": Vector2(0, 0), "footprint": Vector2(3, 80), "height": 0.08, "placeholder_color": Color("b7b2a2")},
-			{"sprite": "d4_bench_placeholder", "at": Vector2(-12, -5), "footprint": Vector2(3, 0.8), "height": 0.6, "placeholder_color": Color("8f7956")},
-			{"sprite": "d4_bench_placeholder", "at": Vector2(12, 5), "footprint": Vector2(3, 0.8), "height": 0.6, "placeholder_color": Color("8f7956")},
-			{"sprite": "tree_birch_august", "at": Vector2(-17, -27), "width": 5.0, "footprint": Vector2(3, 3)},
-			{"sprite": "tree_birch_august", "at": Vector2(17, -27), "width": 5.0, "footprint": Vector2(3, 3)},
-			{"sprite": "tree_birch_august", "at": Vector2(-17, 27), "width": 5.0, "footprint": Vector2(3, 3)},
-			{"sprite": "tree_birch_august", "at": Vector2(17, 27), "width": 5.0, "footprint": Vector2(3, 3)},
-		],
+		"kind": "painted_lot", "ground": "grass", "label": "Городской сквер",
+		"sprite": "city_park_v1", "footprint": Vector2(52, 77.6), "width": 95.08,
+		# Calibrated ground corners in the unchanged 1536 x 1024 source. The near
+		# corner anchors the entire park, rather than the average alpha edge.
+		"anchor": Vector2(0.409, 0.992), "axes": Vector2(0.596, -0.712),
+		"dressing": [],
 	},
 	"boiler_house": {
 		"kind": "building", "footprint": Vector2(28, 20), "height": 9.0, "doorstep": 3.0,

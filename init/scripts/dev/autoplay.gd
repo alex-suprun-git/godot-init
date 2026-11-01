@@ -125,6 +125,7 @@ func _run_map_tour() -> void:
 	await _map_shot("0_forest", Vector2(-520, 120), 390.0)
 	await _map_shot("0_pond", Vector2(278, 20), 200.0)
 	await _map_shot("0_administration", main.hud.Week1.location_position("office"), 250.0)
+	await _map_shot("0_city_park", main.map.DistrictLayout.lot_center("city_park"), 165.0)
 	await _map_shot("0_border_bridges", Vector2(120, -320), 880.0)
 	await _map_shot("0_north", Vector2(-5, -260), 1000.0)
 	await _map_shot("0_village", Vector2(275, 105), 600.0)

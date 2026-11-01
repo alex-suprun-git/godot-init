@@ -42,6 +42,8 @@ static func make_theme(on_paper: bool = false) -> Theme:
 		theme.set_color("font_color", type, foreground)
 	theme.set_color("font_hover_color", "Button", foreground)
 	theme.set_color("font_pressed_color", "Button", foreground)
+	theme.set_color("font_focus_color", "Button", foreground)
+	theme.set_color("font_hover_pressed_color", "Button", foreground)
 	theme.set_color("font_disabled_color", "Button", muted)
 	theme.set_stylebox("normal", "Button", box(surface, EDGE, 10))
 	theme.set_stylebox("hover", "Button", box(surface.lightened(0.07), BURGUNDY, 10))

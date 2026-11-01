@@ -627,6 +627,11 @@ func _build_sidewalks() -> void:
 			sidewalk_roads.push_front(road)
 		else:
 			sidewalk_roads.append(road)
+	# Visual continuations retain road width/material through the opaque haze.
+	for extension in MapBoundaries.road_continuations():
+		var continued: Dictionary = extension["road"].duplicate()
+		continued["rect"] = extension["rect"]
+		sidewalk_roads.append(continued)
 	for road in sidewalk_roads:
 		var width := DistrictLayout.sidewalk_width(road)
 		if width <= 0.0:
@@ -997,17 +1002,23 @@ func _build_road_markings() -> void:
 		if road["kind"] != "asphalt":
 			continue
 		var rect: Rect2 = road["rect"]
+		for extension in MapBoundaries.road_continuations():
+			if extension["road"] == road:
+				rect = rect.merge(extension["rect"])
 		var along_x := rect.size.x > rect.size.y
-		var length := maxf(rect.size.x, rect.size.y)
 		var width := minf(rect.size.x, rect.size.y)
-		var start := rect.position + (Vector2(0, width / 2) if along_x else Vector2(width / 2, 0))
+		var source_rect: Rect2 = road["rect"]
+		var start := source_rect.position + (Vector2(0, width / 2) if along_x else Vector2(width / 2, 0))
 		if road.get("look", "") == "highway":
-			_highway_lines(road)
+			_highway_lines(road, rect)
 			continue
 		if road.has("median"):
 			_boulevard_median(road)
 			continue
-		for i in range(1, int(length / 8.0)):
+		var low := rect.position.x if along_x else rect.position.y
+		var high := rect.end.x if along_x else rect.end.y
+		var phase := start.x if along_x else start.y
+		for i in range(int(ceil((low - phase) / 8.0)), int(floor((high - phase) / 8.0)) + 1):
 			var at := start + (Vector2(i * 8, 0) if along_x else Vector2(0, i * 8))
 			var junction := false
 			for other in DistrictLayout.ROADS:
@@ -1021,12 +1032,12 @@ func _build_road_markings() -> void:
 
 # Highway markings: solid edge lines and a solid double centre line, in 8 m pieces
 # that stop short of every junction.
-func _highway_lines(road: Dictionary) -> void:
-	var rect: Rect2 = road["rect"]
+func _highway_lines(road: Dictionary, rect: Rect2) -> void:
+	var source_rect: Rect2 = road["rect"]
 	var cy := rect.get_center().y
 	var offsets := [-rect.size.y / 2.0 + 0.9, rect.size.y / 2.0 - 0.9, -0.25, 0.25]
-	for i in range(1, int(rect.size.x / 8.0)):
-		var x := rect.position.x + i * 8.0
+	for i in range(int(ceil((rect.position.x - source_rect.position.x) / 8.0)), int(floor((rect.end.x - source_rect.position.x) / 8.0)) + 1):
+		var x := source_rect.position.x + i * 8.0
 		var junction := false
 		for other in DistrictLayout.ROADS:
 			if other != road and other["rect"].grow(8).has_point(Vector2(x, cy)):

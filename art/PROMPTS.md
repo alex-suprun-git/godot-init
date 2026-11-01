@@ -21,6 +21,20 @@ Prompts for the art needed by the first playable week (the heating-season openin
 - Purpose: explore a distinct inhabited town across the river in the brotherly republic, with an older pitched-roof urban fabric, market square and residential waterfront. This replaces the sparse far bank of the earlier concept while retaining the near-bank district, river and two crossings.
 - Status: exploratory, awaiting user feedback. Source concept only; no optimization, game integration or visual approval is implied. Gameplay intent and open questions are in README's Far-Bank City section.
 
+## City park concept (2026-11-01)
+
+- Output: `art/concepts/city-park-v1.png` (untouched generated original).
+- Full prompt: `art/concepts/city-park-v1.prompt.md`.
+- Generator: built-in ImageGen, with the user's map screenshot as camera/style reference.
+- Status: first concept for `city_park`, selected by the user for integration on 2026-11-01. Optimized copy: `init/assets/sprites/city_park_v1.png`; report: `art/optimization_reports/city_park_v1.png.json`. The source has real alpha (0–254); the grounded-strip material uses alpha scissor to exclude the transparent exterior. Integration and review notes: `art/city_park/README.md`.
+
+## Soviet new-district park comparison (2026-11-01)
+
+- Output: `art/concepts/city-park-1980s-v1.png` (untouched original).
+- Full prompt: `art/concepts/city-park-1980s-v1.prompt.md`.
+- Generator: built-in ImageGen, no image references.
+- Status: hypothetical visual comparison requested by the user, not a new approved game direction or a historical reconstruction; not optimized or integrated.
+
 ## Direction
 
 - The playable map is a 3D scene seen from above at an angle, built in Godot. The generator does not paint the map itself. It paints the **surfaces and props** that dress the 3D map: facade textures for simple building shapes and flat sprites for trees, cars, kiosks, and people.
@@ -726,7 +740,6 @@ This table supersedes the earlier selection notes. All game files are separately
 | `journalist` | `art/source_images/situation_banners/journalist_v3.png` | `init/assets/events/journalist.png` |
 | `boss_report` | `art/source_images/situation_banners/boss_report_v2.png` | `init/assets/events/boss_report.png` |
 
-
 ## Traffic light — 1970s–1980s turnaround v1
 
 - Concept: `art/concepts/traffic-light-1970s-1980s-turnaround-v1.png`.
@@ -746,3 +759,7 @@ All three are visually inspected and awaiting user review. Generated projection/
 ## Sidewalk surface textures (2026-11-01)
 
 Built-in ImageGen created three square top-down material sources under `art/source_images/sidewalks/`: `sidewalk-slabs-clean-v1.png`, `sidewalk-slabs-aged-v1.png`, `sidewalk-asphalt-v1.png`. Complete exact prompts are stored in the adjacent `.prompt.md` files; inspection and next action are in that folder's README. Proposed use: maintained square grey concrete slabs on the central civic avenue, gently aged slabs on secondary footways, lighter fine-grained asphalt on ordinary sidewalks. The user authorized integration on 2026-11-01: clean v1 slabs and asphalt are separately optimized and bound to the civic axis/ordinary sidewalks. Exact output/provenance and measured shader sampling are documented in the source README; actual Godot frames are in `art/sidewalks/`. A built-in ImageGen edge-correction attempt `sidewalk-slabs-clean-v2.png` (exact prompt adjacent) was preserved but not selected. Instead the material samples a measured interior region of optimized v1 to avoid partial perimeter slabs. Repetition and day/night/winter rendering were visually inspected. Aged slabs remain an unused candidate; final in-game user review is pending.
+
+## Bridge material textures (2026-11-01)
+
+Built-in ImageGen created `art/source_images/bridges/bridge-concrete-v1.png`, `bridge-ballast-v1.png` and `bridge-steel-v1.png`; exact prompts are in the adjacent `.prompt.md` files. All are opaque top-down materials, not complete bridge paintings. The user approved this direction and requested integration. Separately optimized surface-profile copies are `init/assets/textures/bridge_{concrete,ballast,steel}.png`; matching reports are under `art/optimization_reports/`. Actual world scale, material repeat inspection, game screenshots and remaining appearance review are recorded in `art/bridges/README.md`. No original source was altered.
