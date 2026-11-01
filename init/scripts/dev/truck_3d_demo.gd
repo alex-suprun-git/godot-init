@@ -1,4 +1,4 @@
-# Freight asset viewer; shows the approved 15% truck reduction beside the unchanged Volga.
+# Freight asset viewer; shows the approved 20% truck reduction beside the unchanged Volga.
 extends Node3D
 
 const VehicleModels := preload("res://scripts/map/vehicle_models.gd")
@@ -72,7 +72,7 @@ func _build_ui() -> void:
 	var box := VBoxContainer.new()
 	margin.add_child(box)
 	var title := Label.new()
-	title.text = "Lkw • 15 % kleiner im Vergleich zur Volga"
+	title.text = "Lkw • 20 % kleiner im Vergleich zur Volga"
 	title.add_theme_font_size_override("font_size", 21)
 	box.add_child(title)
 	_info = Label.new()
@@ -109,7 +109,7 @@ func _show_truck(index: int) -> void:
 	_elevation = 0.49
 	_focus = Vector3(1.2, 1.4, 0)
 	_camera.size = 15.0 if _variant == 2 else 9.0
-	_info.text = NAMES[_variant] + " • Lkw −15 % / Volga unverändert"
+	_info.text = NAMES[_variant] + " • Lkw −20 % / Volga unverändert"
 	_update_camera()
 
 

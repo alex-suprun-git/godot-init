@@ -13,8 +13,8 @@ const MODELS := {
 const VOLGA_PATH := "res://assets/models/vehicles/volga_gaz24.glb"
 const VOLGA_SOURCE_LENGTH := 4.905458 # Measured from volga_gaz24.glb.
 const LADA_MAP_LENGTH := 4.3
-# Approved map presentation: freight trucks are uniformly 15% smaller.
-const TRUCK_VISUAL_SCALE := 0.85
+# Approved map presentation: freight trucks are uniformly 20% smaller.
+const TRUCK_VISUAL_SCALE := 0.80
 const VOLGA_TRAFFIC_SHARE := 1.0 / 15.0
 const VOLGA_PAINT_SHADER := preload("res://assets/shaders/vehicle_paint.gdshader")
 # Curated period-inspired palette; red/pink and vivid colours excluded by art direction.
