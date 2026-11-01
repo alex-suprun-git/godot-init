@@ -26,9 +26,7 @@ Completed briefs are moved to `tasks/archive/`, preserving reports and review ev
 
 ## Roles
 
-- **Lead / integrator** (the main session, currently Claude): writes briefs, reviews results, integrates them into the game and owns the shared integration files listed below.
-- **Workers** (currently Codex): execute one brief each, in their own git worktree and branch, and write a report back into the brief.
-- **The user** is the creative lead and approves visual and design choices.
+Claude Code and Codex are equal desktop sessions on the same checkout (see `AGENTS.md`, "Roles and Parallel Work"). A brief is a shared note that survives closed chats; either session can pick one up. The user coordinates and approves visual and design choices.
 
 ## File ownership
 

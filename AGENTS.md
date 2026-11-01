@@ -43,10 +43,21 @@
 
 ## Roles and Parallel Work
 
-- The main session is the lead and integrator: it builds mechanics, writes briefs, reviews results and wires assets into scenes and scripts.
-- Parallel work (sprites, 3D models, other assets) is handed to workers, currently Codex, as briefs in `tasks/`. Read `tasks/README.md` for the lifecycle, file ownership and shared-resource rules.
-- When executing a brief, work in its worktree, write only to its *Outputs*, and never edit `init/scripts/`, scenes, `sprite_anchors.gd`, `README.md` or `AGENTS.md`. Record needed integration changes in the brief's report instead.
-- `tools/dispatch_task.sh <id>` starts a brief with `codex exec` in `../godot-worktrees/<id>`; `--status` shows its progress.
+- Claude Code and Codex run as two equal desktop sessions on the same checkout, each in its own chat on its own topic. The user coordinates them; neither session assigns work to the other and neither is a "lead" or a "worker". Briefs in `tasks/` are shared notes, not dispatch orders.
+- Before editing, run `git status` and `git diff --stat`. A file that is already modified and is not yours may be mid-edit in the other session: do not touch it, and ask the user whether the other session is finished. Never overwrite, revert or stage another session's changes.
+- Stage by path when committing, so a commit contains only your own topic.
+- `tools/dispatch_task.sh <id>` (a brief run with `codex exec` in `../godot-worktrees/<id>`) is optional and not the usual flow. If a brief is run in a worktree, write only to its *Outputs* and record needed changes to `init/scripts/`, scenes, `sprite_anchors.gd`, `README.md` or `AGENTS.md` in the brief's report. See `tasks/README.md`.
+
+## Working Economically
+
+Tokens are the scarcest resource; spend them on the result, not on ceremony.
+
+- Start a new chat per task. Long chats re-send the whole history, including every image, on each step.
+- Reuse existing frames before capturing new ones; if the frame you need does not exist, take it once with the narrowest `--only=` scenario and `--turbo`.
+- Look at no more than two or three images per task. Judge visuals from the default game camera, not from isolated tiles; a night, alternate-camera or material-preview frame is taken only when the change concerns it or the user asks.
+- Map screenshots and capture logs are not repository content: keep them in the scratchpad or an ignored folder (`art/bridges/`, `art/sidewalks/` and similar are in `.gitignore`). Only the three to six curated JPEGs per PR go to `docs/pr-assets/<slug>/`, as described in `docs/PR_WORKFLOW.md`.
+- Documentation stays short: one section in one existing README per feature. No byte counts, no copied logs, no repeated status in several files.
+- Visual rules and art targets are written into docs only after the user has approved a live in-game example of them.
 
 ## Blender and 3D Assets
 
