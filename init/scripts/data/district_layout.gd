@@ -49,8 +49,9 @@ const LOTS := {
 	"slab_2": {"type": "W", "rect": Rect2(22, 232, 110, 14), "content": "admin_slab", "condition": "kept", "facing": "n"},
 	"church": {"type": "X", "rect": Rect2(245, 80, 60, 50), "content": "church", "condition": "fading", "facing": "w"},
 	"g_south": {"type": "G", "rect": Rect2(-430, 315, 200, 70), "content": "empty_lot", "condition": "worked", "facing": "n"},
-	"market": {"type": "X", "rect": Rect2(-215, 315, 185, 70), "content": "market", "condition": "worked", "facing": "n"},
-	"station": {"type": "X", "rect": Rect2(15, 315, 215, 70), "content": "station", "condition": "worked", "facing": "n"},
+	"former_market": {"type": "N", "rect": Rect2(-215, 315, 185, 70), "content": "former_market", "condition": "kept", "facing": "n"},
+	# One painted site contains the market, bus bays and railway station.
+	"market": {"type": "X", "rect": Rect2(-20, 315, 250, 78), "content": "market", "condition": "kept", "facing": "n"},
 	"cemetery": {"type": "N", "rect": Rect2(209, 84.5, 35, 46), "content": "cemetery", "condition": "fading", "facing": "n"},
 	"d_01": {"type": "D", "rect": Rect2(156.5, -40, 42, 38), "content": "house_poor", "condition": "fading", "facing": "n"},
 	"d_02": {"type": "D", "rect": Rect2(334.5, -40, 50, 38), "content": "house_kept", "condition": "kept", "facing": "n"},
@@ -214,12 +215,13 @@ const DISTRICTS := {
 	},
 	"south_hub": {
 		"name": "South hub",
-		"rects": [Rect2(-430, 312, 660, 76)],
+		"rects": [Rect2(-430, 312, 660, 81)],
 		"residents": 50, "foot": 1.5, "cars": 1.0,
 		"fleet": {"car": 0.5, "bus": 0.4, "truck": 0.1}, "hours": "market",
 		"subzones": {
-			"market": {"rect": Rect2(-215, 315, 185, 70), "foot": 2.5, "cars": 0.7, "fleet": {"car": 0.6, "truck": 0.4}},
-			"station": {"rect": Rect2(15, 315, 215, 70), "foot": 1.6, "cars": 1.2, "fleet": {"bus": 0.6, "car": 0.4}, "hours": "commute"},
+			"former_market": {"rect": Rect2(-215, 315, 185, 70), "foot": 0.2, "cars": 0.0},
+			"market": {"rect": Rect2(-20, 315, 150, 78), "foot": 2.5, "cars": 0.7, "fleet": {"car": 0.6, "truck": 0.4}},
+			"station": {"rect": Rect2(130, 315, 100, 78), "foot": 1.6, "cars": 1.2, "fleet": {"bus": 0.6, "car": 0.4}, "hours": "commute"},
 		},
 	},
 }

@@ -1,5 +1,16 @@
 # Image Prompts: First Week
 
+## Compact station market concept (2026-11-01)
+
+- Current integrated revision: `art/source_images/market_hub/market_hub_v7.png` → `init/assets/sprites/market_hub_v7.png`. Exact revision prompts: `art/market_hub/REVISIONS.md`; current calibration and in-game review: `art/market_hub/README.md`. Implements user corrections to fencing, planting, relative sizes, station gap and the straight railway-side boundary; both tracks remain free.
+
+- Combined 2D game asset from approved v3: `art/source_images/market_hub/market_hub_v1.png`; exact preparation prompt: `art/market_hub/asset-v1.prompt.md`; the superseded game copy is excluded from this PR. User explicitly requested this interim single-lot implementation; separate 3D models are deferred.
+- Latest user-directed v3: `art/concepts/market-direction-v3.png`; full prompt and visual-review notes: `art/concepts/market-direction-v3.prompt.md`. Removes wagon, moves station to rails/platform, enlarges market, relocates bus bays to a straight row on the road side, shows former market as grass. User approved v3 as the visual and spatial direction on 2026-11-01; no game integration.
+- Map-based v2 proposal: `art/concepts/market-direction-v2.png`; exact prompt and review: `art/concepts/market-direction-v2.prompt.md`; actual Godot reference: `art/concepts/market-direction-v2.map-reference.png`. Preserves the bus station and railway building; placement awaits user review.
+- Untouched concept: `art/concepts/market-direction-v1.png`.
+- Full generation prompt, input references and review limitations: `art/concepts/market-direction-v1.prompt.md`.
+- Built-in image_gen; proposed direction awaiting user review, not integrated into Godot.
+
 Prompts for the art needed by the first playable week (the heating-season opening, see `README.md`). Written for an image generator; each prompt is self-contained.
 
 ## Far-bank city concept (2026-10-31)

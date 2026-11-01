@@ -1,0 +1,39 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/market_hub/market_hub_v7.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/sprites/market_hub_v7.png",
+  "source_sha256": "4cd1bff6e1c441d2c5c954001d52613d831d0da88be1c6509df96c754fe3f6b1",
+  "profile": "sprite",
+  "max_edge": 2048,
+  "override_reason": "Single combined station and market site; preserve the straight platform boundary, mesh fence and small stalls at map zoom",
+  "approved": true,
+  "before": {
+    "size": [
+      1605,
+      980
+    ],
+    "bytes": 1254991,
+    "estimated_rgba_bytes": 6291600
+  },
+  "after": {
+    "size": [
+      1605,
+      980
+    ],
+    "estimated_rgba_bytes": 6291600,
+    "bytes": 1212233,
+    "sha256": "f6be5b1fd2facb8e19525833b13f43c32223101404e89ceaf0fc9cd0ce1c1341"
+  },
+  "has_alpha": true,
+  "source_alpha_extrema": [
+    0,
+    255
+  ],
+  "output_alpha_extrema": [
+    0,
+    255
+  ],
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}

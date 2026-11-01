@@ -129,6 +129,7 @@ func _run_map_tour() -> void:
 	await _map_shot("0_north", Vector2(-5, -260), 1000.0)
 	await _map_shot("0_village", Vector2(275, 105), 600.0)
 	await _map_shot("0_south", Vector2(-15, 350), 650.0)
+	await _map_shot("0_market_hub", main.map.DistrictLayout.lot_center("market"), 340.0)
 	main.map._camera_goal = main.map.DEFAULT_TARGET
 	main.map._zoom = main.map.ZOOM_DEFAULT
 	await _wait(0.5)

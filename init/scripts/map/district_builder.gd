@@ -205,6 +205,8 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 			_garages(lot)
 		"market":
 			_market(lot)
+		"painted_lot":
+			_painted_lot(lot, entry, center)
 	for prop in ([] if id == "b1_k" else entry.get("dressing", [])):
 		if prop.get("sprite", "") == "garbage_pile" and not Catalog.CONDITIONS[lot["condition"]]["garbage"]:
 			continue
@@ -928,6 +930,23 @@ func _fit(lot: Dictionary, desired: Vector2, size: Vector2) -> Vector2:
 	return desired
 
 
+func _painted_lot(lot: Dictionary, entry: Dictionary, center: Vector2) -> void:
+	var texture := _texture("res://assets/sprites/%s.png" % entry["sprite"])
+	if texture == null:
+		push_error("DistrictBuilder: missing painted lot '%s'" % entry["sprite"])
+		return
+	# Grounded strips seat the painted site's front contour on the terrain while
+	# retaining the height of its buildings, trees and other painted objects.
+	var node := preload("res://scripts/map/grounded_props.gd").new().create(
+		texture, entry["width"], false, entry["anchor"], entry["axes"], map.CAMERA_VIEWS["iso"])
+	node.name = entry.get("node_name", "CityParkPainted")
+	var footprint: Vector2 = entry["footprint"]
+	node.position = map._ground(center + entry.get("offset", Vector2.ZERO) + footprint / 2.0) + Vector3.UP * 0.06
+	map.add_child(node)
+	# The painting already contains its trees, furniture and lawns.
+	map._occupy(center, lot["rect"].size)
+
+
 func _prop(lot: Dictionary, entry: Dictionary, desired: Vector2) -> void:
 	if entry.has("model"):
 		var model_footprint: Vector2 = entry["footprint"]
@@ -995,10 +1014,7 @@ func _market(lot: Dictionary) -> void:
 
 func _build_train_stock() -> void:
 	var stock := _texture("res://assets/sprites/train_wagons_v2.png") # train_commuter.png
-	var passenger: Array = Layout.RAILS[0]
-	var station := Layout.lot_center("station")
-	var platform := Geometry2D.get_closest_point_to_segment(station, passenger[0], passenger[1])
-	map._prop(stock, Vector3(platform.x, 0.2, platform.y), 60.0, "x")
+	# Passenger tracks stay clear; only the port transfer siding carries stock.
 	var siding: Array = Layout.RAILS[2]
 	var transfer: Vector2 = siding[-2].lerp(siding[-1], 0.5)
 	map._prop(stock, Vector3(transfer.x, 0.2, transfer.y), 40.0, "x")

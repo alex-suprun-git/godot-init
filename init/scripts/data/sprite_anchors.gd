@@ -30,6 +30,7 @@ const ANCHORS := {
 	"garbage_pile": {"anchor": Vector2(0.497, 0.850), "slope": 0.09},
 	"kiosk": {"anchor": Vector2(0.505, 0.940), "slope": 0.26},
 	"lamp_post": {"anchor": Vector2(0.618, 0.982), "slope": -3.77},
+	"market_hub_v7": {"anchor": Vector2(0.483, 0.697), "slope": 0.58},
 	"market_tent": {"anchor": Vector2(0.507, 0.941), "slope": -0.12},
 	"monument": {"anchor": Vector2(0.504, 0.988), "slope": -0.25},
 	"person_kid": {"anchor": Vector2(0.509, 0.897), "slope": 0.96},

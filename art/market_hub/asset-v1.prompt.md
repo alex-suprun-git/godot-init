@@ -1,0 +1,19 @@
+# Combined market and station — 2D asset v1
+
+- Generator: built-in image_gen, transparent-background edit.
+- Source: `art/source_images/market_hub/market_hub_v1.png`.
+- Edit target: approved `art/concepts/market-direction-v3.png`; the approved v3 itself used the actual Godot map via v2 and `market-direction-v2.map-reference.png`.
+- Authorization: the user approved v3, then explicitly requested a combined 2D market/bus station/railway station image placed in the moved market lot as an interim implementation. Separate 3D models are deferred.
+- Preparation: standalone optimizer, sprite profile with a 2048px maximum-edge override for the whole large site. The superseded v1 game copy and optimization report are not included in this PR.
+- Visual review: combined colourful market, linear bus shelters and three buses on the street side, yellow station and platform at the railway-facing edge; no labels, rails, surrounding road or buildings. Genuine RGBA alpha 0–255. Small static people and planting are part of the painting. Paving outline has notches; inferred rectangle corners are used for grounding.
+
+## Exact prompt
+
+Use case: background-extraction / game asset preparation.
+Prepare a game-ready transparent 2D cutout of the APPROVED combined railway station, bus station and clothing market from the reference image. This is faithful production preparation of the approved layout, NOT a new concept or a redesign.
+The entire combined facility must be ONE coherent painted isometric sprite, including its paved ground footprint and narrow passenger platform. Preserve the current composition: dense broad colourful clothing market to the LEFT of the small pale-yellow station with green roof; station almost against the railway-facing long edge, with a narrow platform between it and the edge; bus station in ONE straight row behind them on the street-facing side with three small period buses and a continuous narrow shelter. Retain the approved market density, canvas colours, hanging clothes, pavement, modest planted trees and building architecture.
+REMOVE ALL surrounding scenery: apartment blocks, road, intersection, grass fields, rail tracks, railway poles, landscape, sky and all distant objects. Absolutely NO RAILS OR WAGONS in the cutout, since the game supplies real railway geometry. REMOVE ALL LABELS, leader lines, text and graphic annotations. The exterior MUST be genuinely transparent RGBA, not grey, not white, not a checkerboard drawing or grassy halo.
+Finish the paving as one complete clean rectangular site in ground coordinates, approximately 250 metres long along the station/market row and 70 metres deep. It will read as a long parallelogram under the isometric view. Keep all four paved ground corners visible and unclipped, with modest transparent margins around the entire sprite. Put NO extraneous shadow/blob beyond the paved boundary; any soft cast shadows must stay inside the site. Do not invent a floating thick diorama base or soil cross-section.
+Camera must match the reference game: elevated ORTHOGRAPHIC, yaw 45 degrees, elevation 35.264 degrees. The long ground edge runs DOWN-RIGHT at approximately +0.577 slope, the short perpendicular ground edge runs UP-RIGHT at approximately -0.577 slope. Vertical building edges stay vertical. Keep the same restrained detailed painterly GAME MAP material style and late-August afternoon lighting. No cinematic perspective.
+The market stays dense and compact within the left/middle portion, the small station at the right/front near the platform, the linear bus station at the right/back along the opposite long edge. Keep the station entrance and bus access paved and clear. A few tiny painted shoppers at the reference scale are acceptable.
+Output one large crisp landscape transparent PNG, ideally at least 2048 pixels wide, filled by this one combined facility with no text, no labels, no split views, no inset, no watermark.
