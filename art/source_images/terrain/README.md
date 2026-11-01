@@ -23,10 +23,16 @@ Graphical map autoplay completed with the candidates. Baseline emitted shutdown 
 
 Summer appearance is approved; autumn was accepted as tolerable by the user, with no further colour adjustment requested. The same temporary preview harness rendered autumn with `--season=autumn`, at default 07:00 (dark autumn morning) and with lighting pinned using `--hour=12` (daylight). Captures: `/private/tmp/terrain-textures-autumn/` and `/private/tmp/terrain-textures-autumn-noon/`; inspected `0_overview.png` in each. The HUD still says 07:00 because the debug hour overrides lighting only. Existing autumn tint and daylight produce a substantially warmer ochre/olive ground; no separate autumn texture or tint changes were made. The map run completed with the existing shutdown resource warnings. Unrelated Volga import changes were present and left untouched.
 
-T4 needs grayscale/seam correction or explicit deferral in favour of the shader's procedural macro noise. Do not infer its approval from summer feedback.
+T4 was corrected and approved as `macro-v2.png`; see Delivery.
 
 Preparation completed for T1–T3 using the optimizer separately with `--profile surface --approved` for new names `ground_grass_v2.png`, `ground_grass_dry_v2.png`, `ground_dirt_v2.png` and, only if corrected/approved, `ground_macro_variation.png`. Sources stay outside `init/`; leave old and snow textures intact. Wiring is outside this worker brief's Outputs; request integration rather than editing shared scripts.
 
 ## Delivery
 
-Approved T1–T3 copies exist under `init/assets/textures/ground_{grass,grass_dry,dirt}_v2.png`, each opaque RGB, 1024 × 1024. Prepared with `uv run tools/optimize_asset.py art/source_images/terrain/<source>-v1.png --profile surface --approved --output init/assets/textures/<target>.png`; local reports confirm no cropping or alpha loss. Shader bindings remain the integrator’s next action. T4 is retained as an explicitly unfinished source candidate only. Summer appearance approved; autumn accepted with the warm palette noted. Winter, frame time and optimized runtime binding remain unverified.
+Approved T1–T3 copies exist under `init/assets/textures/ground_{grass,grass_dry,dirt}_v2.png`, each opaque RGB, 1024 × 1024, prepared with `uv run tools/optimize_asset.py art/source_images/terrain/<source>-v1.png --profile surface --approved --output init/assets/textures/<target>.png`.
+
+T4: `macro-v2.png` is `macro-v1.png` converted to luminance and made periodic with a smoothed linear ramp per row and column (wrap step 3.0 → 0.75 grey levels; an interior step is 0.46). The user approved it from a 3 × 3 repeat on 2026-11-01; optimised to `init/assets/textures/ground_macro_variation.png`.
+
+## Integration
+
+`city_map.gd` loads the v2 grass, dry grass and dirt tiles for summer and autumn (snow set unchanged). The terrain shader samples `ground_macro_variation.png` instead of procedural noise: one tile per 120 m plus a second sample turned and 2.3 × smaller, re-centred on its mean and stretched by `macro_contrast` to the range the noise had. The default summer camera shows no tile grid or yellow mottling; lawns read greener and smoother than before, as in the earlier preview. The user approved summer and autumn in the running game on 2026-11-01; winter is left to #45. Night and frame time were not checked.
