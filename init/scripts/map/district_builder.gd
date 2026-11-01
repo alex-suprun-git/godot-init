@@ -202,6 +202,8 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 			map._grounded_prop(_texture("res://assets/sprites/%s.png" % entry["sprite"]), map._ground(spot), entry["width"], true, entry.get("axes", Vector2(0.824, -0.234)))
 			map._occupy(spot, entry["footprint"])
 			_platform_canopy(_fit(lot, center + Vector2(-65, -14), Vector2(30, 4)))
+		"wheat_field":
+			preload("res://scripts/map/wheat_field.gd").new().build(map, lot)
 		"garages":
 			_garages(lot)
 		"market":
