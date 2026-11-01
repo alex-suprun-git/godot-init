@@ -47,7 +47,6 @@ const PEOPLE := [
 	{"texture": preload("res://assets/sprites/person_kid.png"), "width": PropDimensions.PEOPLE_WIDTHS["person_kid"]},
 ]
 const PICKET_GROUP := preload("res://assets/sprites/picket_group.png")
-const TRUCK_ZIL := preload("res://assets/sprites/truck_zil_plain.png")
 const CRANE_TRUCK := preload("res://assets/sprites/crane_truck.png")
 
 # Painted ground tiles, seen from above and seamless; laid on flat patches.
@@ -820,7 +819,7 @@ func _build_overlays() -> void:
 	var recipe: Dictionary = BuildingCatalog.CONTENTS[DistrictLayout.LOTS[Week1.LOTS["boiler"]["layout"]]["content"]]
 	for prop in recipe["dressing"]:
 		if prop["sprite"] == "coal_heap":
-			_prop(TRUCK_ZIL, _ground(boiler + prop["at"] + Vector2(13, 3)), 8.5, "z", truck)
+			_vehicle("zil_flatbed", _ground(boiler + prop["at"] + Vector2(13, 3)) + Vector3.UP * 0.025, VehicleModels.map_length("zil_flatbed"), "z", truck, 0)
 	truck.visible = false
 	_overlays["boiler:truck"] = truck
 

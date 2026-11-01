@@ -1,6 +1,6 @@
 # Freight vehicle modeling references
 
-Generated with built-in ImageGen on 2026-11-01 in response to the user's request for two ZIL variants and a KamAZ carrying consumer goods. All three untouched originals are preserved here. Exact prompts are in the adjacent `.prompt.md` files. These sheets are generated modeling aids, not measured blueprints or verified historical records. They have been visually inspected and are presented for user review; no final approval is recorded yet.
+Generated with built-in ImageGen on 2026-11-01 in response to the user's request for two ZIL variants and a KamAZ carrying consumer goods. All three untouched originals are preserved here. Exact prompts are in the adjacent `.prompt.md` files. These sheets are generated modeling aids, not measured blueprints or verified historical records. They have been visually inspected and are presented for user review; the user requested 3D production from these sheets and positively reviewed the resulting model direction on 2026-11-01.
 
 | Variant | Original | Construction proposal |
 | --- | --- | --- |
@@ -10,7 +10,7 @@ Generated with built-in ImageGen on 2026-11-01 in response to the user's request
 
 ## Inputs and scope
 
-The coal sheet directly referenced `init/assets/sprites/truck_zil_plain.png` using ImageGen's image-reference mechanism. The food and KamAZ sheets were new text-guided generations. Existing KamAZ concept `art/concepts/truck_kamaz_candidate_2.png` was inspected for project context, but was not passed as an image reference: it depicts a tarpaulin trailer, whereas this request explores a container.
+The coal sheet directly referenced `zil-coal-original-sprite.png` (originally `init/assets/sprites/truck_zil_plain.png`) using ImageGen's image-reference mechanism. The food and KamAZ sheets were new text-guided generations. Existing KamAZ concept `art/concepts/truck_kamaz_candidate_2.png` was inspected for project context, but was not passed as an image reference: it depicts a tarpaulin trailer, whereas this request explores a container.
 
 Each sheet has full left/right, front, rear and top views and a three-quarter preview. The food sheet also includes a small open-rear cargo inset. All principal views are closed. No raster optimization or Godot import is needed for these modeling references outside `init/`. No existing GLB, sprite, scene or gameplay script was changed. The existing rough freight models remain under `art/models/traffic/` with exports in the game.
 
@@ -30,4 +30,4 @@ All six views show the full coupled combination. The main side views clearly sho
 
 ## Next action
 
-User review of the three proposed variants and the container interpretation. Record accepted directions here. If 3D production is requested, resolve historical variant details/dimensions, reuse suitable existing truck and Lada/Volga helpers, unify the ZIL cab as a reusable component and build cheap silhouettes before detailing/baking. Existing game models are not replaced by this reference-only step.
+The three variants have been modeled and integrated on `art/truck-model-upgrade`; see `../README.md` for current source, scale, measured exports, review commands and limitations. The user positively reviewed the shown visual direction. The generated sheets remain source references, separate from the game assets.

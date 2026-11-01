@@ -1,0 +1,10 @@
+{
+  "container_20ft.glb": {
+    "triangles": 936,
+    "materials": [
+      "Container - paint",
+      "Truck - dark metal",
+      "Truck - steel"
+    ]
+  }
+}
