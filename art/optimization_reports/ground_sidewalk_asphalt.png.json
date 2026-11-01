@@ -1,0 +1,33 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/sidewalks/sidewalk-asphalt-v1.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/textures/ground_sidewalk_asphalt.png",
+  "source_sha256": "f2699792d85f4d09436147c34e722115831ae41103e8b229d67a2398da8e7cb7",
+  "profile": "surface",
+  "max_edge": 1024,
+  "override_reason": null,
+  "approved": true,
+  "before": {
+    "size": [
+      1254,
+      1254
+    ],
+    "bytes": 3877294,
+    "estimated_rgba_bytes": 6290064
+  },
+  "after": {
+    "size": [
+      1024,
+      1024
+    ],
+    "estimated_rgba_bytes": 4194304,
+    "bytes": 2282587,
+    "sha256": "1caac2221196db961589713e6501c806756a09cf405e1ce819b34fe0c42c2c92"
+  },
+  "has_alpha": false,
+  "source_alpha_extrema": null,
+  "output_alpha_extrema": null,
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}

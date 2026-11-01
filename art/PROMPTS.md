@@ -732,3 +732,17 @@ This table supersedes the earlier selection notes. All game files are separately
 - Concept: `art/concepts/traffic-light-1970s-1980s-turnaround-v1.png`.
 - Full prompt and review status: `art/concepts/traffic-light-1970s-1980s-turnaround-v1.prompt.md`.
 - Built-in ImageGen; front, left, rear, three-quarter and enlarged head detail. Period-inspired modeling reference; not a verified historical blueprint. The original Blender model and its static game integration now live under `art/models/traffic_lights/`; the reference image itself remains a concept, not a game texture. See the asset README for geometry, independently controllable lenses and inspected Godot views.
+
+## Freight truck turnaround references (2026-11-01)
+
+Built-in ImageGen, conceptual modeling aids only; no raster game integration. Originals, full prompts and inspection notes are under `art/models/traffic/references/`.
+
+- Food ZIL: `zil-food-turnaround-v1.png`; exact prompt `zil-food-turnaround-v1.prompt.md`.
+- Coal ZIL: `zil-coal-turnaround-v1.png`; exact prompt `zil-coal-turnaround-v1.prompt.md`. Direct image reference: `init/assets/sprites/truck_zil_plain.png`.
+- Container KamAZ: `kamaz-container-turnaround-v1.png`; exact prompt `kamaz-container-turnaround-v1.prompt.md`. Closed 40-foot ISO container is a proposal for the user's tentative container request.
+
+All three are visually inspected and awaiting user review. Generated projection/detail inconsistencies must be resolved before modeling; existing game models are unchanged.
+
+## Sidewalk surface textures (2026-11-01)
+
+Built-in ImageGen created three square top-down material sources under `art/source_images/sidewalks/`: `sidewalk-slabs-clean-v1.png`, `sidewalk-slabs-aged-v1.png`, `sidewalk-asphalt-v1.png`. Complete exact prompts are stored in the adjacent `.prompt.md` files; inspection and next action are in that folder's README. Proposed use: maintained square grey concrete slabs on the central civic avenue, gently aged slabs on secondary footways, lighter fine-grained asphalt on ordinary sidewalks. The user authorized integration on 2026-11-01: clean v1 slabs and asphalt are separately optimized and bound to the civic axis/ordinary sidewalks. Exact output/provenance and measured shader sampling are documented in the source README; actual Godot frames are in `art/sidewalks/`. A built-in ImageGen edge-correction attempt `sidewalk-slabs-clean-v2.png` (exact prompt adjacent) was preserved but not selected. Instead the material samples a measured interior region of optimized v1 to avoid partial perimeter slabs. Repetition and day/night/winter rendering were visually inspected. Aged slabs remain an unused candidate; final in-game user review is pending.

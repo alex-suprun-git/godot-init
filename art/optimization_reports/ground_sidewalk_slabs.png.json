@@ -1,0 +1,33 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/sidewalks/sidewalk-slabs-clean-v1.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/textures/ground_sidewalk_slabs.png",
+  "source_sha256": "177e65abdf4cb8029c159bc972131be2d224685a6cab14b80f63f31df13a2a94",
+  "profile": "surface",
+  "max_edge": 1024,
+  "override_reason": null,
+  "approved": true,
+  "before": {
+    "size": [
+      1254,
+      1254
+    ],
+    "bytes": 3833369,
+    "estimated_rgba_bytes": 6290064
+  },
+  "after": {
+    "size": [
+      1024,
+      1024
+    ],
+    "estimated_rgba_bytes": 4194304,
+    "bytes": 2229131,
+    "sha256": "67b561a09f1dfa3ee0d40ac8e5c5f751d56cbafd9f390770c74217d2abf7889e"
+  },
+  "has_alpha": false,
+  "source_alpha_extrema": null,
+  "output_alpha_extrema": null,
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}

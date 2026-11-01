@@ -65,16 +65,16 @@ Stop with `status: blocked` and explain in the report when:
 
 ## Report
 
-_Filled in by the worker._
-
-- **Status summary:**
-- **Files created or changed:**
-- **Measurements / previews:**
-- **Open questions:**
-- **Requests for the integrator:**
+- **Status summary (audit 2026-11-01):** The model is built and integrated, not awaiting production. Keep this brief in review because the source README explicitly leaves the final rounded bonnet/boot revision awaiting user review.
+- **Files created or changed:** Main checkout contains `init/assets/models/vehicles/volga_gaz24.glb`, extracted textures, vehicle loading/repainting and the black administration car. Editable source, build scripts, detailed README and export report exist in `../godot-worktrees/volga-gaz24-model/art/models/volga/`; they have not been consolidated into the main checkout. Preserve that worktree.
+- **Measurements / previews:** Source README reports 4.905458 × 2.046548 × 1.490000 m, 7,775 triangles and three materials, within the brief's budgets. Its `previews/` and `validation/` contain model review evidence. Main-checkout `art/models/volga/SOURCING.md` records successful import and traffic review; `traffic_review/` contains Godot frames and a log. This audit inspected files and documentation; it did not rerun Blender or Godot.
+- **Open questions:** Final visual review of the rounded bonnet/boot. No new model build is required.
+- **Requests for the integrator:** Finish visual review and consolidate editable sources/documentation from the asset worktree before retiring it. Model integration and measured source-length handling already exist in `vehicle_models.gd`.
 
 ## Review notes
 
 _Filled in by the lead after each review round._
 
 - Integration note for the lead: `VehicleModels.create()` scales every model to the length passed by the caller, and `city_map.gd` passes 4.3 for all cars. A Volga placed that way would be shrunk to Lada length. Add its source length to `LENGTHS` and place it at ≈ 4.91 m (4.99 × the Lada's 4.3 / 4.37 map factor).
+
+- Audit 2026-11-01: the integration note above predates the current implementation; source-length handling is already present.
