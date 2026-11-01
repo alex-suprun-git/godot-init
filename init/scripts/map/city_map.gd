@@ -62,6 +62,8 @@ const GROUND_WATER := preload("res://assets/textures/ground_water.png")
 const GROUND_RAIL := preload("res://assets/textures/ground_rail.png")
 const GROUND_COURTYARD := preload("res://assets/textures/ground_courtyard.png")
 const ROAD_PAINT_SHADER := preload("res://assets/shaders/road_paint.gdshader")
+const TERRAIN_GROUND_SHADER := preload("res://assets/shaders/terrain_ground.gdshader")
+const TERRAIN_EDGE_SHADER := preload("res://assets/shaders/terrain_ground_edge.gdshader")
 const GROUND_SNOW_GRASS := preload("res://assets/textures/ground_snow_grass.png")
 const GROUND_SNOW_GRASS_DRY := preload("res://assets/textures/ground_snow_grass_dry.png")
 const GROUND_SNOW_ASPHALT := preload("res://assets/textures/ground_snow_asphalt.png")
@@ -943,24 +945,43 @@ func _on_lot_state_changed(lot: String, state: String) -> void:
 
 # --- Ground and street details -----------------------------------------------
 
-func _ground_quad(center: Vector2, size: Vector2, y: float, texture: Texture2D, tile: float, turned: bool = false, tint: Color = Color.WHITE) -> void:
+# `organic` swaps the flat tiled material for the terrain shader (world-space UVs,
+# de-tiled, large-scale variation); use it for grass, dirt and similar natural ground.
+# `soft_edge` (metres, organic only) fades the patch out toward its border so it blends
+# into the ground laid beneath it; leave it 0 where the patch meets a road or kerb.
+func _ground_quad(center: Vector2, size: Vector2, y: float, texture: Texture2D, tile: float, turned: bool = false, tint: Color = Color.WHITE, organic: bool = false, soft_edge: float = 0.0) -> void:
 	var quad := QuadMesh.new()
-	var material := StandardMaterial3D.new()
-	material.albedo_texture = texture
-	material.albedo_color = tint
-	material.roughness = 0.95
-	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+	var material: Material
 	var instance := MeshInstance3D.new()
-	if turned:
-		quad.size = Vector2(size.y, size.x)
-		material.uv1_scale = Vector3(size.y / tile, size.x / tile, 1.0)
-		instance.basis = Basis(Vector3.UP, PI / 2.0) * Basis(Vector3.RIGHT, -PI / 2.0)
+	if organic and not OS.get_cmdline_user_args().has("--flat-ground"):
+		var shader_material := ShaderMaterial.new()
+		shader_material.shader = TERRAIN_EDGE_SHADER if soft_edge > 0.0 else TERRAIN_GROUND_SHADER
+		if soft_edge > 0.0:
+			shader_material.set_shader_parameter("quad_metres", size)
+			shader_material.set_shader_parameter("edge_metres", soft_edge)
+		shader_material.set_shader_parameter("ground_texture", texture)
+		shader_material.set_shader_parameter("tint", tint)
+		shader_material.set_shader_parameter("tile_metres", tile)
+		material = shader_material
+		quad.size = Vector2(size.y, size.x) if turned else size
+		instance.basis = (Basis(Vector3.UP, PI / 2.0) * Basis(Vector3.RIGHT, -PI / 2.0)) if turned else Basis(Vector3.RIGHT, -PI / 2.0)
 	else:
-		quad.size = size
-		material.uv1_scale = Vector3(size.x / tile, size.y / tile, 1.0)
-		var corner := center - size / 2.0
-		material.uv1_offset = Vector3(corner.x / tile, corner.y / tile, 0.0)
-		instance.basis = Basis(Vector3.RIGHT, -PI / 2.0)
+		var standard := StandardMaterial3D.new()
+		standard.albedo_texture = texture
+		standard.albedo_color = tint
+		standard.roughness = 0.95
+		standard.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+		material = standard
+		if turned:
+			quad.size = Vector2(size.y, size.x)
+			standard.uv1_scale = Vector3(size.y / tile, size.x / tile, 1.0)
+			instance.basis = Basis(Vector3.UP, PI / 2.0) * Basis(Vector3.RIGHT, -PI / 2.0)
+		else:
+			quad.size = size
+			standard.uv1_scale = Vector3(size.x / tile, size.y / tile, 1.0)
+			var corner := center - size / 2.0
+			standard.uv1_offset = Vector3(corner.x / tile, corner.y / tile, 0.0)
+			instance.basis = Basis(Vector3.RIGHT, -PI / 2.0)
 	instance.mesh = quad
 	instance.material_override = material
 	instance.position = Vector3(center.x, y, center.y)
@@ -1058,7 +1079,7 @@ func _boulevard_median(road: Dictionary) -> void:
 		if piece.size.y < 6.0:
 			continue
 		_box(Vector3(piece.size.x + 0.5, 0.25, piece.size.y), _ground(piece.get_center()) + Vector3.UP * 0.2, Color("b3afa0"))
-		_ground_quad(piece.get_center(), piece.size, 0.33, _season["grass"], 22.0, false, _season["grass_tint"])
+		_ground_quad(piece.get_center(), piece.size, 0.33, _season["grass"], 22.0, false, _season["grass_tint"], true)
 		var z := piece.position.y + 7.0
 		while z < piece.end.y - 3.0:
 			_tree(_ground(Vector2(piece.get_center().x, z)) + Vector3.UP * 0.3,
