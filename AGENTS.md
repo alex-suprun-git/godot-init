@@ -72,6 +72,7 @@ These rules extend and, where they differ, replace "Do not commit or push unless
 - **Do not start a second feature on a branch that already has an open PR.** Branch from `main` (or ask what to stack on) instead.
 - **Branch names:** `feat/<slug>`, `fix/<slug>`, `art/<slug>`, `docs/<slug>`, `chore/<slug>`; briefs for workers use `task/<id>` (see `tasks/README.md`).
 - **Pull requests** use `.github/pull_request_template.md`: summary, scope, what changed, screenshots per feature, how to verify, risks and what was not verified. The title says what the PR does in one line; the body is English. Follow `docs/PR_WORKFLOW.md` for the screenshots.
+- **Label every PR when opening it** (`gh pr create --label ...`, or `gh pr edit --add-label` afterwards), using the Backlog labels: every `area:*` the diff touches (tooling, CI and agent docs are `area:process`), exactly one `type:*`, and the linked issue's `leverage:*`. Never put `ready` on a PR. If the scope changes later, update the labels too.
 - A worker's result (`task/<id>` branch) is integrated by the lead through its own PR, one PR per brief or per coherent group the user approves.
 
 ## Backlog
