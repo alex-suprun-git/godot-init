@@ -1,0 +1,7 @@
+# bridge-steel-v1
+
+Built-in ImageGen; original bridge surface source.
+
+```text
+Use case: stylized-concept. Generate ONE square seamless repeating ALBEDO MATERIAL texture for existing 3D bridges in a grounded stylized strategy game in a maintained post-Soviet provincial town, August 1997. Surface fills square edge-to-edge, pure orthographic flat material view, uniform diffuse light. Seamless both axes, no perimeter border, no centre-to-edge brightness gradient. No baked directional shadows, ambient occlusion, specular highlights, perspective, complete bridge, scenery, objects, text, logos, labels or watermark. Fine realistic restrained painted material detail, no heavy brush marks. Ordinary maintained infrastructure, no ruin, widespread rust, graffiti, vegetation, large cracks or damage. Opaque surface. Distributed subtle variation readable at map distance without obvious isolated repeating stains. Material: aged but cared-for painted structural steel for a railway bridge truss. Muted grey-blue paint, dominant approximately sRGB #697C83. Matte/satin, broad quiet continuous paint surface, very fine texture, small soft tonal variations and tiny sparse hairline wear. Texture represents 2 x 2 metres. No rivets, bolt heads, seams, strips, letters, panels or baked geometry: connections are separate 3D details. No corrugated roofing, no bare shiny metal, no dramatic rust, no flaking sheets. Restrained continuous paint that repeats on long narrow bridge girders.
+```

@@ -1,0 +1,33 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/bridges/bridge-ballast-v1.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/textures/bridge_ballast.png",
+  "source_sha256": "a6ce2cd6fd74c12f12f7a4e3d7d34c6bc31a92eb90c043f26f9deec498b9f422",
+  "profile": "surface",
+  "max_edge": 1024,
+  "override_reason": null,
+  "approved": true,
+  "before": {
+    "size": [
+      1254,
+      1254
+    ],
+    "bytes": 4219983,
+    "estimated_rgba_bytes": 6290064
+  },
+  "after": {
+    "size": [
+      1024,
+      1024
+    ],
+    "estimated_rgba_bytes": 4194304,
+    "bytes": 2442338,
+    "sha256": "be951c649bc27071d591948eab9c6cad99a038a6a68cb2ea9d4a97437f9fda2b"
+  },
+  "has_alpha": false,
+  "source_alpha_extrema": null,
+  "output_alpha_extrema": null,
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}

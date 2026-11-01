@@ -1,0 +1,33 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/bridges/bridge-steel-v1.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/textures/bridge_steel.png",
+  "source_sha256": "a5c78a9e3dd9508adec91c7170b3abe700c00afbbd35f0abacb7a8764b43c378",
+  "profile": "surface",
+  "max_edge": 1024,
+  "override_reason": null,
+  "approved": true,
+  "before": {
+    "size": [
+      1254,
+      1254
+    ],
+    "bytes": 2718984,
+    "estimated_rgba_bytes": 6290064
+  },
+  "after": {
+    "size": [
+      1024,
+      1024
+    ],
+    "estimated_rgba_bytes": 4194304,
+    "bytes": 1535368,
+    "sha256": "74db1c905dd39183fa39d0ce2357d6c19c245aaba00440fd97cf08124f3c3b38"
+  },
+  "has_alpha": false,
+  "source_alpha_extrema": null,
+  "output_alpha_extrema": null,
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}
