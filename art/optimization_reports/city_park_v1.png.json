@@ -1,0 +1,39 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/concepts/city-park-v1.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/sprites/city_park_v1.png",
+  "source_sha256": "8cebf1d89ecb8838089d2f7cbc29fd36ee5c7cf479d8fc98cdea1a7d95d78c6f",
+  "profile": "sprite",
+  "max_edge": 1536,
+  "override_reason": "Whole 54 by 84 metre park with benches, flowers and foliage visible at maximum map zoom",
+  "approved": true,
+  "before": {
+    "size": [
+      1536,
+      1024
+    ],
+    "bytes": 2667760,
+    "estimated_rgba_bytes": 6291456
+  },
+  "after": {
+    "size": [
+      1536,
+      1024
+    ],
+    "estimated_rgba_bytes": 6291456,
+    "bytes": 2516347,
+    "sha256": "0e1efce205e8056d0c090642b8695f824237c6cfce9e379cb0377d91a0a5e344"
+  },
+  "has_alpha": true,
+  "source_alpha_extrema": [
+    0,
+    254
+  ],
+  "output_alpha_extrema": [
+    0,
+    254
+  ],
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}
