@@ -1,6 +1,8 @@
 shader_type spatial;
 render_mode cull_disabled;
 
+uniform vec4 paint_colour : source_color = vec4(0.79, 0.78, 0.72, 1.0);
+
 varying vec3 paint_world;
 
 void vertex() {
@@ -14,6 +16,6 @@ void fragment() {
 	if (wear < 0.07 || edge < 0.012 + wear * 0.018) {
 		discard;
 	}
-	ALBEDO = vec3(0.79, 0.78, 0.72) * (0.94 + wear * 0.06);
+	ALBEDO = paint_colour.rgb * (0.94 + wear * 0.06);
 	ROUGHNESS = 1.0;
 }
