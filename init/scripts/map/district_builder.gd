@@ -56,7 +56,7 @@ func _build_ground() -> void:
 		var depth: float = part.y - part.x
 		var center_z: float = (part.x + part.y) / 2.0
 		map._box(Vector3(2600, 1, depth), Vector3(0, -0.6, center_z), map.GRASS)
-		map._ground_quad(Vector2(0, center_z), Vector2(2600, depth), 0.005, map._season["grass"], 44.0, false, map._season["grass_tint"])
+		map._ground_quad(Vector2(0, center_z), Vector2(2600, depth), 0.005, map._season["grass"], 44.0, false, map._season["grass_tint"], true)
 	var wall_color := Color("6c685a")
 	var wall_height := -WATER_LEVEL + 0.1
 	for z in [north_edge, south_edge]:
@@ -118,7 +118,8 @@ func _patch(rect: Rect2, ground: String, height: float, condition_tint: Color = 
 	var tint: Color = map._season["grass_tint"] if ground in ["grass", "grass_dry"] else Color.WHITE
 	if ground == "asphalt":
 		tint = map._season["asphalt_tint"]
-	map._ground_quad(rect.get_center(), rect.size, height, map._season[ground], 22.0 if ground in ["grass", "grass_dry", "courtyard"] else 12.0, false, tint * condition_tint)
+	var organic: bool = ground in ["grass", "grass_dry", "dirt", "courtyard"]
+	map._ground_quad(rect.get_center(), rect.size, height, map._season[ground], 22.0 if ground in ["grass", "grass_dry", "courtyard"] else 12.0, false, tint * condition_tint, organic, 6.0 if ground in ["grass_dry", "dirt", "courtyard"] else 0.0)
 
 
 func _rail_segment(from: Vector2, to: Vector2) -> void:
