@@ -6,6 +6,7 @@ const DistrictLayout = preload("res://scripts/data/district_layout.gd")
 const BuildingCatalog = preload("res://scripts/data/building_catalog.gd")
 const DistrictBuilder = preload("res://scripts/map/district_builder.gd")
 const Daylight = preload("res://scripts/map/daylight.gd")
+const MapEdges = preload("res://scripts/map/map_edges.gd")
 const LIT_FACADE := preload("res://assets/shaders/lit_facade.gdshader")
 const Week1 = preload("res://scripts/data/week1.gd")
 const Settings = preload("res://scripts/data/settings.gd")
@@ -164,6 +165,7 @@ var _night := -1.0
 var _night_hour := -1.0 # While the night plays between days: the hour shown (22..31).
 var _debug_hour := -1.0 # Dev: --hour=18.5 pins the clock for lighting checks.
 var _weather: CPUParticles3D # Snow or falling leaves, following the camera.
+var _edges: Node3D # Full-screen haze that hides the map edges.
 
 
 func setup(week_sim) -> void:
@@ -173,12 +175,17 @@ func setup(week_sim) -> void:
 			_debug_hour = float(arg.trim_prefix("--hour="))
 		elif arg.begins_with("--season=") and SEASONS.has(arg.trim_prefix("--season=")):
 			Settings.season = arg.trim_prefix("--season=")
+		elif arg.begins_with("--camera-mode=") and Settings.CAMERAS.has(arg.trim_prefix("--camera-mode=")):
+			Settings.camera_mode = arg.trim_prefix("--camera-mode=")
 	_season = SEASONS[Settings.season]
 	_rng.seed = 7
 	_build_environment()
 	_build_weather()
 	var builder := DistrictBuilder.new()
 	builder.build(self)
+	_edges = MapEdges.new()
+	_edges.name = "MapEdges"
+	add_child(_edges)
 	_lot_labels = builder.labels
 	# Whoever starts at a lot with a doorstep stands there, not at the entrance.
 	for id in sim.actors:
@@ -199,6 +206,13 @@ func setup(week_sim) -> void:
 	sim.lot_state_changed.connect(_on_lot_state_changed)
 	for lot in sim.lot_states:
 		_on_lot_state_changed(lot, sim.lot_states[lot])
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--cam="):
+			var parts := arg.trim_prefix("--cam=").split(",")
+			if parts.size() == 3:
+				_set_goal(Vector3(float(parts[0]), 0.0, float(parts[1])))
+				_camera_target = _camera_goal
+				_zoom = clampf(float(parts[2]), ZOOM_MIN, ZOOM_MAX)
 	_update_camera()
 
 
@@ -428,6 +442,11 @@ func _update_daylight() -> void:
 	_sun.light_energy = look["sun_energy"]
 	_environment.ambient_light_energy = look["ambient"]
 	_environment.fog_light_color = look["fog_color"]
+	if _edges != null:
+		# The haze quad is unshaded, so it carries the dimmed fog colour (already
+		# darkened at night) and a further night factor, or it would glow after dark.
+		var haze_color: Color = look["fog_color"]
+		_edges.set_haze_color(haze_color.darkened(0.55 * float(look["night"])))
 	_environment.adjustment_saturation = look["saturation"]
 	_sky_material.sky_top_color = look["sky_top"]
 	_sky_material.sky_horizon_color = look["sky_horizon"]
