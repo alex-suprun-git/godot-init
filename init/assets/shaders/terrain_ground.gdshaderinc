@@ -5,8 +5,12 @@ uniform float tile_metres = 22.0;
 // Second sample: other scale and rotation, so the two repeat grids never line up.
 uniform float second_scale = 0.37;
 uniform float second_angle = 0.65;
-// Large patches of lush / dry / yellowed ground, in metres.
-uniform float macro_metres = 55.0;
+// Large patches of lush / dry / yellowed ground: a painted grayscale map that covers
+// `macro_metres`, sampled twice (second one turned and smaller) so its own repeat hides.
+uniform sampler2D macro_texture : hint_default_white, filter_linear_mipmap, repeat_enable;
+uniform float macro_metres = 120.0;
+// The painted map is soft (std ~0.08); this stretches it to the range the tint expects.
+uniform float macro_contrast = 2.6;
 uniform float macro_strength = 0.18;
 // Measured against the flat material: the blend and macro tint came out ~8 % darker and cooler.
 uniform vec3 compensation = vec3(1.24, 1.17, 1.14);
@@ -52,8 +56,12 @@ vec3 terrain_ground_colour(vec2 world_xz) {
 	float keep = 1.0 / sqrt(w * w + (1.0 - w) * (1.0 - w));
 	vec3 ground = mean_colour + (mix(a, b, w) - mean_colour) * keep;
 
-	// Two octaves of large-scale variation: brightness plus a shift toward dry yellow.
-	float macro = value_noise(world_xz / macro_metres) * 0.65 + value_noise(world_xz / (macro_metres * 0.3) + 17.0) * 0.35;
+	// Large-scale variation: brightness plus a shift toward dry yellow.
+	vec2 macro_uv = world_xz / macro_metres;
+	float macro_sample = texture(macro_texture, macro_uv).r * 0.65
+		+ texture(macro_texture, mat2(vec2(s, -c), vec2(c, s)) * macro_uv * 2.3 + vec2(0.43, 0.71)).r * 0.35;
+	float macro_mean = textureLod(macro_texture, macro_uv, 12.0).r;
+	float macro = clamp(0.5 + (macro_sample - macro_mean) * macro_contrast, 0.0, 1.0);
 	ground *= 1.0 + (macro - 0.5) * 2.0 * macro_strength;
 	ground += dry_shift * smoothstep(0.55, 0.9, macro) * macro_strength * 2.0;
 

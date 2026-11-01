@@ -5,7 +5,17 @@ description: Find and evaluate reusable 3D models, or create, revise and integra
 
 # Blender to Godot Assets
 
-Run commands from the repository root. Read `art/PROMPTS.md` and the relevant asset README for its reference, current version and approval state. Existing Lada source scripts are in `art/models/lada/`; reuse a suitable asset before rebuilding it.
+Run commands from the repository root. Read `art/PROMPTS.md` and the relevant asset README for its reference, current version and approval state. Use the current truck and Volga as the project benchmarks for new vehicle models; see the comparison rules below. Reuse suitable existing helpers before rebuilding them.
+
+## Current vehicle benchmarks
+
+User direction updated 2026-11-01: compare new vehicle models, including buses, with the existing truck and Volga for dimensions, proportions, visual finish and map readability.
+
+- Current truck sources and scale: `art/models/traffic/README.md` and `art/models/traffic/upgrade/`; game exports: `truck_kamaz_semi.glb`, `truck_zil_flatbed.glb` and `truck_zil_food.glb` under `init/assets/models/vehicles/`. The old primitive truck generator/source were removed from main. Compare the actual game instances, including the approved 0.80 truck presentation factor, rather than raw GLBs at scale 1.
+- Volga game export: `init/assets/models/vehicles/volga_gaz24.glb`; inspect the current asset and its available source record before using older sourcing notes as current status.
+- Establish the new vehicle's own real dimensions for the chosen variant. Measure the current GLBs and inspect their actual placement/scaling in `init/scripts/map/vehicle_models.gd` and its callers. Compare length, width, height, wheel size and grounding beside the truck and Volga in a shared Godot frame, with identical camera and lighting.
+- Use the truck and Volga as references for compatible detail, materials and silhouette readability, choosing a budget for the new asset's screen size and instance count.
+- The Lada is a legacy implementation example, not the benchmark for new models. Its 4.37-to-4.3 m conversion is existing code behavior, not a prescribed scale factor for buses or future assets. Resolve integration scale against the current truck and Volga comparison instead of inheriting that factor automatically.
 
 ## Find before building
 

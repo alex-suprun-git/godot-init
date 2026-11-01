@@ -1,8 +1,10 @@
 # Bus and commuter train checkpoint
 
-Updated 2026-11-01. The ER2 head and motor cars are built and exported; buses
-remain unmodeled. ER2 source, measured Volga-relative scaling, four-car assembly,
-actual Godot captures and remaining review points: `er2/README.md`.
+Updated 2026-11-01. The ER2 head and motor cars are built and exported; source,
+Volga-relative scaling, four-car assembly and Godot review: `er2/README.md`.
+LiAZ-5256 and PAZ-3205 buses are built and integrated into traffic and ATP;
+bus sources and review state: `README.md`. The bus update was migrated to
+`art/bus-models` from main `f620893` and rechecked in Godot with upgraded trucks.
 
 ## Existing project material
 
@@ -12,7 +14,8 @@ actual Godot captures and remaining review points: `er2/README.md`.
   bus, used twice at the ATP and at the bus terminal. `art/PROMPTS.md` explicitly
   says it is not a certified PAZ model. Source concepts remain under `art/concepts/`.
 - At the initial 2026-10-31 audit no bus or commuter-train GLB existed. ER2 head
-  and motor GLBs now live under `init/assets/models/vehicles/`.
+  and motor GLBs and both bus GLBs now live under `init/assets/models/vehicles/`.
+  Editable bus stages are in `shape_v1/` and `finish_v1/`.
 - `art/DISTRICT_ART_REQUEST.md`, A11: ER-type suburban electric train, green
   with a yellow/red nose; three coupled cars, approximately 60 m long and
   3.5 m wide. This is an existing text brief, not a completed asset/reference.
@@ -48,6 +51,10 @@ actual Godot captures and remaining review points: `er2/README.md`.
 These are visual/history leads. No external model has been acquired and no
 licence for reusing third-party geometry/textures has been established.
 
+## Model comparison benchmarks
+
+User direction updated 2026-11-01: compare the new buses with the current truck and Volga for dimensions and visual quality. Follow the project's Blender skill benchmark rules. Calibrate each bus to its own verified dimensions and compare all three dimensions, wheels and grounding in the same Godot frame. The old Lada scale factor is not the bus scaling rule.
+
 ## Next action
 
 Generated multi-view concept sheets now exist in `references/` for all three
@@ -55,13 +62,8 @@ selected vehicles, with prompts and inspection notes in `references/README.md`.
 The user requested generated turnarounds as the primary modeling guide. Use
 these for the intended appearance, then calibrate real dimensions and reconcile
 inconsistent details across views. Their drawn grids are not measured blueprints.
-ER2 production has since been completed; see `er2/README.md`. Buses still need
-the modeling steps below.
-
-Collect consistent front/side/rear/three-quarter references for LiAZ-5256,
-PAZ-3205, and choose
-geometry/material budgets for their actual map scale. Then use the project's
-Blender skill and `references/vehicle-modeling.md`: establish silhouette and
-proportions before detail/baking, keep body/glazing coordinated, export only
-the asset, inspect actual GLBs and show a Godot frame. For the ER2, the next step
-is user review of the requested static map placement; movement remains open.
+The user approved the refreshed bus comparison with a 20% size reduction and
+requested a PR. The road fleet is capped at five buses by separate commit
+`469e5fc`. Reconcile exact PAZ variant dimensions
+if required. For ER2, review of the requested static map placement remains the
+recorded next step; movement is open. See each asset's own README.

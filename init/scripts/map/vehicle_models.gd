@@ -8,6 +8,8 @@ const MODELS := {
 	"zil_food": preload("res://assets/models/vehicles/truck_zil_food.glb"),
 	"zil_flatbed": preload("res://assets/models/vehicles/truck_zil_flatbed.glb"),
 	"container_20ft": preload("res://assets/models/vehicles/container_20ft.glb"),
+	"bus_liaz": preload("res://assets/models/vehicles/bus_liaz_5256.glb"),
+	"bus_paz": preload("res://assets/models/vehicles/bus_paz_3205.glb"),
 }
 # Civilian variants share the GLB; the administration keeps black lacquer.
 const VOLGA_PATH := "res://assets/models/vehicles/volga_gaz24.glb"
@@ -15,6 +17,8 @@ const VOLGA_SOURCE_LENGTH := 4.905458 # Measured from volga_gaz24.glb.
 const LADA_MAP_LENGTH := 4.3
 # Approved map presentation: freight trucks are uniformly 20% smaller.
 const TRUCK_VISUAL_SCALE := 0.80
+# Both bus variants share the requested 20% presentation reduction.
+const BUS_VISUAL_SCALE := 0.80
 const VOLGA_TRAFFIC_SHARE := 1.0 / 15.0
 const VOLGA_PAINT_SHADER := preload("res://assets/shaders/vehicle_paint.gdshader")
 # Curated period-inspired palette; red/pink and vivid colours excluded by art direction.
@@ -30,6 +34,8 @@ const VOLGA_PAINT_WEIGHTS := [24, 22, 22, 17, 9, 6]
 const PAINT_BLACK := -2 # Only for the Volga: the traffic palette has no black.
 const BLACK_PAINT := Color(0.035, 0.035, 0.045)
 const LENGTHS := {"lada": 4.37, "lada_wagon": 4.37, "kamaz_semi": 16.98521423, "zil_flatbed": 7.06033731, "zil_food": 7.15875745, "container_20ft": 6.06}
+# Actual exported bounds including bumpers, before BUS_VISUAL_SCALE.
+const BUS_LENGTHS := {"bus_liaz": 11.55, "bus_paz": 7.075}
 # Tarpaulins, shipping containers and truck cabs have their own palettes.
 const TARP_PAINTS := [
 	Color(0.49, 0.48, 0.37), # khaki
@@ -66,10 +72,12 @@ static func has_volga_model() -> bool:
 	return ResourceLoader.exists(VOLGA_PATH)
 
 
-# Map length in metres: every car keeps the Lada's 4.37 -> 4.3 scale factor.
+# Map length in metres. Bus scale was reviewed beside the truck and Volga.
 static func map_length(model_id: String) -> float:
 	if model_id in ["kamaz_semi", "zil_flatbed", "zil_food"]:
 		return _source_length(model_id) * LADA_MAP_LENGTH / float(LENGTHS["lada"])
+	if BUS_LENGTHS.has(model_id):
+		return float(BUS_LENGTHS[model_id])
 	if model_id == "volga" and has_volga_model():
 		return VOLGA_SOURCE_LENGTH * LADA_MAP_LENGTH / float(LENGTHS["lada"])
 	return LADA_MAP_LENGTH
@@ -82,6 +90,8 @@ static func _scene(model_id: String) -> PackedScene:
 
 
 static func _source_length(model_id: String) -> float:
+	if BUS_LENGTHS.has(model_id):
+		return float(BUS_LENGTHS[model_id])
 	if model_id == "volga":
 		return VOLGA_SOURCE_LENGTH if has_volga_model() else float(LENGTHS["lada"])
 	return float(LENGTHS[model_id])
@@ -90,9 +100,10 @@ static func _source_length(model_id: String) -> float:
 # Background traffic: roughly one car in three is the wagon. Same seed, same car.
 # The same seed always gives the same car; the Volga share replaces some cars
 # without adding any, so the total on the map is unchanged.
-# Vehicle class from the district fleet mix to a model. Buses and tractors have no
-# model yet and run as cars until they do.
+# Vehicle class from the district fleet mix to a model. Tractors still use cars.
 static func model_for_class(vehicle_class: String, seed_value: int) -> String:
+	if vehicle_class == "bus":
+		return "bus_liaz" if posmod(hash("bus:%d" % seed_value), 2) == 0 else "bus_paz"
 	if vehicle_class == "truck":
 		return ["kamaz_semi", "zil_flatbed", "zil_food"][(abs(seed_value) >> 4) % 3]
 	return traffic_model(seed_value)
@@ -112,9 +123,13 @@ static func create(model_id: String, at: Vector3, length: float, axis: String, p
 	vehicle.scale = Vector3.ONE * (length / _source_length(model_id))
 	if model_id in ["kamaz_semi", "zil_flatbed", "zil_food"]:
 		vehicle.scale *= TRUCK_VISUAL_SCALE
+	elif BUS_LENGTHS.has(model_id):
+		vehicle.scale *= BUS_VISUAL_SCALE
 	if model_id == "volga" and has_volga_model():
 		if paint >= 0:
 			_repaint_volga(vehicle, _weighted_paint(paint, VOLGA_PAINT_WEIGHTS, "volga-paint"))
+	elif BUS_LENGTHS.has(model_id):
+		pass # Preserve the two-tone concept livery; car tints flatten both paint bands.
 	elif paint == PAINT_BLACK:
 		_repaint(vehicle, PAINT_BLACK)
 	elif paint >= 0:

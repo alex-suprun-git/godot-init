@@ -1,0 +1,20 @@
+{
+  "LiAZ_5256": {
+    "dimensions_m": [
+      11.4,
+      2.5,
+      3.007
+    ],
+    "wheelbase_m": 5.84,
+    "stage": "Shape v1; livery provisional; not visually approved"
+  },
+  "PAZ_3205": {
+    "dimensions_m": [
+      6.925,
+      2.5,
+      2.96
+    ],
+    "wheelbase_m": 3.5999999999999996,
+    "stage": "Shape v1; livery provisional; not visually approved"
+  }
+}

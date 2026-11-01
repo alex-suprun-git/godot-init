@@ -14,6 +14,8 @@ const CAR_KINDS := ["asphalt"]
 const CROWD_CAP := 2.0
 const MIN_DENSITY := 0.02
 const VISIBILITY_PER_FRAME := 48
+# Cap road-traffic bus slots; parked depot models are outside this pool.
+const MAX_BUSES := 5
 # Fast roads slow to town speed at junctions: full town speed within SLOW_NEAR metres
 # of the junction, rising to the road's speed over the next SLOW_RAMP metres.
 const JUNCTION_SLOW_NEAR := 12.0
@@ -210,7 +212,7 @@ func _enter(agent: Dictionary) -> void:
 			break
 	var gate: Dictionary = _gateways[chosen]
 	agent["gateway"] = chosen
-	agent["class"] = _fleet_class(gate["sample"])
+	agent["class"] = _fleet_class(gate["sample"], agent["class"] == "bus")
 	agent["threshold"] = _rng.randf()
 	agent["state"] = "in"
 	agent["leg_from"] = gate["point"] + gate["out"] * gate["leg_length"]
@@ -290,7 +292,7 @@ func _edge_middle(edge: int) -> Vector2:
 	return (_graph.points[_graph.edges[edge]["a"]] + _graph.points[_graph.edges[edge]["b"]]) / 2.0
 
 
-func _fleet_class(point: Vector2) -> String:
+func _fleet_class(point: Vector2, replacing_bus: bool = false) -> String:
 	var fleet: Dictionary = DistrictLayout.profile_at(point)["fleet"]
 	var total := 0.0
 	for weight in fleet.values():
@@ -299,6 +301,13 @@ func _fleet_class(point: Vector2) -> String:
 	for vehicle_class in fleet:
 		roll -= fleet[vehicle_class]
 		if roll <= 0.0:
+			if vehicle_class == "bus":
+				# Exclude the old bus when this same slot re-enters the map.
+				var bus_count := -1 if replacing_bus else 0
+				for agent in agents:
+					if agent["is_car"] and agent["class"] == "bus":
+						bus_count += 1
+				return "bus" if bus_count < MAX_BUSES else "car"
 			return vehicle_class
 	return "car"
 
