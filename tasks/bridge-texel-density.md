@@ -1,6 +1,6 @@
 ---
 id: bridge-texel-density
-status: review   # user approved the after frame in chat; PR not opened yet  # ready | in-progress | review | blocked | done
+status: review   # ready | in-progress | review | blocked | done
 worker: any
 issue: "#31"
 branch: fix/bridge-texel-density
