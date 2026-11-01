@@ -5,6 +5,7 @@ extends Node3D
 const DistrictLayout = preload("res://scripts/data/district_layout.gd")
 const BuildingCatalog = preload("res://scripts/data/building_catalog.gd")
 const DistrictBuilder = preload("res://scripts/map/district_builder.gd")
+const WearMask = preload("res://scripts/map/wear_mask.gd")
 const Daylight = preload("res://scripts/map/daylight.gd")
 const MapEdges = preload("res://scripts/map/map_edges.gd")
 const MapBoundaries = preload("res://scripts/data/map_boundaries.gd")
@@ -150,6 +151,7 @@ var _dragging := false
 var _tokens := {} # actor id -> Node3D
 var _overlays := {} # "lot:name" -> Node3D
 var _lot_states := {} # lot -> {state -> Node3D}
+var wear: WearMask # Worn-ground sources register here while the district is built.
 var _occupied: Array[Rect2] = [] # Ground taken by buildings and roads; trees avoid it.
 var _road_paint_material: ShaderMaterial
 var _lot_labels: Node3D
@@ -192,8 +194,10 @@ func setup(week_sim) -> void:
 	_rng.seed = 7
 	_build_environment()
 	_build_weather()
+	wear = WearMask.new(_wear_bounds())
 	var builder := DistrictBuilder.new()
 	builder.build(self)
+	wear.bake()
 	_edges = MapEdges.new()
 	_edges.name = "MapEdges"
 	add_child(_edges)
@@ -962,6 +966,10 @@ func _ground_quad(center: Vector2, size: Vector2, y: float, texture: Texture2D, 
 		shader_material.set_shader_parameter("ground_texture", texture)
 		shader_material.set_shader_parameter("tint", tint)
 		shader_material.set_shader_parameter("tile_metres", tile)
+		if wear != null:
+			shader_material.set_shader_parameter("wear_mask", wear.texture)
+			shader_material.set_shader_parameter("wear_rect", wear.world_rect())
+			shader_material.set_shader_parameter("dirt_texture", _season["dirt"])
 		material = shader_material
 		quad.size = Vector2(size.y, size.x) if turned else size
 		instance.basis = (Basis(Vector3.UP, PI / 2.0) * Basis(Vector3.RIGHT, -PI / 2.0)) if turned else Basis(Vector3.RIGHT, -PI / 2.0)
@@ -1271,6 +1279,16 @@ func _heat_pipe(from: Vector2, to: Vector2) -> void:
 	for i in steps + 1:
 		var point := from.lerp(to, float(i) / max(1, steps))
 		_box(Vector3(0.4, 2.4, 0.4), Vector3(point.x, 1.2, point.y), Color(0.4, 0.38, 0.35))
+
+
+# The area the wear mask covers: every lot and road of the district plus a margin.
+func _wear_bounds() -> Rect2:
+	var area := Rect2()
+	var first := true
+	for rect in DistrictLayout.LOTS.values().map(func(lot): return lot["rect"]) + DistrictLayout.ROADS.map(func(road): return road["rect"]):
+		area = rect if first else area.merge(rect)
+		first = false
+	return area.grow(30.0)
 
 
 func _occupy(center: Vector2, size: Vector2) -> void:
