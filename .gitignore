@@ -36,3 +36,11 @@ art/models/public_transport/er2/previews/
 /.local/
 /docs/pr-assets/
 /art/optimization_reports/
+
+# Bus visual review captures/logs stay local; sources and GLBs remain versionable.
+/art/models/public_transport/shape_v1/*.png
+/art/models/public_transport/shape_v1/*.log
+/art/models/public_transport/shape_v1/comparison.blend
+/art/models/public_transport/finish_v1/*.png
+/art/models/public_transport/finish_v1/*.log
+/art/models/public_transport/finish_v1/comparison.blend

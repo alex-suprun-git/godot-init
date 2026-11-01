@@ -133,9 +133,9 @@ const CONTENTS := {
 	"atp": {"kind": "group", "footprint": Vector2.ZERO, "ground": "asphalt", "label": "АТП · автобусный парк", "parts": [
 		{"at": Vector2(-20, -24), "footprint": Vector2(64, 24), "height": 8.0, "pitched": 3.2, "roof": "res://assets/textures/roof_rusty_metal.png",  "facade_floors": 8.0 / 3.0, "facade": "res://assets/textures/facade_bus_garage.png", "placeholder_color": Color("988d7a")},
 	], "dressing": [
-		{"sprite": "bus_local_1997", "at": Vector2(-30, 20), "width": 8.8, "footprint": Vector2(3, 10), "axis": "z"},
-		{"sprite": "bus_local_1997", "at": Vector2(-8, 20), "width": 8.8, "footprint": Vector2(3, 10), "axis": "z"},
-		{"sprite": "bus_liaz", "at": Vector2(16, 20), "width": 9.0, "footprint": Vector2(10, 3), "axis": "z"},
+		{"model": "bus_paz", "at": Vector2(-30, 20), "length": 7.075, "footprint": Vector2(3, 7.2), "axis": "z"},
+		{"model": "bus_paz", "at": Vector2(-8, 20), "length": 7.075, "footprint": Vector2(3, 7.2), "axis": "z"},
+		{"model": "bus_liaz", "at": Vector2(16, 20), "length": 11.55, "footprint": Vector2(3, 11.7), "axis": "z"},
 	]},
 	"truck_stop": {"kind": "group", "footprint": Vector2.ZERO, "ground": "asphalt", "label": "Стоянка дальнобойщиков", "parts": [
 		{"at": Vector2(30, -30), "footprint": Vector2(32, 12), "height": 4.0, "facade_floors": 4.0 / 3.0, "facade": "res://assets/textures/facade_roadside_cafe.png", "placeholder_color": Color("b79b76")},

@@ -1,6 +1,6 @@
 # Vehicle modelling and shape revisions
 
-Use for original cars/vans and body-shape edits. Sourcing/acquisition remains
+Use for original vehicles, including buses, and body-shape edits. Use the current truck and Volga as the dimension and visual-quality benchmarks defined in SKILL.md. Sourcing/acquisition remains
 in `asset-sourcing.md`; MCP execution and export scoping remain in `SKILL.md`.
 
 ## Establish the vehicle, then its form

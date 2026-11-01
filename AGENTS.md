@@ -62,6 +62,8 @@ Tokens are the scarcest resource; spend them on the result, not on ceremony.
 
 ## Blender and 3D Assets
 
+- For new vehicle models, use the current truck and Volga as the benchmarks for dimensions, proportions and visual quality. Follow the comparison rules in the project Blender skill; the Lada scale factor is legacy implementation behavior, not the default for new assets.
+
 - Use the project skill at `.agents/skills/blender-godot-assets/SKILL.md` for Blender modeling, export and Godot integration. The reusable MCP client is `tools/blender_mcp.py`; prefer the working API over repeated UI attempts.
 - For downloaded models, read the skill's `references/asset-sourcing.md`: it records acquisition, automated inspection, adaptation, previews and the division of work with the user. Handle routine technical work independently; involve the user for meaningful creative choices or a concrete acquisition blocker.
 - Resume asset work from `art/models/<asset>/SOURCING.md` and its asset README, not from assumed chat memory. The Volga shortlist and pending acquisition are recorded in `art/models/volga/SOURCING.md`.
