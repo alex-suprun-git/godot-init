@@ -1,33 +1,30 @@
 # Pull request workflow and screenshots
 
-Rules for branches live in `AGENTS.md` ("Git and Pull Requests"). This file holds the procedure for screenshots so every PR looks the same between "releases".
+Branch and scope rules live in `AGENTS.md`. Review screenshots are GitHub attachments, not Git content.
 
-## Principle
+## Prepare and attach screenshots
 
-One feature or one coherent update per PR. Each visible feature gets at least one screenshot with a caption that says what to look at. Before-and-after pairs are best for changes to existing visuals.
-
-## Taking the screenshots
-
-1. Run the dev autoplay (it plays the first week and saves a picture of each phase), or open the game and use the dev camera, then pick the frames that show the feature:
+1. Capture only the relevant autoplay scenario into a scratch directory, or reuse existing frames. Select a few clear views, normally one per visible feature; before-and-after pairs are useful when the camera matches.
+2. Prepare JPEGs (quality 80, maximum edge 1600 px) with the helper:
 
    ```bash
-   tools/pr_screenshots.sh <feature-slug>
+   tools/pr_screenshots.sh <feature-slug> --from /absolute/capture/directory --pick overview detail
    ```
 
-   The script runs the autoplay into a temporary folder, converts frames to JPEG (quality 80) at most 1600 px on the long side and copies those you name into `docs/pr-assets/<feature-slug>/`. Name frames with `--pick <shot1> <shot2>`; without `--pick` it lists the available shots and exits.
-2. Read the images yourself and check them before attaching: the feature is visible, nothing is cut off, no debug overlay is left on. For a before-and-after, take the "before" on the base branch (a worktree is fine) with the same camera.
-3. Keep files small: at most about six images per PR, JPEG under about 1 MB each. Originals and large sets do not belong in `docs/pr-assets/`.
+   Output stays in ignored `.local/pr-assets/<feature-slug>/`. Without `--from`, the helper runs autoplay; without `--pick`, it lists available frames. Inspect the selected images and keep each below about 1 MB, with at most six images per PR.
+3. Use GitHub CLI 2.99.0 or newer. Write the PR body to a file, placing local image references in the Screenshots table, then attach those same files:
 
-## Embedding them in the PR
+   ```bash
+   gh pr edit <number> --body-file /absolute/pr-body.md \
+     --attach "$PWD/.local/pr-assets/<feature-slug>/overview.jpg" \
+     --attach "$PWD/.local/pr-assets/<feature-slug>/detail.jpg"
+   ```
 
-The repository is private, so plain raw links do not render for outsiders, but permalinks to committed files render for everyone with access. After committing the screenshots, use the commit SHA, not the branch name (branch links break once the branch is deleted):
+   For example, a table cell can contain `![Field overview](/absolute/path/to/overview.jpg)`. `gh` uploads the file and rewrites its reference to a GitHub attachment URL. Relative references resolve from the body file's directory, then the working directory. The same `--attach` flags work with `gh pr create`.
+4. Read the saved PR body back with `gh pr view <number> --json body --jq .body`. Confirm every selected image became an attachment URL and no local paths remain. A partially failed upload can still update the PR: inspect the saved body before retrying. If the installed CLI lacks `--attach`, update it or use GitHub's web attachment control; do not commit images as a fallback.
 
-```markdown
-![Short caption](https://github.com/<owner>/<repo>/blob/<commit-sha>/docs/pr-assets/<slug>/<file>.jpg?raw=true)
-```
+Do not add review captures or optimizer reports to Git. Generated asset originals and game-ready assets continue to follow `art/ASSET_PIPELINE.md`.
 
-Put them in the "Screenshots" table of the PR template. Commit the screenshots in the same PR branch, as their own commit, so the permalink exists before the description is written.
+## Existing screenshot archive
 
-## After merge
-
-`docs/pr-assets/<slug>/` stays as the visual record of that PR. Prune it only in a dedicated `chore/` PR.
+Existing tracked images in `docs/pr-assets/` remain untouched during this migration. The user deferred cleanup for one to two months from 2026-11-01 (December 2026–January 2027). Do not migrate or delete other PRs' images now. A later, separately authorized cleanup must preserve the affected PR illustrations; deleting files in a new commit alone does not remove their blobs from Git history.

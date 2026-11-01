@@ -17,7 +17,7 @@ Closes #<issue number>  <!-- every PR belongs to a backlog issue; use "Refs #n" 
 ## Screenshots
 
 <!-- One per visible feature, each with a caption saying what to look at. Add them as described in
-docs/PR_WORKFLOW.md (permalinks to docs/pr-assets/<slug>/). Write "none: no visible change" if so. -->
+docs/PR_WORKFLOW.md (upload local files with gh --attach; do not commit review images). Write "none: no visible change" if so. -->
 
 | Feature | Image |
 |---|---|

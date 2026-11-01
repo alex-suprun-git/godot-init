@@ -29,7 +29,7 @@ uv run tools/optimize_asset.py art/source_images/example.png --profile sprite --
 uv run tools/optimize_asset.py art/source_images/example.png --profile sprite --max-edge 1536 --reason "Large landmark seen close up" --output init/assets/sprites/example.png --approved
 ```
 
-The tool refuses to overwrite output/report files unless `--overwrite` is explicit. Sources inside `init/` and in-place edits are rejected. Reports go to `art/optimization_reports/<output filename>.json` by default; use `--report` for assets with the same filename in different directories.
+The tool refuses to overwrite output/report files unless `--overwrite` is explicit. Sources inside `init/` and in-place edits are rejected. Reports go to ignored `art/optimization_reports/<output filename>.json` by default; use `--report` for assets with the same filename in different directories. Read reports locally but do not commit new reports: they are generated diagnostics, include machine-specific paths and are not used by Godot. Keep source selection, preparation commands and any deliberate budget overrides in the asset README. Existing tracked reports are left untouched until a separate cleanup.
 
 ## Processing policy
 
