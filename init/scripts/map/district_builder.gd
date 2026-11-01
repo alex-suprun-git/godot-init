@@ -479,7 +479,8 @@ func _bridge_material(surface: String, dark: bool = false) -> StandardMaterial3D
 		material.roughness = 0.75 if surface == "steel" else 0.95
 		material.uv1_triplanar = true
 		material.uv1_world_triplanar = true
-		var metres := 3.0 if surface == "ballast" else (2.0 if surface == "steel" else 4.0)
+		# One repeat is sized in metres so each painted feature stays >= 3 px at the default map camera.
+		var metres := 6.0 if surface == "ballast" else 8.0
 		material.uv1_scale = Vector3.ONE / metres
 		material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 		_bridge_materials[key] = material

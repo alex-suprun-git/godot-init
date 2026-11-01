@@ -1,6 +1,6 @@
 ---
 id: bridge-texel-density
-status: ready   # ready | in-progress | review | blocked | done
+status: review   # ready | in-progress | review | blocked | done
 worker: any
 issue: "#31"
 branch: fix/bridge-texel-density
@@ -64,12 +64,27 @@ Stop with `status: blocked` and explain in the report when:
 
 _Filled in by the worker._
 
-- **Status summary:**
-- **Screen px per metre (method):**
-- **Files created or changed:**
-- **Measurements / previews:**
-- **Open questions:**
-- **Requests for the integrator:**
+- **Status summary:** New procedural textures and metre-based repeats are in place; no errors beyond the pre-existing exit-time leak warnings. The road and rail bridges sit in the map-edge haze, so the visual check uses the eastern embankment at the z -85 tunnel (125 % zoom, no haze). After strengthening contrast the ballast shows sleeper-hint bands (1.5 m pitch) and a dark oil strip; concrete portal is still small. Volume strips (step 3) not done. Needs user review.
+- **Screen px per metre (method):** `camera.unproject_position()` of a bridge point and the point 1 m along X/Z, window 1600x900, orthographic camera (size = zoom * 0.573). Default zoom (350): 3.66 px/m (brief assumed 10-13; not reproducible). 125 % zoom (ZOOM_MIN 280): 4.58 px/m, used for the screenshots (user agreed). 3 px rule gives details >= 0.8 m (default) / 0.65 m (125 %).
+- **Files created or changed:** `init/scripts/map/district_builder.gd` (repeat: ballast 6 m, concrete and steel 8 m); `init/assets/textures/bridge_{concrete,ballast,steel}.png` (256 px, replaced via optimize_asset, `--approved` used on the strength of the brief, final approval still pending); `art/source_images/bridges/generate_bridge_textures.py` and `bridge_*_v2.png` originals; `art/optimization_reports/bridge_*.png.json`. Code-only (repeat/resolution) was not tried alone: the old detail is photo micro-grain (about 2 cm), so larger repeats only stretch noise.
+- **Measurements / previews:** Downscaled to on-screen size (repeat m x px/m, 3.66 and 4.58), luminance std: concrete 2.3 -> 13.2, ballast 4.5 -> 9.8, steel 1.1 -> 7.6 (old textures at their old repeat). Features: slab joints 0.5 m soft bands every 4 m, 1.3-2.7 m warm/cool patches, 0.7 m ballast clumps, oil strip 0.9 m, rust blotches 1-2 m.
+- **Open questions:** (1) Brief's 10-13 px/m vs measured 3.7-4.6. (2) Haze hides the road bridge and the span of the rail bridge, so there is no frame where sleepers/joints can be judged; options: look at the haze, or accept a closer review camera. (3) The flat volume-hint strips (step 3) are not done; sleepers are separate meshes and were not touched.
+- **Requests for the integrator:** None; the temporary `tmpbridge` autoplay scenario was reverted. Screenshots are in the session scratchpad only.
+
+## Handoff for the next surface
+
+User approved the result (after frame at the eastern embankment, z -85 tunnel, 125 % zoom). Not yet written into `art/ASSET_PIPELINE.md` or READMEs (brief forbids it until the integrator does so now that approval exists): the rule "smallest intended detail >= 3 screen px" and the method below.
+
+Method that worked:
+
+1. Measure px/m: `camera.unproject_position()` of a point and the point 1 m away, orthographic camera, window 1600x900. Default zoom 3.66 px/m, 125 % zoom (ZOOM_MIN) 4.58 px/m. The brief's 10-13 px/m could not be reproduced.
+2. Old photo-grain textures (about 2 cm) average to flat grey at that density; larger repeats only stretch the noise, so code-only was skipped.
+3. Procedural generator `art/source_images/bridges/generate_bridge_textures.py` draws large features in metres (joints 0.5 m, patches 1-3 m, sleeper bands 1.5 m pitch), 256 px per 6-8 m repeat. Then `optimize_asset.py --profile surface --overwrite`, import, repeat set in metres in code.
+4. Judge on a real frame, not on a texture preview: the first numeric check (std after downscale) looked good but the frame barely changed until contrast was raised.
+
+Gotchas: a fresh worktree needs `Godot --headless --path init --import` before the first run or the game hangs. The road bridge and the rail span sit in the map-edge haze, so use the embankment/tunnel (412, -85) to judge. A temporary autoplay scenario `_map_shot(name, Vector2, zoom)` with `ZOOM_MIN` was used and reverted (not committed).
+
+Not done: flat volume-hint strips (dark side band, shadow under span, light top edge); concrete tunnel portal still too small to judge. Candidate next surfaces: sidewalk slabs, grass, lot asphalt (one issue and branch each, from `main`).
 
 ## Review notes
 

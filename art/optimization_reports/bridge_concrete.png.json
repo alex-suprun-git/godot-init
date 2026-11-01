@@ -1,27 +1,27 @@
 {
-  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/bridges/bridge-concrete-v1.png",
-  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/textures/bridge_concrete.png",
-  "source_sha256": "c2f507a1eda77a403d11ff896f39a2c1240fb95b6a3a9f9485aa235e5ec5aac6",
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/.claude/worktrees/bridge-texel-density-3287c7/art/source_images/bridges/bridge_concrete_v2.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/.claude/worktrees/bridge-texel-density-3287c7/init/assets/textures/bridge_concrete.png",
+  "source_sha256": "244b91da6bb0e8f3657a9598163d7cf6a64b01d8ed33e0e5344aa735754a6807",
   "profile": "surface",
   "max_edge": 1024,
   "override_reason": null,
   "approved": true,
   "before": {
     "size": [
-      1254,
-      1254
+      256,
+      256
     ],
-    "bytes": 3429425,
-    "estimated_rgba_bytes": 6290064
+    "bytes": 22164,
+    "estimated_rgba_bytes": 262144
   },
   "after": {
     "size": [
-      1024,
-      1024
+      256,
+      256
     ],
-    "estimated_rgba_bytes": 4194304,
-    "bytes": 2017950,
-    "sha256": "ac3b29f1e128c6ebc1dcc35a0de9dc9a14e8a576c7387172f50b328e0e7676e8"
+    "estimated_rgba_bytes": 262144,
+    "bytes": 20204,
+    "sha256": "a6ed106721cb4b83f894aaeaabd9605954ac5bc71c46c997a8fca272089a859b"
   },
   "has_alpha": false,
   "source_alpha_extrema": null,

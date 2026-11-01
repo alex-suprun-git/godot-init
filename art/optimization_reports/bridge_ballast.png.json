@@ -1,27 +1,27 @@
 {
-  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/bridges/bridge-ballast-v1.png",
-  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/textures/bridge_ballast.png",
-  "source_sha256": "a6ce2cd6fd74c12f12f7a4e3d7d34c6bc31a92eb90c043f26f9deec498b9f422",
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/.claude/worktrees/bridge-texel-density-3287c7/art/source_images/bridges/bridge_ballast_v2.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/.claude/worktrees/bridge-texel-density-3287c7/init/assets/textures/bridge_ballast.png",
+  "source_sha256": "19be2d907b645a8e669839a220e3da1624023c37c28637bf48119e30ab80f86a",
   "profile": "surface",
   "max_edge": 1024,
   "override_reason": null,
   "approved": true,
   "before": {
     "size": [
-      1254,
-      1254
+      256,
+      256
     ],
-    "bytes": 4219983,
-    "estimated_rgba_bytes": 6290064
+    "bytes": 30734,
+    "estimated_rgba_bytes": 262144
   },
   "after": {
     "size": [
-      1024,
-      1024
+      256,
+      256
     ],
-    "estimated_rgba_bytes": 4194304,
-    "bytes": 2442338,
-    "sha256": "be951c649bc27071d591948eab9c6cad99a038a6a68cb2ea9d4a97437f9fda2b"
+    "estimated_rgba_bytes": 262144,
+    "bytes": 28606,
+    "sha256": "1318f92e87bd32251307f500acd58a98fd98f1cf10b2e3d1064958cee585650c"
   },
   "has_alpha": false,
   "source_alpha_extrema": null,
