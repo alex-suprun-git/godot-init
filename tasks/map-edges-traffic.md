@@ -1,8 +1,8 @@
 ---
 id: map-edges-traffic
-status: ready   # ready | in-progress | review | blocked | done
+status: review   # ready | in-progress | review | blocked | done
 worker: lead-integrator
-branch: lead/map-edges-haze
+branch: lead/map-edges-traffic
 issue: 25
 ---
 
@@ -141,7 +141,7 @@ Stripes must stay glued to the ground (same stripe under the same building in ev
 
 ### Phase B: gateways and vehicle height
 
-**Files:** `map_boundaries.gd`, `district_layout.gd` (ids, the highway's east end and the third tunnel), `district_builder.gd` (per-tunnel gap), `ambient_life.gd`, `city_map.gd`.
+**Files:** `map_boundaries.gd`, `district_layout.gd` (ids, the highway's east end and the third tunnel, per-road speed), `road_graph.gd` (road speed on edges, only if needed), `district_builder.gd` (per-tunnel gap), `ambient_life.gd`, `city_map.gd`.
 
 0. **Third tunnel.** In `district_layout.gd`:
    - `highway` rect becomes `Rect2(-450, -197.5, 890, 20)` (east end 425 → 440, matching the two streets);
@@ -165,7 +165,13 @@ Stripes must stay glued to the ground (same stripe under the same building in ev
 3. In `city_map.gd` `_move_ambient()`: car height becomes `_ground(at).y + 0.14` instead of the literal `0.14` (the bridge leg climbs the ramp).
 4. With `--traffic-debug`, print the resolved inventory once at startup.
 
-**Done when:** the tunnel frame looks right; seven gateways resolve with no warnings; autoplay unchanged.
+5. **Parking rules** (user request, 2026-11-01). Parked cars come from `CityMap._build_traffic()` (one every 100 m at the kerb of every asphalt road). Change it so that:
+   - roads with `"look": "highway"` get **no** parked cars at all;
+   - no parked car sits within `PARKING_CLEARANCE` (start at 25 m, constant in `map_boundaries.gd` or `district_layout.gd`) of a junction: skip a slot if its centre is within that distance of the centre of any crossing road rect (reuse the junction test from `DistrictLayout.crosswalks()`, `rect.intersects(junction.grow(0.1))`), measured along the road;
+   - the same slot grid is kept otherwise, so existing frames stay comparable. Check with a frame at a junction (e.g. the axis x highway crossing and the north street x axis).
+6. **Road speeds.** Ambient cars currently get one speed for life (`randf_range(7.0, 12.0)` m/s in `_build_ambient`). Add a per-road speed class: `DistrictLayout` road dicts get an optional `"speed"` multiplier (default 1.0; highway about 2.0, i.e. roughly 14-24 m/s against 7-12 in town; tune after looking). `AmbientLife.step()` multiplies `agent["speed"]` by the current edge's factor (needs the road id or look on each graph edge from `road_graph.gd`; if the edge dict lacks it, add it there, which lifts the "do not touch" rule for this one field). Ease the factor over about 1.5 s when changing roads, so cars do not jump in speed at the junction. Gateways on the highway then also hand off faster, so `leg_length` timing in Phase C uses the highway factor on the outward/inward legs.
+
+**Done when:** the tunnel frame looks right; seven gateways resolve with no warnings; no parked car on the highway or within the clearance of a junction; highway cars are visibly faster than town cars; otherwise autoplay unchanged.
 
 ### Phase C: slot lifecycle
 
@@ -247,12 +253,17 @@ Open the road bridge when part of the far-bank city exists: traversable deck, ra
 
 ## Report
 
-- **Status summary (Phase A, 2026-11-01):** Phase A implemented and rendered; stopped for user review. Phase B/C not started. Status stays `ready` until the user reviews the frames.
+- **Status summary (Phase A, 2026-11-01):** Phase A implemented and rendered; stopped for user review. Phase B/C not started. The later review note below records user approval; Phase B is ready to start.
 - **Files created or changed:** new `init/scripts/data/map_boundaries.gd`, `init/assets/shaders/map_edge_haze.gdshader`, `init/scripts/map/map_edges.gd`; edited `city_map.gd` (MapEdges node, haze colour from `look["fog_color"]` darkened by `0.55 * night`, `--cam=x,z,zoom`, `--camera-mode=iso|front`), `district_builder.gd` (road/rail continuations with occupancy), `autoplay.gd` (`--edges-only`). Godot generated `.uid` files for the new scripts/shader.
 - **Deviations from the plan:** (1) The verify commands need `--autoplay` as well (`main.gd` only attaches the autoplay node with it): `--autoplay --edges-only ...`. (2) The east road ends at x 440 were visibly cut off at the haze start (alpha ~0 there), so I also added **east continuations** for the two streets ending at x 440 (to x ~598); the highway still ends at x 425 inside the embankment (Phase B). (3) Haze noise uses two octaves (0.65/0.35).
 - **Measurements / previews:** Stripe check passed: the world-grid stripes stay glued to the ground in both iso and front modes (reverse-Z depth reconstruction correct, no tuning needed); tall objects show stripes smeared up their faces, which is expected for a world-XZ pattern. Frames in `/private/tmp/map-edges-traffic-shots/`: `stripes/` (14), `summer/` (14), `winter_night/` (14), `autoplay/` (33, finished with exit 0, no new errors/warnings; only the usual exit-time leak notice). Each of summer / winter_night holds `edge_wide_{iso,front}_{center,nw,ne,sw,se}`, `edge_west_road`, `edge_east_road`, `edge_bridge`, `edge_forest`. Current values: `INNER = Rect2(-615,-330,1055,745)`, `FADE = {w 90, n 35, e 90, s 90}`, `NOISE_AMP 18`, `NOISE_SCALE 0.012`. Haze colour is the daylight fog colour (summer day ~ light grey, matches the sky); at night it is dark and does not glow.
 - **What the frames show:** Wide frames: the district reads as a clear island fading into pale haze, no ground slab edge or road end visible; west roads and the two southern rails run into the haze past the forest; forest, pond, customs and station tracks stay clear; the bridge deck and far bank dissolve into river mist (the mist begins right at the near bank, so the deck is only visible for a few metres). Night: dark haze merging with the sky.
 - **Remaining defects / judgement calls for the user:** (a) At the widest iso zoom the clear area is a diamond floating in a pale void; this is the intended trade-off but is the main look to approve (a narrower/softer fade or a tinted lower haze are tuning options). (b) The east embankment/rail lines north of the river still show faintly through the north mist. (c) The bridge deck is hidden within ~35 m of the bank; a longer north FADE would veil more but starts eating the customs yard. (d) Zone-boundary pop of ambient agents is untouched.
+- **Phase B (2026-11-01, user approved the haze and asked to proceed):** implemented steps 0-6. `district_layout.gd`: highway rect now x -450..440, ids `north_street` / `south_street`, third embankment tunnel at z -187.5 with `"gaps": {-187.5: 28.0}`, highway road dict has `"speed": 2.0`. `district_builder.gd`: per-tunnel gap. `map_boundaries.gd`: `GATEWAYS`, `resolve(graph)` (no `road_graph.gd` change needed; graph edges already carry the road index, so speed is read from `ROADS[edge.road]`). `city_map.gd`: car height `_ground(at).y + 0.14`, gateways resolved in `_build_ambient` and printed with `--traffic-debug`, `PARKING_CLEARANCE = 25 m`, no parked cars on the highway or near junctions. `ambient_life.gd`: per-agent `speed_scale` eased over 1.5 s toward the road's `speed` multiplier (highway about 14-24 m/s vs 7-12). `autoplay.gd` edges scenario gained `edge_highway_tunnel_{iso,front}`, `edge_parking_highway`, `edge_parking_junction`.
+- **Resolved gateway inventory (all 7, no warnings):** highway_w node 0 edge 0 (-450,-187.5) leg 283 m; highway_e node 3 edge 2 (440,-187.5) leg 118; north_street_w node 4 edge 3 leg 283; north_street_e node 9 edge 7 leg 118; south_street_w node 10 edge 8 leg 283; south_street_e node 15 edge 12 leg 118; border_bridge node 16 edge 13 (-5,-330) leg 63. Frames in `/private/tmp/map-edges-traffic-shots/phase_b/` (tunnel in both cameras reads correctly: highway passes under a concrete deck, no earth over the road; parking frames show no parked cars on the highway or at the north-street/x 140 junction).
+- **Phase C (2026-11-01):** implemented. `ambient_life.gd`: car states `graph/out/wait/in`, `stats`, `_begin_exit`, `_step_leg`, `_place_leg`, `_park` (2-5 s wait), `_enter` (weighted by `crowd_at(sample)`, previous gateway excluded when another is open, new class/threshold, retry after 1 s if all closed), `_fleet_class(point)`, visibility judged at the gateway sample while on a leg and false while waiting. `city_map.gd`: `_traffic_look` (seed 7070), `_respawn_car` (new model, heading set without lerp), `--traffic-debug` prints every 10 s with the `TRAFFIC INVARIANT BROKEN` check. `autoplay.gd`: guards for `state != "graph"`.
+- **Phase C evidence:** `--autoplay --only=map,week --turbo=10 --traffic-debug` (day) and the same with `--hour=22` (11 prints each): the invariant graph+out+wait+in = 130 never broke, no script errors. Day counters after ~100 s of ambient time: exits per gateway 16/12/14/19/12/10/19 (highway_w, highway_e, north_w, north_e, south_w, south_e, bridge), arrivals 9/12/21/11/15/10/20, i.e. all seven gateways recycle repeatedly. Frames: `/private/tmp/map-edges-traffic-shots/traffic_edges/` (cars drive into the haze on the west road and east street) and `traffic/`, `traffic_night/` (autoplay sets). Note `--hour=22` only pins the light; ambient density follows the sim clock, so a true night-density observation still needs a manual look.
+- **Remaining Phase C observations:** ~25% of the 130 car slots are on an off-map leg or waiting at any moment (legs are 118-283 m long at town speed), so visible town traffic is a bit thinner than before; shorten `leg_length` (smaller `handoff_distance`) or reduce the wait if that shows. Highway speed difference and the bridge leg were seen only in aggregate, not filmed.
 - **Open questions:** Approve haze look (FADE/NOISE/colour) before Phase B.
 - **Requests for the integrator:** Lead-owned work; do not dispatch as a worker brief. README untouched in this phase.
 

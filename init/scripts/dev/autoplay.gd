@@ -243,7 +243,7 @@ func _run_vehicle_review() -> void:
 	var moving_cars := 0
 	var moving_volgas := 0
 	for agent in main.map._ambient.agents:
-		if not agent["is_car"]:
+		if not agent["is_car"] or agent["state"] != "graph":
 			continue
 		moving_cars += 1
 		if agent["visual"].is_in_group("vehicle_volga"):
@@ -268,7 +268,7 @@ func _run_vehicle_review() -> void:
 	# Capture real moving Volgas, rather than relying on a parked-car view.
 	var volga_shots := 0
 	for agent in main.map._ambient.agents:
-		if not agent["is_car"] or not agent["visual"].is_in_group("vehicle_volga"):
+		if not agent["is_car"] or agent["state"] != "graph" or not agent["visual"].is_in_group("vehicle_volga"):
 			continue
 		var at: Vector2 = agent["pos"]
 		await _map_shot("volga_traffic_%d" % volga_shots, at, 35.0)
@@ -304,6 +304,14 @@ func _run_edges_review() -> void:
 	await _map_shot("edge_east_road", Vector2(440, -85), 250.0)
 	await _map_shot("edge_bridge", Vector2(-5, -320), 250.0)
 	await _map_shot("edge_forest", Vector2(-520, 120), 390.0)
+	# Highway gateway: the third tunnel under the railway embankment, both cameras.
+	for mode in ["iso", "front"]:
+		map.Settings.camera_mode = mode
+		await _map_shot("edge_highway_tunnel_%s" % mode, Vector2(420, -187.5), 120.0)
+	map.Settings.camera_mode = previous_view
+	# Parking rules: no parked cars on the highway or near junctions.
+	await _map_shot("edge_parking_highway", Vector2(-5, -187.5), 160.0)
+	await _map_shot("edge_parking_junction", Vector2(145, -85), 130.0)
 
 
 # Prints what the 3D vehicles cost per frame at the closest, default and widest
