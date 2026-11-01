@@ -85,6 +85,8 @@ func _build_ground() -> void:
 		if ground == "grass" and condition["dry_ground"]:
 			ground = "grass_dry"
 		_patch(lot["rect"], ground, 0.025, condition["tint"])
+		if lot["type"] == "K":
+			map.wear.add_inner_edge(lot["rect"], 14.0, 0.7)
 	for road in Layout.ROADS:
 		var rect: Rect2 = road["rect"]
 		# Housing-estate roads are asphalt too, just a lighter, warmer tone than the main roads.
@@ -94,6 +96,8 @@ func _build_ground() -> void:
 		# The highway sits a hair lower so every town street crossing it wins the overlap.
 		var tint: Color = YARD_ROAD_TINT if yard else (HIGHWAY_TINT if highway else Color.WHITE)
 		_patch(rect, ground, 0.135 if yard else (0.139 if highway else 0.14), tint)
+		if yard:
+			map.wear.add_ring(rect, 4.0, 0.8)
 		map._occupy(rect.get_center(), rect.size)
 	# Western roads and southern rails run on past the forest, under the edge haze.
 	for extension in Boundaries.road_continuations():
@@ -454,6 +458,9 @@ func _building(lot: Dictionary, entry: Dictionary, desired: Vector2, lot_id: Str
 	if entry.get("kind", "") == "panel":
 		map._panel_overlays(entry, size, height, group)
 	map._occupy(center, footprint)
+	if entry.get("kind", "") == "panel":
+		# Residents wear the ground along their blocks, most of all in front of the doors.
+		map.wear.add_ring(Rect2(center - footprint / 2.0, footprint), 9.0, 0.8)
 	_register_doorstep(lot_id, lot, entry, center, size.y)
 
 
@@ -970,7 +977,9 @@ func _register_doorstep(lot_id: String, lot: Dictionary, entry: Dictionary, cent
 	if lot_id == "" or not entry.has("doorstep"):
 		return
 	var out: Vector2 = {"s": Vector2.DOWN, "n": Vector2.UP, "e": Vector2.RIGHT, "w": Vector2.LEFT}[lot["facing"]]
-	map.sim.graph.set_doorstep(lot_id, center + out * (depth / 2.0 + float(entry["doorstep"])))
+	var doorstep: Vector2 = center + out * (depth / 2.0 + float(entry["doorstep"]))
+	map.sim.graph.set_doorstep(lot_id, doorstep)
+	map.wear.add_disc(doorstep, 10.0, 1.0)
 
 
 # Keep all footprints out of roads/railways, including village roads through plots.

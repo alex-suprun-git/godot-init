@@ -44,6 +44,7 @@ func build(district_builder) -> void:
 	_prop("carpet_beater_v2", Vector2(41, -21), 4.2, Vector2(5, 2), "x")
 	for at in [Vector2(9, 29), Vector2(28, 29), Vector2(-34, 1), Vector2(18, 76)]:
 		_bench(at)
+		map.wear.add_disc(origin + at * SPACING, 5.0, 0.9)
 	# Deliberately few cars, in bays beside the service lane.
 	_surface(Vector2(33, -55), Vector2(24, 7), "courtyard")
 	var lada_at := origin + Vector2(25, -55) * SPACING

@@ -14,6 +14,13 @@ uniform vec3 compensation = vec3(1.24, 1.17, 1.14);
 uniform float saturation = 0.88;
 uniform vec3 dry_shift = vec3(0.10, 0.04, -0.06);
 
+// Trampled earth: a map-wide mask (0 lawn, 1 bare) and the dirt tile it shows through.
+uniform sampler2D wear_mask : hint_default_black, filter_linear, repeat_disable;
+uniform vec4 wear_rect = vec4(0.0, 0.0, 1.0, 1.0);
+uniform sampler2D dirt_texture : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
+uniform float dirt_tile_metres = 12.0;
+uniform vec3 dirt_shade = vec3(0.92, 0.88, 0.82);
+
 float hash(vec2 p) {
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
 }
@@ -51,5 +58,12 @@ vec3 terrain_ground_colour(vec2 world_xz) {
 	ground += dry_shift * smoothstep(0.55, 0.9, macro) * macro_strength * 2.0;
 
 	ground = mix(vec3(dot(ground, vec3(0.299, 0.587, 0.114))), ground, saturation);
-	return clamp(ground * compensation, 0.0, 1.0) * tint.rgb;
+	vec3 lawn = clamp(ground * compensation, 0.0, 1.0) * tint.rgb;
+
+	// Noise breaks the smooth mask into irregular bare patches and tufts at its edge.
+	float wear = texture(wear_mask, (world_xz - wear_rect.xy) / wear_rect.zw).r;
+	float grain = value_noise(world_xz / 1.7) * 0.6 + value_noise(world_xz / 0.45 + 9.0) * 0.4;
+	float bare = smoothstep(0.3, 0.7, wear + (grain - 0.5) * 0.6);
+	vec3 dirt = texture(dirt_texture, world_xz / dirt_tile_metres).rgb * dirt_shade;
+	return mix(lawn, dirt, bare);
 }
