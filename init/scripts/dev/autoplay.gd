@@ -18,7 +18,9 @@ func _ready() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--shots="):
 			shots_dir = arg.substr("--shots=".length())
-	if OS.get_cmdline_user_args().has("--vehicles-only"):
+	if OS.get_cmdline_user_args().has("--crosswalks-only"):
+		_run_crosswalk_review()
+	elif OS.get_cmdline_user_args().has("--vehicles-only"):
 		_run_vehicle_review()
 	elif OS.get_cmdline_user_args().has("--render-cost"):
 		_run_render_cost()
@@ -277,3 +279,30 @@ func _shot(name: String) -> void:
 	var image := get_viewport().get_texture().get_image()
 	image.save_png(shots_dir.path_join(name + ".png"))
 	print("shot: ", name)
+
+
+# Focused visual review of the boulevard's yard link and both asphalt junctions.
+func _run_crosswalk_review() -> void:
+	await _wait(1.5)
+	main.hud._continue_to_tasks()
+	main.hud._close_week_panel()
+	print("Crosswalk review: ", main.map.AMBIENT_WALKERS, " walkers; ", main.map.DistrictLayout.crosswalks().size(), " marked crossings")
+	await _map_shot("crosswalk_yard", Vector2(-5, 87.2), 140.0)
+	await _map_shot("crosswalk_south", Vector2(-5, 305), 150.0)
+	await _map_shot("crosswalk_highway", Vector2(-5, -187.5), 150.0)
+	# Observe naturally moving pedestrians; capture someone actually on a zebra.
+	var captured := false
+	for i in 120:
+		await _wait(0.1)
+		for agent in main.map._ambient.agents:
+			if agent["is_car"] or not agent["visible"]:
+				continue
+			var edge: Dictionary = agent["graph"].edges[agent["edge"]]
+			if edge["crossing"] and agent["along"] > 2.0 and agent["along"] < edge["length"] - 2.0:
+				await _map_shot("crosswalk_walking", agent["pos"], 65.0)
+				print("Crosswalk review: observed pedestrian using zebra at ", agent["pos"])
+				captured = true
+				break
+		if captured:
+			break
+	get_tree().quit()

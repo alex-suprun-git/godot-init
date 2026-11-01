@@ -883,16 +883,8 @@ func _build_road_markings() -> void:
 					junction = true
 			if not junction:
 				_paint_patch(Vector2(3, 0.12) if along_x else Vector2(0.12, 3), at, 0.145)
-	# Crossings on the civic axis, derived from its road intersections.
-	for axis in DistrictLayout.ROADS:
-		if axis.get("id", "") != "axis":
-			continue
-		var axis_rect: Rect2 = axis["rect"]
-		for road in DistrictLayout.ROADS:
-			var rect: Rect2 = road["rect"]
-			if rect.size.x > rect.size.y and road["kind"] == "asphalt" and rect.intersects(axis_rect):
-				for side in [-1.0, 1.0]:
-					_crosswalk(Vector2(axis_rect.get_center().x, rect.get_center().y + side * (rect.size.y / 2 + 3)), axis_rect.size.x, true, 0.145)
+	for crossing in DistrictLayout.crosswalks():
+		_crosswalk(crossing["at"], crossing["width"], crossing["along_z"], 0.145)
 
 
 # Highway markings: solid edge lines and a solid double centre line, in 8 m pieces
@@ -933,7 +925,7 @@ func _boulevard_median(road: Dictionary) -> void:
 const SIDEWALK_PLACEHOLDER := Color("8f8b80")
 # Pools: how many are shown depends on district and hour (see AmbientLife), so a pool
 # several times the typical crowd is needed.
-const AMBIENT_WALKERS := 240
+const AMBIENT_WALKERS := 288
 const AMBIENT_CARS := 130
 
 
