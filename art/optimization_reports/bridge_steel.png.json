@@ -1,27 +1,27 @@
 {
-  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/bridges/bridge-steel-v1.png",
-  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/textures/bridge_steel.png",
-  "source_sha256": "a5c78a9e3dd9508adec91c7170b3abe700c00afbbd35f0abacb7a8764b43c378",
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/.claude/worktrees/bridge-texel-density-3287c7/art/source_images/bridges/bridge_steel_v2.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/.claude/worktrees/bridge-texel-density-3287c7/init/assets/textures/bridge_steel.png",
+  "source_sha256": "1c2cad8530ef319e3d4b61ddf2941d86d37c6e23719f75e4d7b5911b62bac4d6",
   "profile": "surface",
   "max_edge": 1024,
   "override_reason": null,
   "approved": true,
   "before": {
     "size": [
-      1254,
-      1254
+      256,
+      256
     ],
-    "bytes": 2718984,
-    "estimated_rgba_bytes": 6290064
+    "bytes": 22421,
+    "estimated_rgba_bytes": 262144
   },
   "after": {
     "size": [
-      1024,
-      1024
+      256,
+      256
     ],
-    "estimated_rgba_bytes": 4194304,
-    "bytes": 1535368,
-    "sha256": "74db1c905dd39183fa39d0ce2357d6c19c245aaba00440fd97cf08124f3c3b38"
+    "estimated_rgba_bytes": 262144,
+    "bytes": 20333,
+    "sha256": "887136dc70163317649a3f20d6883e3c51e6553c19ee225b5714eda1c558bd75"
   },
   "has_alpha": false,
   "source_alpha_extrema": null,
