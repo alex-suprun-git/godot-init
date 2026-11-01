@@ -83,8 +83,8 @@ const ROADS := [
 	{"id": "south_street", "rect": Rect2(-450, 300, 890, 10), "kind": "asphalt"},
 	{"id": "axis", "rect": Rect2(-17, -330, 24, 642), "kind": "asphalt", "median": 4.0},
 	{"id": "village_street", "rect": Rect2(140, -80, 10, 380), "kind": "asphalt"},
-	{"id": "housing_cross_path", "rect": Rect2(-398.4, 82.2, 381.4, 10), "kind": "yard"}, # ends at the axis edge (x -17): a gap lets the graph miss the junction
-	{"id": "housing_spine", "rect": Rect2(-205.4, -80, 10, 380), "kind": "yard"},
+	{"id": "housing_cross_path", "rect": Rect2(-398.4, 85.2, 381.4, 4), "kind": "yard"}, # ends at the axis edge (x -17): a gap lets the graph miss the junction
+	{"id": "housing_spine", "rect": Rect2(-202.4, -80, 4, 380), "kind": "yard"},
 	# Civic square / southern tower connection, and the lane between the two slabs.
 	{"id": "square_link", "rect": Rect2(7, 136, 133, 4), "kind": "yard"},
 	{"id": "civic_lane", "rect": Rect2(7, 209, 133, 5), "kind": "asphalt", "walk": 1.5},

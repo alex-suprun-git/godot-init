@@ -154,6 +154,7 @@ var _overlays := {} # "lot:name" -> Node3D
 var _lot_states := {} # lot -> {state -> Node3D}
 var wear: WearMask # Worn-ground sources register here while the district is built.
 var _occupied: Array[Rect2] = [] # Ground taken by buildings and roads; trees avoid it.
+var _crosswalk_material: ShaderMaterial
 var _road_paint_material: ShaderMaterial
 var _lot_labels: Node3D
 var _ambient: AmbientLife # Background pedestrians and cars wandering the road graph.
@@ -998,8 +999,45 @@ func _ground_quad(center: Vector2, size: Vector2, y: float, texture: Texture2D, 
 	add_child(instance)
 
 
+# Local paths retain their earth, compacted yard or paving character.
+func _path_quad(rect: Rect2, height: float, ground: String, tint: Color) -> void:
+	var material := ShaderMaterial.new()
+	material.shader = preload("res://assets/shaders/local_paths.gdshader")
+	material.set_shader_parameter("surface_texture", _season[ground])
+	material.set_shader_parameter("surface_tint", tint)
+	material.set_shader_parameter("winter", Settings.season == "winter")
+	material.set_shader_parameter("paved", ground == "paving")
+	material.set_shader_parameter("yard", ground == "courtyard")
+	var mesh := QuadMesh.new()
+	mesh.size = rect.size
+	var instance := MeshInstance3D.new()
+	instance.mesh = mesh
+	instance.material_override = material
+	instance.rotation.x = -PI / 2.0
+	instance.position = Vector3(rect.get_center().x, height, rect.get_center().y)
+	add_child(instance)
+
+
+# Asphalt roads share world coordinates so adjacent pieces have no texture seams.
+func _asphalt_quad(rect: Rect2, height: float, tint: Color, highway: bool = false) -> void:
+	var material := ShaderMaterial.new()
+	material.shader = preload("res://assets/shaders/town_asphalt.gdshader")
+	material.set_shader_parameter("grain_texture", GROUND_ASPHALT)
+	material.set_shader_parameter("highway", highway)
+	material.set_shader_parameter("winter", Settings.season == "winter")
+	material.set_shader_parameter("surface_tint", tint)
+	var mesh := QuadMesh.new()
+	mesh.size = rect.size
+	var instance := MeshInstance3D.new()
+	instance.mesh = mesh
+	instance.material_override = material
+	instance.rotation.x = -PI / 2.0
+	instance.position = Vector3(rect.get_center().x, height, rect.get_center().y)
+	add_child(instance)
+
+
 # Paint dimensions are in world metres, independent of any image canvas.
-func _paint_patch(size: Vector2, at: Vector2, y: float) -> void:
+func _paint_patch(size: Vector2, at: Vector2, y: float, crossing: bool = false) -> void:
 	if _road_paint_material == null:
 		_road_paint_material = ShaderMaterial.new()
 		_road_paint_material.shader = ROAD_PAINT_SHADER
@@ -1007,7 +1045,11 @@ func _paint_patch(size: Vector2, at: Vector2, y: float) -> void:
 	quad.size = size
 	var instance := MeshInstance3D.new()
 	instance.mesh = quad
-	instance.material_override = _road_paint_material
+	if crossing and _crosswalk_material == null:
+		_crosswalk_material = ShaderMaterial.new()
+		_crosswalk_material.shader = ROAD_PAINT_SHADER
+		_crosswalk_material.set_shader_parameter("paint_colour", Color(0.70, 0.69, 0.65))
+	instance.material_override = _crosswalk_material if crossing else _road_paint_material
 	instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	instance.rotation.x = -PI / 2.0
 	instance.position = Vector3(at.x, y, at.y)
@@ -1024,7 +1066,7 @@ func _crosswalk(at: Vector2, road_width: float, along_z: bool, y: float) -> void
 		var offset := (i - (count - 1) / 2.0) * (BAR + GAP)
 		var shift := Vector2(offset, 0) if along_z else Vector2(0, offset)
 		var size := Vector2(BAR, DEPTH) if along_z else Vector2(DEPTH, BAR)
-		_paint_patch(size, at + shift, y)
+		_paint_patch(size, at + shift, y, true)
 
 
 func _build_road_markings() -> void:

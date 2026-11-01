@@ -10,7 +10,6 @@ const PitchedRoof = preload("res://scripts/map/pitched_roof.gd")
 
 const YARD_ROAD_TINT := Color(1.18, 1.12, 1.02)
 const WATER_LEVEL := -3.5 # River bed depth: deep enough for a barge to pass under the bridges.
-const HIGHWAY_TINT := Color(0.78, 0.8, 0.87) # Newer, darker, cooler asphalt than the town streets.
 const VILLAGE_SETBACK := 4.0
 const FENCE_INSET := 0.6
 const FENCE_STEP := 3.0
@@ -94,8 +93,8 @@ func _build_ground() -> void:
 		var yard: bool = road["kind"] == "yard"
 		var highway: bool = road.get("look", "") == "highway"
 		# The highway sits a hair lower so every town street crossing it wins the overlap.
-		var tint: Color = YARD_ROAD_TINT if yard else (HIGHWAY_TINT if highway else Color.WHITE)
-		_patch(rect, ground, 0.135 if yard else (0.139 if highway else 0.14), tint)
+		var tint: Color = YARD_ROAD_TINT if yard else Color.WHITE
+		_patch(rect, ground, 0.135 if yard else (0.139 if highway else 0.14), tint, highway)
 		if yard:
 			map.wear.add_ring(rect, 4.0, 0.8)
 		map._occupy(rect.get_center(), rect.size)
@@ -104,7 +103,7 @@ func _build_ground() -> void:
 		var road: Dictionary = extension["road"]
 		var rect: Rect2 = extension["rect"]
 		var highway: bool = road.get("look", "") == "highway"
-		_patch(rect, "asphalt", 0.139 if highway else 0.14, HIGHWAY_TINT if highway else Color.WHITE)
+		_patch(rect, "asphalt", 0.139 if highway else 0.14, Color.WHITE, highway)
 		map._occupy(rect.get_center(), rect.size)
 	for bridge in Layout.BRIDGES:
 		_build_bridge(bridge)
@@ -118,10 +117,14 @@ func _build_ground() -> void:
 	map._build_road_markings()
 
 
-func _patch(rect: Rect2, ground: String, height: float, condition_tint: Color = Color.WHITE) -> void:
-	var tint: Color = map._season["grass_tint"] if ground in ["grass", "grass_dry"] else Color.WHITE
+func _patch(rect: Rect2, ground: String, height: float, condition_tint: Color = Color.WHITE, highway: bool = false) -> void:
 	if ground == "asphalt":
-		tint = map._season["asphalt_tint"]
+		map._asphalt_quad(rect, height, condition_tint, highway)
+		return
+	if ground in ["dirt", "courtyard", "paving"] and minf(rect.size.x, rect.size.y) <= 12.0:
+		map._path_quad(rect, height, ground, condition_tint)
+		return
+	var tint: Color = map._season["grass_tint"] if ground in ["grass", "grass_dry"] else Color.WHITE
 	var organic: bool = ground in ["grass", "grass_dry", "dirt", "courtyard"]
 	map._ground_quad(rect.get_center(), rect.size, height, map._season[ground], 22.0 if ground in ["grass", "grass_dry", "courtyard"] else 12.0, false, tint * condition_tint, organic, 6.0 if ground in ["grass_dry", "dirt", "courtyard"] else 0.0)
 
