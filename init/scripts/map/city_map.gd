@@ -278,6 +278,11 @@ func token_screen_position(actor_id: String) -> Vector2:
 	return camera.unproject_position(_tokens[actor_id].position)
 
 
+# Keep map overlays readable, but compact their footprint in the overview.
+func map_icon_scale() -> float:
+	return clampf(sqrt(ZOOM_DEFAULT / _zoom), 0.78, 1.0)
+
+
 # Smoothly moves the camera to a lot, e.g. when a crisis starts off-screen.
 func focus_on(lot: String) -> void:
 	var pos: Vector2 = Week1.location_position(lot)
@@ -783,7 +788,7 @@ func _move_tokens() -> void:
 			# the camera angle.
 			var origin := _ground(pos)
 			var pixels_per_metre := camera.unproject_position(origin).distance_to(camera.unproject_position(origin + _view_right()))
-			var world_gap := 72.0 / maxf(pixels_per_metre, 0.001)
+			var world_gap := 64.0 * map_icon_scale() / maxf(pixels_per_metre, 0.001)
 			var spread := (i - (ids.size() - 1) / 2.0) * world_gap
 			var token: Node3D = _tokens[ids[i]]
 			var spot := Vector3(pos.x, 0.0, pos.y) + _view_right() * spread - _view_forward() * 6.0
