@@ -17,3 +17,14 @@ Thumbs.db
 
 # Background task dispatch logs
 /tasks/logs/
+
+# Local review captures and logs (curated frames go to docs/pr-assets/)
+/art/bridges/*/
+/art/bridges/*.log
+/art/bridges/materials.png
+
+# Review captures of the sidewalk work and park (same policy as bridges)
+/art/sidewalks/*/
+/art/sidewalks/*.log
+/art/sidewalks/*.png
+/art/city_park/in-game-*.png

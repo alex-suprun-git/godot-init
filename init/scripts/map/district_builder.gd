@@ -72,7 +72,8 @@ func _build_ground() -> void:
 	river.position.x = -1300
 	river.size.x = 2600
 	_patch(river, "water", WATER_LEVEL)
-	_patch(Rect2(Layout.WATER.position.x, Layout.WATER.end.y, Layout.WATER.size.x, 6), "paving", 0.05)
+	# Continue the quay beneath fully opaque edge haze, like the roads.
+	_patch(Rect2(Boundaries.west_far_x(), Layout.WATER.end.y, Boundaries.east_far_x() - Boundaries.west_far_x(), 6), "paving", 0.05)
 	for area in Layout.AREAS.values():
 		_patch(area["rect"], area["ground"], 0.018)
 	# Lot surfaces come before roads. Asphalt and tracks retain their own height.
@@ -457,7 +458,55 @@ func _building(lot: Dictionary, entry: Dictionary, desired: Vector2, lot_id: Str
 
 const CONCRETE := Color("9d9a90")
 const CONCRETE_DARK := Color("7e7b72")
-const STEEL_BLUE := Color("4f6168")
+const BRIDGE_SURFACES := {
+	"concrete": preload("res://assets/textures/bridge_concrete.png"),
+	"ballast": preload("res://assets/textures/bridge_ballast.png"),
+	"steel": preload("res://assets/textures/bridge_steel.png"),
+}
+var _bridge_materials := {}
+
+
+# World-sized triplanar sampling keeps the same grain on narrow beams and piers.
+func _bridge_material(surface: String, dark: bool = false) -> StandardMaterial3D:
+	var key := "%s:%s" % [surface, dark]
+	if not _bridge_materials.has(key):
+		var material := StandardMaterial3D.new()
+		material.albedo_texture = BRIDGE_SURFACES[surface]
+		material.albedo_color = Color(0.8, 0.8, 0.8) if dark else Color.WHITE
+		if surface == "ballast":
+			# Keep the aggregate distinct from pale concrete under summer lighting.
+			material.albedo_color = Color(0.65, 0.65, 0.65)
+		material.roughness = 0.75 if surface == "steel" else 0.95
+		material.uv1_triplanar = true
+		material.uv1_world_triplanar = true
+		var metres := 3.0 if surface == "ballast" else (2.0 if surface == "steel" else 4.0)
+		material.uv1_scale = Vector3.ONE / metres
+		material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+		_bridge_materials[key] = material
+	return _bridge_materials[key]
+
+
+func _bridge_concrete_box(size: Vector3, at: Vector3, color: Color, parent: Node = null) -> MeshInstance3D:
+	var instance: MeshInstance3D = map._box(size, at, Color.WHITE, parent)
+	instance.material_override = _bridge_material("concrete", color == CONCRETE_DARK)
+	return instance
+
+
+# Ballast covers the former bare deck; existing rail/sleeper strips remain on top.
+func _rail_deck_surface(at: Vector3, width: float, length: float, parent: Node = null) -> void:
+	var quad := QuadMesh.new()
+	quad.size = Vector2(width - 1.4, length)
+	var instance := MeshInstance3D.new()
+	instance.name = "BridgeBallast"
+	instance.mesh = quad
+	instance.material_override = _bridge_material("ballast")
+	instance.rotation.x = -PI / 2.0
+	instance.position = at + Vector3.UP * 0.015
+	(parent if parent != null else map).add_child(instance)
+	# Narrow raised concrete maintenance edges replace the broad bare white bands.
+	for side in [-1.0, 1.0]:
+		_bridge_concrete_box(Vector3(0.7, 0.12, length), at + Vector3(side * (width / 2.0 - 0.35), 0.06, 0), CONCRETE, parent)
+
 
 
 func _build_bridge(bridge: Dictionary) -> void:
@@ -494,12 +543,12 @@ func _road_bridge(rect: Rect2, height: float, ramp: float) -> void:
 	var z1 := rect.end.y
 	var flat := Rect2(cx - width / 2.0, z0 + ramp, width, z1 - z0 - 2.0 * ramp)
 	var flat_center := flat.get_center()
-	map._box(Vector3(width, 0.8, flat.size.y), Vector3(cx, height - 0.4, flat_center.y), CONCRETE)
-	map._box(Vector3(width + 0.4, 0.35, flat.size.y), Vector3(cx, height - 0.95, flat_center.y), CONCRETE_DARK)
+	_bridge_concrete_box(Vector3(width, 0.8, flat.size.y), Vector3(cx, height - 0.4, flat_center.y), CONCRETE)
+	_bridge_concrete_box(Vector3(width + 0.4, 0.35, flat.size.y), Vector3(cx, height - 0.95, flat_center.y), CONCRETE_DARK)
 	map._ground_quad(flat_center, Vector2(width - 0.8, flat.size.y), height + 0.01, map._season["asphalt"], 14.0)
 	for side in [-1.0, 1.0]:
-		map._box(Vector3(0.4, 1.0, flat.size.y), Vector3(cx + side * (width / 2.0 - 0.2), height + 0.5, flat_center.y), CONCRETE)
-		map._box(Vector3(0.6, 0.15, flat.size.y), Vector3(cx + side * (width / 2.0 - 0.2), height + 1.07, flat_center.y), Color("b3afa0"))
+		_bridge_concrete_box(Vector3(0.4, 1.0, flat.size.y), Vector3(cx + side * (width / 2.0 - 0.2), height + 0.5, flat_center.y), CONCRETE)
+		_bridge_concrete_box(Vector3(0.6, 0.15, flat.size.y), Vector3(cx + side * (width / 2.0 - 0.2), height + 1.07, flat_center.y), Color("b3afa0"))
 	# Piers every 16 m through the water, each up to the underside of the deck.
 	var water: Rect2 = Layout.WATER
 	var z := z0 + 14.0
@@ -507,7 +556,7 @@ func _road_bridge(rect: Rect2, height: float, ramp: float) -> void:
 		var top := _deck_at(rect, height, ramp, z) - 1.15
 		if z > water.position.y + 2.0 and z < water.end.y - 2.0 and top > WATER_LEVEL + 1.0:
 			var bottom := WATER_LEVEL - 0.6
-			map._box(Vector3(width - 4.0, top - bottom, 2.4), Vector3(cx, (top + bottom) / 2.0, z), CONCRETE_DARK)
+			_bridge_concrete_box(Vector3(width - 4.0, top - bottom, 2.4), Vector3(cx, (top + bottom) / 2.0, z), CONCRETE_DARK)
 		z += 16.0
 	# Lamps along the whole deck, lit at night like the street lamps.
 	var lamp := _texture("res://assets/sprites/lamp_post.png")
@@ -524,8 +573,8 @@ func _road_bridge(rect: Rect2, height: float, ramp: float) -> void:
 	for north in [true, false]:
 		var ramp_root := _ramp_root(rect, cx, height, ramp, north)
 		var dir := 1.0 if north else -1.0
-		map._box(Vector3(width, 0.8, length), Vector3(0, -0.4, dir * length / 2.0), CONCRETE, ramp_root)
-		map._box(Vector3(width + 0.4, 0.35, length), Vector3(0, -0.95, dir * length / 2.0), CONCRETE_DARK, ramp_root)
+		_bridge_concrete_box(Vector3(width, 0.8, length), Vector3(0, -0.4, dir * length / 2.0), CONCRETE, ramp_root)
+		_bridge_concrete_box(Vector3(width + 0.4, 0.35, length), Vector3(0, -0.95, dir * length / 2.0), CONCRETE_DARK, ramp_root)
 		var surface := MeshInstance3D.new()
 		var quad := QuadMesh.new()
 		quad.size = Vector2(width - 0.8, length)
@@ -539,7 +588,7 @@ func _road_bridge(rect: Rect2, height: float, ramp: float) -> void:
 		surface.position = Vector3(0, 0.02, dir * length / 2.0)
 		ramp_root.add_child(surface)
 		for side in [-1.0, 1.0]:
-			map._box(Vector3(0.4, 1.0, length), Vector3(side * (width / 2.0 - 0.2), 0.5, dir * length / 2.0), CONCRETE, ramp_root)
+			_bridge_concrete_box(Vector3(0.4, 1.0, length), Vector3(side * (width / 2.0 - 0.2), 0.5, dir * length / 2.0), CONCRETE, ramp_root)
 
 
 # Railway on an embankment that climbs on land, then a steel through-truss over the
@@ -557,14 +606,15 @@ func _rail_bridge(rect: Rect2, height: float, ramp: float, bridge_flat_end: bool
 	var flat_to := z1 if flat_end else z1 - ramp
 	var flat_center := (flat_from + flat_to) / 2.0
 	var flat_length := flat_to - flat_from
-	map._box(Vector3(rect.size.x, 0.8, flat_length), Vector3(cx, height - 0.4, flat_center), CONCRETE)
+	_bridge_concrete_box(Vector3(rect.size.x, 0.8, flat_length), Vector3(cx, height - 0.4, flat_center), CONCRETE)
+	_rail_deck_surface(Vector3(cx, height, flat_center), rect.size.x, flat_length)
 	for track in tracks:
 		_rail_quad(Vector3(track, height + 0.03, flat_center), flat_length, null)
 	# Piers in the river bed under the level deck.
 	for z in [water.position.y + water.size.y * 0.2, water.get_center().y, water.position.y + water.size.y * 0.8]:
 		var top := height - 0.8
 		var bottom := WATER_LEVEL - 0.6
-		map._box(Vector3(rect.size.x - 2.0, top - bottom, 3.0), Vector3(cx, (top + bottom) / 2.0, z), CONCRETE_DARK)
+		_bridge_concrete_box(Vector3(rect.size.x - 2.0, top - bottom, 3.0), Vector3(cx, (top + bottom) / 2.0, z), CONCRETE_DARK)
 	# Embankments: solid gravel wedges with ballast and rails on top.
 	var length := sqrt(ramp * ramp + height * height)
 	for north in [true, false]:
@@ -573,6 +623,7 @@ func _rail_bridge(rect: Rect2, height: float, ramp: float, bridge_flat_end: bool
 		var root := _ramp_root(rect, cx, height, ramp, north)
 		var dir := 1.0 if north else -1.0
 		map._box(Vector3(rect.size.x, height, length), Vector3(0, -height / 2.0, dir * length / 2.0), Color("7b766a"), root)
+		_rail_deck_surface(Vector3(0, 0, dir * length / 2.0), rect.size.x, length, root)
 		for track in tracks:
 			_rail_quad(Vector3(track - cx, 0.03, dir * length / 2.0), length, root)
 	# Truss over the water only.
@@ -605,7 +656,7 @@ func _rail_bridge(rect: Rect2, height: float, ramp: float, bridge_flat_end: bool
 	var node := MultiMeshInstance3D.new()
 	node.name = "RailBridgeTruss"
 	node.multimesh = multi
-	node.material_override = map._material(STEEL_BLUE)
+	node.material_override = _bridge_material("steel")
 	map.add_child(node)
 
 
@@ -662,6 +713,8 @@ func _build_embankment() -> void:
 	spans.append(Vector2(cursor, e["to"]))
 	var surface := SurfaceTool.new()
 	surface.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var crown := SurfaceTool.new()
+	crown.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var ballast: Array[SurfaceTool] = []
 	for track in e["tracks"]:
 		var strip := SurfaceTool.new()
@@ -681,7 +734,7 @@ func _build_embankment() -> void:
 			var b := _embankment_section(cx, top, _embankment_height(zb))
 			for side in [[0, 1], [2, 3]]:
 				_strip_quad(surface, Vector3(a[side[0]].x, a[side[0]].y, za), Vector3(a[side[1]].x, a[side[1]].y, za), Vector3(b[side[1]].x, b[side[1]].y, zb), Vector3(b[side[0]].x, b[side[0]].y, zb))
-			_strip_quad(surface, Vector3(a[1].x, a[1].y, za), Vector3(a[2].x, a[2].y, za), Vector3(b[2].x, b[2].y, zb), Vector3(b[1].x, b[1].y, zb))
+			_strip_quad(crown, Vector3(a[1].x, a[1].y + 0.015, za), Vector3(a[2].x, a[2].y + 0.015, za), Vector3(b[2].x, b[2].y + 0.015, zb), Vector3(b[1].x, b[1].y + 0.015, zb))
 			for k in e["tracks"].size():
 				var x: float = e["tracks"][k]
 				var ha := a[1].y + 0.04
@@ -711,6 +764,13 @@ func _build_embankment() -> void:
 	node.mesh = surface.commit()
 	node.material_override = earth
 	map.add_child(node)
+	# The same world-aligned ballast spans the whole crown, not only bridge decks.
+	crown.generate_normals()
+	var crown_node := MeshInstance3D.new()
+	crown_node.name = "RailEmbankmentBallast"
+	crown_node.mesh = crown.commit()
+	crown_node.material_override = _bridge_material("ballast")
+	map.add_child(crown_node)
 	var rails := StandardMaterial3D.new()
 	rails.albedo_texture = map._season["rail"]
 	rails.roughness = 1.0
@@ -726,10 +786,11 @@ func _build_embankment() -> void:
 	for cut in cuts:
 		var length := cut.y - cut.x
 		var middle := (cut.x + cut.y) / 2.0
-		map._box(Vector3(top * 2.0 + 1.0, 1.2, length), Vector3(cx, peak - 0.6, middle), CONCRETE)
+		_bridge_concrete_box(Vector3(top * 2.0 + 1.0, 1.2, length), Vector3(cx, peak - 0.6, middle), CONCRETE)
 		for end in [cut.x, cut.y]:
 			var inward := 1.0 if end == cut.x else -1.0
-			map._box(Vector3(top * 2.0 + 1.0, peak - 0.6, 0.8), Vector3(cx, (peak - 0.6) / 2.0, end + inward * 0.4), CONCRETE_DARK)
+			_bridge_concrete_box(Vector3(top * 2.0 + 1.0, peak - 0.6, 0.8), Vector3(cx, (peak - 0.6) / 2.0, end + inward * 0.4), CONCRETE_DARK)
+		_rail_deck_surface(Vector3(cx, peak, middle), top * 2.0 + 1.0, length)
 		for track in e["tracks"]:
 			_rail_quad(Vector3(track, peak + 0.04, middle), length, null)
 	map._occupy(Vector2(cx, (float(e["from"]) + float(e["to"])) / 2.0), Vector2(36, float(e["to"]) - float(e["from"])))

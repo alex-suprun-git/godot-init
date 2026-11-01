@@ -1,0 +1,33 @@
+{
+  "source": "/Users/oleksiisuprun/Desktop/Development/godot/art/source_images/bridges/bridge-concrete-v1.png",
+  "output": "/Users/oleksiisuprun/Desktop/Development/godot/init/assets/textures/bridge_concrete.png",
+  "source_sha256": "c2f507a1eda77a403d11ff896f39a2c1240fb95b6a3a9f9485aa235e5ec5aac6",
+  "profile": "surface",
+  "max_edge": 1024,
+  "override_reason": null,
+  "approved": true,
+  "before": {
+    "size": [
+      1254,
+      1254
+    ],
+    "bytes": 3429425,
+    "estimated_rgba_bytes": 6290064
+  },
+  "after": {
+    "size": [
+      1024,
+      1024
+    ],
+    "estimated_rgba_bytes": 4194304,
+    "bytes": 2017950,
+    "sha256": "ac3b29f1e128c6ebc1dcc35a0de9dc9a14e8a576c7387172f50b328e0e7676e8"
+  },
+  "has_alpha": false,
+  "source_alpha_extrema": null,
+  "output_alpha_extrema": null,
+  "icc_preserved": false,
+  "cropped": false,
+  "palette_quantized": false,
+  "dry_run": false
+}

@@ -55,6 +55,9 @@ const GROUND_GRASS := preload("res://assets/textures/ground_grass.png")
 const GROUND_GRASS_DRY := preload("res://assets/textures/ground_grass_dry.png")
 const GROUND_ASPHALT := preload("res://assets/textures/ground_asphalt.png")
 const GROUND_PAVING := preload("res://assets/textures/ground_paving.png")
+const GROUND_SIDEWALK_SLABS := preload("res://assets/textures/ground_sidewalk_slabs.png")
+const GROUND_SIDEWALK_ASPHALT := preload("res://assets/textures/ground_sidewalk_asphalt.png")
+const SIDEWALK_SURFACE := preload("res://assets/shaders/sidewalk_surface.gdshader")
 const GROUND_DIRT := preload("res://assets/textures/ground_dirt.png")
 const GROUND_WATER := preload("res://assets/textures/ground_water.png")
 const GROUND_RAIL := preload("res://assets/textures/ground_rail.png")
@@ -366,7 +369,10 @@ func _update_camera() -> void:
 	var yaw := deg_to_rad(view["yaw"])
 	var elevation := deg_to_rad(view["elevation"])
 	var direction := Vector3(sin(yaw) * cos(elevation), sin(elevation), cos(yaw) * cos(elevation))
-	camera.position = _camera_target + direction * _zoom
+	# Orthographic size controls magnification independently of camera distance.
+	# Keep the eye behind nearby tall buildings even at the closest zoom.
+	var distance: float = maxf(_zoom, 600.0) if view["orthographic"] else _zoom
+	camera.position = _camera_target + direction * distance
 	camera.look_at(_camera_target)
 	# The painted sprites are isometric: an orthographic camera keeps every
 	# building and prop at one scale and slope instead of bending toward the edges.
@@ -596,12 +602,37 @@ func _near_junction(road: Dictionary, at: Vector2, along_x: bool) -> bool:
 	return false
 
 
-# Pavements are derived from the roads: a strip on each side, cut wherever another
-# road crosses. A ground_sidewalk.png texture replaces the placeholder colour.
+# Pavements retain the road-derived strips/cuts. Only the civic axis south of the
+# north cross street uses slabs; the approach towards the river uses asphalt.
+# Ordinary roads use pedestrian asphalt. Both share world-aligned material coordinates.
 func _build_sidewalks() -> void:
-	var texture_path := "res://assets/textures/ground_sidewalk.png"
-	var texture: Texture2D = load(texture_path) if ResourceLoader.exists(texture_path) else null
+	var winter := Settings.season == "winter"
+	var civic_start := _civic_avenue_start()
+	# Prepared 1024px source: three slabs between measured joint centres
+	# x=12..767, y=36..796. Three 50cm slabs repeat every 1.5m.
+	var slab_region := Vector4(12.0 / 1024.0, 36.0 / 1024.0, 755.0 / 1024.0, 760.0 / 1024.0)
+	var slabs := _sidewalk_material(GROUND_SNOW_PAVING if winter else GROUND_SIDEWALK_SLABS,
+		4.0 if winter else 1.5, Vector4(0, 0, 1, 1) if winter else slab_region)
+	var asphalt := _sidewalk_material(GROUND_SNOW_ASPHALT if winter else GROUND_SIDEWALK_ASPHALT, 4.0)
+	if not winter:
+		slabs.set_shader_parameter("surface_brightness", 0.85)
+		asphalt.set_shader_parameter("surface_brightness", 0.65)
+		asphalt.set_shader_parameter("mottle_strength", 0.22)
+	var covered: Array[Rect2] = []
+	var sidewalk_roads: Array[Dictionary] = []
+	# The civic paving owns shared corners. Subtract already rendered surfaces so
+	# crossing strips never put two different materials on the same plane.
 	for road in DistrictLayout.ROADS:
+		if road.get("id", "") == "axis":
+			sidewalk_roads.push_front(road)
+		else:
+			sidewalk_roads.append(road)
+	# Visual continuations retain road width/material through the opaque haze.
+	for extension in MapBoundaries.road_continuations():
+		var continued: Dictionary = extension["road"].duplicate()
+		continued["rect"] = extension["rect"]
+		sidewalk_roads.append(continued)
+	for road in sidewalk_roads:
 		var width := DistrictLayout.sidewalk_width(road)
 		if width <= 0.0:
 			continue
@@ -614,7 +645,60 @@ func _build_sidewalks() -> void:
 			else:
 				strip = Rect2(rect.position.x - width if side < 0 else rect.end.x, rect.position.y, width, rect.size.y)
 			for piece in _strip_pieces(strip, along_x, road):
-				_ground_quad(piece.get_center(), piece.size, 0.15, texture, 4.0, false, Color.WHITE if texture != null else SIDEWALK_PLACEHOLDER)
+				for patch in _uncovered_sidewalk(piece, covered):
+					var material: ShaderMaterial = slabs if road.get("id", "") == "axis" and patch.get_center().y >= civic_start else asphalt
+					var quad := QuadMesh.new()
+					quad.size = patch.size
+					var instance := MeshInstance3D.new()
+					instance.name = "SidewalkSlabs" if material == slabs else "SidewalkAsphalt"
+					instance.mesh = quad
+					instance.material_override = material
+					instance.rotation.x = -PI / 2.0
+					instance.position = Vector3(patch.get_center().x, 0.15, patch.get_center().y)
+					add_child(instance)
+					covered.append(patch)
+
+
+# Derive the change of street treatment from the existing crossing geometry.
+func _civic_avenue_start() -> float:
+	for road in DistrictLayout.ROADS:
+		if road.get("id", "") == "north_street":
+			var rect: Rect2 = road["rect"]
+			return rect.end.y
+	return -INF
+
+
+# Rectangular subtraction preserves the union of the original sidewalk strips.
+func _uncovered_sidewalk(rect: Rect2, covered: Array[Rect2]) -> Array[Rect2]:
+	var remaining: Array[Rect2] = [rect]
+	for occupied in covered:
+		var next: Array[Rect2] = []
+		for piece in remaining:
+			var overlap := piece.intersection(occupied)
+			if not overlap.has_area():
+				next.append(piece)
+				continue
+			for fragment in [
+				Rect2(piece.position, Vector2(overlap.position.x - piece.position.x, piece.size.y)),
+				Rect2(Vector2(overlap.end.x, piece.position.y), Vector2(piece.end.x - overlap.end.x, piece.size.y)),
+				Rect2(Vector2(overlap.position.x, piece.position.y), Vector2(overlap.size.x, overlap.position.y - piece.position.y)),
+				Rect2(Vector2(overlap.position.x, overlap.end.y), Vector2(overlap.size.x, piece.end.y - overlap.end.y)),
+			]:
+				if fragment.has_area():
+					next.append(fragment)
+		remaining = next
+		if remaining.is_empty():
+			break
+	return remaining
+
+
+func _sidewalk_material(texture: Texture2D, repeat_metres: float, region: Vector4 = Vector4(0, 0, 1, 1)) -> ShaderMaterial:
+	var material := ShaderMaterial.new()
+	material.shader = SIDEWALK_SURFACE
+	material.set_shader_parameter("surface_texture", texture)
+	material.set_shader_parameter("repeat_metres", repeat_metres)
+	material.set_shader_parameter("source_region", region)
+	return material
 
 
 # The strip minus every other road it runs into, as a list of rects.
@@ -918,17 +1002,23 @@ func _build_road_markings() -> void:
 		if road["kind"] != "asphalt":
 			continue
 		var rect: Rect2 = road["rect"]
+		for extension in MapBoundaries.road_continuations():
+			if extension["road"] == road:
+				rect = rect.merge(extension["rect"])
 		var along_x := rect.size.x > rect.size.y
-		var length := maxf(rect.size.x, rect.size.y)
 		var width := minf(rect.size.x, rect.size.y)
-		var start := rect.position + (Vector2(0, width / 2) if along_x else Vector2(width / 2, 0))
+		var source_rect: Rect2 = road["rect"]
+		var start := source_rect.position + (Vector2(0, width / 2) if along_x else Vector2(width / 2, 0))
 		if road.get("look", "") == "highway":
-			_highway_lines(road)
+			_highway_lines(road, rect)
 			continue
 		if road.has("median"):
 			_boulevard_median(road)
 			continue
-		for i in range(1, int(length / 8.0)):
+		var low := rect.position.x if along_x else rect.position.y
+		var high := rect.end.x if along_x else rect.end.y
+		var phase := start.x if along_x else start.y
+		for i in range(int(ceil((low - phase) / 8.0)), int(floor((high - phase) / 8.0)) + 1):
 			var at := start + (Vector2(i * 8, 0) if along_x else Vector2(0, i * 8))
 			var junction := false
 			for other in DistrictLayout.ROADS:
@@ -942,12 +1032,12 @@ func _build_road_markings() -> void:
 
 # Highway markings: solid edge lines and a solid double centre line, in 8 m pieces
 # that stop short of every junction.
-func _highway_lines(road: Dictionary) -> void:
-	var rect: Rect2 = road["rect"]
+func _highway_lines(road: Dictionary, rect: Rect2) -> void:
+	var source_rect: Rect2 = road["rect"]
 	var cy := rect.get_center().y
 	var offsets := [-rect.size.y / 2.0 + 0.9, rect.size.y / 2.0 - 0.9, -0.25, 0.25]
-	for i in range(1, int(rect.size.x / 8.0)):
-		var x := rect.position.x + i * 8.0
+	for i in range(int(ceil((rect.position.x - source_rect.position.x) / 8.0)), int(floor((rect.end.x - source_rect.position.x) / 8.0)) + 1):
+		var x := source_rect.position.x + i * 8.0
 		var junction := false
 		for other in DistrictLayout.ROADS:
 			if other != road and other["rect"].grow(8).has_point(Vector2(x, cy)):
@@ -963,6 +1053,7 @@ func _highway_lines(road: Dictionary) -> void:
 func _boulevard_median(road: Dictionary) -> void:
 	var rect: Rect2 = road["rect"]
 	var width: float = road["median"]
+	var civic_start := _civic_avenue_start()
 	var strip := Rect2(rect.get_center().x - width / 2.0, rect.position.y, width, rect.size.y)
 	for piece in _strip_pieces(strip, false, road, 7.0):
 		if piece.size.y < 6.0:
@@ -971,11 +1062,11 @@ func _boulevard_median(road: Dictionary) -> void:
 		_ground_quad(piece.get_center(), piece.size, 0.33, _season["grass"], 22.0, false, _season["grass_tint"])
 		var z := piece.position.y + 7.0
 		while z < piece.end.y - 3.0:
-			_tree(_ground(Vector2(piece.get_center().x, z)) + Vector3.UP * 0.3)
+			_tree(_ground(Vector2(piece.get_center().x, z)) + Vector3.UP * 0.3,
+				road.get("id", "") != "axis" or z >= civic_start)
 			z += 14.0
 
 
-const SIDEWALK_PLACEHOLDER := Color("8f8b80")
 # Pools: how many are shown depends on district and hour (see AmbientLife), so a pool
 # several times the typical crowd is needed.
 const AMBIENT_WALKERS := 288
@@ -1195,18 +1286,22 @@ func _windows(base: Vector3, footprint: Vector2, floors: int, per_row: int, floo
 				_box(Vector3(0.1, floor_height * 0.45, end_spacing * 0.45), base + Vector3(side * (footprint.x / 2.0 + 0.05), window_y, z), WINDOW)
 
 
-func _tree(at: Vector3) -> Sprite3D:
+func _tree(at: Vector3, spawn: bool = true) -> Sprite3D:
 	# Painted tree sprite standing upright and turning toward the camera:
 	# mostly birches, with taller poplars for variety.
 	var poplar := _rng.randf() < 0.25
 	var height := _rng.randf_range(13.0, 18.0) if poplar else _rng.randf_range(9.0, 13.0)
+	var tint := Color(1, 1, 1).lerp(Color(0.92, 0.95, 0.8), _rng.randf())
+	# Omitting a median tree must not reshuffle all later trees in the district.
+	if not spawn:
+		return null
 	var sprite := Sprite3D.new()
 	sprite.texture = _season["poplar"] if poplar else _season["birch"]
 	sprite.pixel_size = height / sprite.texture.get_height()
 	sprite.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
 	sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
 	sprite.shaded = true
-	sprite.modulate = Color(1, 1, 1).lerp(Color(0.92, 0.95, 0.8), _rng.randf())
+	sprite.modulate = tint
 	sprite.position = at + Vector3(0, height / 2.0, 0)
 	add_child(sprite)
 	return sprite

@@ -10,7 +10,7 @@ branch: task/d4-building-art
 
 ## Goal
 
-The rebuilt administrative centre (`tasks/d4-rebuild.md`) needs its own looks instead of placeholders: a small district police station, a three-storey polyclinic, and a department store. Paint their facade textures, in the same manner as the existing ones, so the integrator can swap them into the catalog.
+The rebuilt administrative centre (`tasks/archive/d4-rebuild.md`) needs its own looks instead of placeholders: a small district police station, a three-storey polyclinic, and a department store. Paint their facade textures, in the same manner as the existing ones, so the integrator can swap them into the catalog.
 
 ## Inputs
 
