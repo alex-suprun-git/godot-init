@@ -4,6 +4,10 @@ The optimizer is a standalone Python tool outside the Godot project. Run it afte
 
 ## Agent workflow
 
+For map areas, use an actual current Godot screenshot as the authoritative camera/layout reference and existing project art as the style reference. Keep map context throughout the iterations. The user may choose one combined transparent 2D painting in a moved/resized lot as an interim implementation before separate models. Standalone polished object concept art requires a separate explicit request; do not substitute it for the map-based workflow. Preserve and document the reference screenshot and the approved version beside the asset.
+
+When extracting an approved area, preserve its composition and object proportions. Do not ask for a new diorama camera or force a differently projected source to fit through large affine stretches. Avoid duplicate paving under an asset whose own ground outline is visible. Calibrate the actual opaque boundary against adjacent roads/rails, then inspect an in-game overview and a close-up of critical joins. For the station market, both through tracks must remain outside the painting; the fenced market edge and platform safety edge share one straight boundary.
+
 1. Generate and save the untouched original under `art/source_images/` (or keep an existing source under `art/concepts/`). Never generate directly into `init/assets/`. Keep the original filename/version and record the prompt in `art/PROMPTS.md`.
 2. Review the image against the art brief. Present meaningful new visual directions to the user. Existing approval of a batch or visual direction applies within its agreed scope; do not request repeated approval for routine processing. Do not claim unapproved art has been approved.
 3. Run `tools/optimize_asset.py` with the relevant profile and `--approved`. Write the optimized game copy to the asset's intended path under `init/assets/`. This step is required even if dimensions already fit: it normalizes PNG output and records provenance.

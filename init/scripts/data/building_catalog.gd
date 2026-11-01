@@ -189,7 +189,16 @@ const CONTENTS := {
 		{"model": "container_20ft", "at": Vector2(47.4, 4), "length": 6.06, "footprint": Vector2(2.5, 6.1), "axis": "z", "paint": 13, "lift": 2.59},
 		{"model": "container_20ft", "at": Vector2(50.8, 4), "length": 6.06, "footprint": Vector2(2.5, 6.1), "axis": "z", "paint": 14, "lift": 2.59},
 	]},
-	"market": {"kind": "market", "footprint": Vector2.ZERO, "ground": "paving", "label": "Рынок челноков", "dressing": []},
+	"former_market": {"kind": "open", "ground": "grass", "label": "Бывший рынок · поле", "dressing": []},
+	"market": {
+		"kind": "painted_lot", "ground": "grass", "label": "Рынок · вокзал · автостанция",
+		"sprite": "market_hub_v7", "node_name": "MarketHubPainted",
+		"footprint": Vector2(244, 70), "width": 222.1, "offset": Vector2(0, 1.7),
+		# The revised painting already matches the map camera; do not stretch it.
+		# The opaque strip contour stays north of z=392.9; ballast starts at 393.1.
+		"anchor": Vector2(0.7913, 0.9867), "axes": Vector2(0.583, -0.600),
+		"dressing": [],
+	},
 	"station": {"kind": "station", "footprint": Vector2(40, 12), "ground": "paving", "label": "Вокзал · автостанция", "sprite": "station_v3", "width": 40.0, "axes": Vector2(0.50, -0.41), "dressing": [
 		{"sprite": "bus_local_1997", "at": Vector2(-65, 7), "width": 8.8, "footprint": Vector2(10, 3), "axis": "x"},
 	]},
