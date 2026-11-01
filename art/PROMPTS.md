@@ -9,6 +9,18 @@
 - Built-in ImageGen edit of the existing G7 track texture, using bridge ballast as a material reference and a current Godot frame as map context. Preserved source: `art/source_images/railway/ground-rail-v2.png`; exact prompt: `art/source_images/railway/ground-rail-v2.prompt.md`.
 - The user requested refreshed 2D artwork within the maintained-city direction: intact timber, clearer steel running surfaces, reduced rust and vegetation, neutral grey-brown ballast. The old G7 wording below is historical provenance and is superseded for the current texture. Optimized copy replaces `init/assets/textures/ground_rail.png`; final appearance review is pending. Actual game frames, limitations and preparation record: `art/railway/README.md`.
 
+## Public transport 3D shape pass (2026-11-01)
+
+Original procedural LiAZ-5256 and PAZ-3205 shape models now exist under
+`art/models/public_transport/shape_v1/`. Generated turnarounds in that asset's
+`references/` guide their appearance; no new raster art was generated or integrated.
+Build scripts, measured exports, inspection results and remaining review points
+are recorded in `art/models/public_transport/README.md`. The detailed `finish_v1`
+exports are now integrated into ambient traffic and ATP; Godot screenshots compare
+both buses with both current trucks and Volga. Visual inspection was performed in
+both map axes. The user approved the in-game result after a uniform 20% bus
+size reduction and requested the PR on 2026-11-01.
+
 ## Compact station market concept (2026-11-01)
 
 - Current integrated revision: `art/source_images/market_hub/market_hub_v7.png` → `init/assets/sprites/market_hub_v7.png`. Exact revision prompts: `art/market_hub/REVISIONS.md`; current calibration and in-game review: `art/market_hub/README.md`. Implements user corrections to fencing, planting, relative sizes, station gap and the straight railway-side boundary; both tracks remain free.

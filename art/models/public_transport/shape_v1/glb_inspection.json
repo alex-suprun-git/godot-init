@@ -1,0 +1,114 @@
+{
+  "LiAZ_5256": {
+    "bounds_min": [
+      -1.4249999523162842,
+      -5.774999618530273,
+      0.0
+    ],
+    "bounds_max": [
+      1.4249999523162842,
+      5.774999618530273,
+      3.0295000076293945
+    ],
+    "dimensions_xyz_m": [
+      2.8499999046325684,
+      11.549999237060547,
+      3.0295000076293945
+    ],
+    "triangles": 9150,
+    "mesh_objects": 1,
+    "materials": [
+      "Bus - headlamp.004",
+      "Bus - indicator.004",
+      "Bus - ivory paint.004",
+      "Bus - opaque glass.004",
+      "Bus - rubber.004",
+      "Bus - tail lamp.004",
+      "Bus - wheel steel.004",
+      "LiAZ - blue paint.003"
+    ]
+  },
+  "PAZ_3205": {
+    "bounds_min": [
+      -1.4249999523162842,
+      -3.5375001430511475,
+      0.0
+    ],
+    "bounds_max": [
+      1.4249999523162842,
+      3.5374999046325684,
+      2.9825000762939453
+    ],
+    "dimensions_xyz_m": [
+      2.8499999046325684,
+      7.074999809265137,
+      2.9825000762939453
+    ],
+    "triangles": 6182,
+    "mesh_objects": 1,
+    "materials": [
+      "Bus - headlamp.005",
+      "Bus - indicator.005",
+      "Bus - ivory paint.005",
+      "Bus - opaque glass.005",
+      "Bus - rubber.005",
+      "Bus - tail lamp.005",
+      "Bus - wheel steel.005",
+      "PAZ - ochre paint.003"
+    ]
+  },
+  "KamAZ": {
+    "bounds_min": [
+      -1.6217999458312988,
+      -8.529999732971191,
+      0.0
+    ],
+    "bounds_max": [
+      1.6217999458312988,
+      8.1899995803833,
+      3.9099998474121094
+    ],
+    "dimensions_xyz_m": [
+      3.2435998916625977,
+      16.719999313354492,
+      3.9099998474121094
+    ],
+    "triangles": 2232,
+    "mesh_objects": 9,
+    "materials": [
+      "KamAZ - cab paint.001",
+      "KamAZ - tarpaulin paint.001",
+      "Truck - dark metal.001",
+      "Truck - glass.001",
+      "Truck - lamp.001",
+      "Truck - rubber.001",
+      "Truck - steel.001",
+      "Truck - tail lamp.001",
+      "Truck - tarpaulin straps.001"
+    ]
+  },
+  "Volga": {
+    "bounds_min": [
+      -1.0232741832733154,
+      -2.4587013721466064,
+      0.0
+    ],
+    "bounds_max": [
+      1.0232741832733154,
+      2.4467568397521973,
+      1.4900000095367432
+    ],
+    "dimensions_xyz_m": [
+      2.046548366546631,
+      4.905458450317383,
+      1.4900000095367432
+    ],
+    "triangles": 7775,
+    "mesh_objects": 3,
+    "materials": [
+      "Volga chrome rubber atlas.001",
+      "Volga glass.001",
+      "Volga paint body.001"
+    ]
+  }
+}
