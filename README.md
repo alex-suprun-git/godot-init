@@ -285,6 +285,8 @@ The starting district is an outskirt, not the city center. The center lies far b
 - Civic service vehicles (selected, not yet modeled): cream-and-blue UAZ-452-family police van and off-white/red RAF-22031 ambulance. The RAF replaces the earlier UAZ ambulance plan. Generated multi-view references exist under `art/models/uaz_service/` and `art/models/raf_ambulance/`; both reference directions are approved, and 3D production remains.
 - Data model (implemented in `district_layout.gd` as `DISTRICTS`, `HOURS` and the lookups `district_at`, `subzone_at`, `profile_at`, `crowd_at`; ambient life reads district density, vehicle mix and hourly activity; the D4 lots now follow the new plan): two-level areas. A district (several rects allowed) sets residents, foot and car density, vehicle mix and an hourly profile; a subzone inside it overrides only the fields it names. The axis and highway belong to no district. Passenger cars are one class with several models.
 
+- Ambient buses: at most five slots in the road-traffic pool, including gateway transitions. The existing district mix selects candidates; excess bus candidates become passenger cars. Initial spawn and gateway re-entry share the cap. Total traffic slots and parked buses are unchanged; fewer than five may be visible because of district/hour visibility or departures.
+
 ## Natural Landmarks
 
 - Approved: a small irregular pond beside the old village, with reeds, footpaths and two fishing seats; a distinct wooded area west of the residential superblocks, with paths and an open event clearing.
