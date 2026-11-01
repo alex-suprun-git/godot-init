@@ -1,4 +1,4 @@
-# Background pedestrians and cars that wander the road graph. They are scenery:
+# Background pedestrians and cars wandering pavement and road graphs. They are scenery:
 # no collisions, no right of way, and they never touch the simulation or its RNG.
 # This class only moves agents; CityMap owns their sprites and models.
 extends RefCounted
@@ -6,7 +6,8 @@ extends RefCounted
 const RoadGraph = preload("res://scripts/map/road_graph.gd")
 const DistrictLayout = preload("res://scripts/data/district_layout.gd")
 
-const WALKER_KINDS := ["asphalt", "dirt", "yard"]
+const PedestrianGraph = preload("res://scripts/map/pedestrian_graph.gd")
+const WALKER_KINDS := ["pavement"]
 const CAR_KINDS := ["asphalt"]
 # A district's density of 2.0 at its busiest hour shows every agent standing there; the
 # pool is sized so that a typical place (1.0) shows about half of them.
@@ -18,6 +19,7 @@ var agents: Array[Dictionary] = []
 var hour := 12.0 # Clock hour, set by the view; decides who is out and about.
 
 var _graph: RoadGraph
+var _foot_graph := PedestrianGraph.new()
 var _rng := RandomNumberGenerator.new()
 var _cursor := 0
 
@@ -30,19 +32,20 @@ func _init(graph: RoadGraph, seed_value: int) -> void:
 # Agents start on edges picked by length times district density, so crowded districts
 # hold more of them. Cars also get a vehicle class from the district's fleet mix.
 func add(is_car: bool, speed: float) -> Dictionary:
+	var graph = _graph if is_car else _foot_graph
 	var kinds: Array = CAR_KINDS if is_car else WALKER_KINDS
 	var choices: Array[int] = []
-	for i in _graph.edges.size():
-		if _usable(is_car, kinds, _graph.edges[i]):
+	for i in graph.edges.size():
+		if _usable(is_car, kinds, graph.edges[i]):
 			choices.append(i)
 	if choices.is_empty():
 		return {}
-	var edge := _pick(choices, is_car, true)
+	var edge := _pick(choices, is_car, true, graph)
 	var forward := _rng.randf() < 0.5
 	var agent := {
-		"kinds": kinds, "is_car": is_car, "speed": speed, "edge": edge,
-		"from": _graph.edges[edge]["a"] if forward else _graph.edges[edge]["b"],
-		"along": _rng.randf() * _graph.edges[edge]["length"],
+		"graph": graph, "kinds": kinds, "is_car": is_car, "speed": speed, "edge": edge,
+		"from": graph.edges[edge]["a"] if forward else graph.edges[edge]["b"],
+		"along": _rng.randf() * graph.edges[edge]["length"],
 		"side": 1.0 if is_car or _rng.randf() < 0.5 else -1.0,
 		"lateral": 0.0, "pos": Vector2.ZERO, "heading": Vector2.RIGHT, "visual": null,
 		"threshold": _rng.randf(), "visible": true, "class": _vehicle_class(edge) if is_car else "",
@@ -58,38 +61,41 @@ func add(is_car: bool, speed: float) -> Dictionary:
 func step(delta: float) -> void:
 	_refresh_visibility()
 	for agent in agents:
+		var graph = agent["graph"]
 		agent["along"] += agent["speed"] * delta
-		var edge: Dictionary = _graph.edges[agent["edge"]]
+		var edge: Dictionary = graph.edges[agent["edge"]]
 		while agent["along"] >= edge["length"]:
 			agent["along"] -= edge["length"]
-			var node: int = _graph.other_end(agent["edge"], agent["from"])
+			var node: int = graph.other_end(agent["edge"], agent["from"])
 			agent["edge"] = _next_edge(agent, node)
 			agent["from"] = node
-			edge = _graph.edges[agent["edge"]]
+			edge = graph.edges[agent["edge"]]
 		_place(agent, delta)
 
 
-# Walkers keep to pavements: an asphalt road without one (the highway) is for cars only.
-func _usable(is_car: bool, kinds: Array, edge: Dictionary) -> bool:
-	return edge["kind"] in kinds and (is_car or edge["kind"] != "asphalt" or edge["walk"] > 0.0)
+# Each pool stays on its own network: pavements/crossings for walkers, asphalt for cars.
+func _usable(_is_car: bool, kinds: Array, edge: Dictionary) -> bool:
+	return edge["kind"] in kinds
 
 
 # Keep going; turn back only at a dead end.
 func _next_edge(agent: Dictionary, node: int) -> int:
+	var graph = agent["graph"]
 	var options: Array[int] = []
-	for candidate in _graph.adjacent_edges(node):
-		if candidate != agent["edge"] and _usable(agent["is_car"], agent["kinds"], _graph.edges[candidate]):
+	for candidate in graph.adjacent_edges(node):
+		if candidate != agent["edge"] and _usable(agent["is_car"], agent["kinds"], graph.edges[candidate]):
 			options.append(candidate)
 	if options.is_empty():
 		return agent["edge"]
-	return _pick(options, agent["is_car"], false)
+	return _pick(options, agent["is_car"], false, graph)
 
 
 func _place(agent: Dictionary, delta: float) -> void:
-	var edge: Dictionary = _graph.edges[agent["edge"]]
+	var graph = agent["graph"]
+	var edge: Dictionary = graph.edges[agent["edge"]]
 	var from: int = agent["from"]
-	var start: Vector2 = _graph.points[from]
-	var end: Vector2 = _graph.points[_graph.other_end(agent["edge"], from)]
+	var start: Vector2 = graph.points[from]
+	var end: Vector2 = graph.points[graph.other_end(agent["edge"], from)]
 	var heading := (end - start).normalized()
 	var half: float = edge["half"]
 	var target: float
@@ -105,19 +111,19 @@ func _place(agent: Dictionary, delta: float) -> void:
 	agent["heading"] = heading
 
 
-func _density(edge: Dictionary, is_car: bool) -> float:
-	var middle: Vector2 = (_graph.points[edge["a"]] + _graph.points[edge["b"]]) / 2.0
+func _density(edge: Dictionary, is_car: bool, graph) -> float:
+	var middle: Vector2 = (graph.points[edge["a"]] + graph.points[edge["b"]]) / 2.0
 	return maxf(DistrictLayout.profile_at(middle)["cars" if is_car else "foot"], MIN_DENSITY)
 
 
 # Weighted random choice among edges; the weight is the district density, times the
 # edge length when picking a spawn point.
-func _pick(options: Array[int], is_car: bool, by_length: bool) -> int:
+func _pick(options: Array[int], is_car: bool, by_length: bool, graph) -> int:
 	var weights := PackedFloat32Array()
 	var total := 0.0
 	for option in options:
-		var edge: Dictionary = _graph.edges[option]
-		var weight: float = _density(edge, is_car) * (float(edge["length"]) if by_length else 1.0)
+		var edge: Dictionary = graph.edges[option]
+		var weight: float = _density(edge, is_car, graph) * (float(edge["length"]) if by_length else 1.0)
 		weights.append(weight)
 		total += weight
 	var roll := _rng.randf() * total
@@ -129,7 +135,8 @@ func _pick(options: Array[int], is_car: bool, by_length: bool) -> int:
 
 
 func _vehicle_class(edge: int) -> String:
-	var middle: Vector2 = (_graph.points[_graph.edges[edge]["a"]] + _graph.points[_graph.edges[edge]["b"]]) / 2.0
+	var graph = _graph
+	var middle: Vector2 = (graph.points[graph.edges[edge]["a"]] + graph.points[graph.edges[edge]["b"]]) / 2.0
 	var fleet: Dictionary = DistrictLayout.profile_at(middle)["fleet"]
 	var total := 0.0
 	for weight in fleet.values():

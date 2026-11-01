@@ -1,0 +1,14 @@
+{
+  "triangles": 1416,
+  "mesh_objects": 4,
+  "height_m": 3.4625,
+  "lens_diameter_m": 0.244,
+  "forward_blender": "-Y",
+  "forward_godot": "+Z",
+  "units": "metres",
+  "geometry_budget_triangles": 2500,
+  "textures": 0,
+  "source": "traffic_light_v1.blend",
+  "export": "init/assets/models/street/traffic_light_v1.glb",
+  "note": "Original geometry based on the task concept reference; solid PBR materials, three independently named lenses. No signal controller baked into model."
+}

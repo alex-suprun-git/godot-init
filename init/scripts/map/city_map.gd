@@ -13,6 +13,8 @@ const SpriteAnchors = preload("res://scripts/data/sprite_anchors.gd")
 const GroundedProps = preload("res://scripts/map/grounded_props.gd")
 const VehicleModels = preload("res://scripts/map/vehicle_models.gd")
 const AmbientLife = preload("res://scripts/map/ambient_life.gd")
+const TrafficIntersections = preload("res://scripts/data/traffic_intersections.gd")
+const TrafficLight = preload("res://scripts/map/traffic_light.gd")
 const GarageModel = preload("res://scripts/map/garage_model.gd")
 const PropDimensions = preload("res://scripts/data/prop_dimensions.gd")
 
@@ -146,6 +148,7 @@ var _occupied: Array[Rect2] = [] # Ground taken by buildings and roads; trees av
 var _road_paint_material: ShaderMaterial
 var _lot_labels: Node3D
 var _ambient: AmbientLife # Background pedestrians and cars wandering the road graph.
+var _traffic_light_positions := PackedVector2Array()
 var _hero_car: Node3D # The administration car; shown while you ride with Tolik.
 var _token_discs := {} # actor id -> disc under the token, hidden while riding.
 var _graph_overlay: Node3D # Dev view of the road graph and active routes (F10).
@@ -189,6 +192,7 @@ func setup(week_sim) -> void:
 	_build_traffic()
 	_build_sidewalks()
 	_build_street_furniture()
+	_build_traffic_lights()
 	_build_ambient()
 	_build_graph_overlay()
 	_build_overlays()
@@ -715,7 +719,7 @@ func _build_trees() -> void:
 		var along_x := rect.size.x > rect.size.y
 		for i in range(1, int(maxf(rect.size.x, rect.size.y) / 26.0)):
 			var at := rect.position + (Vector2(i * 26, rect.size.y + 6) if along_x else Vector2(rect.size.x + 6, i * 26))
-			if not _is_occupied(at, 3.0):
+			if not _is_occupied(at, 3.0) and not _near_traffic_light(at):
 				_tree(_ground(at))
 
 
@@ -888,16 +892,8 @@ func _build_road_markings() -> void:
 					junction = true
 			if not junction:
 				_paint_patch(Vector2(3, 0.12) if along_x else Vector2(0.12, 3), at, 0.145)
-	# Crossings on the civic axis, derived from its road intersections.
-	for axis in DistrictLayout.ROADS:
-		if axis.get("id", "") != "axis":
-			continue
-		var axis_rect: Rect2 = axis["rect"]
-		for road in DistrictLayout.ROADS:
-			var rect: Rect2 = road["rect"]
-			if rect.size.x > rect.size.y and road["kind"] == "asphalt" and rect.intersects(axis_rect):
-				for side in [-1.0, 1.0]:
-					_crosswalk(Vector2(axis_rect.get_center().x, rect.get_center().y + side * (rect.size.y / 2 + 3)), axis_rect.size.x, true, 0.145)
+	for crossing in DistrictLayout.crosswalks():
+		_crosswalk(crossing["at"], crossing["width"], crossing["along_z"], 0.145)
 
 
 # Highway markings: solid edge lines and a solid double centre line, in 8 m pieces
@@ -938,7 +934,7 @@ func _boulevard_median(road: Dictionary) -> void:
 const SIDEWALK_PLACEHOLDER := Color("8f8b80")
 # Pools: how many are shown depends on district and hour (see AmbientLife), so a pool
 # several times the typical crowd is needed.
-const AMBIENT_WALKERS := 240
+const AMBIENT_WALKERS := 288
 const AMBIENT_CARS := 130
 
 
@@ -1312,3 +1308,20 @@ func _capsule(at: Vector3, color: Color, parent: Node = null) -> MeshInstance3D:
 	mesh.radius = 0.5
 	mesh.height = 2.0
 	return _add_mesh(mesh, at, color, parent)
+
+
+func _build_traffic_lights() -> void:
+	for id in TrafficIntersections.JUNCTIONS:
+		for fixture in TrafficIntersections.fixtures(id):
+			_traffic_light_positions.append(fixture["position"])
+			var light := TrafficLight.new(fixture)
+			add_child(light)
+			light.add_to_group("traffic_lights")
+
+
+# Keep roadside tree crowns from covering the nearby signal head.
+func _near_traffic_light(at: Vector2) -> bool:
+	for spot in _traffic_light_positions:
+		if at.distance_to(spot) < 8.0:
+			return true
+	return false

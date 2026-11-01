@@ -714,3 +714,10 @@ This table supersedes the earlier selection notes. All game files are separately
 | `residents_meeting` | `art/source_images/situation_banners/residents_meeting_v3.png` | `init/assets/events/residents_meeting.png` |
 | `journalist` | `art/source_images/situation_banners/journalist_v3.png` | `init/assets/events/journalist.png` |
 | `boss_report` | `art/source_images/situation_banners/boss_report_v2.png` | `init/assets/events/boss_report.png` |
+
+
+## Traffic light — 1970s–1980s turnaround v1
+
+- Concept: `art/concepts/traffic-light-1970s-1980s-turnaround-v1.png`.
+- Full prompt and review status: `art/concepts/traffic-light-1970s-1980s-turnaround-v1.prompt.md`.
+- Built-in ImageGen; front, left, rear, three-quarter and enlarged head detail. Period-inspired modeling reference; not a verified historical blueprint. The original Blender model and its static game integration now live under `art/models/traffic_lights/`; the reference image itself remains a concept, not a game texture. See the asset README for geometry, independently controllable lenses and inspected Godot views.

@@ -77,29 +77,29 @@ const SIDEWALK_WIDTH := 2.5
 
 const ROADS := [
 	{"id": "highway", "rect": Rect2(-450, -197.5, 875, 20), "kind": "asphalt", "walk": 0.0, "look": "highway"},
-	{"rect": Rect2(-450, -90, 890, 10), "kind": "asphalt"},
-	{"rect": Rect2(-450, 300, 890, 10), "kind": "asphalt"},
+	{"id": "north_street", "rect": Rect2(-450, -90, 890, 10), "kind": "asphalt"},
+	{"id": "south_street", "rect": Rect2(-450, 300, 890, 10), "kind": "asphalt"},
 	{"id": "axis", "rect": Rect2(-17, -330, 24, 642), "kind": "asphalt", "median": 4.0},
-	{"rect": Rect2(140, -80, 10, 380), "kind": "asphalt"},
-	{"rect": Rect2(-398.4, 82.2, 381.4, 10), "kind": "yard"}, # ends at the axis edge (x -17): a gap lets the graph miss the junction
-	{"rect": Rect2(-205.4, -80, 10, 380), "kind": "yard"},
+	{"id": "village_street", "rect": Rect2(140, -80, 10, 380), "kind": "asphalt"},
+	{"id": "housing_cross_path", "rect": Rect2(-398.4, 82.2, 381.4, 10), "kind": "yard"}, # ends at the axis edge (x -17): a gap lets the graph miss the junction
+	{"id": "housing_spine", "rect": Rect2(-205.4, -80, 10, 380), "kind": "yard"},
 	# Civic square / southern tower connection, and the lane between the two slabs.
-	{"rect": Rect2(7, 136, 133, 4), "kind": "yard"},
-	{"rect": Rect2(7, 209, 133, 5), "kind": "asphalt", "walk": 1.5},
+	{"id": "square_link", "rect": Rect2(7, 136, 133, 4), "kind": "yard"},
+	{"id": "civic_lane", "rect": Rect2(7, 209, 133, 5), "kind": "asphalt", "walk": 1.5},
 	# Short avenue links serving the northern and southern tower groups.
-	{"rect": Rect2(7, -8, 20, 3), "kind": "yard"},
-	{"rect": Rect2(7, 172, 20, 3), "kind": "yard"},
+	{"id": "north_tower_link", "rect": Rect2(7, -8, 20, 3), "kind": "yard"},
+	{"id": "south_tower_link", "rect": Rect2(7, 172, 20, 3), "kind": "yard"},
 	# Village dirt roads form closed loops: H1 north, V1 west, H2 around the church,
 	# V2 east, H4 south, plus an east lane joining the ends of H1 and H3.
-	{"rect": Rect2(150, -45, 237.5, 5), "kind": "dirt"},
-	{"rect": Rect2(202.5, -42.5, 5, 275), "kind": "dirt"},
+	{"id": "village_north", "rect": Rect2(150, -45, 237.5, 5), "kind": "dirt"},
+	{"id": "village_west", "rect": Rect2(202.5, -42.5, 5, 275), "kind": "dirt"},
 	# West lane: the village's only link to the village street besides the north end.
-	{"rect": Rect2(150, 77.5, 55, 5), "kind": "dirt"},
-	{"rect": Rect2(205, 77.5, 122.5, 5), "kind": "dirt"},
-	{"rect": Rect2(322.5, 80, 5, 150), "kind": "dirt"},
-	{"rect": Rect2(325, 215, 70, 5), "kind": "dirt"},
-	{"rect": Rect2(205, 225, 122.5, 5), "kind": "dirt"},
-	{"rect": Rect2(382.5, -42.5, 5, 262.5), "kind": "dirt"},
+	{"id": "village_west_link", "rect": Rect2(150, 77.5, 55, 5), "kind": "dirt"},
+	{"id": "village_church", "rect": Rect2(205, 77.5, 122.5, 5), "kind": "dirt"},
+	{"id": "village_east", "rect": Rect2(322.5, 80, 5, 150), "kind": "dirt"},
+	{"id": "village_east_link", "rect": Rect2(325, 215, 70, 5), "kind": "dirt"},
+	{"id": "village_south", "rect": Rect2(205, 225, 122.5, 5), "kind": "dirt"},
+	{"id": "village_outer_lane", "rect": Rect2(382.5, -42.5, 5, 262.5), "kind": "dirt"},
 ]
 
 # The passenger tracks turn north into the eastern freight corridor.
@@ -318,3 +318,45 @@ static func lot_rect(id: String) -> Rect2:
 
 static func lot_center(id: String) -> Vector2:
 	return lot_rect(id).get_center()
+
+
+# Shared by road paint and the ambient pedestrian graph. Each crossing spans one
+# asphalt road; side roads get markings on every arm that actually continues.
+static func crosswalks() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for road in ROADS:
+		if road["kind"] != "asphalt":
+			continue
+		var rect: Rect2 = road["rect"]
+		var horizontal := rect.size.x > rect.size.y
+		var half := (rect.size.y if horizontal else rect.size.x) / 2.0
+		for other in ROADS:
+			var junction: Rect2 = other["rect"]
+			if horizontal == (junction.size.x > junction.size.y) or not rect.intersects(junction.grow(0.1)):
+				continue
+			var center := Vector2(junction.get_center().x, rect.get_center().y) if horizontal else Vector2(rect.get_center().x, junction.get_center().y)
+			var offsets: Array[float] = [0.0]
+			if other["kind"] == "asphalt":
+				# Without longitudinal highway pavements, follow the crossing
+				# street's pavements straight across instead of stranding the zebra.
+				var setback := 3.0 if sidewalk_width(road) > 0.0 else sidewalk_width(other) / 2.0
+				var reach := (junction.size.x if horizontal else junction.size.y) / 2.0 + setback
+				offsets = [-reach, reach]
+			for offset in offsets:
+				var at := center + (Vector2(offset, 0) if horizontal else Vector2(0, offset))
+				if not rect.has_point(at):
+					continue
+				var across := Vector2(0, half + sidewalk_width(road) / 2.0) if horizontal else Vector2(half + sidewalk_width(road) / 2.0, 0)
+				var side := "before" if offset < 0.0 else ("after" if offset > 0.0 else "center")
+				result.append({"id": "%s__%s__%s" % [road["id"], other["id"], side],
+					"road_id": road["id"], "joining_road_id": other["id"],
+					"at": at, "width": half * 2.0, "along_z": not horizontal, "a": at - across, "b": at + across})
+	return result
+
+
+static func road_by_id(id: String) -> Dictionary:
+	for road in ROADS:
+		if road["id"] == id:
+			return road
+	push_error("DistrictLayout: unknown road '%s'" % id)
+	return {}
