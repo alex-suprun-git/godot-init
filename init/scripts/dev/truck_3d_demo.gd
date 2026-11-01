@@ -1,6 +1,7 @@
-# Freight asset viewer; same common map factor as ER2 and the actual Volga.
+# Freight asset viewer; shows the approved 15% truck reduction beside the unchanged Volga.
 extends Node3D
 
+const VehicleModels := preload("res://scripts/map/vehicle_models.gd")
 const TRUCKS := [preload("res://assets/models/vehicles/truck_zil_food.glb"), preload("res://assets/models/vehicles/truck_zil_flatbed.glb"), preload("res://assets/models/vehicles/truck_kamaz_semi.glb")]
 const VOLGA := preload("res://assets/models/vehicles/volga_gaz24.glb")
 const MAP_FACTOR := 4.3 / 4.37
@@ -71,7 +72,7 @@ func _build_ui() -> void:
 	var box := VBoxContainer.new()
 	margin.add_child(box)
 	var title := Label.new()
-	title.text = "Lkw • gleicher Maßstab wie Volga und ER2"
+	title.text = "Lkw • 15 % kleiner im Vergleich zur Volga"
 	title.add_theme_font_size_override("font_size", 21)
 	box.add_child(title)
 	_info = Label.new()
@@ -98,7 +99,7 @@ func _show_truck(index: int) -> void:
 		_cars.remove_child(child)
 		child.queue_free()
 	var truck: Node3D = TRUCKS[_variant].instantiate()
-	truck.scale = Vector3.ONE * MAP_FACTOR
+	truck.scale = Vector3.ONE * MAP_FACTOR * VehicleModels.TRUCK_VISUAL_SCALE
 	_cars.add_child(truck)
 	var volga: Node3D = VOLGA.instantiate()
 	volga.scale = Vector3.ONE * MAP_FACTOR
@@ -108,7 +109,7 @@ func _show_truck(index: int) -> void:
 	_elevation = 0.49
 	_focus = Vector3(1.2, 1.4, 0)
 	_camera.size = 15.0 if _variant == 2 else 9.0
-	_info.text = NAMES[_variant] + " • Volga daneben als Größenvergleich"
+	_info.text = NAMES[_variant] + " • Lkw −15 % / Volga unverändert"
 	_update_camera()
 
 

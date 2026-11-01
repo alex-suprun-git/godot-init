@@ -13,6 +13,8 @@ const MODELS := {
 const VOLGA_PATH := "res://assets/models/vehicles/volga_gaz24.glb"
 const VOLGA_SOURCE_LENGTH := 4.905458 # Measured from volga_gaz24.glb.
 const LADA_MAP_LENGTH := 4.3
+# Approved map presentation: freight trucks are uniformly 15% smaller.
+const TRUCK_VISUAL_SCALE := 0.85
 const VOLGA_TRAFFIC_SHARE := 1.0 / 15.0
 const VOLGA_PAINT_SHADER := preload("res://assets/shaders/vehicle_paint.gdshader")
 # Curated period-inspired palette; red/pink and vivid colours excluded by art direction.
@@ -108,6 +110,8 @@ static func create(model_id: String, at: Vector3, length: float, axis: String, p
 	vehicle.position = at + Vector3.UP * 0.005
 	vehicle.rotation.y = PI / 2.0 if axis == "x" else 0.0
 	vehicle.scale = Vector3.ONE * (length / _source_length(model_id))
+	if model_id in ["kamaz_semi", "zil_flatbed", "zil_food"]:
+		vehicle.scale *= TRUCK_VISUAL_SCALE
 	if model_id == "volga" and has_volga_model():
 		if paint >= 0:
 			_repaint_volga(vehicle, _weighted_paint(paint, VOLGA_PAINT_WEIGHTS, "volga-paint"))
