@@ -1,7 +1,22 @@
 # Dev-only: plays the first week automatically and saves screenshots of each
 # phase, so changes can be checked without clicking through by hand.
 # Run: Godot --path init -- --autoplay --shots=/absolute/output/dir
+# Pick parts with --only=<scenario>[,<scenario>...]; without it the full run
+# (office, map, week) plays. See SCENARIOS for the list. --turbo[=N] speeds the
+# engine clock up N times (default 10) for quick agent checks.
 extends Node
+
+const SCENARIOS := {
+	"office": "_run_office", # briefing, week tasks, newspaper, contact, request card, planning
+	"map": "_run_map_tour", # overview, lot labels and the district map tour
+	"week": "_run_week", # plays the whole week live, then the summary and week two
+	"edges": "_run_edges_review",
+	"vehicles": "_run_vehicle_review",
+	"crosswalks": "_run_crosswalk_review",
+	"traffic-lights": "_run_traffic_light_review",
+	"render-cost": "_run_render_cost",
+}
+const FULL_RUN := ["office", "map", "week"]
 
 var main
 var shots_dir := ""
@@ -10,6 +25,7 @@ var _day_card_shot_taken := false
 var _crisis_handled := false
 var _picket_shot_taken := false
 var _leave_water_unfixed := false
+var _week_choices_made := false
 
 
 func _ready() -> void:
@@ -18,23 +34,55 @@ func _ready() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--shots="):
 			shots_dir = arg.substr("--shots=".length())
-	if OS.get_cmdline_user_args().has("--traffic-lights-only"):
-		_run_traffic_light_review()
-	elif OS.get_cmdline_user_args().has("--crosswalks-only"):
-		_run_crosswalk_review()
-	elif OS.get_cmdline_user_args().has("--vehicles-only"):
-		_run_vehicle_review()
-	elif OS.get_cmdline_user_args().has("--render-cost"):
-		_run_render_cost()
-	else:
-		_run()
+		elif arg == "--turbo" or arg.begins_with("--turbo="):
+			# Runs the whole engine clock faster: sim, nights, tweens and waits alike.
+			# The sim sub-steps each frame, so large frames do not skip events.
+			Engine.time_scale = float(arg.trim_prefix("--turbo=")) if "=" in arg else 10.0
+			print("autoplay: turbo x", Engine.time_scale)
+	_run(_scenarios())
 
 
-func _run() -> void:
+func _scenarios() -> Array:
+	var args := OS.get_cmdline_user_args()
+	for arg in args:
+		if arg.begins_with("--only="):
+			var picked := Array(arg.trim_prefix("--only=").split(",", false))
+			for name in picked:
+				if not SCENARIOS.has(name):
+					push_error("autoplay: unknown scenario '%s'; known: %s" % [name, ", ".join(SCENARIOS.keys())])
+					return []
+			return picked
+	# Older single-purpose flags.
+	for name in ["crosswalks", "edges", "vehicles", "traffic-lights"]:
+		if args.has("--%s-only" % name):
+			return [name]
+	if args.has("--render-cost"):
+		return ["render-cost"]
+	return FULL_RUN
+
+
+func _run(scenarios: Array) -> void:
 	await _wait(1.5)
+	for name in scenarios:
+		print("autoplay: scenario ", name)
+		await call(SCENARIOS[name])
+	# --keep-open leaves the game running where the last scenario stopped.
+	if not OS.get_cmdline_user_args().has("--keep-open"):
+		get_tree().quit()
+
+
+# Gets the start-of-week briefing and task panel out of the way, for scenarios
+# that only need the map.
+func _dismiss_briefing() -> void:
+	main.hud._continue_to_tasks()
+	main.hud._close_week_panel()
+
+
+func _run_office() -> void:
 	main.map._zoom = main.map.ZOOM_MAX
 	main.map._camera_goal = Vector3(0, 0, -20)
 	await _wait(0.5)
+	main.hud._show_important_notice(main.hud.Week1.START_BRIEFING)
 	await _shot("0_week_briefing")
 	main.hud._continue_to_tasks()
 	await _shot("0_week_tasks")
@@ -46,6 +94,26 @@ func _run() -> void:
 	main.hud._show_important_notice(main.hud.Week1.MORNING_NEWS)
 	await _shot("0_newspaper")
 	main.hud._close_important_notice()
+	main.map._camera_goal = main.map.DEFAULT_TARGET
+	main.map._zoom = main.map.ZOOM_DEFAULT
+	await _wait(0.5)
+	main.hud._show_contact_detail("mikhalych")
+	await _shot("0_contact_detail")
+	main.hud._close_contact_detail()
+	main.hud.open_card("hot_water")
+	await _shot("1_card")
+	_make_week_choices()
+	main.hud.open_card("hot_water")
+	await _shot("2_card_promised")
+	main.hud._close_card()
+	await _shot("3_planning")
+
+
+func _run_map_tour() -> void:
+	_dismiss_briefing()
+	main.map._zoom = main.map.ZOOM_MAX
+	main.map._camera_goal = Vector3(0, 0, -20)
+	await _wait(0.5)
 	await _shot("0_overview")
 	main.map._lot_labels.visible = true
 	await _shot("0_layout_labels")
@@ -64,20 +132,21 @@ func _run() -> void:
 	main.map._camera_goal = main.map.DEFAULT_TARGET
 	main.map._zoom = main.map.ZOOM_DEFAULT
 	await _wait(0.5)
-	main.hud._show_contact_detail("mikhalych")
-	await _shot("0_contact_detail")
-	main.hud._close_contact_detail()
-	main.map._zoom = main.map.ZOOM_DEFAULT
-	await _wait(0.5)
-	main.hud.open_card("hot_water")
-	await _shot("1_card")
+
+
+# The planning choices the week run relies on: a promise for the hot water and
+# Gusev for the boiler house. Made once, by whichever scenario comes first.
+func _make_week_choices() -> void:
+	if _week_choices_made:
+		return
+	_week_choices_made = true
 	main.sim.choose("hot_water", "promise")
 	main.sim.choose("contractor", "pick_gusev")
-	main.hud.open_card("hot_water")
-	await _shot("2_card_promised")
-	main.hud._close_card()
-	await _shot("3_planning")
 
+
+func _run_week() -> void:
+	_dismiss_briefing()
+	_make_week_choices()
 	main.start_week()
 	main.set_speed(4.0)
 	var live_shot_taken := false
@@ -130,11 +199,8 @@ func _run() -> void:
 	await _shot("7_week2")
 	main.hud._overlay_panel.visible = false
 	await _map_shot("7_boiler_repairing", main.hud.Week1.location_position("boiler"), 300.0)
-	get_tree().quit()
 
 
-# Simple player: takes the first option that is possible for every open
-# request except promises and crises, which get their own handling.
 func _play_turn() -> void:
 	var sim = main.sim
 	for id in sim.request_order:
@@ -170,9 +236,7 @@ func _wait(seconds: float) -> void:
 
 # Focused art review; preserves the normal week autoplay and planning state.
 func _run_vehicle_review() -> void:
-	await _wait(1.5)
-	main.hud._continue_to_tasks()
-	main.hud._close_week_panel()
+	_dismiss_briefing()
 	print("3D Lada instances: ", get_tree().get_nodes_in_group("vehicle_lada").size())
 	print("3D vehicles by model: total ", get_tree().get_nodes_in_group("vehicle_models").size(), ", lada ", get_tree().get_nodes_in_group("vehicle_lada").size(), ", wagon ", get_tree().get_nodes_in_group("vehicle_lada_wagon").size(), ", volga ", get_tree().get_nodes_in_group("vehicle_volga").size(), " (real mesh: ", main.map.VehicleModels.has_volga_model(), ")")
 	var moving_cars := 0
@@ -216,15 +280,35 @@ func _run_vehicle_review() -> void:
 		main.map._camera_target = main.map._camera_goal
 		main.map._zoom = main.map.ZOOM_MIN
 		return
-	get_tree().quit()
+
+
+# Map-edge haze review: widest views at the centre and corners in both camera
+# modes, then the places where roads, the bridge and the forest meet the haze.
+func _run_edges_review() -> void:
+	_dismiss_briefing()
+	var map = main.map
+	var previous_view: String = map.Settings.camera_mode
+	var bounds: Rect2 = map.BOUNDS
+	var corners := {
+		"nw": bounds.position, "ne": Vector2(bounds.end.x, bounds.position.y),
+		"sw": Vector2(bounds.position.x, bounds.end.y), "se": bounds.end,
+	}
+	for mode in ["iso", "front"]:
+		map.Settings.camera_mode = mode
+		await _map_shot("edge_wide_%s_center" % mode, bounds.get_center(), map.ZOOM_MAX)
+		for corner in corners:
+			await _map_shot("edge_wide_%s_%s" % [mode, corner], corners[corner], map.ZOOM_MAX)
+	map.Settings.camera_mode = previous_view
+	await _map_shot("edge_west_road", Vector2(-560, -187.5), 300.0)
+	await _map_shot("edge_east_road", Vector2(440, -85), 250.0)
+	await _map_shot("edge_bridge", Vector2(-5, -320), 250.0)
+	await _map_shot("edge_forest", Vector2(-520, 120), 390.0)
 
 
 # Prints what the 3D vehicles cost per frame at the closest, default and widest
 # zoom: with automatic mesh LOD, with LOD off, and with the vehicles hidden.
 func _run_render_cost() -> void:
-	await _wait(1.5)
-	main.hud._continue_to_tasks()
-	main.hud._close_week_panel()
+	_dismiss_briefing()
 	var vehicles := get_tree().get_nodes_in_group("vehicle_models")
 	print("render-cost: vehicle instances ", vehicles.size())
 	var viewport := get_viewport()
@@ -245,7 +329,6 @@ func _run_render_cost() -> void:
 		await _shot("render_cost_%d" % int(zoom))
 		print("render-cost zoom %d: %s" % [int(zoom), JSON.stringify(rows)])
 	viewport.mesh_lod_threshold = default_threshold
-	get_tree().quit()
 
 
 func _render_info() -> Dictionary:
@@ -285,9 +368,7 @@ func _shot(name: String) -> void:
 
 # Focused visual review of the boulevard's yard link and both asphalt junctions.
 func _run_crosswalk_review() -> void:
-	await _wait(1.5)
-	main.hud._continue_to_tasks()
-	main.hud._close_week_panel()
+	_dismiss_briefing()
 	print("Crosswalk review: ", main.map.AMBIENT_WALKERS, " walkers; ", main.map.DistrictLayout.crosswalks().size(), " marked crossings")
 	await _map_shot("crosswalk_yard", Vector2(-5, 87.2), 140.0)
 	await _map_shot("crosswalk_south", Vector2(-5, 305), 150.0)
@@ -307,14 +388,11 @@ func _run_crosswalk_review() -> void:
 				break
 		if captured:
 			break
-	get_tree().quit()
 
 
 # Static placement at every registered junction plus a dev-only lens preview.
 func _run_traffic_light_review() -> void:
-	await _wait(1.5)
-	main.hud._continue_to_tasks()
-	main.hud._close_week_panel()
+	_dismiss_briefing()
 	var registry = main.map.TrafficIntersections
 	var lights := get_tree().get_nodes_in_group("traffic_lights")
 	print("Traffic light review: ", lights.size(), " fixtures at ", registry.JUNCTIONS.size(), " intersections")
@@ -344,4 +422,3 @@ func _run_traffic_light_review() -> void:
 	first.set_signal("red_amber")
 	await _map_shot("signal_detail_night_red_amber", at, 28.0)
 	first.set_signal("off")
-	get_tree().quit()
