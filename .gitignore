@@ -28,3 +28,6 @@ Thumbs.db
 /art/sidewalks/*.log
 /art/sidewalks/*.png
 /art/city_park/in-game-*.png
+# Local railway review captures; curated PR JPEGs live in docs/pr-assets/.
+art/railway/*.png
+art/models/public_transport/er2/previews/
