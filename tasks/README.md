@@ -9,6 +9,7 @@ Audited against the main checkout and existing reports on 2026-11-01. This was a
 | Brief | Status | Actual state / next action |
 | --- | --- | --- |
 | [bridge-materials](bridge-materials.md) | review | Concrete, ballast and steel integrated; three overpasses and river bridges inspected in both cameras and at night. Final appearance review pending. |
+| [bridge-texel-density](bridge-texel-density.md) | ready | #31: measure screen px per metre, resize bridge detail to ≥ 3 px, before/after for user approval. |
 | [sidewalk-textures](sidewalk-textures.md) | review | Slabs/asphalt integrated and visually inspected; user feedback addressed with stronger asphalt detail and orthographic clipping fix. Corrected day/night/winter captures inspected; northern approach now asphalt with treeless median, current junction capture v3 ready for review. |
 | [map-edges-traffic](map-edges-traffic.md) | review | Haze, seven gateways and traffic recycling implemented in the current base branch; remaining observations and visual review are recorded in its brief. |
 | [freight-vehicles](freight-vehicles.md) | review | Food ZIL, coal ZIL and container KamAZ multi-view references generated and inspected; appearance and container interpretation await review. Reference scope only. |
