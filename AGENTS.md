@@ -33,10 +33,11 @@
 - Project files are under `init/`; the main scene is `init/main.tscn`. The project uses Godot 4.7.1.
 - Run the game locally with F5. Running Godot and local game builds does not incur usage fees.
 - Do not add or run automated tests unless the user asks. For visual changes, launch and inspect the game where practical.
-- To check a visual or gameplay change without clicking, run the dev autoplay, which plays the first week and saves screenshots of each phase: `Godot --path init -- --autoplay --shots=<absolute output dir>` (Godot is at `/Users/oleksiisuprun/Desktop/Godot.app/Contents/MacOS/Godot`). Read the PNGs it writes. Run only the parts a change needs with `--only=<scenario>[,...]` (`office` for UI panels and the request card, about 10 s; `map` for the district map tour; `week` for the live week, summary and week two, about 100 s; plus `edges`, `vehicles`, `crosswalks`, `render-cost`); without it the full `office,map,week` run plays. Add `--turbo` (or `--turbo=N`, default 10) to speed up the engine clock for quick agent checks: `week` drops to about 15 s with the same results; use the normal speed when judging animation or pacing. Run `Godot --headless --path init --import` first when new assets were added.
+- To check a visual or gameplay change without clicking, run the dev autoplay, which plays the first week and saves screenshots of each phase: `Godot --path init -- --autoplay --shots=<absolute output dir>` (Godot is at `/Users/oleksiisuprun/Desktop/Godot.app/Contents/MacOS/Godot`). Read the PNGs it writes. Run only the parts a change needs with `--only=<scenario>[,...]` (`office` for UI panels and the request card, about 10 s; `map` for the district map tour; `week` for the live week, summary and week two, about 100 s; plus `edges`, `vehicles`, `crosswalks`, `traffic-lights`, `render-cost`); without it the full `office,map,week` run plays. Add `--turbo` (or `--turbo=N`, default 10) to speed up the engine clock for quick agent checks: `week` drops to about 15 s with the same results; use the normal speed when judging animation or pacing. Run `Godot --headless --path init --import` first when new assets were added.
 - Every run writes a playtest log (JSON lines plus a week summary with waiting time, request latency and contact utilization) to `~/Library/Application Support/Godot/app_userdata/Init/playtests/`; files ending in `_player.jsonl` are real plays, `_autoplay.jsonl` come from the dev autoplay, and `--no-log` turns it off. When asked to analyze a playtest, read the latest `_player` log first, find where the week drags or stalls, and only then compare with the user's own feedback.
 - After sprites are added or redrawn, run `Godot --headless --path init --script res://scripts/dev/measure_sprite_anchors.gd` to refresh `scripts/data/sprite_anchors.gd` (where each sprite touches the ground and which map axis it is drawn along).
 - Generated art is described in `art/PROMPTS.md`; game-ready images live under `init/assets/`, concepts under `art/concepts/`.
+- For map-area visuals, start from an actual current Godot screenshot and the project's existing style work. Develop and integrate the area in its real map context; an approved combined 2D painting can occupy one moved/resized lot as an interim implementation. Standalone polished object concept art is produced only when explicitly requested, not as the default map workflow. See `art/ASSET_PIPELINE.md`.
 - For new or replaced generated raster art, follow `art/ASSET_PIPELINE.md`: preserve the original outside `init/`, review and obtain the applicable visual approval, run `uv run tools/optimize_asset.py` as a separate preparation step, then integrate the optimized copy into Godot. Do not bypass optimization or retroactively bulk-process existing assets without a migration task.
 - Do not commit or push unless explicitly asked.
 
@@ -61,3 +62,25 @@
 
 - Keep agreed workflows and actionable handoff state in the repository before ending a task that establishes them. Gameplay decisions belong in `README.md`, repeatable asset procedures in the project skill, and asset-specific decisions/progress beside that asset.
 - Record what actually exists, what was inspected, remaining blockers and the next action. Distinguish planned automation from implemented scripts and verified results. Update the existing source of truth rather than maintaining duplicate chat summaries.
+
+## Git and Pull Requests
+
+These rules extend and, where they differ, replace "Do not commit or push unless explicitly asked" in Workflow.
+
+- **Never commit or push to `main`.** Everything reaches `main` through a pull request that the user merges. Never enable auto-merge.
+- **Ask before committing new feature work.** Before the first commit of any feature, fix or art change, ask the user which branch it belongs on, or propose a branch name and wait for a yes. Do not decide silently and do not commit "to be safe". Committing is allowed only when the user asks for it.
+- **One feature or one coherent update per branch and per PR, no hurry.** Do not pile unrelated work into one branch. If the working tree mixes topics, stop and split it: stage by path (never `git add -A` across topics) and use a separate branch per topic. Leave changes that are not yours uncommitted and tell the user.
+- **Do not start a second feature on a branch that already has an open PR.** Branch from `main` (or ask what to stack on) instead.
+- **Branch names:** `feat/<slug>`, `fix/<slug>`, `art/<slug>`, `docs/<slug>`, `chore/<slug>`; briefs for workers use `task/<id>` (see `tasks/README.md`).
+- **Pull requests** use `.github/pull_request_template.md`: summary, scope, what changed, screenshots per feature, how to verify, risks and what was not verified. The title says what the PR does in one line; the body is English. Follow `docs/PR_WORKFLOW.md` for the screenshots.
+- **Label every PR when opening it** (`gh pr create --label ...`, or `gh pr edit --add-label` afterwards), using the Backlog labels: every `area:*` the diff touches (tooling, CI and agent docs are `area:process`), exactly one `type:*`, and the linked issue's `leverage:*`. Never put `ready` on a PR. If the scope changes later, update the labels too.
+- A worker's result (`task/<id>` branch) is integrated by the lead through its own PR, one PR per brief or per coherent group the user approves.
+
+## Backlog
+
+- The backlog is GitHub Issues of this repository: one issue is one future feature or coherent update, which becomes one branch and one PR. Do not keep a second list in a Markdown file.
+- Labels: area (`area:map`, `area:sim`, `area:ui`, `area:art`, `area:story`, `area:process`), type (`type:feature`, `type:fix`, `type:question`), `leverage:high|med|low` (interview value, see the global career focus) and `ready` (acceptance criteria exist and, for delegated work, a brief in `tasks/`).
+- An issue gets `ready` only with a "Done when" statement. Open design questions are `type:question` and stay out of `ready` until answered; record answers in `README.md`.
+- Pick the next item by `leverage` first, then by what it unblocks; say plainly when an item is low value.
+- Every PR starts with `Closes #n` (or `Refs #n`); the issue closes when the PR is merged. A brief in `tasks/` names its issue in `issue:`.
+- List and update issues with `gh issue list --label ready` and `gh issue edit`; do not change issue state or labels on someone else's behalf without being asked.

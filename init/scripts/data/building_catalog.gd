@@ -51,19 +51,22 @@ const CONTENTS := {
 	]},
 	"empty_lot": {"kind": "open", "footprint": Vector2.ZERO, "ground": "grass", "label": "Свободный участок", "dressing": []},
 	"ispolkom": {
-		"kind": "building", "footprint": Vector2(30, 25), "height": 15.0,
-		"doorstep": 3.0, # metres in front of the facade where people stand on arrival
-		"center_width": 30.0, "wing_width": 30.0, "wings": 0,
-		"facade_center": "res://assets/textures/facade_ispolkom_front.png",
-		"facade_wing": "res://assets/textures/facade_ispolkom_side.png",
-		"roof": "res://assets/textures/roof_tar.png", "placeholder_color": Color("d5d1c2"),
-		"ground": "paving", "label": "Райисполком", "dressing": [
-			{"sprite": "monument", "at": Vector2(-40, 0), "width": 7.0, "footprint": Vector2(6, 6)},
+		# Lot centre is the square; the unchanged building sits at its eastern end.
+		"kind": "group", "footprint": Vector2.ZERO, "height": 15.0,
+		"ground": "paving", "label": "Райисполком", "parts": [{
+			"at": Vector2(37.5, 0), "footprint": Vector2(30, 25), "height": 15.0,
+			"doorstep": 3.0, # metres in front of the facade where people stand on arrival
+			"center_width": 30.0, "wing_width": 30.0, "wings": 0,
+			"facade_center": "res://assets/textures/facade_ispolkom_front.png",
+			"facade_wing": "res://assets/textures/facade_ispolkom_side.png",
+			"roof": "res://assets/textures/roof_tar.png", "placeholder_color": Color("d5d1c2"),
+		}], "dressing": [
+			{"sprite": "monument", "at": Vector2(-24, -14), "width": 7.0, "footprint": Vector2(6, 6)},
 		],
 	},
 	"police": {
-		"kind": "building", "footprint": Vector2(36, 14), "height": 6.0,
-		"center_width": 12.0, "wing_width": 12.0, "wings": 1,
+		"kind": "building", "footprint": Vector2(18, 10), "height": 6.0, "doorstep": 2.0,
+		"center_width": 6.0, "wing_width": 6.0, "wings": 1,
 		"facade_center": "res://assets/textures/facade_police_front.png",
 		"facade_wing": "res://assets/textures/facade_police_side.png",
 		"roof": "res://assets/textures/roof_tar.png", "placeholder_color": Color("aab5b5"),
@@ -71,12 +74,48 @@ const CONTENTS := {
 		],
 	},
 	"polyclinic": {
-		"kind": "building", "footprint": Vector2(30, 18), "height": 15.0,
-		"center_width": 30.0, "wing_width": 30.0, "wings": 0,
+		"kind": "building", "footprint": Vector2(24, 14), "height": 9.0, "doorstep": 2.0,
+		"center_width": 24.0, "wing_width": 24.0, "wings": 0,
 		"facade_center": "res://assets/textures/facade_polyclinic_entrance.png",
 		"facade_wing": "res://assets/textures/facade_polyclinic.png",
 		"roof": "res://assets/textures/roof_tar.png", "placeholder_color": Color("cbd6d0"),
 		"ground": "paving", "label": "Поликлиника", "dressing": [
+		],
+	},
+	"elite_tower_placeholder": {
+		"kind": "panel", "footprint": Vector2(24, 20), "floors": 9, "doorstep": 3.0,
+		"facade": "res://assets/textures/facade_panel_late_9storey.png",
+		"roof": "res://assets/textures/roof_panel_flat.png",
+		"entrance_base": "res://assets/textures/facade_panel_entrance.png",
+		"stair": "res://assets/textures/facade_panel_stair.png",
+		"ground_floor": "res://assets/textures/facade_panel_groundfloor_shop.png",
+		"placeholder_color": Color("d4d2c7"), "label": "Высотный дом · заглушка", "dressing": [],
+	},
+	"admin_slab": {
+		"kind": "panel", "footprint": Vector2(108, 11), "floors": 5, "doorstep": 2.0,
+		"facade": "res://assets/textures/facade_panel_late_5storey.png",
+		"roof": "res://assets/textures/roof_panel_flat.png",
+		"entrance_base": "res://assets/textures/facade_panel_entrance.png",
+		"stair": "res://assets/textures/facade_panel_stair.png",
+		"placeholder_color": Color("ccc9bd"), "label": "Пятиэтажный дом", "dressing": [],
+	},
+	"department_store": {
+		"kind": "building", "footprint": Vector2(24, 30), "height": 6.0, "doorstep": 2.0,
+		"facade": "res://assets/textures/facade_panel_groundfloor_shop.png", "facade_floors": 2.0,
+		"roof": "res://assets/textures/roof_tar.png", "ground": "paving",
+		"placeholder_color": Color("d4c5ae"), "label": "Универмаг · заглушка", "dressing": [],
+	},
+	"city_park": {
+		"kind": "open", "footprint": Vector2.ZERO, "ground": "grass", "label": "Городской сквер", "dressing": [
+			# Low boxes reuse the existing placeholder prop path; leave the central walk clear.
+			{"sprite": "d4_path_placeholder", "at": Vector2(0, 0), "footprint": Vector2(52, 3), "height": 0.08, "placeholder_color": Color("b7b2a2")},
+			{"sprite": "d4_path_placeholder", "at": Vector2(0, 0), "footprint": Vector2(3, 80), "height": 0.08, "placeholder_color": Color("b7b2a2")},
+			{"sprite": "d4_bench_placeholder", "at": Vector2(-12, -5), "footprint": Vector2(3, 0.8), "height": 0.6, "placeholder_color": Color("8f7956")},
+			{"sprite": "d4_bench_placeholder", "at": Vector2(12, 5), "footprint": Vector2(3, 0.8), "height": 0.6, "placeholder_color": Color("8f7956")},
+			{"sprite": "tree_birch_august", "at": Vector2(-17, -27), "width": 5.0, "footprint": Vector2(3, 3)},
+			{"sprite": "tree_birch_august", "at": Vector2(17, -27), "width": 5.0, "footprint": Vector2(3, 3)},
+			{"sprite": "tree_birch_august", "at": Vector2(-17, 27), "width": 5.0, "footprint": Vector2(3, 3)},
+			{"sprite": "tree_birch_august", "at": Vector2(17, 27), "width": 5.0, "footprint": Vector2(3, 3)},
 		],
 	},
 	"boiler_house": {
@@ -150,7 +189,16 @@ const CONTENTS := {
 		{"model": "container_20ft", "at": Vector2(47.4, 4), "length": 6.06, "footprint": Vector2(2.5, 6.1), "axis": "z", "paint": 13, "lift": 2.59},
 		{"model": "container_20ft", "at": Vector2(50.8, 4), "length": 6.06, "footprint": Vector2(2.5, 6.1), "axis": "z", "paint": 14, "lift": 2.59},
 	]},
-	"market": {"kind": "market", "footprint": Vector2.ZERO, "ground": "paving", "label": "Рынок челноков", "dressing": []},
+	"former_market": {"kind": "open", "ground": "grass", "label": "Бывший рынок · поле", "dressing": []},
+	"market": {
+		"kind": "painted_lot", "ground": "grass", "label": "Рынок · вокзал · автостанция",
+		"sprite": "market_hub_v7", "node_name": "MarketHubPainted",
+		"footprint": Vector2(244, 70), "width": 222.1, "offset": Vector2(0, 1.7),
+		# The revised painting already matches the map camera; do not stretch it.
+		# The opaque strip contour stays north of z=392.9; ballast starts at 393.1.
+		"anchor": Vector2(0.7913, 0.9867), "axes": Vector2(0.583, -0.600),
+		"dressing": [],
+	},
 	"station": {"kind": "station", "footprint": Vector2(40, 12), "ground": "paving", "label": "Вокзал · автостанция", "sprite": "station_v3", "width": 40.0, "axes": Vector2(0.50, -0.41), "dressing": [
 		{"sprite": "bus_local_1997", "at": Vector2(-65, 7), "width": 8.8, "footprint": Vector2(10, 3), "axis": "x"},
 	]},

@@ -2,6 +2,7 @@
 id: d4-building-art
 status: ready   # draft | ready | in-progress | review | blocked | done
 worker: codex
+issue: "#5"
 branch: task/d4-building-art
 ---
 

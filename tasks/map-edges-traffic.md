@@ -3,6 +3,7 @@ id: map-edges-traffic
 status: review   # ready | in-progress | review | blocked | done
 worker: lead-integrator
 branch: lead/map-edges-traffic
+issue: 25
 ---
 
 # Conceal the map edges and recycle ambient traffic

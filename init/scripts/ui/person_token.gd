@@ -62,6 +62,7 @@ func _draw() -> void:
 	draw_string(font, Vector2(-16, 52), label, HORIZONTAL_ALIGNMENT_CENTER, 96.0, 12, CREAM)
 
 	if eta_text != "":
-		var pill := Rect2(Vector2(46, 2), Vector2(58, 20))
+		# Above the face, so a compact group cannot cover its neighbour's ETA.
+		var pill := Rect2(Vector2(3, -24), Vector2(58, 20))
 		draw_rect(pill, INK)
 		draw_string(font, pill.position + Vector2(0, 14), eta_text, HORIZONTAL_ALIGNMENT_CENTER, pill.size.x, 12, YELLOW)

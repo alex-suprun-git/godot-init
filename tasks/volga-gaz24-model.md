@@ -1,6 +1,6 @@
 ---
 id: volga-gaz24-model
-status: ready   # ready | in-progress | review | blocked | done
+status: done   # ready | in-progress | review | blocked | done
 worker: codex
 branch: task/volga-gaz24-model
 ---

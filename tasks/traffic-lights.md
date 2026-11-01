@@ -1,11 +1,11 @@
 # Static 3D traffic lights
 
-status: planned
+status: done
 
 ## Scope
 
 Follow-up to the pedestrian crossings commit; implement as a separate second commit.
-Lead/integrator task, not dispatched to a worker. No model or integration exists yet.
+Lead/integrator task, not dispatched to a worker. Implemented in the follow-up commit.
 
 - Use `art/concepts/traffic-light-1970s-1980s-turnaround-v1.png` as the period-inspired reference, with separately controllable red, amber and green lens materials.
 - Build one reusable modest pole/head model. Preserve editable Blender source under `art/models/traffic_lights/`, export scoped GLB under `init/assets/models/` and inspect actual Godot views.
@@ -14,6 +14,12 @@ Lead/integrator task, not dispatched to a worker. No model or integration exists
 - Courtyard/path entrances remain unsignalized. Other asphalt junctions, including the eastern village street and narrow civic lane, are not automatically signalized simply because they have zebras.
 - Add a small intersection registry during integration: stable road/intersection IDs, road references, linked pedestrian crossings and signal-group/approach bindings. Geometry remains derived from `DistrictLayout.ROADS`; avoid a second manually maintained coordinate layout. Future stop lines and signal phases can bind to these IDs.
 
-## Current state and next action
+## Report
 
-The reference image and full generation prompt are saved. It is a modeling reference, not a dimensionally verified blueprint. The user requested the traffic-light addition as the next task/second commit. First inspect the silhouette and dimensions in Blender, then integrate fixtures and registry together and capture the three junctions in Godot. Follow `.agents/skills/blender-godot-assets/SKILL.md`.
+- Updated the task base by starting from `origin/main` at `83154a2` in `/private/tmp/godot-traffic-lights` (branch `feat/traffic-lights`) and cherry-picking the first crossing commit as `2ccae8e`; unrelated active edits remain in the original checkout.
+- Built one 1,416-triangle original Blender model with three independently named lens meshes. Source, generator, export metadata and reviewed front/rear previews: `art/models/traffic_lights/`.
+- Exported and inspected `init/assets/models/street/traffic_light_v1.glb`; integrated 11 fixtures on the three specified junctions. Stable road, junction, approach, signal-group and zebra IDs are linked in the registry.
+- Signals remain off during normal play. The public visual API and focused dev review demonstrate separate lens emission without implementing traffic phases or vehicle reactions.
+- Inspected Godot placement, grounding, orientations, normal player zoom, alternate camera and day/night lens previews. Kept roadside trees clear of nearby heads. Representative screenshots: `docs/pr-assets/traffic-lights/`.
+- Known pre-existing shutdown issue: four audio objects associated with `city_outskirts.ogg` remain in use; verbose output identified no traffic-light resource leaks. No automated tests were added or run.
+- Further work: a future traffic-simulation task can bind controllers, lanes, stop lines and pedestrian permissions to this registry. No automatic cycling or stopping is claimed here. Asset details and exact review command: `art/models/traffic_lights/README.md`.

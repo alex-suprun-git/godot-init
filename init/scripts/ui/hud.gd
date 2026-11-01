@@ -273,11 +273,13 @@ func _process(_delta: float) -> void:
 # People stand where the map says; the token's feet are the spot on the ground.
 func _update_tokens() -> void:
 	var paths: Array[PackedVector2Array] = []
+	var icon_scale: float = map.map_icon_scale()
 	for id in _tokens:
 		var token: Control = _tokens[id]
 		var actor: Dictionary = sim.actors[id]
 		var feet: Vector2 = map.token_screen_position(id)
-		token.position = feet - Vector2(32, 80)
+		token.scale = Vector2.ONE * icon_scale
+		token.position = feet - Vector2(32, 80) * icon_scale
 		token.state = actor["state"]
 		token.work_fraction = sim.actor_work_fraction(id)
 		token.eta_text = ""
@@ -286,7 +288,7 @@ func _update_tokens() -> void:
 			# Tolik rides with you, so only your path is drawn: the road still ahead.
 			if id != "tolik":
 				var route: PackedVector2Array = sim.actor_route(id)
-				var line := PackedVector2Array([feet - Vector2(0, 50)])
+				var line := PackedVector2Array([feet - Vector2(0, 50) * icon_scale])
 				for i in range(1, route.size()):
 					line.append(map.ground_screen_position(route[i]))
 				paths.append(line)
@@ -297,24 +299,64 @@ func _update_tokens() -> void:
 # Markers float above their lot; when the lot is off-screen they stick to the
 # edge of the free map area with an arrow pointing toward it.
 func _update_markers(area: Rect2) -> void:
+	var icon_scale: float = map.map_icon_scale()
+	# Include names, not just portrait circles. Waiting request markers must not
+	# cover the person standing at their location (often the requester herself).
+	var occupied: Array[Rect2] = []
+	for token: Control in _tokens.values():
+		var top := -24.0 if token.eta_text != "" else 0.0
+		occupied.append(Rect2(token.position + Vector2(-16, top) * icon_scale, Vector2(96, 62 - top) * icon_scale))
 	for id in _markers:
 		var marker: Control = _markers[id]
 		var lot: String = sim.requests[id]["data"]["lot"]
 		var index: int = _markers_at_lot(lot).find(id)
 		var tip: Vector2 = map.lot_screen_position(lot, 14.0)
-		var pos := tip - Vector2(32, 71) - Vector2(0, index * 76)
-		var center := pos + Vector2(32, 32)
+		var center := tip - Vector2(0, 39 + index * 76) * icon_scale
 		var offscreen := not area.has_point(center)
 		marker.edge_direction = Vector2.ZERO
+		var marker_scale := icon_scale
 		if offscreen:
 			var inside := center.clamp(area.position + Vector2(40, 40), area.end - Vector2(40, 40))
 			marker.edge_direction = (center - inside).normalized()
-			pos = inside - Vector2(32, 32)
-		marker.position = pos
+			center = inside
+			marker_scale = 1.0
+		else:
+			center = _clear_marker_center(center, area, occupied, icon_scale)
+		marker.scale = Vector2.ONE * marker_scale
+		marker.position = center - Vector2(32, 32) * marker_scale
+		occupied.append(Rect2(center - Vector2.ONE * 40 * marker_scale, Vector2.ONE * 80 * marker_scale))
 		marker.set_meta("offscreen", offscreen)
 		marker.time_left = sim.request_time_left(id)
 		var worker: String = sim.request_worker(id)
 		marker.work_fraction = sim.actor_work_fraction(worker) if worker != "" else 0.0
+
+
+# Pick the closest clear position, preferring a horizontal move so the marker
+# stays beside its requester. Recompute from the map anchor each frame; offsets
+# never accumulate while panning or zooming.
+func _clear_marker_center(anchor: Vector2, area: Rect2, occupied: Array[Rect2], icon_scale: float) -> Vector2:
+	var half := Vector2.ONE * 40 * icon_scale
+	var candidates: Array[Vector2] = [anchor]
+	for rect in occupied:
+		candidates.append(Vector2(rect.end.x + half.x + 4, anchor.y))
+		candidates.append(Vector2(rect.position.x - half.x - 4, anchor.y))
+		candidates.append(Vector2(anchor.x, rect.position.y - half.y - 4))
+		candidates.append(Vector2(anchor.x, rect.end.y + half.y + 4))
+	var best := anchor
+	var best_distance := INF
+	for candidate in candidates:
+		var bounds := Rect2(candidate - half, half * 2)
+		if not area.encloses(bounds):
+			continue
+		var clear := true
+		for rect in occupied:
+			if rect.intersects(bounds):
+				clear = false
+				break
+		if clear and candidate.distance_squared_to(anchor) < best_distance:
+			best = candidate
+			best_distance = candidate.distance_squared_to(anchor)
+	return best
 
 
 func _eta_text(hours: float) -> String:

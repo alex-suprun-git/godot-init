@@ -13,6 +13,7 @@ const SCENARIOS := {
 	"edges": "_run_edges_review",
 	"vehicles": "_run_vehicle_review",
 	"crosswalks": "_run_crosswalk_review",
+	"traffic-lights": "_run_traffic_light_review",
 	"render-cost": "_run_render_cost",
 }
 const FULL_RUN := ["office", "map", "week"]
@@ -52,7 +53,7 @@ func _scenarios() -> Array:
 					return []
 			return picked
 	# Older single-purpose flags.
-	for name in ["crosswalks", "edges", "vehicles"]:
+	for name in ["crosswalks", "edges", "vehicles", "traffic-lights"]:
 		if args.has("--%s-only" % name):
 			return [name]
 	if args.has("--render-cost"):
@@ -128,6 +129,7 @@ func _run_map_tour() -> void:
 	await _map_shot("0_north", Vector2(-5, -260), 1000.0)
 	await _map_shot("0_village", Vector2(275, 105), 600.0)
 	await _map_shot("0_south", Vector2(-15, 350), 650.0)
+	await _map_shot("0_market_hub", main.map.DistrictLayout.lot_center("market"), 340.0)
 	main.map._camera_goal = main.map.DEFAULT_TARGET
 	main.map._zoom = main.map.ZOOM_DEFAULT
 	await _wait(0.5)
@@ -395,3 +397,37 @@ func _run_crosswalk_review() -> void:
 				break
 		if captured:
 			break
+
+
+# Static placement at every registered junction plus a dev-only lens preview.
+func _run_traffic_light_review() -> void:
+	_dismiss_briefing()
+	var registry = main.map.TrafficIntersections
+	var lights := get_tree().get_nodes_in_group("traffic_lights")
+	print("Traffic light review: ", lights.size(), " fixtures at ", registry.JUNCTIONS.size(), " intersections")
+	for id in registry.JUNCTIONS:
+		var data: Dictionary = registry.junction(id)
+		await _map_shot("signals_" + id, data["center"], 120.0)
+		print("Traffic light junction ", id, ": ", registry.fixtures(id).size(), " approaches; crossings ", data["crossing_ids"])
+	await _map_shot("signals_play_zoom", registry.junction("axis_north")["center"], main.map.ZOOM_MIN)
+	var first = lights[0]
+	for light in lights:
+		if light.binding["id"] == "axis_north/south":
+			first = light
+	var at := Vector2(first.position.x, first.position.z)
+	await _map_shot("signal_detail_off", at, 28.0)
+	first.set_signal("green")
+	await _map_shot("signal_detail_green", at, 28.0)
+	first.set_signal("red_amber")
+	await _map_shot("signal_detail_red_amber", at, 28.0)
+	first.set_signal("off")
+	var previous: String = main.map.Settings.camera_mode
+	main.map.Settings.camera_mode = "front"
+	await _map_shot("signals_perspective", registry.junction("axis_north")["center"], 100.0)
+	main.map.Settings.camera_mode = previous
+	main.map._debug_hour = 22.0
+	await _map_shot("signals_night_off", registry.junction("axis_north")["center"], 100.0)
+	main.map.Settings.camera_mode = previous
+	first.set_signal("red_amber")
+	await _map_shot("signal_detail_night_red_amber", at, 28.0)
+	first.set_signal("off")

@@ -36,17 +36,22 @@ const LOTS := {
 	"b2_n": {"type": "W", "rect": Rect2(-153, 91.92, 90, 24), "content": "panel_5", "condition": "kept", "facing": "s"},
 	"b2_s": {"type": "W", "rect": Rect2(-153, 225.68, 90, 24), "content": "panel_5", "condition": "kept", "facing": "n"},
 	"b2_w": {"type": "W", "rect": Rect2(-195.68, 125.8, 24, 90), "content": "panel_9", "condition": "kept", "facing": "e"},
-	"b2_e": {"type": "W", "rect": Rect2(-44.32, 125.8, 24, 90), "content": "panel_5", "condition": "kept", "facing": "w"},
 	"b2_k": {"type": "K", "rect": Rect2(-152, 135.6, 88, 70.4), "content": "yard", "condition": "kept", "facing": "s"},
-	"police": {"type": "G", "rect": Rect2(20, -75, 115, 45), "content": "police", "condition": "kept", "facing": "w"},
-	"polyclinic": {"type": "G", "rect": Rect2(20, -20, 115, 60), "content": "polyclinic", "condition": "kept", "facing": "w"},
-	"ispolkom": {"type": "G", "rect": Rect2(20, 50, 115, 85), "content": "ispolkom", "condition": "kept", "facing": "w"},
-	"g_axis_1": {"type": "G", "rect": Rect2(20, 145, 115, 55), "content": "empty_lot", "condition": "kept", "facing": "w"},
-	"g_axis_2": {"type": "G", "rect": Rect2(20, 210, 115, 55), "content": "empty_lot", "condition": "kept", "facing": "w"},
+	"police": {"type": "G", "rect": Rect2(-44, -75, 24, 32), "content": "police", "condition": "kept", "facing": "e"},
+	"polyclinic": {"type": "G", "rect": Rect2(-45, 135, 28, 42), "content": "polyclinic", "condition": "kept", "facing": "e"},
+	"ispolkom": {"type": "G", "rect": Rect2(25, 22, 115, 108), "content": "ispolkom", "condition": "kept", "facing": "w"},
+	"tower_e1": {"type": "W", "rect": Rect2(30, -60, 40, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
+	"department_store": {"type": "G", "rect": Rect2(30, -15, 45, 30), "content": "department_store", "condition": "kept", "facing": "w"},
+	"city_park": {"type": "N", "rect": Rect2(82, -72, 54, 84), "content": "city_park", "condition": "kept", "facing": "e"},
+	"tower_e2": {"type": "W", "rect": Rect2(30, 140, 40, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
+	"tower_e3": {"type": "W", "rect": Rect2(82, 140, 40, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
+	"slab_1": {"type": "W", "rect": Rect2(22, 190, 110, 14), "content": "admin_slab", "condition": "kept", "facing": "s"},
+	"slab_2": {"type": "W", "rect": Rect2(22, 232, 110, 14), "content": "admin_slab", "condition": "kept", "facing": "n"},
 	"church": {"type": "X", "rect": Rect2(245, 80, 60, 50), "content": "church", "condition": "fading", "facing": "w"},
 	"g_south": {"type": "G", "rect": Rect2(-430, 315, 200, 70), "content": "empty_lot", "condition": "worked", "facing": "n"},
-	"market": {"type": "X", "rect": Rect2(-215, 315, 185, 70), "content": "market", "condition": "worked", "facing": "n"},
-	"station": {"type": "X", "rect": Rect2(15, 315, 215, 70), "content": "station", "condition": "worked", "facing": "n"},
+	"former_market": {"type": "N", "rect": Rect2(-215, 315, 185, 70), "content": "former_market", "condition": "kept", "facing": "n"},
+	# One painted site contains the market, bus bays and railway station.
+	"market": {"type": "X", "rect": Rect2(-20, 315, 250, 78), "content": "market", "condition": "kept", "facing": "n"},
 	"cemetery": {"type": "N", "rect": Rect2(209, 84.5, 35, 46), "content": "cemetery", "condition": "fading", "facing": "n"},
 	"d_01": {"type": "D", "rect": Rect2(156.5, -40, 42, 38), "content": "house_poor", "condition": "fading", "facing": "n"},
 	"d_02": {"type": "D", "rect": Rect2(334.5, -40, 50, 38), "content": "house_kept", "condition": "kept", "facing": "n"},
@@ -77,23 +82,26 @@ const ROADS := [
 	{"id": "north_street", "rect": Rect2(-450, -90, 890, 10), "kind": "asphalt"},
 	{"id": "south_street", "rect": Rect2(-450, 300, 890, 10), "kind": "asphalt"},
 	{"id": "axis", "rect": Rect2(-17, -330, 24, 642), "kind": "asphalt", "median": 4.0},
-	{"rect": Rect2(140, -80, 10, 380), "kind": "asphalt"},
-	{"rect": Rect2(-398.4, 82.2, 381.4, 10), "kind": "yard"}, # ends at the axis edge (x -17): a gap lets the graph miss the junction
-	{"rect": Rect2(-205.4, -80, 10, 380), "kind": "yard"},
-	# Temporary footpath through the gap under the executive committee, from the axis to the village street.
-	# The block around it will be rebuilt; move the path with it.
-	{"rect": Rect2(7, 138, 133, 4), "kind": "yard"},
+	{"id": "village_street", "rect": Rect2(140, -80, 10, 380), "kind": "asphalt"},
+	{"id": "housing_cross_path", "rect": Rect2(-398.4, 82.2, 381.4, 10), "kind": "yard"}, # ends at the axis edge (x -17): a gap lets the graph miss the junction
+	{"id": "housing_spine", "rect": Rect2(-205.4, -80, 10, 380), "kind": "yard"},
+	# Civic square / southern tower connection, and the lane between the two slabs.
+	{"id": "square_link", "rect": Rect2(7, 136, 133, 4), "kind": "yard"},
+	{"id": "civic_lane", "rect": Rect2(7, 209, 133, 5), "kind": "asphalt", "walk": 1.5},
+	# Short avenue links serving the northern and southern tower groups.
+	{"id": "north_tower_link", "rect": Rect2(7, -8, 20, 3), "kind": "yard"},
+	{"id": "south_tower_link", "rect": Rect2(7, 172, 20, 3), "kind": "yard"},
 	# Village dirt roads form closed loops: H1 north, V1 west, H2 around the church,
 	# V2 east, H4 south, plus an east lane joining the ends of H1 and H3.
-	{"rect": Rect2(150, -45, 237.5, 5), "kind": "dirt"},
-	{"rect": Rect2(202.5, -42.5, 5, 275), "kind": "dirt"},
+	{"id": "village_north", "rect": Rect2(150, -45, 237.5, 5), "kind": "dirt"},
+	{"id": "village_west", "rect": Rect2(202.5, -42.5, 5, 275), "kind": "dirt"},
 	# West lane: the village's only link to the village street besides the north end.
-	{"rect": Rect2(150, 77.5, 55, 5), "kind": "dirt"},
-	{"rect": Rect2(205, 77.5, 122.5, 5), "kind": "dirt"},
-	{"rect": Rect2(322.5, 80, 5, 150), "kind": "dirt"},
-	{"rect": Rect2(325, 215, 70, 5), "kind": "dirt"},
-	{"rect": Rect2(205, 225, 122.5, 5), "kind": "dirt"},
-	{"rect": Rect2(382.5, -42.5, 5, 262.5), "kind": "dirt"},
+	{"id": "village_west_link", "rect": Rect2(150, 77.5, 55, 5), "kind": "dirt"},
+	{"id": "village_church", "rect": Rect2(205, 77.5, 122.5, 5), "kind": "dirt"},
+	{"id": "village_east", "rect": Rect2(322.5, 80, 5, 150), "kind": "dirt"},
+	{"id": "village_east_link", "rect": Rect2(325, 215, 70, 5), "kind": "dirt"},
+	{"id": "village_south", "rect": Rect2(205, 225, 122.5, 5), "kind": "dirt"},
+	{"id": "village_outer_lane", "rect": Rect2(382.5, -42.5, 5, 262.5), "kind": "dirt"},
 ]
 
 # The passenger tracks turn north into the eastern freight corridor.
@@ -155,6 +163,10 @@ const DISTRICTS := {
 			"admin_park": {"rect": Rect2(82, -72, 54, 84), "foot": 0.9, "cars": 0.0, "hours": "leisure"},
 			"admin_shops": {"rect": Rect2(30, -15, 45, 30), "foot": 2.2, "hours": "market"},
 			"admin_elite": {"rect": Rect2(30, -60, 40, 38), "residents": 450, "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
+			"admin_elite_e2": {"rect": Rect2(30, 140, 40, 38), "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
+			"admin_elite_e3": {"rect": Rect2(82, 140, 40, 38), "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
+			"admin_slab_1": {"rect": Rect2(22, 190, 110, 14), "hours": "commute"},
+			"admin_slab_2": {"rect": Rect2(22, 232, 110, 14), "hours": "commute"},
 		},
 	},
 	"transport": {
@@ -206,12 +218,13 @@ const DISTRICTS := {
 	},
 	"south_hub": {
 		"name": "South hub",
-		"rects": [Rect2(-430, 312, 660, 76)],
+		"rects": [Rect2(-430, 312, 660, 81)],
 		"residents": 50, "foot": 1.5, "cars": 1.0,
 		"fleet": {"car": 0.5, "bus": 0.4, "truck": 0.1}, "hours": "market",
 		"subzones": {
-			"market": {"rect": Rect2(-215, 315, 185, 70), "foot": 2.5, "cars": 0.7, "fleet": {"car": 0.6, "truck": 0.4}},
-			"station": {"rect": Rect2(15, 315, 215, 70), "foot": 1.6, "cars": 1.2, "fleet": {"bus": 0.6, "car": 0.4}, "hours": "commute"},
+			"former_market": {"rect": Rect2(-215, 315, 185, 70), "foot": 0.2, "cars": 0.0},
+			"market": {"rect": Rect2(-20, 315, 150, 78), "foot": 2.5, "cars": 0.7, "fleet": {"car": 0.6, "truck": 0.4}},
+			"station": {"rect": Rect2(130, 315, 100, 78), "foot": 1.6, "cars": 1.2, "fleet": {"bus": 0.6, "car": 0.4}, "hours": "commute"},
 		},
 	},
 }
@@ -339,5 +352,16 @@ static func crosswalks() -> Array[Dictionary]:
 				if not rect.has_point(at):
 					continue
 				var across := Vector2(0, half + sidewalk_width(road) / 2.0) if horizontal else Vector2(half + sidewalk_width(road) / 2.0, 0)
-				result.append({"at": at, "width": half * 2.0, "along_z": not horizontal, "a": at - across, "b": at + across})
+				var side := "before" if offset < 0.0 else ("after" if offset > 0.0 else "center")
+				result.append({"id": "%s__%s__%s" % [road["id"], other["id"], side],
+					"road_id": road["id"], "joining_road_id": other["id"],
+					"at": at, "width": half * 2.0, "along_z": not horizontal, "a": at - across, "b": at + across})
 	return result
+
+
+static func road_by_id(id: String) -> Dictionary:
+	for road in ROADS:
+		if road["id"] == id:
+			return road
+	push_error("DistrictLayout: unknown road '%s'" % id)
+	return {}
