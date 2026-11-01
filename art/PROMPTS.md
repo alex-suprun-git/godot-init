@@ -720,4 +720,4 @@ This table supersedes the earlier selection notes. All game files are separately
 
 - Concept: `art/concepts/traffic-light-1970s-1980s-turnaround-v1.png`.
 - Full prompt and review status: `art/concepts/traffic-light-1970s-1980s-turnaround-v1.prompt.md`.
-- Built-in ImageGen; front, left, rear, three-quarter and enlarged head detail. Period-inspired modeling reference; not a verified historical blueprint. User visual approval pending; no 3D model or game integration yet.
+- Built-in ImageGen; front, left, rear, three-quarter and enlarged head detail. Period-inspired modeling reference; not a verified historical blueprint. The original Blender model and its static game integration now live under `art/models/traffic_lights/`; the reference image itself remains a concept, not a game texture. See the asset README for geometry, independently controllable lenses and inspected Godot views.

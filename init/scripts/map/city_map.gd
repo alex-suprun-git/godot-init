@@ -13,6 +13,8 @@ const SpriteAnchors = preload("res://scripts/data/sprite_anchors.gd")
 const GroundedProps = preload("res://scripts/map/grounded_props.gd")
 const VehicleModels = preload("res://scripts/map/vehicle_models.gd")
 const AmbientLife = preload("res://scripts/map/ambient_life.gd")
+const TrafficIntersections = preload("res://scripts/data/traffic_intersections.gd")
+const TrafficLight = preload("res://scripts/map/traffic_light.gd")
 const GarageModel = preload("res://scripts/map/garage_model.gd")
 const PropDimensions = preload("res://scripts/data/prop_dimensions.gd")
 
@@ -146,6 +148,7 @@ var _occupied: Array[Rect2] = [] # Ground taken by buildings and roads; trees av
 var _road_paint_material: ShaderMaterial
 var _lot_labels: Node3D
 var _ambient: AmbientLife # Background pedestrians and cars wandering the road graph.
+var _traffic_light_positions := PackedVector2Array()
 var _hero_car: Node3D # The administration car; shown while you ride with Tolik.
 var _token_discs := {} # actor id -> disc under the token, hidden while riding.
 var _graph_overlay: Node3D # Dev view of the road graph and active routes (F10).
@@ -189,6 +192,7 @@ func setup(week_sim) -> void:
 	_build_traffic()
 	_build_sidewalks()
 	_build_street_furniture()
+	_build_traffic_lights()
 	_build_ambient()
 	_build_graph_overlay()
 	_build_overlays()
@@ -715,7 +719,7 @@ func _build_trees() -> void:
 		var along_x := rect.size.x > rect.size.y
 		for i in range(1, int(maxf(rect.size.x, rect.size.y) / 26.0)):
 			var at := rect.position + (Vector2(i * 26, rect.size.y + 6) if along_x else Vector2(rect.size.x + 6, i * 26))
-			if not _is_occupied(at, 3.0):
+			if not _is_occupied(at, 3.0) and not _near_traffic_light(at):
 				_tree(_ground(at))
 
 
@@ -1304,3 +1308,20 @@ func _capsule(at: Vector3, color: Color, parent: Node = null) -> MeshInstance3D:
 	mesh.radius = 0.5
 	mesh.height = 2.0
 	return _add_mesh(mesh, at, color, parent)
+
+
+func _build_traffic_lights() -> void:
+	for id in TrafficIntersections.JUNCTIONS:
+		for fixture in TrafficIntersections.fixtures(id):
+			_traffic_light_positions.append(fixture["position"])
+			var light := TrafficLight.new(fixture)
+			add_child(light)
+			light.add_to_group("traffic_lights")
+
+
+# Keep roadside tree crowns from covering the nearby signal head.
+func _near_traffic_light(at: Vector2) -> bool:
+	for spot in _traffic_light_positions:
+		if at.distance_to(spot) < 8.0:
+			return true
+	return false

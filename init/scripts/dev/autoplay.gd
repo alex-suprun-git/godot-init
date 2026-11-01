@@ -18,7 +18,9 @@ func _ready() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--shots="):
 			shots_dir = arg.substr("--shots=".length())
-	if OS.get_cmdline_user_args().has("--crosswalks-only"):
+	if OS.get_cmdline_user_args().has("--traffic-lights-only"):
+		_run_traffic_light_review()
+	elif OS.get_cmdline_user_args().has("--crosswalks-only"):
 		_run_crosswalk_review()
 	elif OS.get_cmdline_user_args().has("--vehicles-only"):
 		_run_vehicle_review()
@@ -305,4 +307,41 @@ func _run_crosswalk_review() -> void:
 				break
 		if captured:
 			break
+	get_tree().quit()
+
+
+# Static placement at every registered junction plus a dev-only lens preview.
+func _run_traffic_light_review() -> void:
+	await _wait(1.5)
+	main.hud._continue_to_tasks()
+	main.hud._close_week_panel()
+	var registry = main.map.TrafficIntersections
+	var lights := get_tree().get_nodes_in_group("traffic_lights")
+	print("Traffic light review: ", lights.size(), " fixtures at ", registry.JUNCTIONS.size(), " intersections")
+	for id in registry.JUNCTIONS:
+		var data: Dictionary = registry.junction(id)
+		await _map_shot("signals_" + id, data["center"], 120.0)
+		print("Traffic light junction ", id, ": ", registry.fixtures(id).size(), " approaches; crossings ", data["crossing_ids"])
+	await _map_shot("signals_play_zoom", registry.junction("axis_north")["center"], main.map.ZOOM_MIN)
+	var first = lights[0]
+	for light in lights:
+		if light.binding["id"] == "axis_north/south":
+			first = light
+	var at := Vector2(first.position.x, first.position.z)
+	await _map_shot("signal_detail_off", at, 28.0)
+	first.set_signal("green")
+	await _map_shot("signal_detail_green", at, 28.0)
+	first.set_signal("red_amber")
+	await _map_shot("signal_detail_red_amber", at, 28.0)
+	first.set_signal("off")
+	var previous: String = main.map.Settings.camera_mode
+	main.map.Settings.camera_mode = "front"
+	await _map_shot("signals_perspective", registry.junction("axis_north")["center"], 100.0)
+	main.map.Settings.camera_mode = previous
+	main.map._debug_hour = 22.0
+	await _map_shot("signals_night_off", registry.junction("axis_north")["center"], 100.0)
+	main.map.Settings.camera_mode = previous
+	first.set_signal("red_amber")
+	await _map_shot("signal_detail_night_red_amber", at, 28.0)
+	first.set_signal("off")
 	get_tree().quit()
