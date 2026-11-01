@@ -17,3 +17,8 @@ Thumbs.db
 
 # Background task dispatch logs
 /tasks/logs/
+
+# Local review captures and logs (curated frames go to docs/pr-assets/)
+/art/bridges/*/
+/art/bridges/*.log
+/art/bridges/materials.png
