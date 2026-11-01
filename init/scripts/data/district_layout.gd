@@ -123,6 +123,8 @@ const EMBANKMENT := {
 	"gaps": {-187.5: 28.0},
 }
 const SIDING_RAMP := {"z": -245.0, "x_from": 315.0, "x_to": 402.0, "height": 6.0, "top": 3.5}
+# Static ER2 on the outer eastern track, beside the northern village garden.
+const COMMUTER_TRAIN := {"track_index": 1, "center_z": 15.0}
 const WATER := Rect2(-450, -440, 900, 110)
 const FOREIGN_BANK := Rect2(-450, -500, 900, 60)
 const BRIDGES := [

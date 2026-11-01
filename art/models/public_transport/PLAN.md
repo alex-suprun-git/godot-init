@@ -1,7 +1,8 @@
 # Bus and commuter train checkpoint
 
-Checked 2026-10-31. User requested a bus and commuter train after the vehicle
-modelling work. Vehicle variants are approved; modelling has not started.
+Updated 2026-11-01. The ER2 head and motor cars are built and exported; buses
+remain unmodeled. ER2 source, measured Volga-relative scaling, four-car assembly,
+actual Godot captures and remaining review points: `er2/README.md`.
 
 ## Existing project material
 
@@ -10,13 +11,17 @@ modelling work. Vehicle variants are approved; modelling has not started.
 - `init/assets/sprites/bus_local_1997.png`: generated cream/red generic local
   bus, used twice at the ATP and at the bus terminal. `art/PROMPTS.md` explicitly
   says it is not a certified PAZ model. Source concepts remain under `art/concepts/`.
-- No bus GLB or commuter-train GLB was found in the project model directories.
+- At the initial 2026-10-31 audit no bus or commuter-train GLB existed. ER2 head
+  and motor GLBs now live under `init/assets/models/vehicles/`.
 - `art/DISTRICT_ART_REQUEST.md`, A11: ER-type suburban electric train, green
   with a yellow/red nose; three coupled cars, approximately 60 m long and
   3.5 m wide. This is an existing text brief, not a completed asset/reference.
 - `train_commuter.png` is absent. `district_builder.gd::_build_train_stock()`
-  currently places `train_wagons_v2.png` on both the passenger track and freight
-  siding. `docs/MAP_LAYOUT_REQUEST.md` explicitly describes that placeholder.
+  currently places `train_wagons_v2.png` only on the port freight siding; the
+  station tracks stay clear in normal gameplay. The reviewed ER2 four-car train
+  is now permanently placed as static scenery beside the village on the outer
+  eastern embankment track (x=420, centre z=15, rail surface y=6.04), as requested
+  by the user. Current Godot evidence: `er2/previews/godot-embankment*.png`.
 - README has a passenger station/track and explicitly excludes trams in this
   district. Do not substitute the existing tram sprite for a commuter train.
 
@@ -26,9 +31,10 @@ modelling work. Vehicle variants are approved; modelling has not started.
 - Model the ER2 with the angular, square-front cab. The user's latest correction
   explicitly supersedes their earlier round-cab selection. Do not build the
   round-cab variant.
-- The old three-car brief remains a map representation, not an assertion about
-  an actual operational ER2 formation. Exact livery and budgets remain to be
-  established against references.
+- The user chose the handbook's four-car formation on 2026-11-01, superseding
+  both the old three-car illustration brief and the temporary two-car proposal:
+  head–motor–motor–head, outward cabs. The existing green/cream reference guides
+  the model, positively reviewed by the user before requesting map placement.
 
 ## Reference leads
 
@@ -49,13 +55,13 @@ selected vehicles, with prompts and inspection notes in `references/README.md`.
 The user requested generated turnarounds as the primary modeling guide. Use
 these for the intended appearance, then calibrate real dimensions and reconcile
 inconsistent details across views. Their drawn grids are not measured blueprints.
-No 3D models have been built yet.
+ER2 production has since been completed; see `er2/README.md`. Buses still need
+the modeling steps below.
 
 Collect consistent front/side/rear/three-quarter references for LiAZ-5256,
-PAZ-3205 and the square-cab ER2, and choose
+PAZ-3205, and choose
 geometry/material budgets for their actual map scale. Then use the project's
 Blender skill and `references/vehicle-modeling.md`: establish silhouette and
 proportions before detail/baking, keep body/glazing coordinated, export only
-the asset, inspect actual GLBs and show a Godot frame. A three-car train in the
-old art brief is a proposed map representation, not an assertion about a real
-ER2 operational consist. No models or gameplay files were changed in this pass.
+the asset, inspect actual GLBs and show a Godot frame. For the ER2, the next step
+is user review of the requested static map placement; movement remains open.

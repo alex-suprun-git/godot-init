@@ -1076,8 +1076,13 @@ func _market(lot: Dictionary) -> void:
 
 
 func _build_train_stock() -> void:
+	var train := preload("res://scripts/map/er2_train.gd").create()
+	var train_z: float = Layout.COMMUTER_TRAIN["center_z"]
+	var track_x: float = Layout.EMBANKMENT["tracks"][Layout.COMMUTER_TRAIN["track_index"]]
+	train.position = Vector3(track_x, _embankment_height(train_z) + 0.04, train_z)
+	map.add_child(train)
 	var stock := _texture("res://assets/sprites/train_wagons_v2.png") # train_commuter.png
-	# Passenger tracks stay clear; only the port transfer siding carries stock.
+	# The station tracks stay clear; freight stock remains on the port siding.
 	var siding: Array = Layout.RAILS[2]
 	var transfer: Vector2 = siding[-2].lerp(siding[-1], 0.5)
 	map._prop(stock, Vector3(transfer.x, 0.2, transfer.y), 40.0, "x")
