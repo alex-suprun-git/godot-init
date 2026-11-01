@@ -4,6 +4,7 @@ extends RefCounted
 
 const Layout = preload("res://scripts/data/district_layout.gd")
 const Catalog = preload("res://scripts/data/building_catalog.gd")
+const Boundaries = preload("res://scripts/data/map_boundaries.gd")
 const OfficeTheme = preload("res://scripts/ui/office_theme.gd")
 const PitchedRoof = preload("res://scripts/map/pitched_roof.gd")
 
@@ -93,11 +94,20 @@ func _build_ground() -> void:
 		var tint: Color = YARD_ROAD_TINT if yard else (HIGHWAY_TINT if highway else Color.WHITE)
 		_patch(rect, ground, 0.135 if yard else (0.139 if highway else 0.14), tint)
 		map._occupy(rect.get_center(), rect.size)
+	# Western roads and southern rails run on past the forest, under the edge haze.
+	for extension in Boundaries.road_continuations():
+		var road: Dictionary = extension["road"]
+		var rect: Rect2 = extension["rect"]
+		var highway: bool = road.get("look", "") == "highway"
+		_patch(rect, "asphalt", 0.139 if highway else 0.14, HIGHWAY_TINT if highway else Color.WHITE)
+		map._occupy(rect.get_center(), rect.size)
 	for bridge in Layout.BRIDGES:
 		_build_bridge(bridge)
 	for line in Layout.RAILS:
 		for i in line.size() - 1:
 			_rail_segment(line[i], line[i + 1])
+	for extension in Boundaries.rail_continuations():
+		_rail_segment(extension[0], extension[1]) # Registers its own occupancy.
 	_build_embankment()
 	_build_siding_ramp()
 	map._build_road_markings()
