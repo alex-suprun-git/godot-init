@@ -318,3 +318,34 @@ static func lot_rect(id: String) -> Rect2:
 
 static func lot_center(id: String) -> Vector2:
 	return lot_rect(id).get_center()
+
+
+# Shared by road paint and the ambient pedestrian graph. Each crossing spans one
+# asphalt road; side roads get markings on every arm that actually continues.
+static func crosswalks() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for road in ROADS:
+		if road["kind"] != "asphalt":
+			continue
+		var rect: Rect2 = road["rect"]
+		var horizontal := rect.size.x > rect.size.y
+		var half := (rect.size.y if horizontal else rect.size.x) / 2.0
+		for other in ROADS:
+			var junction: Rect2 = other["rect"]
+			if horizontal == (junction.size.x > junction.size.y) or not rect.intersects(junction.grow(0.1)):
+				continue
+			var center := Vector2(junction.get_center().x, rect.get_center().y) if horizontal else Vector2(rect.get_center().x, junction.get_center().y)
+			var offsets: Array[float] = [0.0]
+			if other["kind"] == "asphalt":
+				# Without longitudinal highway pavements, follow the crossing
+				# street's pavements straight across instead of stranding the zebra.
+				var setback := 3.0 if sidewalk_width(road) > 0.0 else sidewalk_width(other) / 2.0
+				var reach := (junction.size.x if horizontal else junction.size.y) / 2.0 + setback
+				offsets = [-reach, reach]
+			for offset in offsets:
+				var at := center + (Vector2(offset, 0) if horizontal else Vector2(0, offset))
+				if not rect.has_point(at):
+					continue
+				var across := Vector2(0, half + sidewalk_width(road) / 2.0) if horizontal else Vector2(half + sidewalk_width(road) / 2.0, 0)
+				result.append({"at": at, "width": half * 2.0, "along_z": not horizontal, "a": at - across, "b": at + across})
+	return result
