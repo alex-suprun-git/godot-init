@@ -8,6 +8,8 @@ const Boundaries = preload("res://scripts/data/map_boundaries.gd")
 const RailwayRoute = preload("res://scripts/map/railway_route.gd")
 const OfficeTheme = preload("res://scripts/ui/office_theme.gd")
 const PitchedRoof = preload("res://scripts/map/pitched_roof.gd")
+const CivicFacades = preload("res://scripts/map/civic_facades.gd")
+const CivicRoofs = preload("res://scripts/map/civic_roofs.gd")
 
 const YARD_ROAD_TINT := Color(1.18, 1.12, 1.02)
 const WATER_LEVEL := -3.5 # River bed depth: deep enough for a barge to pass under the bridges.
@@ -188,6 +190,12 @@ func _rail_segment(from: Vector2, to: Vector2) -> void:
 
 func _build_lot(id: String, lot: Dictionary) -> void:
 	var entry: Dictionary = Catalog.CONTENTS[lot["content"]]
+	if id in ["tower_e2", "tower_e3"]:
+		entry = entry.duplicate()
+		entry["tower_variant"] = "e2"
+		entry["height"] = 36.0
+		entry["floors"] = 12
+		entry["roof"] = "res://assets/textures/facade_tower_roof_e2.png"
 	var center: Vector2 = Layout.lot_center(id)
 	if lot["type"] == "D":
 		center += _front_shift(lot, entry)
@@ -445,8 +453,16 @@ func _building(lot: Dictionary, entry: Dictionary, desired: Vector2, lot_id: Str
 		gable.material_override.albedo_color = Catalog.CONDITIONS[lot["condition"]]["tint"]
 		group.add_child(gable)
 	elif roof != null:
-		map._roof(Vector2(size.x + 0.6, size.y + 0.6), Vector3(0, height + 0.41, 0), 12.0, roof, group)
-	if entry.has("facade_center"):
+		var detailed_roof: bool = entry.has("tower_variant") or entry.get("civic_facade", false) or entry.get("kind", "") == "panel"
+		map._roof(Vector2(size.x + 0.6, size.y + 0.6), Vector3(0, height + 0.41, 0), 12.0, roof, group, detailed_roof)
+		if detailed_roof:
+			var roof_style := "tower" if entry.has("tower_variant") else ("store" if lot_id == "department_store" else "housing")
+			CivicRoofs.build(map, group, size, height, roof_style)
+	if entry.has("tower_variant"):
+		CivicFacades.tower(map, group, size, height, entry["tower_variant"], tint)
+	elif entry.get("civic_facade", false):
+		CivicFacades.civic(map, group, size, height, _texture(entry["facade_center"]), _texture(entry["facade_wing"]), entry["center_width"], tint)
+	elif entry.has("facade_center"):
 		var center_texture := _texture(entry["facade_center"])
 		var wing_texture := _texture(entry.get("facade_wing", ""))
 		var center_width: float = entry["center_width"]
@@ -463,7 +479,7 @@ func _building(lot: Dictionary, entry: Dictionary, desired: Vector2, lot_id: Str
 	if entry.get("kind", "") == "panel":
 		map._panel_overlays(entry, size, height, group)
 	map._occupy(center, footprint)
-	if entry.get("kind", "") == "panel":
+	if entry.get("kind", "") == "panel" or entry.has("tower_variant"):
 		# Residents wear the ground along their blocks, most of all in front of the doors.
 		map.wear.add_ring(Rect2(center - footprint / 2.0, footprint), 9.0, 0.8)
 	_register_doorstep(lot_id, lot, entry, center, size.y)
@@ -980,6 +996,9 @@ func _register_doorstep(lot_id: String, lot: Dictionary, entry: Dictionary, cent
 		return
 	var out: Vector2 = {"s": Vector2.DOWN, "n": Vector2.UP, "e": Vector2.RIGHT, "w": Vector2.LEFT}[lot["facing"]]
 	var doorstep: Vector2 = center + out * (depth / 2.0 + float(entry["doorstep"]))
+	# Local facade X follows the building rotation; tower entrances occupy an outer bay.
+	var facade_right := Vector2(out.y, -out.x)
+	doorstep += facade_right * float(entry.get("door_offset", 0.0))
 	map.sim.graph.set_doorstep(lot_id, doorstep)
 	map.wear.add_disc(doorstep, 10.0, 1.0)
 

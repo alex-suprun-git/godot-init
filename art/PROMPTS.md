@@ -814,3 +814,340 @@ Use case: stylized-concept. Asset type: grayscale shader data texture, NOT an il
 ## Freight train reference proposal (2026-11-02)
 
 Built-in ImageGen reference sheet: art/models/freight_train/references/freight-train-v2.png. Original v1 is preserved beside it; v2 corrects nine wagons to the requested eight. Full generation and correction prompts: art/models/freight_train/references/freight-train-v1.prompt.md. The user approved the M62-inspired locomotive and full formation with brick, blue-grey and olive cargo paints. Current source, exports, comparison rule and actual Godot results: art/models/freight_train/README.md. No additional generated raster art was used for modeling.
+
+## Civic facade references (2026-11-02)
+
+Issues #4 and #5 share branch `art/civic-facade-textures` by user request. Built-in ImageGen; appearance proposals await user approval. Untouched originals and corrected sheets: `art/models/elite_towers/references/`. Inspection, metric inconsistencies and next action: its `README.md`. Reference input for initial generations: existing actual Godot screenshot `.local/flows-final-shots/0_north.png` (ignored). No new game-ready texture or shader change yet.
+
+### E1 v1
+
+```text
+Use case: stylized-concept.
+Create an architectural reference turnaround sheet for E1, an original late-Soviet improved-layout apartment tower for the administrative square of a fictional provincial border city in August 1997.
+Input reference: actual Godot map screenshot, context ONLY for restrained palette, ordinary inhabited estate and scale/readability; do NOT copy its nine-storey panel placeholders. This sheet is explicitly requested as a design reference, not an in-game sprite.
+Landscape sheet on plain warm light-grey background. Show the SAME consistent building in FIVE neatly separated views: front LONG facade, END facade, rear LONG facade, roof plan, and a smaller orthographic three-quarter view. Small neutral labels FRONT, END, REAR, ROOF, 3/4 are allowed outside the views. No grid or decorative props.
+Dimensions: rectangular footprint 24m along long face, 20m deep. EXACTLY 14 storeys total, 3m each, total wall height 42m plus restrained stepped brick crown. Ground floor is commercial; thirteen residential floors above. Long face faces the avenue. Keep floor count, bays, cornice and colors consistent across ALL views.
+Architecture: muted tan/buff brick, strong narrow vertical brick pilasters rising above roofline as a restrained stepped crown; wide middle packets of shallow glazed loggias on long faces; ordinary apartment windows at either side; end faces have restrained narrow window strips. Loggias are simple modular repeated rectangles, not huge external glass atria. Roof flat dark tar with modest vents and unadorned antenna masts, no satellite dishes. Ground-floor modest shops, blank sign panels and a separate residential entrance.
+Detailed hand-painted architectural illustration compatible with a strategy game viewed from an elevated orthographic map camera. Structure built about ten years ago and reasonably kept: sound brick, intact windows, minor dust only. Cream and tan masonry, subdued grey-blue glazing, restrained grey metal. No red, pink, garish colors, actual branding, readable building signs, people, cars, trees, scenery, photorealistic dramatic lighting, ruined surfaces, ornate luxury architecture or futuristic skyscraper styling. Flat diffuse daylight; subtle material depth, no dramatic cast shadows. Whole building in every elevation with clear edges.
+```
+
+### E2/E3 v1
+
+```text
+Use case: stylized-concept.
+Create an architectural reference turnaround sheet for E2/E3, an original light-colored late-Soviet improved-layout apartment tower in a fictional provincial border city, August 1997. This is the lighter companion to a taller tan-brick tower, not an identical twin.
+Input reference: actual Godot map screenshot for district context, muted painted palette and map readability only; its existing panel-block placeholders are not the final tower design.
+Landscape sheet on plain warm light grey background; FIVE clearly separated consistent views of the SAME building: long FRONT facade facing the avenue, END facade, long REAR facade, ROOF plan, smaller orthographic THREE-QUARTER view. Labels outside views may read FRONT, END, REAR, ROOF, 3/4. No decorative grid.
+Exact target footprint 24m long-face width x 20m depth, EXACTLY twelve storeys total at 3m per storey, 36m to flat roof. Ground floor shops plus eleven residential floors above. Consistent floor count and bays across all elevations. Restrained pale warm ivory brick with very light grey concrete balcony slabs, ordinary shallow rectangular balconies in repeated vertical stacks, a few individual modest glazed balconies, grey-blue windows, two narrow window strips on end faces. Simple flat dark tar roof with modest vents and unadorned antennas, no satellite dishes. Very modest flat parapet, NOT the tall stepped crown of its tan-brick companion. Ground floor modest shop glazing and blank sign panels plus a distinct residential entrance. No luxury glass tower.
+Detailed hand-painted architectural illustration compatible with an elevated orthographic strategy game map. Kept: built about ten years ago, intact masonry and glazing, light dust only, no ruin or graffiti. Muted ivory, pale grey, grey-blue glass and restrained grey metal. No vivid colors, red or pink; no brand signs or readable text on the building, no people/cars/trees, no environment. Flat diffuse daylight, no dramatic cast shadows. Whole building visible in each elevation.
+```
+
+### E1 v2 correction
+
+```text
+Edit the attached architectural reference sheet. Preserve its muted tan brick, narrow pilasters, loggia packets, stepped crown, roof materials and five-view presentation. Correct the building HEIGHT AND PROPORTIONS in ALL elevations and the 3/4 view. It currently has only nine residential rows above shops; it MUST have THIRTEEN residential window/loggia rows above ONE ground-floor commercial storey = FOURTEEN STOREYS TOTAL. Make every tower elevation much TALLER AND MORE SLENDER by adding FOUR full identical residential rows, without widening or compressing storeys. Target 24m FRONT width x 20m END depth x 42m wall height. In the orthographic elevations front height/width must be 42/24 = 1.75; END height/width must be 42/20 = 2.10 (the current END view is much too narrow relative to FRONT: correct this). All views SAME scale and consistent row count. Use tall portrait-like individual elevations on the landscape sheet; reduce the bottom roof plan and 3/4 panel size if needed. Keep the long front facing avenue, no changes to architectural family. Thirteen residential rows must be clearly individually countable above the shop row. No readable signs or new objects.
+```
+
+### E2/E3 v2 correction
+
+```text
+Edit attached architectural reference sheet; preserve the ivory brick, ordinary balconies, muted palette and five-view arrangement. Correct ONLY floor count and building proportions consistently across FRONT, END, REAR and 3/4. Current building shows nine residential rows plus shops. ADD TWO full residential rows so there are ELEVEN residential rows above ONE ground storey = TWELVE STOREYS TOTAL. Keep storey height equal; make the building taller, not wider. Footprint 24m FRONT width x20m END depth; 36m wall height. FRONT elevation height/width = 1.5. END elevation height/width=1.8 and END width is five-sixths the FRONT width (currently end is far too narrow). Keep identical 3m storeys and SAME scale in elevations. Roof plan must be near-square rectangle 24x20 rather than very oblong. Enlarge top elevation area of sheet and reduce lower roof/3/4 panel sizes as necessary. No new architectural features, keep no crown, simple flat parapet. No readable building signs, people, scenery. Eleven upper window rows should be clearly countable in each elevation.
+```
+
+## Approved civic facade production (2026-11-02)
+
+The user approved both tower looks in chat. Stage 2 uses the approved v2 sheets as appearance references while preserving the brief's exact game dimensions. Built-in ImageGen; originals are versioned under `art/source_images/elite_towers/`. Each prompt is the shared block below followed by the material and piece specification. The crown is split into two 6 x 3 m modules per 12 m strip: the brief's 12 x 3 m piece conflicts with its mandatory 2:1 canvas, so this keeps both the storey scale and canvas rule.
+
+Shared block:
+
+```text
+Use case: stylized-concept. Asset type: production hand-painted facade ALBEDO texture for an orthographic Godot strategy map of a functioning provincial post-Soviet city, August 1997. Generate ONE image, exact 2:1 aspect ratio, preferably 2048 by 1024 pixels. Surface fills canvas edge-to-edge. Strict front orthographic elevation, no perspective, no visible wall ends or roof plane, no background, border or caption. Flat uniform shadowless illumination; fine painted material variation, no directional lighting, cast shadows or ambient-occlusion halos. Kept: intact masonry/cladding, working windows, only light dust; no peeling, rust, graffiti, ruin, vivid red/pink or saturated accents. Glass subdued blue-grey, unlit. No people, vegetation, vehicles, readable text, letters or emblems. No grid overlay. Muted palette compatible with the supplied approved tower reference.
+```
+
+### tower_long_e1
+
+Reference: `e1-turnaround-v2.png`. Original: `art/source_images/elite_towers/long_e1_v1.png`.
+
+```text
+Muted tan/buff brick with restrained narrow brick pilasters, slim pale concrete horizontal loggia slabs. TILE: seamless periodic left/right AND top/bottom. Exactly two equal residential storeys, 3m each; represented surface 12m wide x6m high. Floor boundary at exact image midline. Wall material continues across all four edges: identical uninterrupted masonry and matching horizontal mortar rows at left/right, matching vertical pilaster cadence at top/bottom. First and last scanline represent the same position within the 3m storey. No cornice, plinth, roofline, entrance door, shop, canopy or stairwell column. Two horizontal complete window rows, no third row. Leave masonry margins at horizontal edges, no half-openings or random objects. Residential long-face module: paired central shallow glazed loggia bays and ordinary rectangular apartment windows outside them; loggia glazing clean thin grey frames, modest individually varied curtains.
+```
+
+### tower_end_e1
+
+Reference: `e1-turnaround-v2.png`. Original: `art/source_images/elite_towers/end_e1_v1.png`.
+
+```text
+Muted tan/buff brick with restrained narrow brick pilasters, slim pale concrete horizontal loggia slabs. TILE: seamless periodic left/right AND top/bottom. Exactly two equal residential storeys, 3m each; represented surface 12m wide x6m high. Floor boundary at exact image midline. Wall material continues across all four edges: identical uninterrupted masonry and matching horizontal mortar rows at left/right, matching vertical pilaster cadence at top/bottom. First and last scanline represent the same position within the 3m storey. No cornice, plinth, roofline, entrance door, shop, canopy or stairwell column. Two horizontal complete window rows, no third row. Leave masonry margins at horizontal edges, no half-openings or random objects. Residential END-face module: mostly tan brick and two narrow vertical strips of ordinary apartment windows, NO loggias or balconies.
+```
+
+### tower_shop_e1
+
+Reference: `e1-turnaround-v2.png`. Original: `art/source_images/elite_towers/shop_e1_v1.png`.
+
+```text
+Muted tan/buff brick with restrained narrow brick pilasters, slim pale concrete horizontal loggia slabs. Ground-floor commercial overlay, ONE 6m wide x3m high bay, grey-blue shopfront glazing, slender grey metal mullions, modest recessed glazed entry at right, blank shallow sign panel above. Bottom plinth exactly aligned with adjacent entrance bay. No lettering. Horizontal edges must join plain brick at same vertical heights.
+```
+
+### tower_entrance_e1
+
+Reference: `e1-turnaround-v2.png`. Original: `art/source_images/elite_towers/entrance_e1_v1.png`.
+
+```text
+Muted tan/buff brick with restrained narrow brick pilasters, slim pale concrete horizontal loggia slabs. Residential entrance base overlay, ONE 6m wide x3m high ground-storey bay. Simple grey metal residential door centered under modest concrete canopy, small shallow steps and grey handrail; brick at sides, windows only if space permits. Horizontal edges continue same material and plinth as shop bay. No emblems, lettering or shopfront.
+```
+
+### tower_crown_e1
+
+Reference: `e1-turnaround-v2.png`. Original: `art/source_images/elite_towers/crown_e1_v1.png`.
+
+```text
+Muted tan/buff brick with restrained narrow brick pilasters, slim pale concrete horizontal loggia slabs. Crown module ONE 6m wide x3m high top storey (two modules cover a 12m strip, preserving the mandatory 2:1 canvas). Top-storey crown: two restrained tan-brick vertical pilasters extend above parapet with a stepped silhouette; keep the silhouette painted within the wall panel, no transparent background or sky. One row of uppermost windows or glazed loggia bays. Horizontal repetition must join exactly; masonry at lower edge continues the ordinary wall. No ground or entrances.
+```
+
+### tower_roof_e1
+
+Reference: `e1-turnaround-v2.png`. Original: `art/source_images/elite_towers/roof_e1_v1.png`.
+
+```text
+Muted tan/buff brick with restrained narrow brick pilasters, slim pale concrete horizontal loggia slabs. EXCEPTION TO ELEVATION: perfectly top-down orthographic seamless 12m x6m flat tar roof surface, periodic BOTH axes. Dark neutral grey tar felt with fine seams and a few small subtle repairs, uniform detail, no skylights or large roof equipment, no parapet, shadow, perspective or visible sides. No windows.
+```
+
+### tower_long_e2
+
+Reference: `e2-e3-turnaround-v2.png`. Original: `art/source_images/elite_towers/long_e2_v1.png`.
+
+```text
+Pale warm ivory brick, light grey concrete balcony slabs and subdued grey metal. TILE: seamless periodic left/right AND top/bottom. Exactly two equal residential storeys, 3m each; represented surface 12m wide x6m high. Floor boundary at exact image midline. Wall material continues across all four edges: identical uninterrupted masonry and matching horizontal mortar rows at left/right, matching vertical pilaster cadence at top/bottom. First and last scanline represent the same position within the 3m storey. No cornice, plinth, roofline, entrance door, shop, canopy or stairwell column. Two horizontal complete window rows, no third row. Leave masonry margins at horizontal edges, no half-openings or random objects. Residential long-face module: ordinary shallow rectangular balconies in two vertical stacks, a few glazed balcony fronts and ordinary windows; subtle readable concrete balcony fronts, no deep perspective.
+```
+
+### tower_end_e2
+
+Reference: `e2-e3-turnaround-v2.png`. Original: `art/source_images/elite_towers/end_e2_v1.png`.
+
+```text
+Pale warm ivory brick, light grey concrete balcony slabs and subdued grey metal. TILE: seamless periodic left/right AND top/bottom. Exactly two equal residential storeys, 3m each; represented surface 12m wide x6m high. Floor boundary at exact image midline. Wall material continues across all four edges: identical uninterrupted masonry and matching horizontal mortar rows at left/right, matching vertical pilaster cadence at top/bottom. First and last scanline represent the same position within the 3m storey. No cornice, plinth, roofline, entrance door, shop, canopy or stairwell column. Two horizontal complete window rows, no third row. Leave masonry margins at horizontal edges, no half-openings or random objects. Residential END-face module: mostly ivory brick with two narrow vertical strips of apartment windows; no balconies or loggias.
+```
+
+### tower_shop_e2
+
+Reference: `e2-e3-turnaround-v2.png`. Original: `art/source_images/elite_towers/shop_e2_v1.png`.
+
+```text
+Pale warm ivory brick, light grey concrete balcony slabs and subdued grey metal. Ground-floor commercial overlay, ONE 6m wide x3m high bay, grey-blue shopfront glazing, slender grey metal mullions, modest recessed glazed entry at right, blank shallow sign panel above. Bottom plinth exactly aligned with adjacent entrance bay. No lettering. Horizontal edges must join plain brick at same vertical heights.
+```
+
+### tower_entrance_e2
+
+Reference: `e2-e3-turnaround-v2.png`. Original: `art/source_images/elite_towers/entrance_e2_v1.png`.
+
+```text
+Pale warm ivory brick, light grey concrete balcony slabs and subdued grey metal. Residential entrance base overlay, ONE 6m wide x3m high ground-storey bay. Simple grey metal residential door centered under modest concrete canopy, small shallow steps and grey handrail; brick at sides, windows only if space permits. Horizontal edges continue same material and plinth as shop bay. No emblems, lettering or shopfront.
+```
+
+### tower_crown_e2
+
+Reference: `e2-e3-turnaround-v2.png`. Original: `art/source_images/elite_towers/crown_e2_v1.png`.
+
+```text
+Pale warm ivory brick, light grey concrete balcony slabs and subdued grey metal. Crown module ONE 6m wide x3m high top storey (two modules cover a 12m strip, preserving the mandatory 2:1 canvas). Top-storey parapet piece: flat restrained ivory brick parapet and a single row of windows with ordinary balcony fronts; NO stepped crown or tall pilasters. Horizontal repetition must join exactly; masonry at lower edge continues the ordinary wall. No ground or entrances.
+```
+
+### tower_roof_e2
+
+Reference: `e2-e3-turnaround-v2.png`. Original: `art/source_images/elite_towers/roof_e2_v1.png`.
+
+```text
+Pale warm ivory brick, light grey concrete balcony slabs and subdued grey metal. EXCEPTION TO ELEVATION: perfectly top-down orthographic seamless 12m x6m flat tar roof surface, periodic BOTH axes. Dark neutral grey tar felt with fine seams and a few small subtle repairs, uniform detail, no skylights or large roof equipment, no parapet, shadow, perspective or visible sides. No windows.
+```
+
+### Civic centre and wing pieces
+
+Same shared production block; existing map screenshot is the context reference. Centre widths are 12/18/12 m for police/clinic/store; heights 6/9/6 m. Preserve existing footprints and sample partial wing tiles at outer ends rather than stretch facades or enlarge buildings.
+
+#### police_new_center
+
+Original: `art/source_images/d4_buildings/police_new_center_v1.png`.
+
+```text
+Plain late-Soviet TWO-storey district police station. Pale grey-beige painted masonry with a muted blue-grey plinth, regular grey framed rectangular institutional windows, fine brick/render texture, restrained plain roof cornice. Exactly TWO equal 3m storeys. Represented surface 12m wide x6m high. Main entrance centered in the lower storey, modest shallow concrete canopy, simple grey double door, small blank dark-blue institutional plaque beside door. Upper storey ordinary windows. No real police symbols or readable words. Floor lines exactly at multiples of 3m from bottom. The left and right 5% of the image must be plain uninterrupted matching wall/cladding and matching horizontal bands. Wing and centre edges share identical colors, cornice, plinth, floor heights and sill heights. Exactly one entrance. Composition is a centre insert to be flanked by matching repeating wings. Do not show separate sides or surrounding paving/sky.
+```
+
+#### police_new_wing
+
+Original: `art/source_images/d4_buildings/police_new_wing_v1.png`.
+
+```text
+Plain late-Soviet TWO-storey district police station. Pale grey-beige painted masonry with a muted blue-grey plinth, regular grey framed rectangular institutional windows, fine brick/render texture, restrained plain roof cornice. Exactly TWO equal 3m storeys. Represented surface 12m wide x6m high. NO door, plaque, canopy or emblem. Identical ordinary rectangular windows in two rows. Floor lines exactly at multiples of 3m from bottom. The left and right 5% of the image must be plain uninterrupted matching wall/cladding and matching horizontal bands. Wing and centre edges share identical colors, cornice, plinth, floor heights and sill heights. Perfectly tileable left-right; edge mullion/window rhythm must continue when repeated. Do not show separate sides or surrounding paving/sky.
+```
+
+#### polyclinic_new_center
+
+Original: `art/source_images/d4_buildings/polyclinic_new_center_v1.png`.
+
+```text
+Modest THREE-storey neighborhood polyclinic, not a hospital complex. Pale ivory ceramic cladding, very subdued sage-grey horizontal spandrels, regular grey framed institutional windows, pale grey plinth, thin flat roof cornice. Exactly THREE equal 3m storeys. Represented surface 18m wide x9m high. Main double glazed entrance centered on ground floor under a modest flat concrete canopy; small shallow steps and a low simple accessibility ramp running to one side within the ground-floor band. Upper two storeys evenly spaced ordinary windows. No cross/emblem or readable words. Floor lines exactly at multiples of 3m from bottom. The left and right 5% of the image must be plain uninterrupted ivory cladding and matching horizontal bands. Wing and centre edges share identical colors, cornice, plinth, floor heights and sill heights. Exactly one entrance. Composition is a centre insert to be flanked by matching repeating wings. Do not show separate sides or surrounding paving/sky.
+```
+
+#### polyclinic_new_wing
+
+Original: `art/source_images/d4_buildings/polyclinic_new_wing_v1.png`.
+
+```text
+Modest THREE-storey neighborhood polyclinic, not a hospital complex. Pale ivory ceramic cladding, very subdued sage-grey horizontal spandrels, regular grey framed institutional windows, pale grey plinth, thin flat roof cornice. Exactly THREE equal 3m storeys. Represented surface 18m wide x9m high. NO entrance, canopy, ramp, signs or emblem. Three identical ordinary window rows continuing same window spacing and horizontal bands. Floor lines exactly at multiples of 3m from bottom. The left and right 5% of the image must be plain uninterrupted ivory cladding and matching horizontal bands. Wing and centre edges share identical colors, cornice, plinth, floor heights and sill heights. Perfectly tileable left-right; edge mullion/window rhythm must continue when repeated. Do not show separate sides or surrounding paving/sky.
+```
+
+#### department_store_center
+
+Original: `art/source_images/d4_buildings/department_store_center_v1.png`.
+
+```text
+Low late-Soviet department store. Total height 6m, two 3m storeys: ground-floor tall continuous grey-blue storefront glazing with thin grey aluminium mullions; upper floor mostly solid light warm beige ceramic band with a restrained continuous strip of high windows. Thin flat grey roof cornice, plain neutral plinth. No signs except empty beige panels. Represented surface 12m wide x6m high. Single main recessed double glazed entrance centered on ground floor. Remaining ground-floor display glazing closed, no other doors. One blank shallow sign panel in the upper solid band. Floor lines exactly at multiples of 3m from bottom. The left and right 5% of the image must be plain uninterrupted matching wall/cladding and matching horizontal bands. Wing and centre edges share identical colors, cornice, plinth, floor heights and sill heights. Exactly one entrance. Composition is a centre insert to be flanked by matching repeating wings. Do not show separate sides or surrounding paving/sky.
+```
+
+#### department_store_wing
+
+Original: `art/source_images/d4_buildings/department_store_wing_v1.png`.
+
+```text
+Low late-Soviet department store. Total height 6m, two 3m storeys: ground-floor tall continuous grey-blue storefront glazing with thin grey aluminium mullions; upper floor mostly solid light warm beige ceramic band with a restrained continuous strip of high windows. Thin flat grey roof cornice, plain neutral plinth. No signs except empty beige panels. Represented surface 12m wide x6m high. NO entrance doors or signs. Ground-floor display glazing with a low continuous plinth, matching upper solid ceramic band and high window strip. Floor lines exactly at multiples of 3m from bottom. The left and right 5% of the image must be plain uninterrupted matching wall/cladding and matching horizontal bands. Wing and centre edges share identical colors, cornice, plinth, floor heights and sill heights. Perfectly tileable left-right; edge mullion/window rhythm must continue when repeated. Do not show separate sides or surrounding paving/sky.
+```
+
+### Residential window variation and module corrections
+
+User direction: inhabited homes should show varied curtains, occasional potted plants and small differences in balcony glazing while retaining the existing maintained architecture. The following are exact replacement/edit prompts; v1 module mistakes remain as originals and are excluded from game preparation.
+
+#### tower_shop_e1 — shop_e1_v2.png
+
+Input: text only, without a building reference to avoid whole-building compositions.
+
+```text
+Use case: stylized-concept. Asset type: production hand-painted facade ALBEDO texture for an orthographic Godot strategy map of a functioning provincial post-Soviet city, August 1997. Generate ONE image, exact 2:1 aspect ratio, preferably 2048 by 1024 pixels. Surface fills canvas edge-to-edge. Strict front orthographic elevation, no perspective, no visible wall ends or roof plane, no background, border or caption. Flat uniform shadowless illumination; fine painted material variation, no directional lighting, cast shadows or ambient-occlusion halos. Kept: intact masonry/cladding, working windows, only light dust; no peeling, rust, graffiti, ruin, vivid red/pink or saturated accents. Glass subdued blue-grey, unlit. No people, vegetation, vehicles, readable text, letters or emblems. No grid overlay. Muted palette compatible with the supplied approved tower reference. Muted tan/buff brick with restrained narrow brick pilasters, slim pale concrete horizontal loggia slabs. Ground-floor commercial overlay, ONE 6m wide x3m high bay, grey-blue shopfront glazing, slender grey metal mullions, modest recessed glazed entry at right, blank shallow sign panel above. Bottom plinth exactly aligned with adjacent entrance bay. No lettering. Horizontal edges must join plain brick at same vertical heights. CRITICAL COMPOSITION: This is a SINGLE MATERIAL MODULE, NOT a whole building elevation or reference sheet. Show ONLY ONE GROUND-FLOOR SHOP BAY, one storey high, approximately twice as wide as tall. No upper apartment floors, no roof or whole tower. Brick margins, blank sign fascia, shop window and one modest doorway. NOTHING above the ground-storey fascia.
+```
+
+#### tower_entrance_e1 — entrance_e1_v2.png
+
+Input: text only, without a building reference to avoid whole-building compositions.
+
+```text
+Use case: stylized-concept. Asset type: production hand-painted facade ALBEDO texture for an orthographic Godot strategy map of a functioning provincial post-Soviet city, August 1997. Generate ONE image, exact 2:1 aspect ratio, preferably 2048 by 1024 pixels. Surface fills canvas edge-to-edge. Strict front orthographic elevation, no perspective, no visible wall ends or roof plane, no background, border or caption. Flat uniform shadowless illumination; fine painted material variation, no directional lighting, cast shadows or ambient-occlusion halos. Kept: intact masonry/cladding, working windows, only light dust; no peeling, rust, graffiti, ruin, vivid red/pink or saturated accents. Glass subdued blue-grey, unlit. No people, vegetation, vehicles, readable text, letters or emblems. No grid overlay. Muted palette compatible with the supplied approved tower reference. Muted tan/buff brick with restrained narrow brick pilasters, slim pale concrete horizontal loggia slabs. Residential entrance base overlay, ONE 6m wide x3m high ground-storey bay. Simple grey metal residential door centered under modest concrete canopy, small shallow steps and grey handrail; brick at sides, windows only if space permits. Horizontal edges continue same material and plinth as shop bay. No emblems, lettering or shopfront. CRITICAL COMPOSITION: This is a SINGLE MATERIAL MODULE, NOT a whole building elevation or reference sheet. Show ONLY ONE RESIDENTIAL ENTRANCE BAY, one storey high, approximately twice as wide as tall. Only brick wall, one door, low canopy and small entry steps. NO apartments above it, no upper floors, no full tower.
+```
+
+#### tower_crown_e1 — crown_e1_v2.png
+
+Input: text only, without a building reference to avoid whole-building compositions.
+
+```text
+Use case: stylized-concept. Asset type: production hand-painted facade ALBEDO texture for an orthographic Godot strategy map of a functioning provincial post-Soviet city, August 1997. Generate ONE image, exact 2:1 aspect ratio, preferably 2048 by 1024 pixels. Surface fills canvas edge-to-edge. Strict front orthographic elevation, no perspective, no visible wall ends or roof plane, no background, border or caption. Flat uniform shadowless illumination; fine painted material variation, no directional lighting, cast shadows or ambient-occlusion halos. Kept: intact masonry/cladding, working windows, only light dust; no peeling, rust, graffiti, ruin, vivid red/pink or saturated accents. Glass subdued blue-grey, unlit. No people, vegetation, vehicles, readable text, letters or emblems. No grid overlay. Muted palette compatible with the supplied approved tower reference. Muted tan/buff brick with restrained narrow brick pilasters, slim pale concrete horizontal loggia slabs. Crown module ONE 6m wide x3m high top storey (two modules cover a 12m strip, preserving the mandatory 2:1 canvas). Top-storey crown: two restrained tan-brick vertical pilasters extend above parapet with a stepped silhouette; keep the silhouette painted within the wall panel, no transparent background or sky. One row of uppermost windows or glazed loggia bays. Horizontal repetition must join exactly; masonry at lower edge continues the ordinary wall. No ground or entrances. CRITICAL COMPOSITION: This is a SINGLE MATERIAL MODULE, NOT a whole building elevation or reference sheet. Show ONLY ONE TOP STOREY with ONE horizontal window row and the parapet above it; six metres wide by three metres high. At most two apartment windows and one narrow brick pilaster, no lower storeys. No commercial floor. A very close-up wall patch, not a tower.
+```
+
+#### tower_shop_e2 — shop_e2_v2.png
+
+Input: text only, without a building reference to avoid whole-building compositions.
+
+```text
+Use case: stylized-concept. Asset type: production hand-painted facade ALBEDO texture for an orthographic Godot strategy map of a functioning provincial post-Soviet city, August 1997. Generate ONE image, exact 2:1 aspect ratio, preferably 2048 by 1024 pixels. Surface fills canvas edge-to-edge. Strict front orthographic elevation, no perspective, no visible wall ends or roof plane, no background, border or caption. Flat uniform shadowless illumination; fine painted material variation, no directional lighting, cast shadows or ambient-occlusion halos. Kept: intact masonry/cladding, working windows, only light dust; no peeling, rust, graffiti, ruin, vivid red/pink or saturated accents. Glass subdued blue-grey, unlit. No people, vegetation, vehicles, readable text, letters or emblems. No grid overlay. Muted palette compatible with the supplied approved tower reference. Pale warm ivory brick, light grey concrete balcony slabs and subdued grey metal. Ground-floor commercial overlay, ONE 6m wide x3m high bay, grey-blue shopfront glazing, slender grey metal mullions, modest recessed glazed entry at right, blank shallow sign panel above. Bottom plinth exactly aligned with adjacent entrance bay. No lettering. Horizontal edges must join plain brick at same vertical heights. CRITICAL COMPOSITION: This is a SINGLE MATERIAL MODULE, NOT a whole building elevation or reference sheet. Show ONLY ONE GROUND-FLOOR SHOP BAY, one storey high, approximately twice as wide as tall. No upper apartment floors, no roof or whole tower. Brick margins, blank sign fascia, shop window and one modest doorway. NOTHING above the ground-storey fascia.
+```
+
+#### tower_entrance_e2 — entrance_e2_v2.png
+
+Input: text only, without a building reference to avoid whole-building compositions.
+
+```text
+Use case: stylized-concept. Asset type: production hand-painted facade ALBEDO texture for an orthographic Godot strategy map of a functioning provincial post-Soviet city, August 1997. Generate ONE image, exact 2:1 aspect ratio, preferably 2048 by 1024 pixels. Surface fills canvas edge-to-edge. Strict front orthographic elevation, no perspective, no visible wall ends or roof plane, no background, border or caption. Flat uniform shadowless illumination; fine painted material variation, no directional lighting, cast shadows or ambient-occlusion halos. Kept: intact masonry/cladding, working windows, only light dust; no peeling, rust, graffiti, ruin, vivid red/pink or saturated accents. Glass subdued blue-grey, unlit. No people, vegetation, vehicles, readable text, letters or emblems. No grid overlay. Muted palette compatible with the supplied approved tower reference. Pale warm ivory brick, light grey concrete balcony slabs and subdued grey metal. Residential entrance base overlay, ONE 6m wide x3m high ground-storey bay. Simple grey metal residential door centered under modest concrete canopy, small shallow steps and grey handrail; brick at sides, windows only if space permits. Horizontal edges continue same material and plinth as shop bay. No emblems, lettering or shopfront. CRITICAL COMPOSITION: This is a SINGLE MATERIAL MODULE, NOT a whole building elevation or reference sheet. Show ONLY ONE RESIDENTIAL ENTRANCE BAY, one storey high, approximately twice as wide as tall. Only brick wall, one door, low canopy and small entry steps. NO apartments above it, no upper floors, no full tower.
+```
+
+#### tower_crown_e2 — crown_e2_v2.png
+
+Input: text only, without a building reference to avoid whole-building compositions.
+
+```text
+Use case: stylized-concept. Asset type: production hand-painted facade ALBEDO texture for an orthographic Godot strategy map of a functioning provincial post-Soviet city, August 1997. Generate ONE image, exact 2:1 aspect ratio, preferably 2048 by 1024 pixels. Surface fills canvas edge-to-edge. Strict front orthographic elevation, no perspective, no visible wall ends or roof plane, no background, border or caption. Flat uniform shadowless illumination; fine painted material variation, no directional lighting, cast shadows or ambient-occlusion halos. Kept: intact masonry/cladding, working windows, only light dust; no peeling, rust, graffiti, ruin, vivid red/pink or saturated accents. Glass subdued blue-grey, unlit. No people, vegetation, vehicles, readable text, letters or emblems. No grid overlay. Muted palette compatible with the supplied approved tower reference. Pale warm ivory brick, light grey concrete balcony slabs and subdued grey metal. Crown module ONE 6m wide x3m high top storey (two modules cover a 12m strip, preserving the mandatory 2:1 canvas). Top-storey parapet piece: flat restrained ivory brick parapet and a single row of windows with ordinary balcony fronts; NO stepped crown or tall pilasters. Horizontal repetition must join exactly; masonry at lower edge continues the ordinary wall. No ground or entrances. CRITICAL COMPOSITION: This is a SINGLE MATERIAL MODULE, NOT a whole building elevation or reference sheet. Show ONLY ONE TOP STOREY with ONE horizontal window row and the parapet above it; six metres wide by three metres high. At most two apartment windows and one narrow brick pilaster, no lower storeys. No commercial floor. A very close-up wall patch, not a tower.
+```
+
+#### tower_roof_e2 — roof_e2_v2.png
+
+Input: text only, without a building reference to avoid whole-building compositions.
+
+```text
+Use case: stylized-concept. Asset type: production hand-painted facade ALBEDO texture for an orthographic Godot strategy map of a functioning provincial post-Soviet city, August 1997. Generate ONE image, exact 2:1 aspect ratio, preferably 2048 by 1024 pixels. Surface fills canvas edge-to-edge. Strict front orthographic elevation, no perspective, no visible wall ends or roof plane, no background, border or caption. Flat uniform shadowless illumination; fine painted material variation, no directional lighting, cast shadows or ambient-occlusion halos. Kept: intact masonry/cladding, working windows, only light dust; no peeling, rust, graffiti, ruin, vivid red/pink or saturated accents. Glass subdued blue-grey, unlit. No people, vegetation, vehicles, readable text, letters or emblems. No grid overlay. Muted palette compatible with the supplied approved tower reference. Pale warm ivory brick, light grey concrete balcony slabs and subdued grey metal. EXCEPTION TO ELEVATION: perfectly top-down orthographic seamless 12m x6m flat tar roof surface, periodic BOTH axes. Dark neutral grey tar felt with fine seams and a few small subtle repairs, uniform detail, no skylights or large roof equipment, no parapet, shadow, perspective or visible sides. No windows. CRITICAL COMPOSITION: This is a SINGLE MATERIAL MODULE, NOT a whole building elevation or reference sheet. EVERY PIXEL is horizontal dark tar roofing. NO facades, balconies, windows, buildings, horizons, walls or perspective. Seamless top-down tar material only.
+```
+
+#### tower_long_e1 — long_e1_v2.png
+
+Input: `long_e1_v1.png`.
+
+```text
+Use case: precise-object-edit. Change ONLY the contents and small household details of residential windows and balcony glazing. Give individual homes varied curtains: some plain ivory sheer, some muted sage or dusty-blue fabric, some tiny faded floral patterns, some half-open asymmetrical curtains, and some windows with no curtains. Add a few modest small terracotta/grey plant pots with green leaves behind glass, unevenly distributed in less than 10% of windows. Modest individual mismatched balcony glazing in a few bays. Preserve all original floor counts, window sizes/positions, wall materials, grid lines, surface colors, facade boundaries and roof bands EXACTLY. No graffiti, ruin, wall clutter, satellite dishes, modern air-conditioning units, text or bright accents. Do not add floors or crop window rows. Preserve seamless repeat boundaries; edge pixels must remain unchanged. Strict front-on flat albedo, not a building rendering. Output a 2:1 surface texture, exactly two residential storeys. No doors, shops, roofline or cornice.
+```
+
+#### tower_long_e2 — long_e2_v2.png
+
+Input: `long_e2_v1.png`.
+
+```text
+Use case: precise-object-edit. Change ONLY the contents and small household details of residential windows and balcony glazing. Give individual homes varied curtains: some plain ivory sheer, some muted sage or dusty-blue fabric, some tiny faded floral patterns, some half-open asymmetrical curtains, and some windows with no curtains. Add a few modest small terracotta/grey plant pots with green leaves behind glass, unevenly distributed in less than 10% of windows. Modest individual mismatched balcony glazing in a few bays. Preserve all original floor counts, window sizes/positions, wall materials, grid lines, surface colors, facade boundaries and roof bands EXACTLY. No graffiti, ruin, wall clutter, satellite dishes, modern air-conditioning units, text or bright accents. Do not add floors or crop window rows. Preserve seamless repeat boundaries; edge pixels must remain unchanged. Strict front-on flat albedo, not a building rendering. Output a 2:1 surface texture, exactly two residential storeys. No doors, shops, roofline or cornice.
+```
+
+#### panel_lived_5 — panel_5_v1.png
+
+Input: `facade_panel_late_5storey.png`.
+
+```text
+Use case: precise-object-edit. Change ONLY the contents and small household details of residential windows and balcony glazing. Give individual homes varied curtains: some plain ivory sheer, some muted sage or dusty-blue fabric, some tiny faded floral patterns, some half-open asymmetrical curtains, and some windows with no curtains. Add a few modest small terracotta/grey plant pots with green leaves behind glass, unevenly distributed in less than 10% of windows. Modest individual mismatched balcony glazing in a few bays. Preserve all original floor counts, window sizes/positions, wall materials, grid lines, surface colors, facade boundaries and roof bands EXACTLY. No graffiti, ruin, wall clutter, satellite dishes, modern air-conditioning units, text or bright accents. Do not add floors or crop window rows. Preserve seamless repeat boundaries; edge pixels must remain unchanged. Strict front-on flat albedo, not a building rendering. This existing panel facade has EXACTLY 5 residential storeys; keep that count unchanged. This is a residential wall tile, not a freestanding building. Output 2:1 aspect ratio.
+```
+
+#### panel_lived_9 — panel_9_v1.png
+
+Input: `facade_panel_late_9storey.png`.
+
+```text
+Use case: precise-object-edit. Change ONLY the contents and small household details of residential windows and balcony glazing. Give individual homes varied curtains: some plain ivory sheer, some muted sage or dusty-blue fabric, some tiny faded floral patterns, some half-open asymmetrical curtains, and some windows with no curtains. Add a few modest small terracotta/grey plant pots with green leaves behind glass, unevenly distributed in less than 10% of windows. Modest individual mismatched balcony glazing in a few bays. Preserve all original floor counts, window sizes/positions, wall materials, grid lines, surface colors, facade boundaries and roof bands EXACTLY. No graffiti, ruin, wall clutter, satellite dishes, modern air-conditioning units, text or bright accents. Do not add floors or crop window rows. Preserve seamless repeat boundaries; edge pixels must remain unchanged. Strict front-on flat albedo, not a building rendering. This existing panel facade has EXACTLY 9 residential storeys; keep that count unchanged. This is a residential wall tile, not a freestanding building. Output 2:1 aspect ratio.
+```
+
+#### tower_end_e1 — end_e1_v2.png
+
+Input: `end_e1_v1.png`.
+
+```text
+Use case: precise-object-edit. Correct this TWO-storey residential wall texture so it tiles seamlessly VERTICALLY and horizontally. Keep exactly TWO rows of windows and the same architecture, masonry colors, pilasters and window dimensions. CRITICAL: the first and last pixel rows must have identical masonry/pilaster rhythm and brightness, with NO sill or balcony slab touching either boundary. Window centers at 25% and 75% image height; openings entirely within 12-40% and 62-90% bands. Leave identical plain masonry/pilaster strips at the top and bottom. Left and right edges must continue the same uninterrupted masonry. No cornice, roofline, plinth or new floors. Preserve 2:1 aspect ratio. Add varied subtle ivory/sage/grey-blue curtains in selected windows and a few tiny plant pots behind glass; some curtains open, some closed, no repetitive pattern. Flat even ALBEDO lighting, no shadows. No whole building. Surface only, exact two storeys of 3m each on a 12m x6m repeat.
+```
+
+### Final crown and civic join corrections
+
+Crown v3 fills the generated white exterior strip with continuous brick; rooftop pilasters are authored as geometry after the user requested roof dressing.
+
+```text
+Use case: precise-object-edit. Change ONLY the white exterior strip along the top edge of this single-storey tan-brick facade module. Fill ALL white/exterior pixels above and between the parapet pilasters with the SAME continuous tan-brick material; every pixel must be opaque building wall, not white sky or empty background. Keep the two stepped pilaster motifs legible as masonry relief/color bands against that continuous brick wall. Preserve the one row of windows, wall color, pilaster positions, lower edge and horizontal join rhythm exactly. Do not add floor rows. Flat orthographic albedo, 2:1 canvas, one 6m x3m top-storey wall module, no sky, no white blank region, no ground, no surrounding building.
+```
+
+#### police_new_wing v2
+
+Input: `police_new_center_v1.png`; output original: `art/source_images/d4_buildings/police_new_wing_v2.png`.
+
+```text
+Use case: precise-object-edit. This is the approved FRONT CENTRE facade texture of a civic building. Derive its repeating WING texture by removing ONLY its main entrance details. Replace the ground-floor door, canopy and plaque with ordinary institutional windows matching the existing ground-floor window bays. CRITICAL preserve ALL other pixels and the original floor heights, window size, cornice, cladding color, plinth and horizontal fascia positions. In particular, the full left and right 10% strips must remain unchanged so this wing joins the original centre. Do not redesign or recolor the building; do not shift any floor lines. No doors, ramps, canopies, emblems or text remain. Keep original 2:1 aspect ratio, straight-on flat diffuse albedo, edge-to-edge wall surface only. Left and right edges must repeat smoothly.
+```
+
+#### polyclinic_new_wing v2
+
+Input: `polyclinic_new_center_v1.png`; output original: `art/source_images/d4_buildings/polyclinic_new_wing_v2.png`.
+
+```text
+Use case: precise-object-edit. This is the approved FRONT CENTRE facade texture of a civic building. Derive its repeating WING texture by removing ONLY its main entrance details. Replace only the ground-floor entry, canopy, steps and ramp with plain ivory cladding, sage-grey band and ordinary windows matching adjacent ground-floor bays. CRITICAL preserve ALL other pixels and the original floor heights, window size, cornice, cladding color, plinth and horizontal fascia positions. In particular, the full left and right 10% strips must remain unchanged so this wing joins the original centre. Do not redesign or recolor the building; do not shift any floor lines. No doors, ramps, canopies, emblems or text remain. Keep original 2:1 aspect ratio, straight-on flat diffuse albedo, edge-to-edge wall surface only. Left and right edges must repeat smoothly.
+```
+
+#### department_store_wing v2
+
+Input: `department_store_center_v1.png`; output original: `art/source_images/d4_buildings/department_store_wing_v2.png`.
+
+```text
+Use case: precise-object-edit. This is the approved FRONT CENTRE facade texture of a civic building. Derive its repeating WING texture by removing ONLY its main entrance details. Replace only the recessed entrance door with uninterrupted shop display glazing and low plinth matching the adjacent display windows. Leave the upper windows, blank fascia and ceramic bands exactly in place. CRITICAL preserve ALL other pixels and the original floor heights, window size, cornice, cladding color, plinth and horizontal fascia positions. In particular, the full left and right 10% strips must remain unchanged so this wing joins the original centre. Do not redesign or recolor the building; do not shift any floor lines. No doors, ramps, canopies, emblems or text remain. Keep original 2:1 aspect ratio, straight-on flat diffuse albedo, edge-to-edge wall surface only. Left and right edges must repeat smoothly.
+```
+
+#### tower_long_e2 — long_e2_v3.png
+
+Input: `long_e2_v1.png`.
+
+```text
+Use case: precise-object-edit. Correct this TWO-storey residential wall texture so it tiles seamlessly VERTICALLY and horizontally. Keep exactly TWO rows of windows and the same architecture, masonry colors, pilasters and window dimensions. CRITICAL: the first and last pixel rows must have identical masonry/pilaster rhythm and brightness, with NO sill or balcony slab touching either boundary. Window centers at 25% and 75% image height; openings entirely within 12-40% and 62-90% bands. Leave identical plain masonry/pilaster strips at the top and bottom. Left and right edges must continue the same uninterrupted masonry. No cornice, roofline, plinth or new floors. Preserve 2:1 aspect ratio. Add varied subtle ivory/sage/grey-blue curtains in selected windows and a few tiny plant pots behind glass; some curtains open, some closed, no repetitive pattern. Flat even ALBEDO lighting, no shadows. No whole building. Surface only, exact two storeys of 3m each on a 12m x6m repeat.
+```
