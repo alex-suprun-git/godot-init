@@ -6,9 +6,9 @@ extends RefCounted
 const HOUSING_SPACING := 0.88
 
 const LOTS := {
-	"housing_reserve_w": {"type": "R", "rect": Rect2(-440, -70, 44, 365), "content": "housing_reserve", "condition": "kept", "facing": "e"},
+	"housing_reserve_w": {"type": "R", "rect": Rect2(-472.5, -70, 76.5, 365), "content": "housing_reserve", "condition": "kept", "facing": "e"},
 	"housing_reserve_s": {"type": "R", "rect": Rect2(-390, 261, 365, 34), "content": "housing_reserve", "condition": "kept", "facing": "n"},
-	"forest_clearing": {"type": "N", "rect": Rect2(-537, 108, 28, 24), "content": "forest_clearing", "condition": "kept", "facing": "e"},
+	"forest_clearing": {"type": "N", "rect": Rect2(-567, 108, 28, 24), "content": "forest_clearing", "condition": "kept", "facing": "e"},
 	"pond_bank": {"type": "N", "rect": Rect2(265, -20, 24, 10), "content": "pond_bank", "condition": "kept", "facing": "s"},
 	"atp": {"type": "X", "rect": Rect2(-430, -320, 140, 120), "content": "atp", "condition": "worked", "facing": "s"},
 	"truck_stop": {"type": "X", "rect": Rect2(-280, -320, 140, 120), "content": "truck_stop", "condition": "worked", "facing": "s"},
@@ -77,14 +77,15 @@ const LOTS := {
 const SIDEWALK_WIDTH := 2.5
 
 const ROADS := [
-	# "speed" scales how fast ambient cars drive on a road (default 1.0).
-	{"id": "highway", "rect": Rect2(-450, -197.5, 890, 20), "kind": "asphalt", "walk": 0.0, "look": "highway", "speed": 2.0},
-	{"id": "north_street", "rect": Rect2(-450, -90, 890, 10), "kind": "asphalt"},
-	{"id": "south_street", "rect": Rect2(-450, 300, 890, 10), "kind": "asphalt"},
-	{"id": "axis", "rect": Rect2(-17, -330, 24, 642), "kind": "asphalt", "median": 4.0},
+	# "speed" scales car speed (default 1.0); courtyard traffic is opt-in and passenger-only.
+	{"id": "west_street", "rect": Rect2(-485, -85, 10, 390), "kind": "asphalt"},
+	{"id": "highway", "rect": Rect2(-450, -197.5, 890, 20), "kind": "asphalt", "walk": 0.0, "look": "highway", "speed": 2.0, "lanes_per_direction": 2},
+	{"id": "north_street", "rect": Rect2(-500, -90, 940, 10), "kind": "asphalt"},
+	{"id": "south_street", "rect": Rect2(-500, 300, 940, 10), "kind": "asphalt"},
+	{"id": "axis", "rect": Rect2(-17, -330, 24, 642), "kind": "asphalt", "median": 4.0, "lanes_per_direction": 2},
 	{"id": "village_street", "rect": Rect2(140, -80, 10, 380), "kind": "asphalt"},
-	{"id": "housing_cross_path", "rect": Rect2(-398.4, 85.2, 381.4, 4), "kind": "yard"}, # ends at the axis edge (x -17): a gap lets the graph miss the junction
-	{"id": "housing_spine", "rect": Rect2(-202.4, -80, 4, 380), "kind": "yard"},
+	{"id": "housing_cross_path", "rect": Rect2(-480, 85.2, 463, 4), "kind": "yard", "traffic": "courtyard", "speed": 0.5, "vehicles": ["car"]}, # joins the axis edge; traffic uses the graph connection to its centreline
+	{"id": "housing_spine", "rect": Rect2(-202.4, -80, 4, 380), "kind": "yard", "traffic": "courtyard", "speed": 0.5, "vehicles": ["car"]},
 	# Civic square / southern tower connection, and the lane between the two slabs.
 	{"id": "square_link", "rect": Rect2(7, 136, 133, 4), "kind": "yard"},
 	{"id": "civic_lane", "rect": Rect2(7, 209, 133, 5), "kind": "asphalt", "walk": 1.5},

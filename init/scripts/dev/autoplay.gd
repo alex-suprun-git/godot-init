@@ -16,6 +16,7 @@ const SCENARIOS := {
 	"traffic-lights": "_run_traffic_light_review",
 	"render-cost": "_run_render_cost",
 	"field": "_run_field_review",
+	"traffic": "_run_traffic_review",
 }
 const FULL_RUN := ["office", "map", "week"]
 
@@ -441,3 +442,20 @@ func _run_field_review() -> void:
 	main.map._debug_hour = 12.0
 	await _map_shot("field_context", Vector2(205, -132), 460.0)
 	await _map_shot("field_roadside", Vector2(205, -132), 180.0)
+
+
+func _run_traffic_review() -> void:
+	_dismiss_briefing()
+	main.map._debug_hour = 12.0
+	await _map_shot("traffic_west_reserve", Vector2(-420, 110), 580.0)
+	await _wait(2.0)
+	await _map_shot("traffic_highway_border", Vector2(-5, -205), 220.0)
+	# Keep the camera on a real courtyard car, without adding review-only vehicles.
+	for agent in main.map._ambient.agents:
+		if agent.get("stream", "") != "courtyard":
+			continue
+		for i in 600:
+			if agent["graph"].edges[agent["edge"]]["kind"] == "yard":
+				await _map_shot("traffic_courtyard", agent["pos"], 100.0)
+				return
+			await _wait(0.1)
