@@ -17,8 +17,12 @@ const VOLGA_SOURCE_LENGTH := 4.905458 # Measured from volga_gaz24.glb.
 const LADA_MAP_LENGTH := 4.3
 # Approved map presentation: freight trucks are uniformly 20% smaller.
 const TRUCK_VISUAL_SCALE := 0.80
+# Both ZIL bodies are 5% larger than the previously reviewed truck scale.
+const ZIL_VISUAL_ADJUSTMENT := 1.05
 # Both bus variants share the requested 20% presentation reduction.
 const BUS_VISUAL_SCALE := 0.80
+# Approved map presentation: all Volga variants are uniformly 10% smaller.
+const VOLGA_VISUAL_SCALE := 0.90
 const VOLGA_TRAFFIC_SHARE := 1.0 / 15.0
 const VOLGA_PAINT_SHADER := preload("res://assets/shaders/vehicle_paint.gdshader")
 # Curated period-inspired palette; red/pink and vivid colours excluded by art direction.
@@ -123,8 +127,12 @@ static func create(model_id: String, at: Vector3, length: float, axis: String, p
 	vehicle.scale = Vector3.ONE * (length / _source_length(model_id))
 	if model_id in ["kamaz_semi", "zil_flatbed", "zil_food"]:
 		vehicle.scale *= TRUCK_VISUAL_SCALE
+		if model_id in ["zil_flatbed", "zil_food"]:
+			vehicle.scale *= ZIL_VISUAL_ADJUSTMENT
 	elif BUS_LENGTHS.has(model_id):
 		vehicle.scale *= BUS_VISUAL_SCALE
+	elif model_id == "volga" and has_volga_model():
+		vehicle.scale *= VOLGA_VISUAL_SCALE
 	if model_id == "volga" and has_volga_model():
 		if paint >= 0:
 			_repaint_volga(vehicle, _weighted_paint(paint, VOLGA_PAINT_WEIGHTS, "volga-paint"))
