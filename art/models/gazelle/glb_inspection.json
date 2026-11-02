@@ -1,0 +1,42 @@
+{
+  "file": "gazelle_2705.glb",
+  "scenes": 1,
+  "meshes": 1,
+  "triangles": 13300,
+  "materials": [
+    "Gazelle paint portable",
+    "Gazelle glass portable",
+    "Gazelle fittings portable"
+  ],
+  "images": 1,
+  "embedded_images": true,
+  "forward": "Godot +Z",
+  "source_dimensions_xyz": [
+    2.484999895095825,
+    5.54800009727478,
+    2.2850000893275997
+  ],
+  "wheelbase_m": 2.9,
+  "ground_z": -3.4969109830029765e-09,
+  "presentation_scale": 0.831725,
+  "glb_dimensions_godot_xyz_m": [
+    2.0668365955352783,
+    1.9004917173860074,
+    4.614410400390625
+  ],
+  "glb_ground_y_m": -2.908468355045102e-09,
+  "paint_variants": [
+    {
+      "file": "gazelle_2705_blue.glb",
+      "paint_srgb": "617F98",
+      "triangles": 13300,
+      "embedded_images": true
+    },
+    {
+      "file": "gazelle_2705_sand.glb",
+      "paint_srgb": "B7A989",
+      "triangles": 13300,
+      "embedded_images": true
+    }
+  ]
+}
