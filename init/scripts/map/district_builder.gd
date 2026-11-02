@@ -5,6 +5,7 @@ extends RefCounted
 const Layout = preload("res://scripts/data/district_layout.gd")
 const Catalog = preload("res://scripts/data/building_catalog.gd")
 const Boundaries = preload("res://scripts/data/map_boundaries.gd")
+const RailwayRoute = preload("res://scripts/map/railway_route.gd")
 const OfficeTheme = preload("res://scripts/ui/office_theme.gd")
 const PitchedRoof = preload("res://scripts/map/pitched_roof.gd")
 
@@ -107,7 +108,8 @@ func _build_ground() -> void:
 		map._occupy(rect.get_center(), rect.size)
 	for bridge in Layout.BRIDGES:
 		_build_bridge(bridge)
-	for line in Layout.RAILS:
+	for track in range(Layout.RAILS.size()):
+		var line: Array = RailwayRoute.through_line(track) if track < 2 else Layout.RAILS[track]
 		for i in line.size() - 1:
 			_rail_segment(line[i], line[i + 1])
 	for extension in Boundaries.rail_continuations():
@@ -699,10 +701,7 @@ func _embankment_section(cx: float, top: float, h: float) -> Array[Vector2]:
 
 
 func _embankment_height(z: float) -> float:
-	var e: Dictionary = Layout.EMBANKMENT
-	var from_ramp: float = e.get("ramp_from", e["ramp"])
-	var up := (z - float(e["from"])) / from_ramp if from_ramp > 0.0 else INF
-	return float(e["height"]) * clampf(minf(up, (float(e["to"]) - z) / float(e["ramp"])), 0.0, 1.0)
+	return Layout.embankment_height(z)
 
 
 # A grassed railway embankment with ramps at both ends. Where a road crosses it the
@@ -737,7 +736,7 @@ func _build_embankment() -> void:
 	for span in spans:
 		# Break the span where a ramp meets the plateau, so heights stay straight lines.
 		var marks: Array[float] = [span.x]
-		for z in [float(e["from"]) + float(e.get("ramp_from", e["ramp"])), float(e["to"]) - float(e["ramp"])]:
+		for z in [float(e["from"]) + float(e.get("ramp_from", e["ramp"])), Layout.embankment_south_ramp_start()]:
 			if z > span.x and z < span.y:
 				marks.append(z)
 		marks.append(span.y)
@@ -990,7 +989,8 @@ func _clear(rect: Rect2) -> bool:
 	for road in Layout.ROADS:
 		if rect.intersects(road["rect"].grow(0.5)):
 			return false
-	for line in Layout.RAILS:
+	for track in range(Layout.RAILS.size()):
+		var line: Array = RailwayRoute.through_line(track) if track < 2 else Layout.RAILS[track]
 		for i in line.size() - 1:
 			var corridor := Rect2(line[i], Vector2.ZERO).expand(line[i + 1]).grow(2.5)
 			if rect.intersects(corridor):
@@ -1092,11 +1092,9 @@ func _market(lot: Dictionary) -> void:
 
 
 func _build_train_stock() -> void:
-	var train := preload("res://scripts/map/er2_train.gd").create()
-	var train_z: float = Layout.COMMUTER_TRAIN["center_z"]
-	var track_x: float = Layout.EMBANKMENT["tracks"][Layout.COMMUTER_TRAIN["track_index"]]
-	train.position = Vector3(track_x, _embankment_height(train_z) + 0.04, train_z)
-	map.add_child(train)
+	var traffic := preload("res://scripts/map/railway_traffic.gd").new()
+	traffic.name = "RailwayTraffic"
+	map.add_child(traffic)
 	var stock := _texture("res://assets/sprites/train_wagons_v2.png") # train_commuter.png
 	# The station tracks stay clear; freight stock remains on the port siding.
 	var siding: Array = Layout.RAILS[2]

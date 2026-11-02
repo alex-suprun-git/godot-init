@@ -17,6 +17,7 @@ const SCENARIOS := {
 	"render-cost": "_run_render_cost",
 	"field": "_run_field_review",
 	"traffic": "_run_traffic_review",
+	"trains": "_run_train_review",
 }
 const FULL_RUN := ["office", "map", "week"]
 
@@ -78,6 +79,53 @@ func _run(scenarios: Array) -> void:
 func _dismiss_briefing() -> void:
 	main.hud._continue_to_tasks()
 	main.hud._close_week_panel()
+
+
+func _run_train_review() -> void:
+	_dismiss_briefing()
+	main.map._debug_hour = 12.0
+	var traffic = main.map.get_node("RailwayTraffic")
+	traffic.set_process(false)
+	var trace: Array = [traffic.snapshot()]
+	var previous_state := JSON.stringify([trace[0]["active_indices"], trace[0]["departures"]])
+	var captured: Dictionary = {}
+	await _map_shot("trains_er2_inner_track", Vector2(410, 15), 125.0)
+	captured["er2"] = true
+	# Fast-forward the real scheduler between review frames, keeping normal speeds/gaps.
+	for tick in range(2400):
+		traffic.advance(0.5)
+		var state: Dictionary = traffic.snapshot()
+		var signature := JSON.stringify([state["active_indices"], state["departures"]])
+		if signature != previous_state:
+			trace.append(state)
+			print("Rail traffic: ", JSON.stringify(state))
+			previous_state = signature
+		for active in state["active_indices"]:
+			var model: Node3D = traffic.get_child(active)
+			var leading: Vector3 = model.get_child(0).position
+			var direction: int = state["trains"][active]["direction"]
+			if active == 0 and direction < 0 and leading.z > 0 and leading.z < 20 and not captured.has("er2"):
+				captured["er2"] = true
+				await _map_shot("trains_er2_inner_track", Vector2(410, 15), 125.0)
+			elif active == 1 and direction > 0 and leading.z < 370 and leading.z > 345 and leading.x > 419 and not captured.has("bend"):
+				captured["bend"] = true
+				await _map_shot("trains_freight_bend", Vector2(390, 375), 175.0)
+			elif active == 1 and direction > 0 and leading.z < -340 and leading.z > -350 and not captured.has("haze"):
+				captured["haze"] = true
+				await _map_shot("trains_freight_haze", Vector2(415, -280), 210.0)
+		if state["active_indices"].size() == 2 and not captured.has("passing"):
+			var commuter: Vector3 = traffic.get_child(0).get_child(0).position
+			var freight: Vector3 = traffic.get_child(1).get_child(0).position
+			if commuter.x > 405 and freight.x > 405 and commuter.z > -330 and commuter.z < 200 and commuter.distance_to(freight) < 60:
+				captured["passing"] = true
+				await _map_shot("trains_passing", Vector2(415, (commuter.z + freight.z) / 2.0), 210.0)
+		if state["trains"][0]["completed"] >= 2 and state["trains"][1]["completed"] >= 2:
+			break
+	if shots_dir != "":
+		var file := FileAccess.open(shots_dir.path_join("trains-review.json"), FileAccess.WRITE)
+		file.store_string(JSON.stringify({"transitions": trace, "captures": captured}, "\t"))
+	traffic.set_process(true)
+	await _wait(2.0)
 
 
 func _run_office() -> void:

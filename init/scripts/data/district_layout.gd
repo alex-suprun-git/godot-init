@@ -124,8 +124,9 @@ const EMBANKMENT := {
 	"gaps": {-187.5: 28.0},
 }
 const SIDING_RAMP := {"z": -245.0, "x_from": 315.0, "x_to": 402.0, "height": 6.0, "top": 3.5}
-# Static ER2 on the outer eastern track, beside the northern village garden.
-const COMMUTER_TRAIN := {"track_index": 1, "center_z": 15.0}
+# Each ambient train keeps its own through track in both travel directions.
+const COMMUTER_TRAIN := {"track_index": 0}
+const FREIGHT_TRAIN := {"track_index": 1}
 const WATER := Rect2(-450, -440, 900, 110)
 const FOREIGN_BANK := Rect2(-450, -500, 900, 60)
 const BRIDGES := [
@@ -360,6 +361,25 @@ static func crosswalks() -> Array[Dictionary]:
 					"road_id": road["id"], "joining_road_id": other["id"],
 					"at": at, "width": half * 2.0, "along_z": not horizontal, "a": at - across, "b": at + across})
 	return result
+
+
+# A tunnel deck stays level at full clearance; its landward approach starts after it.
+# Shared by the earth/track mesh and moving-car height samples.
+static func embankment_south_ramp_start() -> float:
+	var start := float(EMBANKMENT["to"]) - float(EMBANKMENT["ramp"])
+	var gaps: Dictionary = EMBANKMENT.get("gaps", {})
+	for tunnel in EMBANKMENT["tunnels"]:
+		var half: float = float(gaps.get(tunnel, EMBANKMENT["gap"])) / 2.0
+		if float(tunnel) - half < float(EMBANKMENT["to"]):
+			start = maxf(start, float(tunnel) + half)
+	return start
+
+
+static func embankment_height(z: float) -> float:
+	var from_ramp: float = EMBANKMENT.get("ramp_from", EMBANKMENT["ramp"])
+	var up := (z - float(EMBANKMENT["from"])) / from_ramp if from_ramp > 0.0 else INF
+	var down := (float(EMBANKMENT["to"]) - z) / (float(EMBANKMENT["to"]) - embankment_south_ramp_start())
+	return float(EMBANKMENT["height"]) * clampf(minf(up, down), 0.0, 1.0)
 
 
 static func road_by_id(id: String) -> Dictionary:

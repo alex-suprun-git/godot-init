@@ -1,0 +1,37 @@
+{
+  "asset": "init/assets/models/vehicles/m62_locomotive.glb",
+  "blender_xyz_bounds": {
+    "min": [
+      -1.7679903507232666,
+      -9.090896606445312,
+      0.0
+    ],
+    "max": [
+      1.7679903507232666,
+      9.090896606445312,
+      4.493000030517578
+    ]
+  },
+  "length": 18.181793212890625,
+  "width": 3.535980701446533,
+  "height": 4.493000030517578,
+  "triangles": 9632,
+  "mesh_objects": 1,
+  "materials": [
+    "M62 body paint and livery.004",
+    "M62 mechanical trim.004",
+    "M62 opaque glass.004"
+  ],
+  "embedded_images": 0,
+  "gltf_meshes": 1,
+  "gltf_scenes": 1,
+  "gltf_materials": 3,
+  "common_rail_map_factor": 0.9839816933638443,
+  "budget_triangles": 14000,
+  "construction_lwh_m": [
+    17.55,
+    2.95,
+    4.493
+  ],
+  "comparison": "Common ER2 presentation factors; no independent fitting to a platform or car length"
+}
