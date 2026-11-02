@@ -5,10 +5,13 @@ extends EditorPlugin
 # the editor toolbar. The current branch comes from .git/HEAD (cheap, polled);
 # git itself only runs when the list opens or a branch is picked.
 #
-# A switch is refused while tracked files have real changes (line-ending-only
-# changes are ignored), so another session's uncommitted work is never carried
-# or lost. After a switch the editor restarts without saving, so nothing held
-# in memory is written over the new branch's files.
+# Picking a branch first fast-forwards it to its upstream, so the switch lands
+# on what was merged on GitHub, not on a stale local copy. The switch is then
+# refused only for work it would carry over or lose: files whose content
+# differs from both the current and the target branch (line endings ignored).
+# Leftovers that already match the target are reset to it. After a switch the
+# editor restarts without saving, so nothing held in memory is written over the
+# new branch's files.
 
 const REFRESH_SECONDS := 2.0
 
@@ -20,6 +23,9 @@ var _repo_root := ""
 var _head_path := ""
 var _current := ""
 var _target := ""
+# Filled when a branch is picked: leftovers that already match the target.
+var _reset_files := PackedStringArray()
+var _remove_files := PackedStringArray()
 
 
 func _enter_tree() -> void:
@@ -90,24 +96,71 @@ func _on_branch_picked(index: int) -> void:
 	_target = _picker.get_item_text(index)
 	if _target == _current:
 		return
-	var dirty: String = _git(["diff", "HEAD", "--ignore-cr-at-eol", "--name-only"])["output"].strip_edges()
-	if dirty != "":
+	var update_note := _update_from_upstream(_target)
+
+	# Tracked files with real changes, compared with where we are and where we go.
+	var changed := _names(["diff", "HEAD", "--ignore-cr-at-eol", "--name-only"])
+	var differ_from_target := _names(["diff", _target, "--ignore-cr-at-eol", "--name-only"])
+	var blocking := PackedStringArray()
+	_reset_files = PackedStringArray()
+	for path in changed:
+		if path in differ_from_target:
+			blocking.append(path)
+		else:
+			_reset_files.append(path)
+	# Untracked files the target also has: identical ones can go, others block.
+	_remove_files = PackedStringArray()
+	for path in _names(["ls-files", "--others", "--exclude-standard"]):
+		var in_target: String = _git(["rev-parse", "--verify", "--quiet", _target + ":" + path])["output"].strip_edges()
+		if in_target == "":
+			continue
+		if _git(["hash-object", "--", path])["output"].strip_edges() == in_target:
+			_remove_files.append(path)
+		else:
+			blocking.append(path)
+
+	if not blocking.is_empty():
 		_show_current()
-		_notice.dialog_text = "Not switching: these files have uncommitted changes.\nCommit or stash them first (they may belong to another session).\n\n" + dirty
+		_notice.dialog_text = "Not switching: these files have changes that '%s' does not have.\nCommit or stash them first (they may belong to another session).\n\n%s" % [_target, "\n".join(blocking)]
 		_notice.popup_centered()
 		return
-	_confirm.dialog_text = "Switch to '%s'?\nThe editor restarts WITHOUT saving: save open scenes and scripts first." % _target
+	var leftovers := _reset_files.size() + _remove_files.size()
+	_confirm.dialog_text = "Switch to '%s'?%s%s\nThe editor restarts WITHOUT saving: save open scenes and scripts first." % [
+		_target,
+		"\n" + update_note if update_note != "" else "",
+		"\n%d leftover file(s) already match it and are reset." % leftovers if leftovers > 0 else ""]
 	_confirm.popup_centered()
 
 
 func _switch() -> void:
+	if not _reset_files.is_empty():
+		_git(["checkout", "--"] + Array(_reset_files))
+	for path in _remove_files:
+		DirAccess.remove_absolute(_repo_root + "/" + path)
 	var result := _git(["switch", _target], true)
 	if result["code"] != 0:
 		_show_current()
-		_notice.dialog_text = "git switch failed; nothing was changed.\n\n" + result["output"]
+		_notice.dialog_text = "git switch failed; the branch was not changed.\n\n" + result["output"]
 		_notice.popup_centered()
 		return
 	EditorInterface.restart_editor(false)
+
+
+# Fast-forwards a local branch to its upstream without checking it out.
+# Returns a line for the confirm dialog when that did not work.
+func _update_from_upstream(branch: String) -> String:
+	var upstream: String = _git(["rev-parse", "--abbrev-ref", branch + "@{upstream}"])["output"].strip_edges()
+	if upstream == "" or not "/" in upstream:
+		return ""
+	var remote := upstream.get_slice("/", 0)
+	var fetch := _git(["fetch", remote, upstream.trim_prefix(remote + "/") + ":" + branch], true)
+	if fetch["code"] != 0:
+		return "Could not update it from %s (offline or diverged); switching to the local copy." % upstream
+	return ""
+
+
+func _names(arguments: Array) -> PackedStringArray:
+	return _git(arguments)["output"].split("\n", false)
 
 
 # stderr stays out unless asked for: git prints a line-ending warning per file there.
