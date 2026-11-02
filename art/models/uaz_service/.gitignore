@@ -1,0 +1,5 @@
+previews/
+preview_project/.godot/
+preview_project/models/
+*.log
+__pycache__/

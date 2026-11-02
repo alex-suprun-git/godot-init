@@ -1,0 +1,37 @@
+{
+  "file": "uaz_police.glb",
+  "triangles": 10688,
+  "meshes": 5,
+  "nodes": 6,
+  "scenes": 1,
+  "primitives": 7,
+  "materials": [
+    "UAZ_Police fittings.001 portable.003",
+    "UAZ_Police glass.001 portable.003",
+    "UAZ_Police paint.001 portable.003"
+  ],
+  "images": 1,
+  "animations": 0,
+  "cameras": 0,
+  "bounds_min": [
+    -0.9690001010894775,
+    -4.761830751931484e-08,
+    -1.8870000839233398
+  ],
+  "bounds_max": [
+    0.968999981880188,
+    1.9397006034851074,
+    1.887000322341919
+  ],
+  "dimensions_xyz_m": [
+    1.9380000829696655,
+    1.939700651103415,
+    3.774000406265259
+  ],
+  "forward": "+Z",
+  "origin": "ground centre",
+  "palette_texture": "one embedded 64 x 64 nearest-filtered sRGB atlas",
+  "presentation_scale": 0.85,
+  "source_wheelbase_m": 2.3,
+  "wheelbase_m": 1.9549999999999998
+}

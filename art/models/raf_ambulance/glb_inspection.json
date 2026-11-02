@@ -1,0 +1,37 @@
+{
+  "file": "raf_ambulance.glb",
+  "triangles": 9864,
+  "meshes": 5,
+  "nodes": 6,
+  "scenes": 1,
+  "primitives": 7,
+  "materials": [
+    "RAF_Ambulance fittings.001 portable.002",
+    "RAF_Ambulance glass.001 portable.002",
+    "RAF_Ambulance paint.001 portable.002"
+  ],
+  "images": 1,
+  "animations": 0,
+  "cameras": 0,
+  "bounds_min": [
+    -0.9690001010894775,
+    -1.7815986907976367e-08,
+    -2.1547493934631348
+  ],
+  "bounds_max": [
+    0.9690001010894775,
+    1.9380000829696655,
+    2.154750347137451
+  ],
+  "dimensions_xyz_m": [
+    1.938000202178955,
+    1.9380001007856524,
+    4.309499740600586
+  ],
+  "forward": "+Z",
+  "origin": "ground centre",
+  "palette_texture": "one embedded 64 x 64 nearest-filtered sRGB atlas",
+  "presentation_scale": 0.85,
+  "source_wheelbase_m": 2.62,
+  "wheelbase_m": 2.227
+}
