@@ -1,67 +1,43 @@
 ---
 id: car-junction-turns
-status: ready   # ready | in-progress | review | blocked | done
-worker: lead-integrator
-branch: lead/car-junction-turns
+issue: 67
+status: review
+branch: fix/car-junction-turns
 ---
 
-# Smooth ambient car turns at junctions
+# Ambient traffic routes, turns and the western loop
 
-## Goal
+## Agreed scope
 
-Ambient cars currently jerk sideways at junctions: they jump several metres when they change road edge, cut or overshoot corners, and the body turns late. Make turns look like a car following a curve: no teleport, a smooth arc that stays in the right-hand lane, a heading that follows the path, and a short slowdown while turning. This is background scenery; no collisions, right of way or traffic lights.
+The user approved one combined PR on 2026-11-02, explicitly overriding the usual split-by-feature rule and authorizing the PR work. Smooth turns were positively reviewed. Moving cars must remain visible; traffic density now belongs to routes rather than district visibility.
 
-## Cause (diagnosed 2026-11-01, `init/scripts/map/ambient_life.gd`, `_place()`)
+- Highway traffic goes straight through; border traffic connects the bridge head to either highway end in both directions.
+- City traffic circulates on eastern/western loops.
+- A western street joins north and south streets, with the forest moved west and space reserved east of the street for future buildings. No new buildings are included.
+- Courtyard traffic is rare and passenger-only. Explicit courtyard roads use speed 0.5, normal roads 1.0 and the highway 2.0. Other paths remain excluded; rural-road speed can be configured later.
+- After reviewing the initial excessive density, the user requested fewer cars. Final slots: 30 highway, 14 border, 18 city and 4 courtyard, 66 total including gateway legs/waiting. The bus cap remains five.
+- No collisions, yielding, signal phases, bridge crossing, or automated tests.
 
-1. Position is the edge centreline point plus `right(heading) * lateral` (1.5-4 m). When the car moves to the next edge, `right` rotates instantly (up to 90 degrees), so the lane offset jumps by roughly 3-5 m. Only the offset's magnitude is eased (`move_toward(lateral, target, 4 * delta)`), not its direction.
-2. The path is two straight lines meeting at the junction centre: a right turn cuts the inside corner, a left turn swings outside. There is no arc.
-3. `city_map.gd` `_move_ambient` smooths the body with `lerp_angle(rotation.y, atan2(...), delta * 6.0)` while the position has already jumped, so the body lags about 0.2 s and looks snapped.
-4. Speed does not drop for turns.
+## Implementation
 
-## Inputs
+`traffic_flows.gd` owns stream budgets, fleets and named road itineraries. `traffic_routes.gd` resolves each itinerary over actual graph edges, validating connectivity, closed loops, gateway endpoints and vehicle restrictions. `ambient_life.gd` follows directed routes and continuous lane-to-lane Bezier turns by travelled distance, with tangent heading and corner slowdown. Initial open trips are distributed over the graph and gateway legs to avoid a startup surge. Pedestrian visibility rules remain independent; only off-map waiting hides a car.
 
-- `init/scripts/map/ambient_life.gd`: `_step_graph()`, `_place()`, `_place_leg()`, `_wanted_speed()`, `_next_edge()`.
-- `init/scripts/map/city_map.gd`: `_move_ambient()` (rotation smoothing), `_respawn_car()`.
-- `init/scripts/map/road_graph.gd`: edge `half`, node positions; `tasks/map-edges-traffic.md` for the car states (`graph/out/wait/in`) that must keep working.
+`district_layout.gd` adds the western street at x=-480 and extends the two streets to meet it. The west reserve is 76.5 m deep beside the sidewalk. `nature_places.gd` moves the forest/clearing 30 m west; paths and the western haze boundary follow. Housing-spine/cross-street roads explicitly opt into passenger-only courtyard traffic, with lane offsets sized for their 4 m width. Existing road-graph and pedestrian movement implementations are unchanged; new road geometry is derived as usual.
 
-## Constraints
+## Verification and review
 
-- Cars only; pedestrians keep their current movement.
-- Keep the car states, gateway legs, the slot invariant (`graph + out + wait + in = 130`) and the highway/junction speed rules.
-- Keep the right-hand lane offset (`clampf(half * 0.35, 1.5, 4.0)`); an arc must start and end exactly on the lane position of the incoming and outgoing edge, so exits and gateway joins stay continuous.
-- Suggested approach (change it if a simpler one works): when a car reaches the end of an edge, build a short quadratic Bezier from the incoming lane point (a few metres before the node) through the lane-offset corner to the outgoing lane point (a few metres after the node), and advance the car along the arc by length; heading is the arc tangent, so the body rotation needs no lerp (or only a very light one). Straight-through and U-turns at dead ends must stay valid (a U-turn can stay a simple swing or reverse in place; no visible teleport).
-- Scale the car's speed during an arc by turn angle (about 0.5 of its current speed for a 90 degree turn, easing back out afterwards).
-- No automated tests. No commits or pushes.
+- [x] Original turn implementation: inspected right/left/highway turn sequences; the user confirmed the turns look good.
+- [x] Inspected live-game western layout, highway/border traffic and a passenger car entering the courtyard connection. Reviewed the reduced-density highway frame after the user's feedback.
+- [x] Final 480-second runtime observation, fixed 1/60 s step: 66 slots throughout, 56 city laps and 10 courtyard laps, bus count never above five, no unexpected visibility changes or forbidden courtyard vehicles/roads, and no through traffic leaving the highway. Maximum displacement 0.3952 m/frame; excess over the travel budget 0.00109 m; zero motion warnings.
+- [x] `--autoplay --only=traffic,map,week --turbo=10 --traffic-debug --no-log` completed through week two without errors or invariant violations. Turbo displacement is assessed against its longer simulated frame, rather than a fixed 1 m threshold.
+- [x] `git diff --check` passed. No automated tests were added or run. Verification used installed Godot 4.7.2 on Windows.
+- [ ] User's final review of reduced density and precise road/reserve placement.
 
-## Outputs
+Local evidence is ignored scratch content under `C:/Users/alexe/Desktop/Development/godot-init/.local/`: `flows-final-shots/`, `flows-final-visual.log`, `flows-final-measure.log`, and the original `turns-*-strip.jpg` turn sequences. Temporary gameplay measurement drivers stay outside the deliverable diff. PR frames are attachments, never committed.
 
-Lead/integrator edits:
+Worktree project: `C:/Users/alexe/Desktop/Development/godot-init/.local/worktrees/car-junction-turns/init`.
+Open with PowerShell:
 
-- `init/scripts/map/ambient_life.gd`
-- `init/scripts/map/city_map.gd` (only the rotation handling in `_move_ambient` if needed)
-- This brief's Report; frames under `/private/tmp/car-junction-turns-shots/`.
-
-## Acceptance criteria
-
-- [ ] Frames of a right turn, a left turn and a highway-to-axis turn at a large junction (zoom about 60, `--cam=x,z,zoom`), read, show the car on a smooth arc in its lane with the body aligned to its path. Take several frames of one turn, a fraction of a second apart.
-- [ ] A numeric check with `--traffic-debug` (or a temporary dev print, removed afterwards): the maximum frame-to-frame position jump of any car at a junction is below about speed x frame time plus a small tolerance; no jump larger than 1 m for any car in a 120 s run.
-- [ ] Gateway exits and re-entries are still continuous; the slot invariant never breaks; `--autoplay --only=map,week --turbo=10 --traffic-debug` runs with no new errors.
-- [ ] Pedestrians are unchanged.
-
-## Stop and ask
-
-Ask the user if the fix would need real lane or intersection data (a junction registry), or changes to the road graph beyond reading it. Resolve tuning (arc size, turn speed) independently.
-
-## Report
-
-_Filled in after implementation._
-
-- **Status summary:**
-- **Files created or changed:**
-- **Measurements / previews:**
-- **Open questions:**
-- **Requests for the integrator:**
-
-## Review notes
-
-_Filled in by the lead after review._
+```powershell
+& 'C:/Users/alexe/Desktop/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64.exe' --editor --path 'C:/Users/alexe/Desktop/Development/godot-init/.local/worktrees/car-junction-turns/init'
+```

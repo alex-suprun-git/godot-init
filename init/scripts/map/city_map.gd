@@ -1139,10 +1139,9 @@ func _boulevard_median(road: Dictionary) -> void:
 			z += 14.0
 
 
-# Pools: how many are shown depends on district and hour (see AmbientLife), so a pool
-# several times the typical crowd is needed.
+# Walkers use district/hour visibility; car slots follow the authored traffic flows.
 const AMBIENT_WALKERS := 288
-const AMBIENT_CARS := 130
+const AMBIENT_CARS := preload("res://scripts/data/traffic_flows.gd").CAR_COUNT
 
 
 func _build_ambient() -> void:
@@ -1188,7 +1187,7 @@ func _move_ambient(delta: float) -> void:
 			var car: Node3D = agent["visual"]
 			car.visible = agent["visible"]
 			car.position = Vector3(at.x, _ground(at).y + 0.14, at.y)
-			car.rotation.y = lerp_angle(car.rotation.y, atan2(heading.x, heading.y), minf(1.0, delta * 6.0))
+			car.rotation.y = atan2(heading.x, heading.y)
 		else:
 			var sprite: Sprite3D = agent["visual"]
 			sprite.visible = agent["visible"]
@@ -1218,11 +1217,18 @@ func _print_traffic_stats(delta: float) -> void:
 	_traffic_debug_clock = 0.0
 	var states := {"graph": 0, "out": 0, "wait": 0, "in": 0}
 	var cars := 0
+	var streams := {}
+	var buses := 0
 	for agent in _ambient.agents:
 		if agent["is_car"]:
 			cars += 1
+			streams[agent["stream"]] = streams.get(agent["stream"], 0) + 1
+			if agent["class"] == "bus":
+				buses += 1
 			states[agent["state"]] += 1
 	print("traffic: exits ", _ambient.stats["exits"], " arrivals ", _ambient.stats["arrivals"], " states ", states)
+	print("traffic motion: max_step=", _ambient.stats["max_step"], " max_excess=", _ambient.stats["max_excess"], " warnings=", _ambient.stats["motion_warnings"])
+	print("traffic flows: ", streams, " buses=", buses, " completed_loops=", _ambient.stats["loops"])
 	if cars != AMBIENT_CARS or states["graph"] + states["out"] + states["wait"] + states["in"] != AMBIENT_CARS:
 		print("TRAFFIC INVARIANT BROKEN: ", cars, " cars, states ", states)
 

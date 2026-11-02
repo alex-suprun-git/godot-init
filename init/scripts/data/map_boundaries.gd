@@ -5,13 +5,13 @@ extends RefCounted
 const Layout := preload("res://scripts/data/district_layout.gd")
 
 # Everything inside stays clear; haze rises outside it. The west edge is past the forest.
-const INNER := Rect2(-615, -330, 1055, 745) # x -615..440, z -330 (our bank)..415
+const INNER := Rect2(-650, -330, 1090, 745) # x -650..440, z -330 (our bank)..415
 # Fade widths in metres per side: west, north (river mist), east, south.
 const FADE := {"w": 90.0, "n": 35.0, "e": 90.0, "s": 90.0}
 const NOISE_AMP := 18.0 # Metres the noisy edge moves in and out.
 const NOISE_SCALE := 0.012 # 1 / metres.
 const CAR_LENGTH := 10.0
-# The three western roads and two southern rails start here; continuations run to it.
+# Southern rails start here; road continuations use each road's own western end.
 const WEST_ROAD_START_X := -450.0
 const EAST_ROAD_END_X := 440.0
 
@@ -37,9 +37,9 @@ static func road_continuations() -> Array[Dictionary]:
 		var rect: Rect2 = road["rect"]
 		if rect.size.x <= rect.size.y:
 			continue
-		if is_equal_approx(rect.position.x, WEST_ROAD_START_X):
+		if road.get("id", "") in ["highway", "north_street", "south_street"]:
 			var far := west_far_x()
-			result.append({"road": road, "rect": Rect2(far, rect.position.y, WEST_ROAD_START_X - far, rect.size.y)})
+			result.append({"road": road, "rect": Rect2(far, rect.position.y, rect.position.x - far, rect.size.y)})
 		if is_equal_approx(rect.end.x, EAST_ROAD_END_X):
 			result.append({"road": road, "rect": Rect2(EAST_ROAD_END_X, rect.position.y, east_far_x() - EAST_ROAD_END_X, rect.size.y)})
 	return result

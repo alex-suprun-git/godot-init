@@ -60,8 +60,8 @@ func _pond() -> void:
 
 func _forest() -> void:
 	var clearing: Vector2 = Layout.lot_center("forest_clearing")
-	_path([Layout.lot_center("a1_w") + Vector2(-8, 0), Vector2(-454,15), Vector2(-480,38), clearing], 2.2)
-	_path([clearing, Vector2(-492,213), Layout.lot_center("a2_w") + Vector2(-8, 0)], 1.6)
+	_path([Layout.lot_center("a1_w") + Vector2(-8, 0), Vector2(-484,15), Vector2(-510,38), clearing], 2.2)
+	_path([clearing, Vector2(-522,213), Layout.lot_center("a2_w") + Vector2(-8, 0)], 1.6)
 	var clearing_edge := PackedVector2Array()
 	for i in 20:
 		var angle := TAU * i / 20.0
@@ -72,10 +72,10 @@ func _forest() -> void:
 	trees.name = "ForestCanopy"
 	root.add_child(trees)
 	# A jittered grid makes a continuous grove with an irregular boundary.
-	for x in range(-599, -460, 8):
+	for x in range(-629, -490, 8):
 		for z in range(-35, 290, 8):
 			var at := Vector2(x + rng.randf_range(-3, 3), z + rng.randf_range(-3, 3))
-			var edge := pow((at.x + 533) / 79.0, 2) + pow((at.y - 126) / 174.0, 2)
+			var edge := pow((at.x + 563) / 79.0, 2) + pow((at.y - 126) / 174.0, 2)
 			if edge > rng.randf_range(0.86, 1.12) or map._is_occupied(at, 3.0):
 				continue
 			var tree: Sprite3D = map._tree(map._ground(at))
