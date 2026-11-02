@@ -31,6 +31,7 @@
 - Match the pace to the task: use manageable steps for learning, and complete small features when appropriate.
 - Align on creative direction and intended behavior; resolve technical details independently when they do not materially change the game's scope.
 - Project files are under `init/`; the main scene is `init/main.tscn`. The project uses Godot 4.7.1.
+- The editor plugin `init/addons/branch_indicator/` shows the checked-out branch in the toolbar and can switch it: it refuses while tracked files have real (not line-ending-only) changes and restarts the editor without saving. Close the editor before switching branches from a terminal.
 - When delivering work from a worktree, always include the exact absolute Godot editor launch command (`<Godot binary> --editor --path <worktree>/init`) and identify that project folder, so the user can open the correct copy.
 - Run the game locally with F5. Running Godot and local game builds does not incur usage fees.
 - Do not add or run automated tests unless the user asks. For visual changes, launch and inspect the game where practical.
