@@ -7,6 +7,7 @@ const RoadGraph = preload("res://scripts/map/road_graph.gd")
 const DistrictLayout = preload("res://scripts/data/district_layout.gd")
 const TrafficFlows = preload("res://scripts/data/traffic_flows.gd")
 const TrafficRoutes = preload("res://scripts/map/traffic_routes.gd")
+const TrafficRules = preload("res://scripts/map/traffic_rules.gd")
 
 const PedestrianGraph = preload("res://scripts/map/pedestrian_graph.gd")
 const WALKER_KINDS := ["pavement"]
@@ -128,7 +129,7 @@ func _add_car(speed: float) -> Dictionary:
 		agent["leg_dir"] = -gate["out"] if arriving else gate["out"]
 		agent["leg_len"] = gate["leg_length"]
 		agent["along"] = entry_length + position if arriving else position - total
-		agent["lateral"] = _lane_offset(_graph.edges[gate["edge"]])
+		agent["lateral"] = _lane_offset(agent, _graph.edges[gate["edge"]])
 		_place_leg(agent, 1.0)
 		return agent
 	_place(agent, 1.0)
@@ -195,8 +196,8 @@ func _plan_turn(agent: Dictionary) -> void:
 	var center: Vector2 = _graph.points[node]
 	var incoming_dir: Vector2 = (center - _graph.points[agent["from"]]).normalized()
 	var outgoing_dir: Vector2 = (_graph.points[_graph.other_end(next, node)] - center).normalized()
-	var lane_in := _lane_offset(edge)
-	var lane_out := _lane_offset(outgoing)
+	var lane_in := _lane_offset(agent, edge)
+	var lane_out := _lane_offset(agent, outgoing)
 	var angle := absf(incoming_dir.angle_to(outgoing_dir))
 	var radius := maxf(float(edge["half"]), float(outgoing["half"])) + 3.0
 	# Collinear edges still need a short continuous lane merge if widths differ.
@@ -304,10 +305,9 @@ func _road_speed(edge: int) -> float:
 	return float(DistrictLayout.ROADS[road].get("speed", 1.0)) if road >= 0 else 1.0
 
 
-func _lane_offset(edge: Dictionary) -> float:
-	if edge["kind"] == "yard":
-		return clampf(float(edge["half"]) * 0.45, 0.7, 1.0)
-	return clampf(float(edge["half"]) * 0.35, 1.5, 4.0)
+func _lane_offset(agent: Dictionary, edge: Dictionary) -> float:
+	var road: Dictionary = DistrictLayout.ROADS[edge["road"]]
+	return TrafficRules.lane_offset(agent["class"], edge, road)
 
 
 # The road's speed, eased down to town speed approaching or leaving a junction; the
@@ -361,7 +361,7 @@ func _step_leg(agent: Dictionary, delta: float) -> void:
 # with the road graph is continuous.
 func _place_leg(agent: Dictionary, delta: float) -> void:
 	var gate: Dictionary = _gateways[agent["gateway"]]
-	var target := _lane_offset(_graph.edges[gate["edge"]])
+	var target := _lane_offset(agent, _graph.edges[gate["edge"]])
 	agent["target_lateral"] = target
 	agent["lateral"] = move_toward(agent["lateral"], target, 4.0 * delta)
 	var heading: Vector2 = agent["leg_dir"]
@@ -396,7 +396,7 @@ func _enter(agent: Dictionary) -> void:
 	agent["leg_len"] = gate["leg_length"]
 	agent["along"] = 0.0
 	agent["speed_scale"] = _road_speed(gate["edge"])
-	agent["lateral"] = _lane_offset(_graph.edges[gate["edge"]])
+	agent["lateral"] = _lane_offset(agent, _graph.edges[gate["edge"]])
 	agent["respawned"] = true
 	stats["arrivals"][gate["id"]] += 1
 	_place_leg(agent, 1.0)
@@ -429,7 +429,7 @@ func _place(agent: Dictionary, delta: float) -> void:
 	var half: float = edge["half"]
 	var target: float
 	if agent["is_car"]:
-		target = _lane_offset(edge)
+		target = _lane_offset(agent, edge)
 	else:
 		target = agent["side"] * (half + edge["walk"] / 2.0 if edge["kind"] == "asphalt" else half * 0.6)
 	agent["target_lateral"] = target

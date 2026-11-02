@@ -2,6 +2,7 @@
 extends RefCounted
 const Layout = preload("res://scripts/data/district_layout.gd")
 const Flows = preload("res://scripts/data/traffic_flows.gd")
+const Rules = preload("res://scripts/map/traffic_rules.gd")
 var trips := {}
 var _graph
 var _roads := {}
@@ -53,7 +54,7 @@ func _validate_trip(stream: String, trip: Dictionary) -> void:
 		var road: Dictionary = Layout.ROADS[_graph.edges[leg["edge"]]["road"]]
 		assert(road["kind"] == "asphalt" or (stream == "courtyard" and road.get("traffic", "") == "courtyard"), "Traffic itinerary includes a forbidden road")
 		for vehicle in Flows.STREAMS[stream]["fleet"]:
-			assert(not road.has("vehicles") or vehicle in road["vehicles"], "Traffic fleet violates a road's vehicle restriction")
+			assert(Rules.can_use_road(vehicle, road), "Traffic fleet violates a road's vehicle restriction")
 
 func stream_for_slot(slot: int) -> String:
 	for stream in Flows.STREAMS:

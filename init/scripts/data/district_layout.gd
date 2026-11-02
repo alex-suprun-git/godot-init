@@ -79,10 +79,10 @@ const SIDEWALK_WIDTH := 2.5
 const ROADS := [
 	# "speed" scales car speed (default 1.0); courtyard traffic is opt-in and passenger-only.
 	{"id": "west_street", "rect": Rect2(-485, -85, 10, 390), "kind": "asphalt"},
-	{"id": "highway", "rect": Rect2(-450, -197.5, 890, 20), "kind": "asphalt", "walk": 0.0, "look": "highway", "speed": 2.0},
+	{"id": "highway", "rect": Rect2(-450, -197.5, 890, 20), "kind": "asphalt", "walk": 0.0, "look": "highway", "speed": 2.0, "lanes_per_direction": 2},
 	{"id": "north_street", "rect": Rect2(-500, -90, 940, 10), "kind": "asphalt"},
 	{"id": "south_street", "rect": Rect2(-500, 300, 940, 10), "kind": "asphalt"},
-	{"id": "axis", "rect": Rect2(-17, -330, 24, 642), "kind": "asphalt", "median": 4.0},
+	{"id": "axis", "rect": Rect2(-17, -330, 24, 642), "kind": "asphalt", "median": 4.0, "lanes_per_direction": 2},
 	{"id": "village_street", "rect": Rect2(140, -80, 10, 380), "kind": "asphalt"},
 	{"id": "housing_cross_path", "rect": Rect2(-480, 85.2, 463, 4), "kind": "yard", "traffic": "courtyard", "speed": 0.5, "vehicles": ["car"]}, # joins the axis edge; traffic uses the graph connection to its centreline
 	{"id": "housing_spine", "rect": Rect2(-202.4, -80, 4, 380), "kind": "yard", "traffic": "courtyard", "speed": 0.5, "vehicles": ["car"]},
