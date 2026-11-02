@@ -15,6 +15,7 @@ const Settings = preload("res://scripts/data/settings.gd")
 const SpriteAnchors = preload("res://scripts/data/sprite_anchors.gd")
 const GroundedProps = preload("res://scripts/map/grounded_props.gd")
 const VehicleModels = preload("res://scripts/map/vehicle_models.gd")
+const TrafficVehicleModels = preload("res://scripts/map/traffic_vehicle_models.gd")
 const AmbientLife = preload("res://scripts/map/ambient_life.gd")
 const TrafficIntersections = preload("res://scripts/data/traffic_intersections.gd")
 const TrafficLight = preload("res://scripts/map/traffic_light.gd")
@@ -1168,8 +1169,9 @@ func _build_ambient() -> void:
 		if agent.is_empty():
 			break
 		var seed_value := look.randi()
-		var model := VehicleModels.model_for_class(agent["class"], seed_value)
-		agent["visual"] = _vehicle(model, _ground(agent["pos"]) + Vector3.UP * 0.14, VehicleModels.map_length(model), "z", null, seed_value)
+		var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(agent["pos"]) + Vector3.UP * 0.14)
+		add_child(car)
+		agent["visual"] = car
 
 
 func _move_ambient(delta: float) -> void:
@@ -1201,9 +1203,9 @@ func _respawn_car(agent: Dictionary) -> void:
 	agent["respawned"] = false
 	agent["visual"].queue_free()
 	var seed_value := _traffic_look.randi()
-	var model := VehicleModels.model_for_class(agent["class"], seed_value)
 	var at: Vector2 = agent["pos"]
-	var car := _vehicle(model, _ground(at) + Vector3.UP * 0.14, VehicleModels.map_length(model), "z", null, seed_value)
+	var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(at) + Vector3.UP * 0.14)
+	add_child(car)
 	var heading: Vector2 = agent["heading"]
 	car.rotation.y = atan2(heading.x, heading.y)
 	agent["visual"] = car

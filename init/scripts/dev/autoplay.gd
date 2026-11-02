@@ -17,6 +17,7 @@ const SCENARIOS := {
 	"render-cost": "_run_render_cost",
 	"field": "_run_field_review",
 	"traffic": "_run_traffic_review",
+	"gazelle": "_run_gazelle_review",
 	"trains": "_run_train_review",
 }
 const FULL_RUN := ["office", "map", "week"]
@@ -507,3 +508,38 @@ func _run_traffic_review() -> void:
 				await _map_shot("traffic_courtyard", agent["pos"], 100.0)
 				return
 			await _wait(0.1)
+
+
+# Capture real road-traffic vans; do not add review-only vehicles to the city.
+func _run_gazelle_review() -> void:
+	_dismiss_briefing()
+	main.map._debug_hour = 12.0
+	var models := {}
+	var classes := {}
+	for agent in main.map._ambient.agents:
+		if not agent["is_car"]:
+			continue
+		var model: String = agent["visual"].get_meta("traffic_model", "unknown")
+		models[model] = int(models.get(model, 0)) + 1
+		classes[agent["class"]] = int(classes.get(agent["class"], 0)) + 1
+	print("Road traffic initial classes: ", JSON.stringify(classes))
+	print("Road traffic initial models: ", JSON.stringify(models))
+	var captured := {}
+	for step in 200:
+		for agent in main.map._ambient.agents:
+			if not agent["is_car"] or agent["state"] != "graph":
+				continue
+			if not agent["visual"].is_in_group("vehicle_gazelle"):
+				continue
+			var heading: Vector2 = agent["heading"]
+			var axis := "x" if absf(heading.x) > 0.95 else "z" if absf(heading.y) > 0.95 else "turn"
+			if axis == "turn" or captured.has(axis):
+				continue
+			captured[axis] = true
+			print("Gazelle road capture: ", axis, " ", agent["visual"].get_meta("traffic_model"), " at ", agent["pos"])
+			await _map_shot("gazelle_road_" + axis, agent["pos"], 90.0)
+			break
+		if captured.size() == 2:
+			return
+		await _wait(0.2)
+	print("Gazelle road capture orientations: ", captured.keys())
