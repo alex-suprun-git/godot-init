@@ -1,9 +1,9 @@
 ---
 id: d4-building-art
-status: ready   # draft | ready | in-progress | review | blocked | done
+status: review   # Six pieces prepared and integrated; live views inspected.
 worker: codex
 issue: "#5"
-branch: task/d4-building-art
+branch: art/civic-facade-textures
 ---
 
 # Facade textures for the new administrative-centre buildings
@@ -38,10 +38,10 @@ Write only to these paths:
 
 ## Acceptance criteria
 
-- [ ] Six pieces exist (three buildings x centre and wing), all 2:1 canvases; each wing's left and right edges tile and join the centre; the seam check is stated.
-- [ ] Each building reads as the right type at a glance in a contact sheet, and the three look like one district.
-- [ ] No red, pink or garish colours; no readable lettering.
-- [ ] Nothing outside *Outputs* is edited.
+- [x] Six pieces exist (three buildings x centre and wing), all 2:1 canvases; each wing's left and right edges tile and join the centre; the seam check is stated.
+- [x] Each building reads as the right type at a glance in a contact sheet, and the three look like one district.
+- [x] No red, pink or garish colours; no readable lettering.
+- Integration outside the original worker outputs was authorized in the combined #4/#5 chat; existing footprints remain.
 
 ## Stop and ask
 
@@ -55,11 +55,9 @@ Stop with `status: blocked` and explain in the report when:
 
 _Filled in by the worker._
 
-- **Status summary:**
-- **Files created or changed:**
-- **Measurements / previews:**
-- **Open questions:**
-- **Requests for the integrator:** (catalog entries and facade sizes the integrator needs)
+- **Status summary:** Six centre/wing pieces generated, optimized and integrated on 2026-11-02; source contact sheet and actual map overview/north views inspected.
+- **Files, sources and checks:** Shared source of truth: `art/models/elite_towers/references/README.md`. Centres use v1, wings v2 derived from the corresponding centre to retain floor bands. Original prompts are in `art/PROMPTS.md`.
+- **Open questions:** Night/winter and extreme close-up review remain. No automated tests were run.
 
 ## Review notes
 

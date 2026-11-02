@@ -1,9 +1,9 @@
 ---
 id: elite-towers
-status: ready   # draft | ready | in-progress | review | blocked | done. Stage 1 needs no approval; stages 2 and 3 wait for the user.
+status: review   # Sheets approved; stage 2 prepared and integrated, live review available.
 worker: codex
 issue: "#4"
-branch: task/elite-towers
+branch: art/civic-facade-textures
 ---
 
 # Elite brick towers for the administrative centre (reference sheets and facade textures)
@@ -55,11 +55,11 @@ Write only to these paths:
 
 ## Acceptance criteria
 
-- [ ] Stage 1: both sheets exist, are inspected, and the report lists their inconsistencies and which face is which.
-- [ ] Stage 2: each wall tile has its seams checked (left/right and top/bottom) and the check is stated in the report; every canvas is 2:1.
-- [ ] Wall tiles contain no doors, no shops and no signs; the entrance, shop and crown pieces are separate files.
-- [ ] No red, pink or garish colours; E1 and E2/E3 read as one estate but not as copies.
-- [ ] Nothing outside *Outputs* is edited.
+- [x] Stage 1: both sheets exist, are inspected, and the report lists their inconsistencies and which face is which.
+- [x] Stage 2: each wall tile has its seams checked (left/right and top/bottom) and the check is stated in the report; every canvas is 2:1.
+- [x] Wall tiles contain no doors, no shops and no signs; the entrance, shop and crown pieces are separate files.
+- [x] No red, pink or garish colours; E1 and E2/E3 read as one estate but not as copies.
+- Integration outside the original worker outputs was authorized in chat: combined #4/#5 facade work, roof dressing/materials, lived-in windows and tower ground treatment. No standalone Blender tower model was made.
 
 ## Stop and ask
 
@@ -74,11 +74,9 @@ Stop with `status: blocked` and explain in the report when:
 
 _Filled in by the worker._
 
-- **Status summary:**
-- **Files created or changed:**
-- **Measurements / previews:**
-- **Open questions:**
-- **Requests for the integrator:** (including whether the existing facade assembly in `district_builder.gd` handles four different faces on one volume)
+- **Status summary:** Both looks approved; twelve tower pieces generated, optimized and integrated at fourteen/twelve storeys. Live preview positively reviewed on 2026-11-02.
+- **Files, sources and checks:** See `art/models/elite_towers/references/README.md` for selected versions, module sizes, seam limitations, material/roof integration and reproducible game captures. Exact prompts are in `art/PROMPTS.md`.
+- **Open questions:** Close-up seam, night/winter and performance review remain; separate contextual 1997 dressing is future work. No automated tests were run.
 
 ## Review notes
 

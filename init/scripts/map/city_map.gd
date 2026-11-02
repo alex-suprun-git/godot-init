@@ -1478,7 +1478,7 @@ func _slope_of(texture: Texture2D) -> float:
 
 
 # A textured flat roof: a quad facing up, tiled so the roof detail stays small.
-func _roof(size: Vector2, at: Vector3, tile: float, texture: Texture2D = ROOF_TAR, parent: Node = null) -> void:
+func _roof(size: Vector2, at: Vector3, tile: float, texture: Texture2D = ROOF_TAR, parent: Node = null, surface_detail := false) -> void:
 	var quad := QuadMesh.new()
 	quad.size = size
 	var material := StandardMaterial3D.new()
@@ -1488,6 +1488,13 @@ func _roof(size: Vector2, at: Vector3, tile: float, texture: Texture2D = ROOF_TA
 	var instance := MeshInstance3D.new()
 	instance.mesh = quad
 	instance.material_override = material
+	if surface_detail:
+		var roofing := ShaderMaterial.new()
+		roofing.shader = preload("res://assets/shaders/roof_felt.gdshader")
+		roofing.set_shader_parameter("albedo_tex", texture)
+		roofing.set_shader_parameter("uv_scale", Vector2(size.x / tile, size.y / tile))
+		roofing.set_shader_parameter("surface_detail", not OS.get_cmdline_user_args().has("--facade-baseline"))
+		instance.material_override = roofing
 	instance.position = at
 	instance.rotation.x = -PI / 2.0
 	(parent if parent != null else self).add_child(instance)
@@ -1504,7 +1511,7 @@ func _facades(base: Vector3, size: Vector3, texture: Texture2D, tiles_per_height
 
 
 # One textured wall: a quad facing +Z, turned by yaw around the vertical axis.
-func _facade(size: Vector2, at: Vector3, yaw: float, texture: Texture2D, tiles: Vector2, tint: Color = Color.WHITE, parent: Node = null) -> void:
+func _facade(size: Vector2, at: Vector3, yaw: float, texture: Texture2D, tiles: Vector2, tint: Color = Color.WHITE, parent: Node = null, uv_offset := Vector2.ZERO, surface_detail := false, seam_blend := Vector2.ZERO) -> void:
 	var quad := QuadMesh.new()
 	quad.size = size
 	var material := ShaderMaterial.new()
@@ -1512,6 +1519,9 @@ func _facade(size: Vector2, at: Vector3, yaw: float, texture: Texture2D, tiles: 
 	material.set_shader_parameter("albedo_tex", texture)
 	material.set_shader_parameter("tint", tint)
 	material.set_shader_parameter("uv_scale", tiles)
+	material.set_shader_parameter("uv_offset", uv_offset)
+	material.set_shader_parameter("surface_detail", (surface_detail or texture.resource_path.ends_with("_lived.png")) and not OS.get_cmdline_user_args().has("--facade-baseline"))
+	material.set_shader_parameter("seam_blend", Vector2.ZERO if OS.get_cmdline_user_args().has("--facade-baseline") else seam_blend)
 	material.set_shader_parameter("night", maxf(_night, 0.0))
 	_window_materials.append(material)
 	var instance := MeshInstance3D.new()
