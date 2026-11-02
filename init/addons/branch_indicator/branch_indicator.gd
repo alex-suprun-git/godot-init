@@ -84,16 +84,37 @@ func _fill_branches() -> void:
 	if _repo_root == "":
 		return
 	_picker.clear()
+	var elsewhere := _branches_in_other_worktrees()
 	var branches := _git(["for-each-ref", "--sort=-committerdate", "--format=%(refname:short)", "refs/heads"])
-	for branch in branches["output"].split("\n", false):
+	for branch in branches["output"].split("
+", false):
 		_picker.add_item(branch)
+		var index := _picker.item_count - 1
+		_picker.set_item_metadata(index, branch)
 		if branch == _current:
-			_picker.select(_picker.item_count - 1)
-			_picker.set_item_disabled(_picker.item_count - 1, true)
+			_picker.select(index)
+			_picker.set_item_disabled(index, true)
+		elif elsewhere.has(branch):
+			# Git allows a branch in one worktree only; offering it would just fail.
+			_picker.set_item_text(index, "%s  (open in %s)" % [branch, elsewhere[branch]])
+			_picker.set_item_disabled(index, true)
+
+
+# Branch name -> folder name, for branches checked out in a worktree other than this one.
+func _branches_in_other_worktrees() -> Dictionary:
+	var result := {}
+	var folder := ""
+	for line in _git(["worktree", "list", "--porcelain"])["output"].split("
+"):
+		if line.begins_with("worktree "):
+			folder = line.trim_prefix("worktree ")
+		elif line.begins_with("branch refs/heads/") and folder.trim_suffix("/") != _repo_root.trim_suffix("/"):
+			result[line.trim_prefix("branch refs/heads/")] = folder.get_file()
+	return result
 
 
 func _on_branch_picked(index: int) -> void:
-	_target = _picker.get_item_text(index)
+	_target = str(_picker.get_item_metadata(index))
 	if _target == _current:
 		return
 	var update_note := _update_from_upstream(_target)
