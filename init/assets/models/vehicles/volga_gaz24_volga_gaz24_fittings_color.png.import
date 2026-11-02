@@ -3,9 +3,10 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://vy185pc4l8v7"
-path="res://.godot/imported/volga_gaz24_volga_gaz24_fittings_color.png-e3e681b420f29184e47ec8fb5e8b8107.ctex"
+path.s3tc="res://.godot/imported/volga_gaz24_volga_gaz24_fittings_color.png-e3e681b420f29184e47ec8fb5e8b8107.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 generator_parameters={
 "md5": "a32540b8f1fd4744599d0a084db28f99"
@@ -14,11 +15,11 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/models/vehicles/volga_gaz24_volga_gaz24_fittings_color.png"
-dest_files=["res://.godot/imported/volga_gaz24_volga_gaz24_fittings_color.png-e3e681b420f29184e47ec8fb5e8b8107.ctex"]
+dest_files=["res://.godot/imported/volga_gaz24_volga_gaz24_fittings_color.png-e3e681b420f29184e47ec8fb5e8b8107.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -40,4 +41,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=1
+detect_3d/compress_to=0
