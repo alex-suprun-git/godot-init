@@ -810,3 +810,7 @@ Use case: stylized-concept. Asset type: seamless square terrain albedo texture f
 ### macro v1
 
 Use case: stylized-concept. Asset type: grayscale shader data texture, NOT an illustration of terrain. Generate one square 1024x1024 seamless tileable on both axes low-frequency noise map for large-scale ground tint variation in a Godot city map. Pure neutral grayscale, smooth organic amorphous cloud-shaped regions, roughly 6 to 10 broad softly interleaved irregular regions across width. Continuous soft gradients spanning medium dark grey to medium light grey, mean near 50 percent grey; no solid black or white. Entire texture edge to edge, no lighting, no central subject, no vignette, no fine grain or tiny detail, no cracks, contour lines, sharp edges, grids, directional stripes, borders, text or watermark. Both opposing edges must match smoothly. This is smooth technical noise data, not realistic clouds or smoke.
+
+## Freight train reference proposal (2026-11-02)
+
+Built-in ImageGen reference sheet: art/models/freight_train/references/freight-train-v2.png. Original v1 is preserved beside it; v2 corrects nine wagons to the requested eight. Full generation and correction prompts: art/models/freight_train/references/freight-train-v1.prompt.md. The user approved the M62-inspired locomotive and full formation with brick, blue-grey and olive cargo paints. Current source, exports, comparison rule and actual Godot results: art/models/freight_train/README.md. No additional generated raster art was used for modeling.

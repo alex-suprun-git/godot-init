@@ -1,0 +1,50 @@
+{
+  "asset": "init/assets/models/vehicles/container_flat_wagon.glb",
+  "blender_xyz_bounds": {
+    "min": [
+      -1.7566206455230713,
+      -7.57315731048584,
+      0.0
+    ],
+    "max": [
+      1.7566206455230713,
+      7.57315731048584,
+      3.990999937057495
+    ]
+  },
+  "length": 15.14631462097168,
+  "width": 3.5132412910461426,
+  "height": 3.990999937057495,
+  "triangles": 4704,
+  "budget_triangles": 5500,
+  "mesh_objects": 1,
+  "gltf_meshes": 1,
+  "gltf_materials": 3,
+  "embedded_images": 0,
+  "nominal_container_lwh_m": [
+    12.192,
+    2.438,
+    2.591
+  ],
+  "common_map_factor": 0.9839816933638443,
+  "palette": [
+    "985a49",
+    "526c7b",
+    "6b7450"
+  ],
+  "wagon_palette_indices": [
+    0,
+    1,
+    2,
+    0,
+    2,
+    1,
+    0,
+    1
+  ],
+  "formation": {
+    "wagons": 8,
+    "length_map_m": 137.12012214573352,
+    "triangles": 47264
+  }
+}
