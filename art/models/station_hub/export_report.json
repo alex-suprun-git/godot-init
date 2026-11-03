@@ -1,0 +1,58 @@
+[
+  {
+    "asset": "station",
+    "triangles": 6030,
+    "materials": 10,
+    "objects_exported": 1,
+    "path": "init/assets/models/station_hub/station.glb"
+  },
+  {
+    "asset": "stall_red",
+    "triangles": 484,
+    "materials": 9,
+    "objects_exported": 1,
+    "path": "init/assets/models/station_hub/stall_red.glb"
+  },
+  {
+    "asset": "stall_blue",
+    "triangles": 484,
+    "materials": 8,
+    "objects_exported": 1,
+    "path": "init/assets/models/station_hub/stall_blue.glb"
+  },
+  {
+    "asset": "stall_ochre",
+    "triangles": 484,
+    "materials": 8,
+    "objects_exported": 1,
+    "path": "init/assets/models/station_hub/stall_ochre.glb"
+  },
+  {
+    "asset": "bus_shelter",
+    "triangles": 356,
+    "materials": 6,
+    "objects_exported": 1,
+    "path": "init/assets/models/station_hub/bus_shelter.glb"
+  },
+  {
+    "asset": "kiosk",
+    "triangles": 214,
+    "materials": 9,
+    "objects_exported": 1,
+    "path": "init/assets/models/station_hub/kiosk.glb"
+  },
+  {
+    "asset": "bench",
+    "triangles": 96,
+    "materials": 2,
+    "objects_exported": 1,
+    "path": "init/assets/models/station_hub/bench.glb"
+  },
+  {
+    "asset": "lamp",
+    "triangles": 100,
+    "materials": 2,
+    "objects_exported": 1,
+    "path": "init/assets/models/station_hub/lamp.glb"
+  }
+]

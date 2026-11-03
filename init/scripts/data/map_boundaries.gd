@@ -5,7 +5,7 @@ extends RefCounted
 const Layout := preload("res://scripts/data/district_layout.gd")
 
 # Everything inside stays clear; haze rises outside it. The west edge is past the forest.
-const INNER := Rect2(-650, -330, 1090, 745) # x -650..440, z -330 (our bank)..415
+const INNER := Rect2(-650, -330, 1090, 885) # x -650..440, z -330 (our bank)..555
 # Fade widths in metres per side: west, north (river mist), east, south.
 const FADE := {"w": 90.0, "n": 35.0, "e": 90.0, "s": 90.0}
 const NOISE_AMP := 18.0 # Metres the noisy edge moves in and out.
@@ -35,6 +35,8 @@ static func road_continuations() -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	for road in Layout.ROADS:
 		var rect: Rect2 = road["rect"]
+		if road.get("id", "") == "axis":
+			result.append({"road": road, "rect": Rect2(rect.position.x, rect.end.y, rect.size.x, handoff_distance("s") + 20.0)})
 		if rect.size.x <= rect.size.y:
 			continue
 		if road.get("id", "") in ["highway", "north_street", "south_street"]:
@@ -66,6 +68,7 @@ const GATEWAYS := [
 	{"id": "south_street_w", "road": "south_street", "end": "lo", "side": "w"},
 	{"id": "south_street_e", "road": "south_street", "end": "hi", "side": "e"},
 	{"id": "border_bridge", "road": "axis", "end": "lo", "side": "n"},
+	{"id": "axis_south", "road": "axis", "end": "hi", "side": "s"},
 ]
 const NODE_TOLERANCE := 0.5
 const ENTRY_SAMPLE_DISTANCE := 30.0

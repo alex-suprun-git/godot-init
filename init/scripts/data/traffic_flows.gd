@@ -9,12 +9,15 @@ const STREAMS := {
 		{"entry": "highway_e", "exit": "highway_w", "roads": ["highway"]},
 	]},
 	"border": {"slots": 14, "fleet": {"truck": 0.8, "car": 0.2}, "trips": [
+		{"entry": "border_bridge", "exit": "axis_south", "roads": ["axis"]},
+		{"entry": "axis_south", "exit": "border_bridge", "roads": ["axis"]},
 		{"entry": "highway_w", "exit": "border_bridge", "roads": ["highway", "axis"]},
 		{"entry": "highway_e", "exit": "border_bridge", "roads": ["highway", "axis"]},
 		{"entry": "border_bridge", "exit": "highway_w", "roads": ["axis", "highway"]},
 		{"entry": "border_bridge", "exit": "highway_e", "roads": ["axis", "highway"]},
 	]},
 	"city": {"slots": 18, "fleet": {"car": 0.8, "bus": 0.2}, "loops": [
+		["south_street", "station_entry", "station_link", "station_exit"],
 		["north_street", "axis", "south_street", "west_street"],
 		["north_street", "village_street", "south_street", "axis"],
 	]},
