@@ -146,6 +146,7 @@ Opening demo: Tolik is disabled through his actor `enabled` flag, not removed. H
   - Week (until Friday): the week's tasks (the contractor, the report).
 - The request card states the fiction, not a bare time: "Waiting for you at the station, about 3 h left" rather than "until Fri 12:00".
 - Requests that can wait escalate while unanswered instead of only expiring: the pipe complaint turns into a letter to the newspaper and then a picket. Waiting is allowed but grows more expensive. A promise pauses a request's deadline and escalation until the promised date.
+- Shared request framework: `week1.gd` declares content and `week_sim.gd` applies common rules. Requests pass through waiting, travel, work on site, optional interruption and a result. The reaction deadline continues during travel and is satisfied on arrival; work then has its own duration. Arrival removes the waiting marker and countdown; an interrupted job reappears for manual reassignment without restarting the satisfied reaction deadline. Missing the deadline en route applies the expiry consequence; the trip finishes without starting quest work. Promise deadlines remain separate commitments. Zero-hour personal choices can require an explicit location and resolve immediately there. Optional requests can be disabled through `enabled: false`; the fuel-depot offer is disabled pending redesign because travelling merely to refuse it and rewarding residents for that refusal do not provide meaningful gameplay.
 - Urgent requests combine with the office-only dispatch rule: leaving the office means missing what is urgent, which is the price of going out.
 - Request types:
   - Plea: a person or group asks for help; ignoring it hurts the relationship.
@@ -332,7 +333,7 @@ The first stretch of the game is built around one concrete 1990s objective: the 
 - Every faction has a stake: residents fear another winter in coats; business wants the fuel oil supply and boiler repair contracts; the mafia steals fuel oil and wants its own contractor; the police protect the fuel depot; the church asks to heat the cathedral or open a shelter.
 - Day one: each request teaches one mechanic.
   1. Plea: elderly residents of a five-storey block ask to fix the pipes. Teaches basic responses and spending money or influence.
-  2. Offer: a businessman puts an envelope on the desk to get his repair contract signed. Teaches bribes and the first trace.
+  2. Offer: Gusev, a boiler-repair contractor, brings an envelope and waits in the administration reception for about three hours. Taking it or returning it to him is an immediate personal choice available only while the protagonist is in the office and the visitor is still waiting. Teaches bribes and the first trace.
   3. Residents' meeting: the player may promise heating by October 1. Teaches promises, the first debt.
   4. Conflict: two contractors fight over the boiler house; one is quietly backed by the mafia, which the player does not know yet. Teaches picking a side.
   5. Evening: the rival appears on TV claiming their district is ready for winter. First encounter with the rival.

@@ -140,6 +140,7 @@ const OBJECTIVES := [
 # Option fields:
 #   actor: who goes ("me", a contact id, "phone", or "promise").
 #   hours: work time on site after arriving.
+#   requires_lot: the actor must already be there; zero-hour local choices resolve immediately.
 #   chance: success probability (default 1.0).
 #   success / fail: effects (faction deltas, money, trace, flags, next_week, overlay, log).
 #   keeps_open: the request stays open after this option (used by promises).
@@ -206,19 +207,19 @@ const REQUESTS := [
 	{
 		"id": "envelope", "type": "offer", "lot": "office", "asker": "",
 		"title": "Посетитель с конвертом",
-		"text": "Гусев кладёт на стол толстый конверт: «Это просто за понимание. С Петровичем всё согласовано».",
+		"text": "Гусев, подрядчик котельной, принёс конверт: «Это просто за понимание. С Петровичем всё согласовано». Он ждёт ответа в приёмной. Принять или вернуть конверт можно при личной встрече в кабинете.",
 		"appear": {"day": 0, "hour": 10}, "urgency": "now", "wait_text": "Гусев сидит в приёмной",
 		"expire_effects": {"business": -5, "log": "Гусев забрал конверт и ушёл, не прощаясь."},
 		"options": [
 			{
-				"id": "take", "actor": "me", "hours": 1,
+				"id": "take", "actor": "me", "hours": 0, "requires_lot": "office",
 				"label": "Взять конверт",
 				"hint": "Деньги сейчас. Кто-то это видел.",
 				"success": {"money": 1_500, "business": 10, "trace": 1, "flags": {"envelope": true}, "thread": "Толик видел, как Гусев выходил от вас довольным.", "log": "Конверт в ящике стола. Толик видел, как Гусев выходил довольным."},
 			},
 			{
-				"id": "refuse", "actor": "me", "hours": 1,
-				"label": "Отказаться",
+				"id": "refuse", "actor": "me", "hours": 0, "requires_lot": "office",
+				"label": "Вернуть конверт Гусеву",
 				"hint": "Бизнес будет недоволен. Чистые руки.",
 				"success": {"business": -10, "log": "Вы вернули конверт. Гусев улыбнулся, но глаза не улыбались."},
 			},
@@ -319,6 +320,7 @@ const REQUESTS := [
 	},
 	{
 		"id": "fuel_offer", "type": "offer", "lot": "depot", "asker": "",
+		"enabled": false, # Disabled until the deal has meaningful actions beyond accept/refuse.
 		"title": "Кладовщик предлагает мазут «мимо кассы»",
 		"text": "«Часть пойдёт на котельную, часть никто не считал. Вы же хотите, чтобы зимой было тепло».",
 		"appear": {"day": 2, "hour": 13}, "urgency": "today", "wait_text": "Вечером продаст другому",

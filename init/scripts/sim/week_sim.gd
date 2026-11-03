@@ -73,10 +73,13 @@ func _init(seed_value: int = 1997) -> void:
 			"path": PackedVector2Array(), "path_index": 0, "commute_target": "",
 		}
 	for data in Week1.REQUESTS:
+		if not data.get("enabled", true):
+			continue
 		requests[data["id"]] = {
 			"data": data, "status": "pending", "promised": false,
 			"expire_t": _expire_hours(data), "escalated": 0,
 			"jobs": {}, # option id -> remaining on-site work; survives reassignment.
+			"responded": false, # Arrival satisfies the reaction deadline; completion is separate.
 		}
 		request_order.append(data["id"])
 
@@ -114,6 +117,12 @@ func advance(hours: float) -> void:
 					step = minf(step, left)
 		if actors["me"]["state"] == "paperwork":
 			step = minf(step, paperwork_left())
+		for request_id in request_order:
+			var request: Dictionary = requests[request_id]
+			if request["status"] in ["open", "assigned"] and not request["responded"] and _active_promise(request_id).is_empty():
+				var until_deadline: float = request["expire_t"] - t
+				if until_deadline > 0.00001:
+					step = minf(step, until_deadline)
 		hours -= step
 		var was_at_work := at_work
 		_tick(step)
@@ -191,6 +200,13 @@ func hours_text(hours: float, with_day: bool = true) -> String:
 func request_wait_text(request_id: String) -> String:
 	var request: Dictionary = requests[request_id]
 	var data: Dictionary = request["data"]
+	match request_stage(request_id):
+		"closed":
+			return "Вопрос закрыт"
+		"work":
+			return "Исполнитель на месте · идёт работа"
+		"paused":
+			return "Работа прервана · назначьте продолжение"
 	var promise := _active_promise(request_id)
 	if not promise.is_empty():
 		return "Обещано · до " + promise["due_text"]
@@ -304,6 +320,17 @@ func request_worker(request_id: String) -> String:
 	return ""
 
 
+# A shared lifecycle derived from the request and its actor, never from a quest id.
+func request_stage(request_id: String) -> String:
+	var request: Dictionary = requests[request_id]
+	if request["status"] in ["closed", "pending"]:
+		return request["status"]
+	var worker := request_worker(request_id)
+	if worker != "":
+		return actors[worker]["state"] # travel or work
+	return "paused" if request["responded"] else "waiting"
+
+
 # 1 when the request just appeared, 0 when its deadline is reached.
 func request_time_left(request_id: String) -> float:
 	var data: Dictionary = requests[request_id]["data"]
@@ -338,6 +365,8 @@ func option_block_reason(request_id: String, option: Dictionary) -> String:
 		return "Сначала отложите документы"
 	if actor["state"] != "idle":
 		return "Занят"
+	if option.has("requires_lot") and actor["lot"] != option["requires_lot"]:
+		return "Только лично · " + Week1.LOTS[option["requires_lot"]]["name"]
 	return ""
 
 
@@ -396,6 +425,9 @@ func choose(request_id: String, option_id: String) -> void:
 			_resolve(request_id, option)
 		_:
 			var actor: Dictionary = actors[option["actor"]]
+			if float(option.get("hours", 1)) <= 0.0 and actor["lot"] == _request_lot(request_id):
+				_resolve(request_id, option)
+				return
 			actor["state"] = "travel"
 			actor["request"] = request_id
 			actor["option"] = option
@@ -520,7 +552,7 @@ func _sync_contact_availability() -> void:
 			continue
 		if actor["state"] == "unavailable":
 			continue
-		if actor["state"] in ["travel", "work"]:
+		if actor["state"] in ["travel", "work"] and actor["request"] != "":
 			var request_id: String = actor["request"]
 			var request: Dictionary = requests[request_id]
 			request["status"] = "open"
@@ -649,6 +681,8 @@ func _move_actors(step: float) -> void:
 					actor["state"] = "idle"
 				else:
 					actor["state"] = "work"
+					requests[actor["request"]]["responded"] = true
+					request_changed.emit(actor["request"])
 		elif actor["state"] == "work":
 			actor["work_left"] -= step
 			requests[actor["request"]]["jobs"][actor["option"]["id"]]["left"] = maxf(0.0, actor["work_left"])
@@ -676,23 +710,35 @@ func _resolve(request_id: String, option: Dictionary) -> void:
 	if request["status"] == "closed" and request["data"].has("overlay"):
 		var overlay: Dictionary = request["data"]["overlay"]
 		_set_overlay(overlay["lot"], overlay["name"], false)
-	var actor_id: String = option["actor"]
-	if actors.has(actor_id):
-		var actor: Dictionary = actors[actor_id]
-		actor["state"] = "idle"
+	_release_request_worker(request_id)
+	request_changed.emit(request_id)
+	state_changed.emit()
+
+
+func _release_request_worker(request_id: String, finish_travel: bool = false) -> void:
+	for id in actors:
+		var actor: Dictionary = actors[id]
+		if actor["request"] != request_id:
+			continue
+		if finish_travel and actor["state"] == "travel":
+			# The appointment is gone, but a person already on the road still
+			# finishes the trip without starting work or producing quest effects.
+			actor["commute_target"] = _request_lot(request_id)
+		else:
+			actor["state"] = "idle"
 		actor["request"] = ""
+		actor["option"] = {}
 		if actor["driver"]:
 			actor["driver"] = false
 			actors["tolik"]["state"] = "idle"
-	request_changed.emit(request_id)
-	state_changed.emit()
 
 
 func _expire_requests() -> void:
 	for id in request_order:
 		var request: Dictionary = requests[id]
-		if request["status"] == "open" and request["expire_t"] <= t and _active_promise(id).is_empty():
+		if request["status"] in ["open", "assigned"] and not request["responded"] and request["expire_t"] <= t and _active_promise(id).is_empty():
 			request["status"] = "closed"
+			_release_request_worker(id, true)
 			_apply(request["data"]["expire_effects"], {"lot": request["data"]["lot"], "kind": "missed"})
 			if request["data"].has("overlay"):
 				var overlay: Dictionary = request["data"]["overlay"]
@@ -707,7 +753,7 @@ func _escalate_requests() -> void:
 	for id in request_order:
 		var request: Dictionary = requests[id]
 		var steps: Array = request["data"].get("escalation", [])
-		if request["status"] != "open" or not _active_promise(id).is_empty():
+		if request["status"] != "open" or request["responded"] or not _active_promise(id).is_empty():
 			continue
 		while request["escalated"] < steps.size():
 			var next_step: Dictionary = steps[request["escalated"]]

@@ -1092,7 +1092,9 @@ func _show_toast(entry: Dictionary) -> void:
 func _refresh_markers() -> void:
 	var visible_ids: Array[String] = []
 	if phase in ["planning", "live"]:
-		visible_ids = sim.visible_requests()
+		for id in sim.visible_requests():
+			if sim.request_stage(id) != "work":
+				visible_ids.append(id)
 	for id in _markers.keys():
 		if not visible_ids.has(id):
 			_markers[id].queue_free()
@@ -1112,6 +1114,7 @@ func _refresh_markers() -> void:
 		var marker: Control = _markers[id]
 		marker.tooltip_text = "%s\n%s" % [data["title"], sim.request_wait_text(id)]
 		marker.assigned = sim.requests[id]["status"] == "assigned"
+		marker.show_deadline = not sim.requests[id]["responded"]
 		var worker: String = sim.request_worker(id)
 		if worker != "":
 			var worker_info: Dictionary = Week1.ACTORS[worker]
@@ -1274,7 +1277,7 @@ func _option_chips(option: Dictionary) -> Array:
 	if jobs.has(option["id"]):
 		hours = jobs[option["id"]]["left"]
 		if hours < float(option.get("hours", 0)) - 0.00001:
-			chips.append(["продолжить", STEEL])
+			chips.append(["продолжить" if sim.requests[_card_request]["status"] == "open" else "осталось", STEEL])
 	match option["actor"]:
 		"phone":
 			chips.append(["сразу", OfficeTheme.SECONDARY])
@@ -1282,7 +1285,7 @@ func _option_chips(option: Dictionary) -> Array:
 			chips.append(["бесплатно сейчас", OfficeTheme.SECONDARY])
 			chips.append(["станет долгом", AMBER])
 		_:
-			chips.append([_eta_text(hours), OfficeTheme.SECONDARY])
+			chips.append(["сразу" if hours <= 0.0 else _eta_text(hours), OfficeTheme.SECONDARY])
 	if float(option.get("chance", 1.0)) < 1.0:
 		chips.append(["может сорваться", AMBER])
 	var effects: Dictionary = option.get("success", option.get("promise", {}).get("made", {}))

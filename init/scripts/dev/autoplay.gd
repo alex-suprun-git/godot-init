@@ -14,6 +14,7 @@ const SCENARIOS := {
 	"tokens": "_run_token_review", # portrait feet at home and after a fast personal trip
 	"paperwork": "_run_paperwork", # interruption, overnight progress, calls and weekly completion
 	"contacts": "_run_contact_availability", # off-map/red after hours, interrupted job and manual reassignment
+	"requests": "_run_request_lifecycle", # arrival ends reaction timer/marker; late travel can expire
 	"edges": "_run_edges_review",
 	"vehicles": "_run_vehicle_review",
 	"crosswalks": "_run_crosswalk_review",
@@ -213,6 +214,46 @@ func _run_contact_availability() -> void:
 	print("contact reassigned: work left=", main.sim.actors["mikhalych"]["work_left"])
 	main.sim.advance(8.0)
 	print("contact after remaining work: request=", main.sim.requests["hot_water"]["status"], " / state=", main.sim.actors["mikhalych"]["state"])
+
+
+func _run_request_lifecycle() -> void:
+	print("request disabled fuel offer present: ", main.sim.requests.has("fuel_offer"))
+	_dismiss_briefing()
+	main.start_week()
+	main.set_speed(0.0)
+	while main.sim.day_index() < 2:
+		if main._night:
+			main.hud.continue_day()
+			await _wait(0.5)
+		main.set_speed(0.0)
+		_dismiss_briefing()
+		main.sim.advance(32.0)
+	if main._night:
+		main.hud.continue_day()
+		await _wait(0.5)
+	main.set_speed(0.0)
+	main.sim.advance(2.0)
+	main.sim.advance(1.0) # Wednesday 09:00: conflict at the station market.
+	main.sim.choose("market_cops", "go_myself")
+	main.sim.advance(0.7)
+	print("request arrival: stage=", main.sim.request_stage("market_cops"), " / marker=", main.hud._markers.has("market_cops"), " / label=", main.sim.request_wait_text("market_cops"))
+	await _map_shot("request_on_site", main.sim.actors["me"]["pos"], main.map.ZOOM_DEFAULT)
+	main.sim.advance(2.5)
+	print("request after reaction deadline: ", main.sim.clock_text(), " / stage=", main.sim.request_stage("market_cops"))
+	main.hud.open_card("market_cops")
+	await _shot("request_working_card")
+	main.hud._close_card()
+	main.sim.advance(20.0)
+	if main._night:
+		main.hud.continue_day()
+		await _wait(0.5)
+	main.set_speed(0.0)
+	main.sim.advance(2.0)
+	main.sim.advance(4.9) # Thursday 12:54: too late to reach the boiler by 13:00.
+	main.hud._close_card()
+	main.sim.choose("coal_theft", "go_myself")
+	main.sim.advance(2.0)
+	print("request late travel: stage=", main.sim.request_stage("coal_theft"), " / actor=", main.sim.actors["me"]["state"], " / coal_stolen=", main.sim.flags.get("coal_stolen", false))
 
 
 func _run_train_review() -> void:

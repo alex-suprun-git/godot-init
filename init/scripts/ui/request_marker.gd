@@ -22,6 +22,7 @@ const COLORS := {"plea": CREAM, "conflict": AMBER, "crisis": RED, "offer": BLUE}
 var kind := "plea"
 var time_left := 1.0 # 1 just appeared, 0 deadline
 var assigned := false
+var show_deadline := true
 var asker_texture: Texture2D # the face of whoever asks, when it is a person
 var asker_region := Rect2()
 var worker_texture: Texture2D # the face of whoever is on it, when assigned
@@ -65,13 +66,14 @@ func _draw() -> void:
 	var fill: Color = COLORS[kind]
 	if assigned:
 		fill = fill.darkened(0.45)
-	if kind == "crisis" and not assigned:
+	if kind == "crisis" and not assigned and show_deadline:
 		var pulse := fmod(_time, 1.4) / 1.4
 		draw_arc(CENTER, 28.0 + pulse * 12.0, 0.0, TAU, 48, Color(RED, 1.0 - pulse), 3.0)
 
 	# Time ring: full when it just appeared, shrinking to the deadline.
-	draw_arc(CENTER, 28.0, 0.0, TAU, 48, Color(0.1, 0.1, 0.09, 0.85), 6.0)
-	if time_left > 0.0:
+	if show_deadline:
+		draw_arc(CENTER, 28.0, 0.0, TAU, 48, Color(0.1, 0.1, 0.09, 0.85), 6.0)
+	if show_deadline and time_left > 0.0:
 		var ring := RED if time_left < 0.25 else (AMBER if not assigned else Color(0.55, 0.52, 0.45))
 		draw_arc(CENTER, 28.0, -PI / 2.0, -PI / 2.0 + TAU * time_left, 48, ring, 6.0)
 
