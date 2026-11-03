@@ -10,11 +10,19 @@ const YEAR := 1997
 const MONTH := 8
 const FIRST_DAY := 25 # Monday, 25 August 1997
 const DAY_NAMES := ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
-const WORK_START_HOUR := 7
-const HOURS_PER_DAY := 15 # Working day 07:00–22:00; the night is a short transition, the weekend is skipped.
+const DAY_START_HOUR := 6
+const WORK_START_HOUR := 8
+const WORK_END_HOUR := 18
+const DAY_END_HOUR := 22
+const HOURS_PER_DAY := DAY_END_HOUR - DAY_START_HOUR # Overtime is tracked separately.
 const DAYS_PER_WEEK := 5
 
-const START_MONEY := 1_200_000
+const START_MONEY := 1_200 # Stable fictional rubles; no historical denomination changes.
+const PAYDAY := 1
+const MONTHLY_SALARY := 1_500
+const WEEKLY_RENT := 250
+const PAPERWORK_HOURS := 20.0
+const PAPERWORK_BOSS_PENALTY := 10 # Initial balance setting for an unfinished weekly quota.
 
 # Hidden values; the player only sees words.
 const FACTIONS := {
@@ -27,6 +35,7 @@ const FACTIONS := {
 
 # Gameplay locations reference fixed layout lots; positions are never duplicated.
 const LOTS := {
+	"dormitory": {"name": "Общежитие", "layout": "dormitory"},
 	"forest": {"name": "Лесная поляна", "layout": "forest_clearing"},
 	"pond": {"name": "Пруд у посёлка", "layout": "pond_bank"},
 	"office": {"name": "Администрация района", "layout": "ispolkom"},
@@ -38,25 +47,40 @@ const LOTS := {
 	"wasteland": {"name": "Пустырь", "layout": "a2_k"},
 }
 
-# Speed is in map metres per game hour; unchanged during the layout migration.
+# Speed is in map metres per game hour. Player pace: office -> House 5 in 15 minutes.
 const ACTORS := {
 	"me": {
-		"name": "Вы", "role": "Помощник главы района", "start_lot": "office", "speed": 120.0,
+		"name": "Вы", "role": "Помощник главы района", "start_lot": "dormitory", "speed": 707.68,
 		"portrait": "res://assets/portraits/protagonist.png", "face": Rect2(375, 176, 1237, 1237),
 	},
 	"mikhalych": {
+		"availability": {"start": 8, "end": 18},
 		"name": "Михалыч", "role": "Слесарь ЖЭКа", "start_lot": "office", "speed": 100.0,
 		"portrait": "res://assets/portraits/mikhalych.png", "face": Rect2(362, 229, 580, 580),
 	},
 	"nina": {
+		"enabled": false, # A resident/requester, not yet a contact in the opening demo.
 		"name": "Баба Нина", "role": "Старшая по дому 5", "start_lot": "block5", "speed": 70.0,
 		"portrait": "res://assets/portraits/baba_nina.png", "face": Rect2(370, 140, 540, 540),
 	},
 	"tolik": {
+		"enabled": false, # Unavailable in the opening demo; keep his content and driving logic.
 		"name": "Толик", "role": "Водитель администрации", "start_lot": "office", "speed": 400.0,
 		"portrait": "res://assets/portraits/tolik.png", "face": Rect2(266, 180, 555, 555),
 	},
 }
+
+static func actor_enabled(id: String) -> bool:
+	return ACTORS.has(id) and ACTORS[id].get("enabled", true)
+
+
+static func enabled_actor_ids() -> Array[String]:
+	var ids: Array[String] = []
+	for id in ACTORS:
+		if actor_enabled(id):
+			ids.append(id)
+	return ids
+
 
 const BOSS := {
 	"name": "Пётр Петрович", "role": "Глава района",
@@ -99,6 +123,7 @@ const MORNING_NEWS := {
 # The boss's order for the week. An objective is met when its flag is set and
 # failed when the request with the same id closes without it.
 const OBJECTIVES := [
+	{"id": "paperwork", "title": "Работа с документами", "deadline": "До конца пятницы", "lot": "office", "flag": "paperwork"},
 	{"id": "contractor", "title": "Выбрать подрядчика для котельной", "deadline": "До четверга", "lot": "boiler", "flag": "contractor"},
 	{"id": "boss_report", "title": "Явиться к боссу на отчёт", "deadline": "Пятница", "lot": "office", "flag": "report"},
 ]
@@ -115,6 +140,7 @@ const OBJECTIVES := [
 # Option fields:
 #   actor: who goes ("me", a contact id, "phone", or "promise").
 #   hours: work time on site after arriving.
+#   requires_lot: the actor must already be there; zero-hour local choices resolve immediately.
 #   chance: success probability (default 1.0).
 #   success / fail: effects (faction deltas, money, trace, flags, next_week, overlay, log).
 #   keeps_open: the request stays open after this option (used by promises).
@@ -123,7 +149,7 @@ const REQUESTS := [
 		"id": "hot_water", "type": "plea", "lot": "block5", "asker": "nina",
 		"title": "Нет горячей воды с четверга",
 		"text": "Баба Нина от имени подъезда: «Третий раз за год, а год ещё молодой».",
-		"appear": {"day": 0, "hour": 7}, "urgency": "days", "wait_text": "Подъезд терпит, но недолго",
+		"appear": {"day": 0, "hour": 8}, "urgency": "days", "wait_text": "Подъезд терпит, но недолго",
 		"escalation": [
 			{"after": 15, "effects": {"residents": -3, "log": "Жильцы дома 5 собирают подписи под жалобой в мэрию."}},
 			{"after": 26, "effects": {"residents": -5, "overlay": {"lot": "block5", "name": "picket"}, "log": "У дома 5 вышли с плакатами: «Где вода?»"}},
@@ -139,7 +165,7 @@ const REQUESTS := [
 			},
 			{
 				"id": "go_myself", "actor": "me", "hours": 3,
-				"label": "Поехать самому",
+				"label": "Пойти самому",
 				"hint": "Жители оценят, что пришли лично. Трубу это не починит.",
 				"success": {"residents": 8, "log": "Вы выслушали весь подъезд. Воды нет, но злятся меньше."},
 			},
@@ -161,7 +187,7 @@ const REQUESTS := [
 		"id": "contractor", "type": "conflict", "lot": "boiler", "asker": "",
 		"title": "Два подрядчика на одну котельную",
 		"text": "Гусев и «Стройремонт» оба уверены, что ремонт котельной — их. Решать вам, на месте.",
-		"appear": {"day": 0, "hour": 7}, "urgency": "week", "expire": {"day": 3, "hour": 20}, "wait_text": "Решить до четверга",
+		"appear": {"day": 0, "hour": 8}, "urgency": "week", "expire": {"day": 3, "hour": 20}, "wait_text": "Решить до четверга",
 		"expire_effects": {"boss": -20, "thread": "Котельная стоит без подрядчика.", "log": "Подрядчика так и не выбрали. Котельная стоит, Пётр Петрович мрачнеет."},
 		"options": [
 			{
@@ -181,19 +207,19 @@ const REQUESTS := [
 	{
 		"id": "envelope", "type": "offer", "lot": "office", "asker": "",
 		"title": "Посетитель с конвертом",
-		"text": "Гусев кладёт на стол толстый конверт: «Это просто за понимание. С Петровичем всё согласовано».",
+		"text": "Гусев, подрядчик котельной, принёс конверт: «Это просто за понимание. С Петровичем всё согласовано». Он ждёт ответа в приёмной. Принять или вернуть конверт можно при личной встрече в кабинете.",
 		"appear": {"day": 0, "hour": 10}, "urgency": "now", "wait_text": "Гусев сидит в приёмной",
 		"expire_effects": {"business": -5, "log": "Гусев забрал конверт и ушёл, не прощаясь."},
 		"options": [
 			{
-				"id": "take", "actor": "me", "hours": 1,
+				"id": "take", "actor": "me", "hours": 0, "requires_lot": "office",
 				"label": "Взять конверт",
 				"hint": "Деньги сейчас. Кто-то это видел.",
-				"success": {"money": 1_500_000, "business": 10, "trace": 1, "flags": {"envelope": true}, "thread": "Толик видел, как Гусев выходил от вас довольным.", "log": "Конверт в ящике стола. Толик видел, как Гусев выходил довольным."},
+				"success": {"money": 1_500, "business": 10, "trace": 1, "flags": {"envelope": true}, "thread": "Толик видел, как Гусев выходил от вас довольным.", "log": "Конверт в ящике стола. Толик видел, как Гусев выходил довольным."},
 			},
 			{
-				"id": "refuse", "actor": "me", "hours": 1,
-				"label": "Отказаться",
+				"id": "refuse", "actor": "me", "hours": 0, "requires_lot": "office",
+				"label": "Вернуть конверт Гусеву",
 				"hint": "Бизнес будет недоволен. Чистые руки.",
 				"success": {"business": -10, "log": "Вы вернули конверт. Гусев улыбнулся, но глаза не улыбались."},
 			},
@@ -207,9 +233,9 @@ const REQUESTS := [
 		"expire_effects": {"church": -5, "log": "Отец Георгий так и не дождался ответа."},
 		"options": [
 			{
-				"id": "go_myself", "actor": "me", "hours": 4,
-				"label": "Поехать самому",
-				"hint": "Церковь оценит личный визит. Полдня уйдёт.",
+				"id": "go_myself", "actor": "me", "hours": 1.5,
+				"label": "Пойти самому",
+				"hint": "Церковь оценит личный визит. Чай и разговор — около полутора часов.",
 				"success": {"church": 15, "log": "Вы пили чай с отцом Георгием. Храм в списке на отопление."},
 			},
 			{
@@ -230,7 +256,7 @@ const REQUESTS := [
 		"options": [
 			{
 				"id": "go_myself", "actor": "me", "hours": 1,
-				"label": "Поехать самому",
+				"label": "Пойти самому",
 				"hint": "Грузовик уедет, если вы приедете лично. Рискованно.",
 				"success": {"residents": 5, "thread": "Номера грузовика у котельной вы всё-таки запомнили.", "log": "Вы приехали — грузовик уехал пустым. Номера вы всё-таки запомнили."},
 			},
@@ -260,7 +286,7 @@ const REQUESTS := [
 				"id": "allow", "actor": "me", "hours": 2,
 				"label": "Разрешить ларьки",
 				"hint": "Деньги и бизнес довольны. Жители не любят ларьки у дома.",
-				"success": {"money": 500_000, "business": 8, "residents": -5, "trace": 1, "log": "Вы разрешили ларьки на пустыре. Берёзы остались, пока."},
+				"success": {"money": 500, "business": 8, "residents": -5, "trace": 1, "log": "Вы разрешили ларьки на пустыре. Берёзы остались, пока."},
 			},
 			{
 				"id": "deny", "actor": "me", "hours": 2,
@@ -279,7 +305,7 @@ const REQUESTS := [
 		"options": [
 			{
 				"id": "go_myself", "actor": "me", "hours": 3,
-				"label": "Поехать самому",
+				"label": "Пойти самому",
 				"hint": "Обе стороны выслушаны. Никто не уйдёт полностью довольным.",
 				"success": {"police": -3, "business": 8, "log": "Вы развели милицию и торговцев по углам рынка. Обе стороны остались при своём."},
 			},
@@ -294,6 +320,7 @@ const REQUESTS := [
 	},
 	{
 		"id": "fuel_offer", "type": "offer", "lot": "depot", "asker": "",
+		"enabled": false, # Disabled until the deal has meaningful actions beyond accept/refuse.
 		"title": "Кладовщик предлагает мазут «мимо кассы»",
 		"text": "«Часть пойдёт на котельную, часть никто не считал. Вы же хотите, чтобы зимой было тепло».",
 		"appear": {"day": 2, "hour": 13}, "urgency": "today", "wait_text": "Вечером продаст другому",
@@ -303,7 +330,7 @@ const REQUESTS := [
 				"id": "take", "actor": "me", "hours": 2,
 				"label": "Взять мазут и деньги",
 				"hint": "Котельной хватит топлива. Следов больше.",
-				"success": {"money": 800_000, "business": 5, "police": -3, "trace": 1, "flags": {"fuel_off_books": true}, "thread": "Мазут ушёл на котельную без накладных.", "log": "Мазут отгрузили без накладных. Кладовщик сказал, что вы понятливый."},
+				"success": {"money": 800, "business": 5, "police": -3, "trace": 1, "flags": {"fuel_off_books": true}, "thread": "Мазут ушёл на котельную без накладных.", "log": "Мазут отгрузили без накладных. Кладовщик сказал, что вы понятливый."},
 			},
 			{
 				"id": "refuse", "actor": "me", "hours": 2,
@@ -328,7 +355,7 @@ const REQUESTS := [
 			},
 			{
 				"id": "go_myself", "actor": "me", "hours": 3,
-				"label": "Поехать самому",
+				"label": "Пойти самому",
 				"hint": "Люди увидят, что вы приехали. Вы потеряете полдня.",
 				"success": {"residents": 12, "log": "Вы пришли на собрание сами. Люди запомнили, кто пришёл."},
 			},

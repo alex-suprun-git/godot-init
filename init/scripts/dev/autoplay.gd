@@ -10,6 +10,11 @@ const SCENARIOS := {
 	"office": "_run_office", # briefing, week tasks, newspaper, contact, request card, planning
 	"map": "_run_map_tour", # overview, lot labels and the district map tour
 	"week": "_run_week", # plays the whole week live, then the summary and week two
+	"routine": "_run_routine", # dormitory dawn, office arrival, overtime, rent and monthly salary
+	"tokens": "_run_token_review", # portrait feet at home and after a fast personal trip
+	"paperwork": "_run_paperwork", # interruption, overnight progress, calls and weekly completion
+	"contacts": "_run_contact_availability", # off-map/red after hours, interrupted job and manual reassignment
+	"requests": "_run_request_lifecycle", # arrival ends reaction timer/marker; late travel can expire
 	"edges": "_run_edges_review",
 	"vehicles": "_run_vehicle_review",
 	"crosswalks": "_run_crosswalk_review",
@@ -78,8 +83,177 @@ func _run(scenarios: Array) -> void:
 # Gets the start-of-week briefing and task panel out of the way, for scenarios
 # that only need the map.
 func _dismiss_briefing() -> void:
-	main.hud._continue_to_tasks()
+	main.hud._close_important_notice()
 	main.hud._close_week_panel()
+
+
+func _run_routine() -> void:
+	_dismiss_briefing()
+	await _map_shot("routine_06_dormitory", main.hud.Week1.location_position("dormitory"), 340.0)
+	main.start_week()
+	main.set_speed(0.0)
+	main.sim.advance(2.0)
+	print("routine arrival: ", main.sim.clock_text(), " / ", main.sim.actors["me"]["lot"], " / boss=", main.sim.flags.get("boss_briefing_received", false))
+	await _shot("routine_08_boss")
+	_dismiss_briefing()
+	main.sim.advance(13.5) # 21:30: begin an existing three-hour personal visit.
+	main.sim.choose("hot_water", "go_myself")
+	main.sim.advance(1.0)
+	main.hud._close_card()
+	print("routine overtime: ", main.sim.clock_text(), " / ", main.sim.actors["me"]["state"], " / work left=", main.sim.actors["me"]["work_left"])
+	await _map_shot("routine_overtime", main.sim.actors["me"]["pos"], 340.0)
+	main.sim.advance(12.0)
+	print("routine next morning: ", main.sim.clock_text(), " / ", main.sim.actors["me"]["lot"], " / last return=", main.sim.last_day_end_hour)
+	# Play the remaining days without taking new jobs; normal night cards still run.
+	while not main.sim.ended:
+		if main._night:
+			main.hud.continue_day()
+			await _wait(0.5)
+		main.set_speed(0.0)
+		_dismiss_briefing()
+		main.sim.advance(32.0)
+	print("routine Friday: money=", main.sim.money, " / rent debt=", main.sim.rent_debt, " / home=", main.sim.actors["me"]["lot"])
+	for outcome in main.sim.outcomes:
+		if "Документы за неделю не закончены" in outcome["text"]:
+			print("routine paperwork penalty: ", outcome["text"])
+	await _shot("routine_friday_rent")
+	main.go_to_next_week()
+	print("routine Monday salary: money=", main.sim.money, " / date=", main.sim.date_text())
+	print("routine new weekly quota: ", main.sim.paperwork_hours, " / ended=", main.sim.ended)
+	await _shot("routine_monday_salary")
+
+
+func _run_token_review() -> void:
+	_dismiss_briefing()
+	await _map_shot("tokens_home", main.sim.actors["me"]["pos"], main.map.ZOOM_DEFAULT)
+	print("token home anchor gap (m): ", main.map._tokens["me"].position.distance_to(main.map._ground(main.sim.actors["me"]["pos"])))
+	main.sim.advance(2.0)
+	_dismiss_briefing()
+	main.sim.choose("hot_water", "go_myself")
+	main.sim.advance(0.5)
+	await _map_shot("tokens_house5", main.sim.actors["me"]["pos"], main.map.ZOOM_DEFAULT)
+	print("token work anchor gap (m): ", main.map._tokens["me"].position.distance_to(main.map._ground(main.sim.actors["me"]["pos"])))
+
+
+func _run_paperwork() -> void:
+	_dismiss_briefing()
+	main.start_week()
+	main.set_speed(0.0)
+	main.sim.advance(2.0)
+	_dismiss_briefing()
+	main.sim.start_paperwork()
+	main.sim.advance(4.0)
+	print("paperwork personal visit blocked: ", main.sim.option_block_reason("hot_water", main.sim.requests["hot_water"]["data"]["options"][1]))
+	main.sim.choose("hot_water", "send_mikhalych")
+	print("paperwork after dispatch call: ", main.sim.actors["me"]["state"], " / hours=", main.sim.paperwork_hours)
+	main.hud._show_week_panel()
+	await _shot("paperwork_progress")
+	main.hud._close_week_panel()
+	main.sim.pause_paperwork()
+	main.sim.advance(1.0)
+	print("paperwork after paused hour: ", main.sim.paperwork_hours)
+	main.sim.choose("contractor", "pick_gusev")
+	main.sim.advance(4.0)
+	main.sim.return_to_office()
+	main.sim.advance(2.0)
+	print("paperwork return to office: ", main.sim.actors["me"]["lot"], " / progress=", main.sim.paperwork_hours)
+	main.sim.start_paperwork()
+	main.sim.advance(20.0)
+	print("paperwork next morning: ", main.sim.clock_text(), " / hours=", main.sim.paperwork_hours, " / home=", main.sim.actors["me"]["lot"])
+	# Leave some quota for Friday to inspect a real phone choice alongside paperwork.
+	while main.sim.day_index() < 4:
+		if main._night:
+			main.hud.continue_day()
+			await _wait(0.5)
+		main.set_speed(0.0)
+		_dismiss_briefing()
+		main.sim.advance(32.0)
+	if main._night:
+		main.hud.continue_day()
+		await _wait(0.5)
+	main.set_speed(0.0)
+	_dismiss_briefing()
+	main.sim.advance(2.0)
+	main.sim.start_paperwork()
+	main.sim.advance(1.0)
+	main.hud.open_card("journalist")
+	await _shot("paperwork_phone")
+	main.sim.choose("journalist", "phone")
+	print("paperwork after journalist call: ", main.sim.actors["me"]["state"], " / request=", main.sim.requests["journalist"]["status"])
+	main.hud._close_card()
+	main.sim.advance(main.sim.paperwork_left())
+	print("paperwork complete: ", main.sim.paperwork_hours, " / flag=", main.sim.flags.get("paperwork", false), " / state=", main.sim.actors["me"]["state"])
+	main.hud._show_week_panel()
+	await _shot("paperwork_complete")
+
+
+func _run_contact_availability() -> void:
+	_dismiss_briefing()
+	main.start_week()
+	main.set_speed(0.0)
+	main.sim.advance(2.0)
+	_dismiss_briefing()
+	main.sim.advance(7.0) # Assign a five-hour repair at 15:00, including travel.
+	main.sim.choose("hot_water", "send_mikhalych")
+	main.sim.advance(3.0)
+	print("contact 18:00: state=", main.sim.actors["mikhalych"]["state"], " / request=", main.sim.requests["hot_water"]["status"], " / job=", main.sim.requests["hot_water"]["jobs"])
+	main.hud._show_contact_detail("mikhalych")
+	await _map_shot("contact_off_hours", main.hud.Week1.location_position("block5"), main.map.ZOOM_DEFAULT)
+	print("contact visibility: hud=", main.hud._tokens["mikhalych"].visible, " / map=", main.map._tokens["mikhalych"].visible)
+	main.hud._close_contact_detail()
+	main.sim.advance(12.0)
+	if main._night:
+		main.hud.continue_day()
+		await _wait(0.5)
+	main.set_speed(0.0)
+	main.sim.advance(2.0)
+	print("contact next 08:00: state=", main.sim.actors["mikhalych"]["state"], " / request=", main.sim.requests["hot_water"]["status"], " / job=", main.sim.requests["hot_water"]["jobs"])
+	main.hud.open_card("hot_water")
+	await _shot("contact_resume_manually")
+	main.sim.choose("hot_water", "send_mikhalych")
+	print("contact reassigned: work left=", main.sim.actors["mikhalych"]["work_left"])
+	main.sim.advance(8.0)
+	print("contact after remaining work: request=", main.sim.requests["hot_water"]["status"], " / state=", main.sim.actors["mikhalych"]["state"])
+
+
+func _run_request_lifecycle() -> void:
+	print("request disabled fuel offer present: ", main.sim.requests.has("fuel_offer"))
+	_dismiss_briefing()
+	main.start_week()
+	main.set_speed(0.0)
+	while main.sim.day_index() < 2:
+		if main._night:
+			main.hud.continue_day()
+			await _wait(0.5)
+		main.set_speed(0.0)
+		_dismiss_briefing()
+		main.sim.advance(32.0)
+	if main._night:
+		main.hud.continue_day()
+		await _wait(0.5)
+	main.set_speed(0.0)
+	main.sim.advance(2.0)
+	main.sim.advance(1.0) # Wednesday 09:00: conflict at the station market.
+	main.sim.choose("market_cops", "go_myself")
+	main.sim.advance(0.7)
+	print("request arrival: stage=", main.sim.request_stage("market_cops"), " / marker=", main.hud._markers.has("market_cops"), " / label=", main.sim.request_wait_text("market_cops"))
+	await _map_shot("request_on_site", main.sim.actors["me"]["pos"], main.map.ZOOM_DEFAULT)
+	main.sim.advance(2.5)
+	print("request after reaction deadline: ", main.sim.clock_text(), " / stage=", main.sim.request_stage("market_cops"))
+	main.hud.open_card("market_cops")
+	await _shot("request_working_card")
+	main.hud._close_card()
+	main.sim.advance(20.0)
+	if main._night:
+		main.hud.continue_day()
+		await _wait(0.5)
+	main.set_speed(0.0)
+	main.sim.advance(2.0)
+	main.sim.advance(4.9) # Thursday 12:54: too late to reach the boiler by 13:00.
+	main.hud._close_card()
+	main.sim.choose("coal_theft", "go_myself")
+	main.sim.advance(2.0)
+	print("request late travel: stage=", main.sim.request_stage("coal_theft"), " / actor=", main.sim.actors["me"]["state"], " / coal_stolen=", main.sim.flags.get("coal_stolen", false))
 
 
 func _run_train_review() -> void:
@@ -130,6 +304,8 @@ func _run_train_review() -> void:
 
 
 func _run_office() -> void:
+	_dismiss_briefing()
+	main.sim.advance(2.0) # Reach work before showing the boss and request cards.
 	main.map._zoom = main.map.ZOOM_MAX
 	main.map._camera_goal = Vector3(0, 0, -20)
 	await _wait(0.5)
@@ -199,12 +375,19 @@ func _make_week_choices() -> void:
 
 func _run_week() -> void:
 	_dismiss_briefing()
+	if not main.sim.at_work:
+		main.sim.advance(2.0)
+		_dismiss_briefing()
 	_make_week_choices()
 	main.start_week()
 	main.set_speed(4.0)
 	var live_shot_taken := false
 	while main.phase == "live":
 		await get_tree().process_frame
+		# The morning newspaper and the first office briefing are reading pauses.
+		if main.hud._notice_panel != null:
+			_dismiss_briefing()
+			main.set_speed(4.0)
 		_play_turn()
 		if not _picket_shot_taken and main.map._overlays["block5:picket"].visible:
 			_picket_shot_taken = true

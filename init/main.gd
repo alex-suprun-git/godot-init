@@ -40,6 +40,7 @@ func _ready() -> void:
 	map = CityMap.new()
 	add_child(map)
 	map.setup(sim)
+	map.focus_on("dormitory")
 	hud = Hud.new()
 	add_child(hud)
 	hud.setup(sim, map, audio, play_log)
@@ -55,6 +56,12 @@ func _ready() -> void:
 		get_tree().reload_current_scene())
 	sim.week_ended.connect(_on_week_ended)
 	sim.day_started.connect(_on_day_started)
+	sim.workday_started.connect(func():
+		map.focus_on("office")
+		if not sim.flags.get("boss_briefing_received", false):
+			sim.flags["boss_briefing_received"] = true
+			hud._show_important_notice(hud.Week1.START_BRIEFING)
+			sim.state_changed.emit())
 	# Crises pause the game, as in Frostpunk: decide first, then resume.
 	sim.crisis_started.connect(func(_id): set_speed(0.0))
 	# Sounds for things that happen in the world. The sim knows nothing about
@@ -123,6 +130,7 @@ func go_to_next_week() -> void:
 func _on_day_started(day: int) -> void:
 	_night = true
 	set_speed(0.0)
+	map.focus_on("dormitory")
 	map.play_night(hud.DAY_CARD_SECONDS)
 	hud.show_day_card(day, func():
 		_night = false

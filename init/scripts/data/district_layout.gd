@@ -6,7 +6,9 @@ extends RefCounted
 const HOUSING_SPACING := 0.88
 
 const LOTS := {
-	"housing_reserve_w": {"type": "R", "rect": Rect2(-472.5, -70, 76.5, 365), "content": "housing_reserve", "condition": "kept", "facing": "e"},
+	"housing_reserve_w": {"type": "R", "rect": Rect2(-472.5, -70, 76.5, 75), "content": "housing_reserve", "condition": "kept", "facing": "e"},
+	"dormitory": {"type": "W", "rect": Rect2(-472.5, 5, 76.5, 45), "content": "dormitory_placeholder", "condition": "kept", "facing": "s"},
+	"housing_reserve_w_s": {"type": "R", "rect": Rect2(-472.5, 50, 76.5, 245), "content": "housing_reserve", "condition": "kept", "facing": "e"},
 	"housing_reserve_s": {"type": "R", "rect": Rect2(-390, 261, 365, 34), "content": "housing_reserve", "condition": "kept", "facing": "n"},
 	"forest_clearing": {"type": "N", "rect": Rect2(-567, 108, 28, 24), "content": "forest_clearing", "condition": "kept", "facing": "e"},
 	"pond_bank": {"type": "N", "rect": Rect2(265, -20, 24, 10), "content": "pond_bank", "condition": "kept", "facing": "s"},

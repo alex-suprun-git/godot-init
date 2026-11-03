@@ -2,8 +2,8 @@
 # season picks which look the map has; the scenario itself is the same in all of them.
 extends RefCounted
 
-# Real seconds per game hour at x1: a 15-hour day (07:00–22:00) takes 60 seconds,
-# and the five-day live week takes five minutes before pauses.
+# Real seconds per game hour at x1: a 16-hour day (06:00–22:00) takes 64 seconds,
+# plus any overtime and the walk home. Five base days take 5 minutes 20 seconds.
 const GAME_HOUR_SECONDS := 4.0
 const TIME_SPEEDS := [0.0, 1.0, 2.0, 4.0]
 

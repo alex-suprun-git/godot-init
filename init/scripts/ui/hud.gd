@@ -40,6 +40,11 @@ var _root: Control
 var _date_label: Label
 var _phase_label: Label
 var _money_label: Label
+var _boss_notice_button: Button
+var _paperwork_map_button: Button
+var _paperwork_folder_button: Button
+var _paperwork_progress: ProgressBar
+var _paperwork_progress_label: Label
 var _start_button: Button
 var _tasks_button: Button
 var _map_controls: PanelContainer
@@ -64,6 +69,7 @@ var _contact_dots := {} # actor id -> availability color
 var _contact_cards := {} # actor id -> compact card
 var _contact_detail_panel: PanelContainer
 var _contact_detail_status: Label
+var _contact_detail_map_button: Button
 var _contact_detail_actor := ""
 var _path_layer: Control
 var _tokens_layer: Control
@@ -101,7 +107,7 @@ func setup(week_sim, city_map, audio_manager = null, playtest_log = null) -> voi
 	_markers_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_markers_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.add_child(_markers_layer)
-	for id in Week1.ACTORS:
+	for id in Week1.enabled_actor_ids():
 		var info: Dictionary = Week1.ACTORS[id]
 		var token := PersonToken.new()
 		token.texture = load(info["portrait"])
@@ -118,7 +124,7 @@ func setup(week_sim, city_map, audio_manager = null, playtest_log = null) -> voi
 	_build_toasts()
 	_build_incoming_tray()
 	_build_map_controls()
-	_show_important_notice(Week1.START_BRIEFING)
+	_show_important_notice(Week1.MORNING_NEWS)
 
 	sim.request_opened.connect(func(_id): _refresh_markers())
 	sim.request_changed.connect(_on_request_changed)
@@ -139,7 +145,7 @@ func _on_season_pressed(key: String) -> void:
 func set_phase(new_phase: String) -> void:
 	phase = new_phase
 	_start_button.visible = phase == "planning"
-	_tasks_button.visible = phase in ["planning", "live"]
+	_tasks_button.visible = phase in ["planning", "live"] and sim.flags.get("boss_briefing_received", false)
 	_incoming_tray.visible = phase in ["planning", "live"]
 	_season_controls.visible = phase == "planning"
 	for speed in _speed_buttons:
@@ -276,6 +282,9 @@ func _update_tokens() -> void:
 	var icon_scale: float = map.map_icon_scale()
 	for id in _tokens:
 		var token: Control = _tokens[id]
+		token.visible = sim.actor_available(id)
+		if not token.visible:
+			continue
 		var actor: Dictionary = sim.actors[id]
 		var feet: Vector2 = map.token_screen_position(id)
 		token.scale = Vector2.ONE * icon_scale
@@ -304,6 +313,8 @@ func _update_markers(area: Rect2) -> void:
 	# cover the person standing at their location (often the requester herself).
 	var occupied: Array[Rect2] = []
 	for token: Control in _tokens.values():
+		if not token.visible:
+			continue
 		var top := -24.0 if token.eta_text != "" else 0.0
 		occupied.append(Rect2(token.position + Vector2(-16, top) * icon_scale, Vector2(96, 62 - top) * icon_scale))
 	for id in _markers:
@@ -427,7 +438,7 @@ func _build_top_bar() -> void:
 	row.add_child(spacer)
 	_money_label = _label("", 17, PAPER)
 	_money_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_money_label.tooltip_text = "Влияние: взято взаймы у босса"
+	_money_label.tooltip_text = "Личные деньги"
 	row.add_child(_money_label)
 	_season_controls = HBoxContainer.new()
 	_season_controls.add_theme_constant_override("separation", 4)
@@ -457,7 +468,7 @@ func _build_top_bar() -> void:
 		button.pressed.connect(_sfx.bind("speed_click"))
 		time_controls.add_child(button)
 		_speed_buttons[speed] = button
-	_start_button = _primary_button("Начать неделю →")
+	_start_button = _primary_button("Начать день →")
 	_start_button.pressed.connect(start_week_pressed.emit)
 	row.add_child(_start_button)
 	# The folder is a map control, independent of the time controls above.
@@ -488,6 +499,16 @@ func _build_top_bar() -> void:
 	var folder_name := _heading("Дела недели · %d" % Week1.OBJECTIVES.size(), 22)
 	folder_name.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	folder_title.add_child(folder_name)
+	_paperwork_map_button = Button.new()
+	_paperwork_map_button.theme = _paper_theme
+	_paperwork_map_button.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	_paperwork_map_button.offset_left = -250
+	_paperwork_map_button.offset_right = -16
+	_paperwork_map_button.offset_top = -168
+	_paperwork_map_button.offset_bottom = -114
+	_paperwork_map_button.add_theme_font_size_override("font_size", 14)
+	_paperwork_map_button.pressed.connect(_on_paperwork_pressed)
+	_root.add_child(_paperwork_map_button)
 
 
 func _build_week_panel() -> void:
@@ -608,7 +629,7 @@ func _show_important_notice(notice: Dictionary) -> void:
 	_notice_panel.offset_bottom = 380 if newspaper else 230
 	_root.add_child(_notice_panel)
 	if newspaper:
-		(_notice_panel as Newspaper).build(notice, notice.get("date", sim.date_text(0)), dismiss)
+		(_notice_panel as Newspaper).build(notice, notice.get("date", sim.date_text()), dismiss)
 		return
 	var layout := VBoxContainer.new()
 	layout.add_theme_constant_override("separation", 18)
@@ -697,7 +718,7 @@ func _close_week_panel() -> void:
 
 
 func _build_contacts_bar() -> void:
-	var contact_count: int = Week1.ACTORS.size() - 1
+	var contact_count: int = Week1.enabled_actor_ids().size() - 1
 	var dock := _panel(INK)
 	dock.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	dock.offset_left = 16
@@ -713,7 +734,7 @@ func _build_contacts_bar() -> void:
 	var photos := HBoxContainer.new()
 	photos.add_theme_constant_override("separation", 10)
 	layout.add_child(photos)
-	for id in Week1.ACTORS:
+	for id in Week1.enabled_actor_ids():
 		if id == "me":
 			continue
 		var info: Dictionary = Week1.ACTORS[id]
@@ -778,6 +799,17 @@ func _refresh_all() -> void:
 
 func _refresh_clock() -> void:
 	_date_label.text = "%s · %s" % [sim.date_text(), sim.clock_text()]
+	if _boss_notice_button != null:
+		_boss_notice_button.visible = sim.flags.get("boss_briefing_received", false)
+	_tasks_button.visible = phase in ["planning", "live"] and sim.flags.get("boss_briefing_received", false)
+	_refresh_paperwork()
+	if phase == "live" and not _speed_buttons[0.0].button_pressed:
+		if sim._day_closing:
+			_phase_label.text = "ОВЕРТАЙМ · ЗАВЕРШИТЬ ДЕЛА И ДОМОЙ"
+		elif not sim.at_work:
+			_phase_label.text = "УТРО · К 08:00 В АДМИНИСТРАЦИЮ"
+		elif sim.clock_hour() >= Week1.WORK_END_HOUR:
+			_phase_label.text = "ПОСЛЕ РАБОТЫ · ДО 22:00"
 	for id in _contact_cards:
 		_contact_dots[id].color = _contact_status_color(id)
 		_contact_cards[id].tooltip_text = "%s · %s\n%s" % [Week1.ACTORS[id]["name"], Week1.ACTORS[id]["role"], sim.actor_status_text(id)]
@@ -786,11 +818,14 @@ func _refresh_clock() -> void:
 		progress.value = sim.actor_work_fraction(id) * 100.0
 	if _contact_detail_status != null and is_instance_valid(_contact_detail_status):
 		_contact_detail_status.text = sim.actor_status_text(_contact_detail_actor)
+		_contact_detail_map_button.disabled = not sim.actor_available(_contact_detail_actor)
 	if _card != null and _card.visible and _card_request != "" and is_instance_valid(_card_wait_label):
 		_card_wait_label.text = sim.request_wait_text(_card_request)
 
 
 func _contact_status_color(id: String) -> Color:
+	if not sim.actor_available(id):
+		return Color("d74747")
 	match sim.actors[id]["state"]:
 		"travel":
 			return AMBER
@@ -852,6 +887,8 @@ func _show_contact_detail(actor_id: String) -> void:
 	layout.add_child(_contact_detail_status)
 	var map_button := Button.new()
 	map_button.text = "Показать на карте"
+	_contact_detail_map_button = map_button
+	map_button.disabled = not sim.actor_available(actor_id)
 	map_button.custom_minimum_size = Vector2(0, 36)
 	map_button.pressed.connect(_focus_contact_on_map.bind(actor_id))
 	layout.add_child(map_button)
@@ -859,6 +896,8 @@ func _show_contact_detail(actor_id: String) -> void:
 
 
 func _focus_contact_on_map(actor_id: String) -> void:
+	if not sim.actor_available(actor_id):
+		return
 	var lot_id: String = sim.actor_target_lot(actor_id)
 	if lot_id == "":
 		lot_id = sim.actors[actor_id]["lot"]
@@ -871,11 +910,13 @@ func _close_contact_detail() -> void:
 		_contact_detail_panel.queue_free()
 	_contact_detail_panel = null
 	_contact_detail_status = null
+	_contact_detail_map_button = null
 	_contact_detail_actor = ""
 
 
 func _refresh_panels() -> void:
-	_money_label.text = "%s млн руб." % String.num(sim.money / 1_000_000.0, 1).replace(".", ",")
+	_money_label.text = "%d руб." % sim.money
+	_money_label.tooltip_text = "Личные деньги\nЗарплата: %d руб. · %d-го числа\nАренда: %d руб. · по пятницам\nДолг за аренду: %d руб." % [Week1.MONTHLY_SALARY, Week1.PAYDAY, Week1.WEEKLY_RENT, sim.rent_debt]
 	_clear(_objectives_box)
 	var number := 0
 	for objective in Week1.OBJECTIVES:
@@ -898,6 +939,21 @@ func _refresh_panels() -> void:
 			map_button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 			map_button.pressed.connect(_focus_objective_location.bind(location))
 			text_column.add_child(map_button)
+		if objective["id"] == "paperwork":
+			_paperwork_progress_label = _paper_label("", 16, OfficeTheme.BURGUNDY)
+			text_column.add_child(_paperwork_progress_label)
+			_paperwork_progress = ProgressBar.new()
+			_paperwork_progress.max_value = Week1.PAPERWORK_HOURS
+			_paperwork_progress.show_percentage = false
+			_paperwork_progress.custom_minimum_size = Vector2(0, 12)
+			text_column.add_child(_paperwork_progress)
+			var explanation := _paper_label("Можно прерываться: сделанное сохранится на следующий день. За бумагами доступны звонки. В 22:00 работа откладывается.", 14, OfficeTheme.SECONDARY)
+			explanation.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			text_column.add_child(explanation)
+			_paperwork_folder_button = _primary_button("")
+			_paperwork_folder_button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+			_paperwork_folder_button.pressed.connect(_on_paperwork_pressed)
+			text_column.add_child(_paperwork_folder_button)
 		var note: String = {"done": "Выполнено", "failed": "Провалено", "pending": objective.get("deadline", "")}[status]
 		var deadline := _paper_label(note, 15, OfficeTheme.BURGUNDY)
 		deadline.custom_minimum_size.x = 125
@@ -923,11 +979,52 @@ func _refresh_panels() -> void:
 		_standing_box.add_child(HSeparator.new())
 	_refresh_clock()
 	_refresh_wire()
+	if _card != null and _card.visible and _card_request != "":
+		_refresh_card()
 
 
 func _focus_objective_location(location: String) -> void:
 	_close_week_panel()
 	map.focus_on(location)
+
+
+func _refresh_paperwork() -> void:
+	if _paperwork_map_button == null:
+		return
+	var me: Dictionary = sim.actors["me"]
+	var active: bool = me["state"] == "paperwork"
+	var action := "Отложить документы" if active else ("Вернуться в кабинет" if me["lot"] != "office" else "Сесть за документы")
+	if sim.paperwork_left() <= 0.00001 and me["lot"] == "office":
+		action = "Норма выполнена"
+	var remaining := _eta_text(sim.paperwork_left()) if sim.paperwork_left() > 0.00001 else "готово"
+	var reason: String = sim.paperwork_block_reason()
+	_paperwork_map_button.visible = phase == "live" and sim.flags.get("boss_briefing_received", false)
+	_paperwork_map_button.text = "Документы · %s\n%s" % [remaining, action]
+	_paperwork_map_button.disabled = reason != "" or phase != "live"
+	_paperwork_map_button.tooltip_text = reason if reason != "" else "Работа с документами · %.0f часов на неделю" % Week1.PAPERWORK_HOURS
+	if is_instance_valid(_paperwork_folder_button):
+		_paperwork_folder_button.text = action
+		_paperwork_folder_button.disabled = reason != "" or phase != "live"
+		_paperwork_folder_button.tooltip_text = reason
+		_paperwork_progress_label.text = ("Сделано %.1f из %.0f ч" % [sim.paperwork_hours, Week1.PAPERWORK_HOURS]).replace(".", ",")
+		_paperwork_progress.value = sim.paperwork_hours
+
+
+func _on_paperwork_pressed() -> void:
+	if phase != "live" or sim.paperwork_block_reason() != "":
+		return
+	_close_week_panel()
+	_close_card(false)
+	if sim.actors["me"]["state"] == "paperwork":
+		sim.pause_paperwork()
+		speed_selected.emit(0.0)
+	elif sim.actors["me"]["lot"] != "office":
+		sim.return_to_office()
+		speed_selected.emit(1.0)
+	else:
+		sim.start_paperwork()
+		speed_selected.emit(1.0)
+	_refresh_paperwork()
 
 
 func _on_entry_added(entry: Dictionary) -> void:
@@ -995,7 +1092,9 @@ func _show_toast(entry: Dictionary) -> void:
 func _refresh_markers() -> void:
 	var visible_ids: Array[String] = []
 	if phase in ["planning", "live"]:
-		visible_ids = sim.visible_requests()
+		for id in sim.visible_requests():
+			if sim.request_stage(id) != "work":
+				visible_ids.append(id)
 	for id in _markers.keys():
 		if not visible_ids.has(id):
 			_markers[id].queue_free()
@@ -1015,6 +1114,7 @@ func _refresh_markers() -> void:
 		var marker: Control = _markers[id]
 		marker.tooltip_text = "%s\n%s" % [data["title"], sim.request_wait_text(id)]
 		marker.assigned = sim.requests[id]["status"] == "assigned"
+		marker.show_deadline = not sim.requests[id]["responded"]
 		var worker: String = sim.request_worker(id)
 		if worker != "":
 			var worker_info: Dictionary = Week1.ACTORS[worker]
@@ -1073,7 +1173,16 @@ func _refresh_card() -> void:
 		column.add_child(_paper_label("В работе.", 15, OfficeTheme.BURGUNDY))
 
 	column.add_child(_paper_label("ЧТО ДЕЛАТЬ", 12, OfficeTheme.SECONDARY))
+	if sim.actors["me"]["state"] == "paperwork":
+		var pause_button := Button.new()
+		pause_button.text = "Отложить документы · прогресс сохранится"
+		pause_button.pressed.connect(func():
+			sim.pause_paperwork()
+			_refresh_card())
+		column.add_child(pause_button)
 	for option in data["options"]:
+		if Week1.ACTORS.has(option["actor"]) and not Week1.actor_enabled(option["actor"]):
+			continue
 		column.add_child(_option_row(option))
 
 	var close := Button.new()
@@ -1164,6 +1273,11 @@ func _option_row(option: Dictionary) -> Control:
 func _option_chips(option: Dictionary) -> Array:
 	var chips: Array = []
 	var hours: float = float(option.get("hours", 0))
+	var jobs: Dictionary = sim.requests[_card_request]["jobs"]
+	if jobs.has(option["id"]):
+		hours = jobs[option["id"]]["left"]
+		if hours < float(option.get("hours", 0)) - 0.00001:
+			chips.append(["продолжить" if sim.requests[_card_request]["status"] == "open" else "осталось", STEEL])
 	match option["actor"]:
 		"phone":
 			chips.append(["сразу", OfficeTheme.SECONDARY])
@@ -1171,7 +1285,7 @@ func _option_chips(option: Dictionary) -> Array:
 			chips.append(["бесплатно сейчас", OfficeTheme.SECONDARY])
 			chips.append(["станет долгом", AMBER])
 		_:
-			chips.append(["%d ч" % int(hours), OfficeTheme.SECONDARY])
+			chips.append(["сразу" if hours <= 0.0 else _eta_text(hours), OfficeTheme.SECONDARY])
 	if float(option.get("chance", 1.0)) < 1.0:
 		chips.append(["может сорваться", AMBER])
 	var effects: Dictionary = option.get("success", option.get("promise", {}).get("made", {}))
@@ -1181,7 +1295,7 @@ func _option_chips(option: Dictionary) -> Array:
 			chips.append(["%s %s" % ["↑" if delta > 0 else "↓", Week1.FACTIONS[id]["name"]], STEEL if delta > 0 else RUST])
 	var money: int = effects.get("money", 0)
 	if money != 0:
-		chips.append(["%s%.1f млн" % ["+" if money > 0 else "−", absf(money) / 1_000_000.0], STEEL if money > 0 else RUST])
+		chips.append(["%s%d руб." % ["+" if money > 0 else "−", absi(money)], STEEL if money > 0 else RUST])
 	if effects.get("trace", 0) > 0:
 		chips.append(["останется след", RUST])
 	return chips
@@ -1543,6 +1657,7 @@ func _build_incoming_tray() -> void:
 	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_incoming_tray.add_child(caption)
 	var order := Button.new()
+	_boss_notice_button = order
 	order.text = "ПЁТР ПЕТРОВИЧ\nПоручение на неделю"
 	order.add_theme_font_size_override("font_size", 14)
 	order.pressed.connect(_show_important_notice.bind(Week1.START_BRIEFING))
