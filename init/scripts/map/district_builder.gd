@@ -33,6 +33,7 @@ func build(city_map) -> void:
 	_build_ground()
 	for id in Layout.LOTS:
 		_build_lot(id, Layout.LOTS[id])
+	preload("res://scripts/map/station_platform.gd").new().build(map)
 	_build_village_plots()
 	_build_border_fence()
 	_build_rail_poles()
@@ -91,13 +92,27 @@ func _build_ground() -> void:
 			map.wear.add_inner_edge(lot["rect"], 14.0, 0.7)
 	for road in Layout.ROADS:
 		var rect: Rect2 = road["rect"]
+		if road.get("hub_surface", false):
+			map._occupy(rect.get_center(), rect.size)
+			continue
 		# Housing-estate roads are asphalt too, just a lighter, warmer tone than the main roads.
 		var ground: String = {"asphalt": "asphalt", "yard": "asphalt", "dirt": "dirt"}[road["kind"]]
 		var yard: bool = road["kind"] == "yard"
 		var highway: bool = road.get("look", "") == "highway"
 		# The highway sits a hair lower so every town street crossing it wins the overlap.
 		var tint: Color = YARD_ROAD_TINT if yard else Color.WHITE
-		_patch(rect, ground, 0.135 if yard else (0.139 if highway else 0.14), tint, highway)
+		# Elevated road surfaces replace ground asphalt; leave the railway open below.
+		var patches: Array[Rect2] = [rect]
+		for bridge in Layout.BRIDGES:
+			if bridge.get("rail_overpass", false) and rect.intersects(bridge["rect"]):
+				var deck: Rect2 = bridge["rect"]
+				patches = []
+				if rect.position.y < deck.position.y:
+					patches.append(Rect2(rect.position, Vector2(rect.size.x, deck.position.y - rect.position.y)))
+				if rect.end.y > deck.end.y:
+					patches.append(Rect2(rect.position.x, deck.end.y, rect.size.x, rect.end.y - deck.end.y))
+		for patch in patches:
+			_patch(patch, ground, 0.135 if yard else (0.139 if highway else 0.14), tint, highway)
 		if yard:
 			map.wear.add_ring(rect, 4.0, 0.8)
 		map._occupy(rect.get_center(), rect.size)
@@ -231,6 +246,8 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 			_market(lot)
 		"painted_lot":
 			_painted_lot(lot, entry, center)
+		"station_hub":
+			preload("res://scripts/map/station_hub.gd").new().build(map)
 	for prop in ([] if id == "b1_k" else entry.get("dressing", [])):
 		if prop.get("sprite", "") == "garbage_pile" and not Catalog.CONDITIONS[lot["condition"]]["garbage"]:
 			continue
@@ -546,13 +563,96 @@ func _rail_deck_surface(at: Vector3, width: float, length: float, parent: Node =
 
 
 
+func _bridge_root(bridge: Dictionary) -> Node3D:
+	var bridge_root := Node3D.new()
+	bridge_root.name = "Bridge_" + str(bridge["id"])
+	bridge_root.set_meta("bridge_id", bridge["id"])
+	bridge_root.set_meta("bridge_kind", bridge["kind"])
+	bridge_root.set_meta("bridge_rect", bridge["rect"])
+	bridge_root.set_meta("parking_allowed", false)
+	bridge_root.add_to_group("map_bridges")
+	map.add_child(bridge_root)
+	return bridge_root
+
+
 func _build_bridge(bridge: Dictionary) -> void:
+	if bridge.get("embankment_span", false):
+		return # Built with the embankment gap, under the same registered bridge ID.
 	var rect: Rect2 = bridge["rect"]
-	if bridge["kind"] == "road":
+	var previous_children: Array[Node] = map.get_children()
+	var bridge_root := _bridge_root(bridge)
+	if bridge.get("rail_overpass", false):
+		_avenue_overpass(bridge)
+	elif bridge["kind"] == "road":
 		_road_bridge(rect, float(bridge["height"]), float(bridge["ramp"]))
 	else:
 		_rail_bridge(rect, float(bridge["height"]), float(bridge["ramp"]), bridge.get("flat_end", false))
+	# Legacy builders add directly to map. Keep each complete structure, including
+	# ramps, piers, lamps and lights, under its own stable gameplay-addressable node.
+	for child in map.get_children():
+		if child != bridge_root and not child in previous_children:
+			child.reparent(bridge_root)
 	map._occupy(rect.get_center(), rect.size)
+
+
+# Four-lane avenue over live railway tracks. Segment boundaries include the
+# ramp crests, so road, pavements and barriers share exactly the same profile.
+func _avenue_overpass(bridge: Dictionary) -> void:
+	var rect: Rect2 = bridge["rect"]
+	var height: float = bridge["height"]
+	var ramp: float = bridge["ramp"]
+	var cx := rect.get_center().x
+	var z0 := rect.position.y
+	var z1 := rect.end.y
+	var asphalt := ShaderMaterial.new()
+	asphalt.shader = preload("res://assets/shaders/town_asphalt.gdshader")
+	asphalt.set_shader_parameter("grain_texture", map.GROUND_ASPHALT)
+	asphalt.set_shader_parameter("winter", map.Settings.season == "winter")
+	var root := Node3D.new()
+	root.name = "AvenueRailOverpass"
+	map.add_child(root)
+	for span in [Vector2(z0, z0 + ramp), Vector2(z0 + ramp, z1 - ramp), Vector2(z1 - ramp, z1)]:
+		var z: float = span.x
+		while z < span.y - 0.01:
+			var end := minf(z + 5.0, span.y)
+			var a := Vector3(cx, 0.10 + _deck_at(rect, height, ramp, z), z)
+			var b := Vector3(cx, 0.10 + _deck_at(rect, height, ramp, end), end)
+			_overpass_strip(a, b, 0.0, rect.size.x, 0.8, -0.4, CONCRETE, root)
+			var surface := _overpass_strip(a, b, 0.0, 24.0, 0.02, 0.025, Color.WHITE, root)
+			surface.material_override = asphalt
+			# Solid paved divider replaces the planted median on the structure.
+			_overpass_strip(a, b, 0.0, 4.0, 0.18, 0.09, Color("9c9b8e"), root)
+			for side in [-1.0, 1.0]:
+				_overpass_strip(a, b, side * 13.25, 2.5, 0.18, 0.09, Color("aaa89c"), root)
+				_overpass_strip(a, b, side * 14.25, 0.32, 1.0, 0.5, CONCRETE, root)
+				_overpass_strip(a, b, side * 14.25, 0.46, 0.12, 1.06, Color("888b87"), root)
+				# Two traffic lanes in each direction, with continuous edge lines.
+				for x in [side * 2.2, side * 11.7]:
+					_overpass_strip(a, b, x, 0.12, 0.012, 0.045, Color("ddd9c9"), root)
+				if int(round((z - z0) / 5.0)) % 2 == 0:
+					_overpass_strip(a, b, side * 7.0, 0.12, 0.012, 0.045, Color("ddd9c9"), root)
+			z = end
+	# Portal supports stay outside the ballast of both E-W tracks (z=395/405).
+	for z in [z0 + ramp - 5.0, z1 - ramp + 5.0]:
+		var underside := 0.14 + _deck_at(rect, height, ramp, z) - 1.1
+		_bridge_concrete_box(Vector3(rect.size.x - 1.0, 0.5, 1.8), Vector3(cx, underside + 0.05, z), CONCRETE_DARK, root)
+		for side in [-1.0, 1.0]:
+			_bridge_concrete_box(Vector3(1.4, underside, 1.4), Vector3(cx + side * 10.0, underside / 2.0, z), CONCRETE, root)
+	# Modest bridge lamps, shared with the city's day/night lighting.
+	var lamp := _texture("res://assets/sprites/lamp_post.png")
+	for z in range(int(z0 + 15.0), int(z1), 30):
+		for side in [-1.0, 1.0]:
+			var base := Vector3(cx + side * 13.9, 0.32 + _deck_at(rect, height, ramp, z), z)
+			if lamp != null:
+				map._sprite(lamp, base, 6.0)
+			map._lamp_light(base)
+
+
+# A thin box whose top follows the incline between two road-surface points.
+func _overpass_strip(a: Vector3, b: Vector3, x: float, width: float, thickness: float, lift: float, color: Color, parent: Node3D) -> MeshInstance3D:
+	var instance = map._box(Vector3(width, thickness, a.distance_to(b)), (a + b) / 2.0 + Vector3(x, lift, 0), color, parent)
+	instance.rotation.x = -atan2(b.y - a.y, b.z - a.z)
+	return instance
 
 
 # Deck height of a bridge at map z: climbs over `ramp` metres from each end.
@@ -817,16 +917,19 @@ func _build_embankment() -> void:
 		strip_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		map.add_child(strip_node)
 	# Tunnels: concrete abutments, a deck under the ballast, rails on top.
-	for cut in cuts:
+	for cut_index in range(cuts.size()):
+		var cut: Vector2 = cuts[cut_index]
+		var crossing: Dictionary = Layout.EMBANKMENT_CROSSINGS[cut_index]
+		var bridge_root := _bridge_root(Layout.bridge_by_id(crossing["id"]))
 		var length := cut.y - cut.x
 		var middle := (cut.x + cut.y) / 2.0
-		_bridge_concrete_box(Vector3(top * 2.0 + 1.0, 1.2, length), Vector3(cx, peak - 0.6, middle), CONCRETE)
+		_bridge_concrete_box(Vector3(top * 2.0 + 1.0, 1.2, length), Vector3(cx, peak - 0.6, middle), CONCRETE, bridge_root)
 		for end in [cut.x, cut.y]:
 			var inward := 1.0 if end == cut.x else -1.0
-			_bridge_concrete_box(Vector3(top * 2.0 + 1.0, peak - 0.6, 0.8), Vector3(cx, (peak - 0.6) / 2.0, end + inward * 0.4), CONCRETE_DARK)
-		_rail_deck_surface(Vector3(cx, peak, middle), top * 2.0 + 1.0, length)
+			_bridge_concrete_box(Vector3(top * 2.0 + 1.0, peak - 0.6, 0.8), Vector3(cx, (peak - 0.6) / 2.0, end + inward * 0.4), CONCRETE_DARK, bridge_root)
+		_rail_deck_surface(Vector3(cx, peak, middle), top * 2.0 + 1.0, length, bridge_root)
 		for track in e["tracks"]:
-			_rail_quad(Vector3(track, peak + 0.04, middle), length, null)
+			_rail_quad(Vector3(track, peak + 0.04, middle), length, bridge_root)
 	map._occupy(Vector2(cx, (float(e["from"]) + float(e["to"])) / 2.0), Vector2(36, float(e["to"]) - float(e["from"])))
 
 

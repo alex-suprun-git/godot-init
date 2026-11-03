@@ -180,12 +180,7 @@ const CONTENTS := {
 	]},
 	"former_market": {"kind": "open", "ground": "grass", "label": "Бывший рынок · поле", "dressing": []},
 	"market": {
-		"kind": "painted_lot", "ground": "grass", "label": "Рынок · вокзал · автостанция",
-		"sprite": "market_hub_v7", "node_name": "MarketHubPainted",
-		"footprint": Vector2(244, 70), "width": 222.1, "offset": Vector2(0, 1.7),
-		# The revised painting already matches the map camera; do not stretch it.
-		# The opaque strip contour stays north of z=392.9; ballast starts at 393.1.
-		"anchor": Vector2(0.7913, 0.9867), "axes": Vector2(0.583, -0.600),
+		"kind": "station_hub", "ground": "grass", "label": "Рынок · вокзал · привокзальная площадь",
 		"dressing": [],
 	},
 	"station": {"kind": "station", "footprint": Vector2(40, 12), "ground": "paving", "label": "Вокзал · автостанция", "sprite": "station_v3", "width": 40.0, "axes": Vector2(0.50, -0.41), "dressing": [

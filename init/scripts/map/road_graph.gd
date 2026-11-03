@@ -219,7 +219,7 @@ func _add_entrances(segments: Array[Dictionary], lot_ids: Array) -> Array[Dictio
 		if bridge["kind"] == "road":
 			var rect: Rect2 = bridge["rect"]
 			# The end on our bank is the southern one.
-			wanted["bridge_road"] = Vector2(rect.get_center().x, rect.end.y)
+			wanted[bridge.get("entrance_id", bridge["id"])] = Vector2(rect.get_center().x, rect.end.y)
 	var links: Array[Dictionary] = []
 	for id in wanted:
 		var entrance: Vector2 = wanted[id]
@@ -240,6 +240,8 @@ func _add_entrances(segments: Array[Dictionary], lot_ids: Array) -> Array[Dictio
 
 
 func _facing_point(lot_id: String) -> Vector2:
+	if DistrictLayout.LOTS[lot_id].has("entrance"):
+		return DistrictLayout.LOTS[lot_id]["entrance"]
 	var lot: Dictionary = DistrictLayout.LOTS[lot_id]
 	if lot.has("entrance"):
 		return lot["entrance"]

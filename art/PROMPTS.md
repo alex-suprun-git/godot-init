@@ -1,5 +1,17 @@
 # Image Prompts: First Week
 
+## Station-area 3D reference proposals (2026-11-03)
+
+The accepted composition and prepared images now guide a first integrated 3D assembly, exported from `art/models/station_hub/station_hub.blend` to `init/assets/models/station_hub/`. The prior combined painting is no longer rendered. This implementation creates no further ImageGen artwork; current geometry, material use and actual Godot review are in `art/models/station_hub/README.md`.
+
+Station material batch generated with built-in ImageGen: facing, roof, neutral canvas, mosaic and six-advertisement sheet. Untouched sources plus exact prompts: `art/source_images/station_hub/`. Ads v2 replaces v1's currency symbols with generic notes. Separate optimizer preparation produced `art/models/station_hub/textures/`; actual sizes, command, review and pending UV/game checks are recorded in that asset README. No game integration in this batch.
+
+Ensemble revision v2: `art/models/station_hub/references/ensemble-game-camera-v2.png`, edit target v1; exact prompt in adjacent `.prompt.md`. User requests a roughly 1.5x market, preservation of image proportions/composition and a shorter station-front/left platform with a small right extension. Untouched proposal saved; no game integration.
+
+Game-camera ensemble proposal: `art/models/station_hub/references/ensemble-game-camera-v1.png`; exact edit prompt and roles in the adjacent `.prompt.md`. Uses the actual current Godot overview, the station sheet and the stall sheet. Depicts the corrected shared forecourt with parking, stops and street connections. Unapproved concept only, not an implemented scene or a scale/traffic validation.
+
+Built-in ImageGen produced separate modeling sheets for market stalls, a lived-in 1970s–1980s railway station with 1997 advertising, and a matching bus-station pavilion/shelters. The latter uses the station sheet as its architectural reference. Untouched originals and exact prompts: `art/models/station_hub/references/`; status and review limitations: `art/models/station_hub/README.md`. All are proposals awaiting user review; no models or game integration in this pass. This supersedes the earlier deferral of separate 3D production below.
+
 ## Whole-map 3D trees (2026-11-03)
 
 Standalone tree sprites are replaced by the original civic-centre deciduous and poplar meshes, using shared seasonal materials. No new art was generated. The old combined city-park game painting was removed at the user request; its original concept is preserved for reference. See README Natural Landmarks and `art/models/civic_center/README.md`.
