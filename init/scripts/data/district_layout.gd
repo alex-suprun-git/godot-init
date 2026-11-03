@@ -167,7 +167,7 @@ const AREAS := {
 const DISTRICTS := {
 	"admin": {
 		"name": "Administrative centre",
-		"rects": [Rect2(20, -80, 125, 350), Rect2(-44, -75, 24, 32), Rect2(-45, 135, 28, 42)],
+		"rects": [Rect2(19.5, -80, 125.5, 350), Rect2(-44, -75, 24, 32), Rect2(-45, 135, 28, 42)],
 		"residents": 1200, "foot": 1.4, "cars": 0.8,
 		"fleet": {"car": 0.8, "bus": 0.2}, "hours": "office",
 		"subzones": {
