@@ -581,7 +581,7 @@ const PARKING_CLEARANCE := 25.0
 func _build_traffic() -> void:
 	for road in DistrictLayout.ROADS:
 		# No parking on the highway at all.
-		if road["kind"] != "asphalt" or road.get("look", "") == "highway":
+		if road["kind"] != "asphalt" or road.get("look", "") == "highway" or road.get("hub_surface", false):
 			continue
 		var rect: Rect2 = road["rect"]
 		var along_x := rect.size.x > rect.size.y
@@ -593,7 +593,13 @@ func _build_traffic() -> void:
 				continue
 			var look := i * 5 + int(length) + i * 977
 			var model := VehicleModels.traffic_model(look)
-			_vehicle(model, _ground(at) + Vector3.UP * 0.14, VehicleModels.map_length(model), "x" if along_x else "z", null, look)
+			var car_length := VehicleModels.map_length(model)
+			var footprint := Vector2(car_length + .8, 2.8) if along_x else Vector2(2.8, car_length + .8)
+			if not DistrictLayout.parking_allowed(at, footprint):
+				continue
+			var parked := _vehicle(model, _ground(at) + Vector3.UP * 0.14, car_length, "x" if along_x else "z", null, look)
+			parked.add_to_group("parked_vehicles")
+			parked.set_meta("parking_footprint", footprint)
 
 
 # True when a parking spot lies within PARKING_CLEARANCE of a road crossing or joining this one.
@@ -1078,7 +1084,7 @@ func _crosswalk(at: Vector2, road_width: float, along_z: bool, y: float) -> void
 
 func _build_road_markings() -> void:
 	for road in DistrictLayout.ROADS:
-		if road["kind"] != "asphalt":
+		if road["kind"] != "asphalt" or road.get("hub_surface", false):
 			continue
 		var rect: Rect2 = road["rect"]
 		for extension in MapBoundaries.road_continuations():
@@ -1411,6 +1417,9 @@ func _ground(at: Vector2) -> Vector3:
 # Deck height under a map point: zero on land, rising along the ramps of the road bridge.
 func _bridge_height(at: Vector2) -> float:
 	for bridge in DistrictLayout.BRIDGES:
+		# Road users travel below railway spans, not on their decks.
+		if bridge["kind"] != "road":
+			continue
 		var rect: Rect2 = bridge["rect"]
 		if rect.has_point(at):
 			var ramp: float = bridge["ramp"]

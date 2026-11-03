@@ -34,7 +34,7 @@ func _init(track_index: int) -> void:
 	line.append(Vector2(x, Layout.embankment_south_ramp_start()))
 	line.append(Vector2(x, float(embankment["from"])))
 	for bridge in Layout.BRIDGES:
-		if bridge["kind"] == "rail":
+		if bridge["kind"] == "rail" and not bridge.get("embankment_span", false):
 			var rect: Rect2 = bridge["rect"]
 			line.append(Vector2(x, rect.position.y + float(bridge["ramp"])))
 			line.append(Vector2(x, rect.position.y))
@@ -52,7 +52,7 @@ static func rail_height(point: Vector2) -> float:
 		return Layout.embankment_height(point.y) + 0.04
 	for bridge in Layout.BRIDGES:
 		var rect: Rect2 = bridge["rect"]
-		if bridge["kind"] == "rail" and point.y >= rect.position.y and point.y < rect.end.y and point.x >= rect.position.x and point.x <= rect.end.x:
+		if bridge["kind"] == "rail" and not bridge.get("embankment_span", false) and point.y >= rect.position.y and point.y < rect.end.y and point.x >= rect.position.x and point.x <= rect.end.x:
 			return float(bridge["height"]) * clampf((point.y - rect.position.y) / float(bridge["ramp"]), 0.0, 1.0) + 0.03
 	return 0.19
 

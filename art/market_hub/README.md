@@ -1,5 +1,7 @@
 # Market, bus station and railway station — combined 2D site
 
+**Historical interim implementation:** the combined painting is now replaced in the game by the first 3D station/market/forecourt assembly. Current sources, dimensions, limitations and graphical verification: `../models/station_hub/README.md`. The v7 source and calibration below remain preserved for provenance.
+
 ## Current state
 
 The user approved the map-based concept v3 and explicitly requested one combined 2D painting in the moved market slot as an interim implementation. Separate 3D stalls are deferred. The current integrated source is **asset v7**, incorporating the user's subsequent corrections; the final in-game result awaits user review.

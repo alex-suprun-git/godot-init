@@ -17,6 +17,7 @@ const STREAMS := {
 		{"entry": "border_bridge", "exit": "highway_e", "roads": ["axis", "highway"]},
 	]},
 	"city": {"slots": 18, "fleet": {"car": 0.8, "bus": 0.2}, "loops": [
+		["south_street", "station_entry", "station_link", "station_exit"],
 		["north_street", "axis", "south_street", "west_street"],
 		["north_street", "village_street", "south_street", "axis"],
 	]},

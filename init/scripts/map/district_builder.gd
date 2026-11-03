@@ -92,6 +92,9 @@ func _build_ground() -> void:
 			map.wear.add_inner_edge(lot["rect"], 14.0, 0.7)
 	for road in Layout.ROADS:
 		var rect: Rect2 = road["rect"]
+		if road.get("hub_surface", false):
+			map._occupy(rect.get_center(), rect.size)
+			continue
 		# Housing-estate roads are asphalt too, just a lighter, warmer tone than the main roads.
 		var ground: String = {"asphalt": "asphalt", "yard": "asphalt", "dirt": "dirt"}[road["kind"]]
 		var yard: bool = road["kind"] == "yard"
@@ -240,6 +243,8 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 			_market(lot)
 		"painted_lot":
 			_painted_lot(lot, entry, center)
+		"station_hub":
+			preload("res://scripts/map/station_hub.gd").new().build(map)
 	for prop in ([] if id == "b1_k" else entry.get("dressing", [])):
 		if prop.get("sprite", "") == "garbage_pile" and not Catalog.CONDITIONS[lot["condition"]]["garbage"]:
 			continue
@@ -553,14 +558,35 @@ func _rail_deck_surface(at: Vector3, width: float, length: float, parent: Node =
 
 
 
+func _bridge_root(bridge: Dictionary) -> Node3D:
+	var bridge_root := Node3D.new()
+	bridge_root.name = "Bridge_" + str(bridge["id"])
+	bridge_root.set_meta("bridge_id", bridge["id"])
+	bridge_root.set_meta("bridge_kind", bridge["kind"])
+	bridge_root.set_meta("bridge_rect", bridge["rect"])
+	bridge_root.set_meta("parking_allowed", false)
+	bridge_root.add_to_group("map_bridges")
+	map.add_child(bridge_root)
+	return bridge_root
+
+
 func _build_bridge(bridge: Dictionary) -> void:
+	if bridge.get("embankment_span", false):
+		return # Built with the embankment gap, under the same registered bridge ID.
 	var rect: Rect2 = bridge["rect"]
+	var previous_children: Array[Node] = map.get_children()
+	var bridge_root := _bridge_root(bridge)
 	if bridge.get("rail_overpass", false):
 		_avenue_overpass(bridge)
 	elif bridge["kind"] == "road":
 		_road_bridge(rect, float(bridge["height"]), float(bridge["ramp"]))
 	else:
 		_rail_bridge(rect, float(bridge["height"]), float(bridge["ramp"]), bridge.get("flat_end", false))
+	# Legacy builders add directly to map. Keep each complete structure, including
+	# ramps, piers, lamps and lights, under its own stable gameplay-addressable node.
+	for child in map.get_children():
+		if child != bridge_root and not child in previous_children:
+			child.reparent(bridge_root)
 	map._occupy(rect.get_center(), rect.size)
 
 
@@ -886,16 +912,19 @@ func _build_embankment() -> void:
 		strip_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		map.add_child(strip_node)
 	# Tunnels: concrete abutments, a deck under the ballast, rails on top.
-	for cut in cuts:
+	for cut_index in range(cuts.size()):
+		var cut: Vector2 = cuts[cut_index]
+		var crossing: Dictionary = Layout.EMBANKMENT_CROSSINGS[cut_index]
+		var bridge_root := _bridge_root(Layout.bridge_by_id(crossing["id"]))
 		var length := cut.y - cut.x
 		var middle := (cut.x + cut.y) / 2.0
-		_bridge_concrete_box(Vector3(top * 2.0 + 1.0, 1.2, length), Vector3(cx, peak - 0.6, middle), CONCRETE)
+		_bridge_concrete_box(Vector3(top * 2.0 + 1.0, 1.2, length), Vector3(cx, peak - 0.6, middle), CONCRETE, bridge_root)
 		for end in [cut.x, cut.y]:
 			var inward := 1.0 if end == cut.x else -1.0
-			_bridge_concrete_box(Vector3(top * 2.0 + 1.0, peak - 0.6, 0.8), Vector3(cx, (peak - 0.6) / 2.0, end + inward * 0.4), CONCRETE_DARK)
-		_rail_deck_surface(Vector3(cx, peak, middle), top * 2.0 + 1.0, length)
+			_bridge_concrete_box(Vector3(top * 2.0 + 1.0, peak - 0.6, 0.8), Vector3(cx, (peak - 0.6) / 2.0, end + inward * 0.4), CONCRETE_DARK, bridge_root)
+		_rail_deck_surface(Vector3(cx, peak, middle), top * 2.0 + 1.0, length, bridge_root)
 		for track in e["tracks"]:
-			_rail_quad(Vector3(track, peak + 0.04, middle), length, null)
+			_rail_quad(Vector3(track, peak + 0.04, middle), length, bridge_root)
 	map._occupy(Vector2(cx, (float(e["from"]) + float(e["to"])) / 2.0), Vector2(36, float(e["to"]) - float(e["from"])))
 
 

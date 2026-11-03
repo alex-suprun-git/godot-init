@@ -185,13 +185,7 @@ const CONTENTS := {
 	]},
 	"former_market": {"kind": "open", "ground": "grass", "label": "Бывший рынок · поле", "dressing": []},
 	"market": {
-		"kind": "painted_lot", "ground": "grass", "label": "Рынок · вокзал · автостанция",
-		"sprite": "market_hub_v7", "node_name": "MarketHubPainted",
-		"footprint": Vector2(146.4, 42), "width": 133.26, "offset": Vector2(0.8, 2.3),
-		# The revised painting already matches the map camera; do not stretch it.
-		# 60% scale trial beside the actual five-storey blocks and rolling stock.
-		# Retain anchor (-33,390.7); the separate platform owns the passenger edge.
-		"anchor": Vector2(0.7913, 0.9867), "axes": Vector2(0.583, -0.600),
+		"kind": "station_hub", "ground": "grass", "label": "Рынок · вокзал · привокзальная площадь",
 		"dressing": [],
 	},
 	"station": {"kind": "station", "footprint": Vector2(40, 12), "ground": "paving", "label": "Вокзал · автостанция", "sprite": "station_v3", "width": 40.0, "axes": Vector2(0.50, -0.41), "dressing": [
