@@ -37,4 +37,12 @@ Both tile axes and centre/wing boundaries were checked. Selected civic edge RGB 
 
 Import and graphical capture completed with exit 0 and no script/render warnings on installed Godot 4.7.2. No automated tests or full-week autoplay were run. Focused capture: `Godot --path init --script <repo>/art/models/elite_towers/capture_map.gd -- --no-log`. It saves overview, north and matched material-baseline frames under ignored `.local/civic-facades/`; selected frames are `map-detail.png` and `map-north.png`. `--facade-baseline` disables material additions in a normal launch.
 
+## Floor-pitch correction (2026-11-02)
+
+The lived-in nine-storey panel image contains eight window rows, with its bottom row clipped. `facade_floors.gd` now samples the seven complete source rows onto nine physical 3 m storeys, cycling two rows rather than stretching eight across 27 m. The narrow image-top decorative band and incomplete bottom row are excluded. E2/E3 long/end art also has different window positions and surplus masonry; calibrated UV bands now place each residential floor separately at 3 m, including the rear/side ground floor. Shop/entrance and crown modules retain their existing art. E1's already regular two-floor repetition remains unchanged. Building heights remain 27/36/42 m.
+
+This is a mesh-UV correction: no raster image was edited, generated or reprocessed. Each wall still uses one mesh surface/material, with six vertices per floor. Existing nighttime shading and window materials remain connected. `CityMap._facade/_facades` accept optional floor-band data; all other callers retain their previous mapping.
+
+Ran the real-map capture `art/models/civic_center/capture_integrated.gd` with Godot 4.7.2 and inspected the default-camera overview beside the administration and ordinary panel housing. Capture completed with exit 0 and no script errors; the local Windows certificate-store startup warning remains. Current image/log: ignored `.local/civic-center-review/integrated-overview.png` and `floor-pitch.log`. No automated tests were added or run. Night/winter and extreme close-up seams were not visually reviewed; user review of this correction remains pending.
+
 Context reference reused: `.local/flows-final-shots/0_north.png` (actual Godot screenshot, ignored). Later 1997-specific signage, notices, kiosks and contextual props were discussed, not implemented in this update.

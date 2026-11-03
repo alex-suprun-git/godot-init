@@ -856,7 +856,9 @@ func _build_trees() -> void:
 		for i in range(1, int(maxf(rect.size.x, rect.size.y) / 26.0)):
 			var at := rect.position + (Vector2(i * 26, rect.size.y + 6) if along_x else Vector2(rect.size.x + 6, i * 26))
 			if not _is_occupied(at, 3.0) and not _near_traffic_light(at):
-				_tree(_ground(at))
+				# This lot owns its 3D planting. Consume the same RNG values even
+				# when suppressing a roadside sprite, preserving all later trees.
+				_tree(_ground(at), not preload("res://scripts/map/civic_center.gd").PLANTING_RECT.has_point(at))
 
 
 # --- Tokens ------------------------------------------------------------------
@@ -1503,17 +1505,20 @@ func _roof(size: Vector2, at: Vector3, tile: float, texture: Texture2D = ROOF_TA
 
 
 # Painted facades on the four sides of a box-shaped building.
-func _facades(base: Vector3, size: Vector3, texture: Texture2D, tiles_per_height: float, tint: Color = Color.WHITE, parent: Node = null) -> void:
+func _facades(base: Vector3, size: Vector3, texture: Texture2D, tiles_per_height: float, tint: Color = Color.WHITE, parent: Node = null, floor_count: int = 0, floor_bands: Array = []) -> void:
 	var tile_width := size.y * 2.0 / tiles_per_height
 	var center_y := size.y / 2.0
-	_facade(Vector2(size.x, size.y), base + Vector3(0, center_y, size.z / 2.0 + 0.01), 0.0, texture, Vector2(size.x / tile_width, tiles_per_height), tint, parent)
-	_facade(Vector2(size.x, size.y), base + Vector3(0, center_y, -size.z / 2.0 - 0.01), PI, texture, Vector2(size.x / tile_width, tiles_per_height), tint, parent)
-	_facade(Vector2(size.z, size.y), base + Vector3(size.x / 2.0 + 0.01, center_y, 0), PI / 2.0, texture, Vector2(size.z / tile_width, tiles_per_height), tint, parent)
-	_facade(Vector2(size.z, size.y), base + Vector3(-size.x / 2.0 - 0.01, center_y, 0), -PI / 2.0, texture, Vector2(size.z / tile_width, tiles_per_height), tint, parent)
+	for face in [
+		[Vector2(size.x, size.y), Vector3(0, center_y, size.z / 2.0 + 0.01), 0.0],
+		[Vector2(size.x, size.y), Vector3(0, center_y, -size.z / 2.0 - 0.01), PI],
+		[Vector2(size.z, size.y), Vector3(size.x / 2.0 + 0.01, center_y, 0), PI / 2.0],
+		[Vector2(size.z, size.y), Vector3(-size.x / 2.0 - 0.01, center_y, 0), -PI / 2.0],
+	]:
+		_facade(face[0], base + face[1], face[2], texture, Vector2(face[0].x / tile_width, tiles_per_height), tint, parent, Vector2.ZERO, false, Vector2.ZERO, floor_count, floor_bands)
 
 
 # One textured wall: a quad facing +Z, turned by yaw around the vertical axis.
-func _facade(size: Vector2, at: Vector3, yaw: float, texture: Texture2D, tiles: Vector2, tint: Color = Color.WHITE, parent: Node = null, uv_offset := Vector2.ZERO, surface_detail := false, seam_blend := Vector2.ZERO) -> void:
+func _facade(size: Vector2, at: Vector3, yaw: float, texture: Texture2D, tiles: Vector2, tint: Color = Color.WHITE, parent: Node = null, uv_offset := Vector2.ZERO, surface_detail := false, seam_blend := Vector2.ZERO, floor_count: int = 0, floor_bands: Array = []) -> void:
 	var quad := QuadMesh.new()
 	quad.size = size
 	var material := ShaderMaterial.new()
@@ -1521,6 +1526,8 @@ func _facade(size: Vector2, at: Vector3, yaw: float, texture: Texture2D, tiles: 
 	material.set_shader_parameter("albedo_tex", texture)
 	material.set_shader_parameter("tint", tint)
 	material.set_shader_parameter("uv_scale", tiles)
+	if floor_count > 0:
+		material.set_shader_parameter("uv_scale", Vector2(tiles.x, 1.0))
 	material.set_shader_parameter("uv_offset", uv_offset)
 	material.set_shader_parameter("surface_detail", (surface_detail or texture.resource_path.ends_with("_lived.png")) and not OS.get_cmdline_user_args().has("--facade-baseline"))
 	material.set_shader_parameter("seam_blend", Vector2.ZERO if OS.get_cmdline_user_args().has("--facade-baseline") else seam_blend)
@@ -1528,6 +1535,8 @@ func _facade(size: Vector2, at: Vector3, yaw: float, texture: Texture2D, tiles: 
 	_window_materials.append(material)
 	var instance := MeshInstance3D.new()
 	instance.mesh = quad
+	if floor_count > 0:
+		instance.mesh = preload("res://scripts/map/facade_floors.gd").mesh(size, floor_count, floor_bands)
 	instance.material_override = material
 	instance.position = at
 	instance.rotation.y = yaw

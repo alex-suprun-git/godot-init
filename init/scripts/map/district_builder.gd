@@ -201,6 +201,8 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 		center += _front_shift(lot, entry)
 	var kind: String = entry["kind"]
 	match kind:
+		"civic_center":
+			preload("res://scripts/map/civic_center.gd").new().build(self)
 		"panel", "building":
 			_building(lot, entry, center, id)
 		"group":
@@ -475,7 +477,10 @@ func _building(lot: Dictionary, entry: Dictionary, desired: Vector2, lot_id: Str
 		var facade := _texture(entry.get("facade", ""))
 		if facade != null:
 			var repeats := height / (float(entry.get("facade_floors", entry.get("floors", 5))) * 3.0)
-			map._facades(Vector3.ZERO, Vector3(size.x, height, size.y), facade, repeats, tint, group)
+			if lot["content"] == "panel_9":
+				map._facades(Vector3.ZERO, Vector3(size.x, height, size.y), facade, repeats, tint, group, 9, preload("res://scripts/map/facade_floors.gd").PANEL_9_BANDS)
+			else:
+				map._facades(Vector3.ZERO, Vector3(size.x, height, size.y), facade, repeats, tint, group)
 	if entry.get("kind", "") == "panel":
 		map._panel_overlays(entry, size, height, group)
 	map._occupy(center, footprint)
