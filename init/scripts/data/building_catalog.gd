@@ -95,12 +95,8 @@ const CONTENTS := {
 		"placeholder_color": Color("d4c5ae"), "label": "Универмаг", "dressing": [],
 	},
 	"city_park": {
-		"kind": "painted_lot", "ground": "grass", "label": "Городской сквер",
-		"sprite": "city_park_v1", "footprint": Vector2(52, 77.6), "width": 95.08,
-		# Calibrated ground corners in the unchanged 1536 x 1024 source. The near
-		# corner anchors the entire park, rather than the average alpha edge.
-		"anchor": Vector2(0.409, 0.992), "axes": Vector2(0.596, -0.712),
-		"dressing": [],
+		# Reserved for the park replacement on its separate branch.
+		"kind": "open", "ground": "grass", "label": "Городской сквер", "dressing": [],
 	},
 	"boiler_house": {
 		"kind": "building", "footprint": Vector2(28, 20), "height": 9.0, "doorstep": 3.0,

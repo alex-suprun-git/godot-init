@@ -78,7 +78,7 @@ func _forest() -> void:
 			var edge := pow((at.x + 563) / 79.0, 2) + pow((at.y - 126) / 174.0, 2)
 			if edge > rng.randf_range(0.86, 1.12) or map._is_occupied(at, 3.0):
 				continue
-			var tree: Sprite3D = map._tree(map._ground(at))
+			var tree: Node3D = map._tree(map._ground(at))
 			tree.reparent(trees)
 	# A bench marks the clearing; its centre stays free for event characters.
 	_box(Vector3(3.5, 0.16, 0.65), Vector3(clearing.x - 8, 0.65, clearing.y + 8), Color("82735a"))

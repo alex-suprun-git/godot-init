@@ -1,5 +1,9 @@
 # Image Prompts: First Week
 
+## Whole-map 3D trees (2026-11-03)
+
+Standalone tree sprites are replaced by the original civic-centre deciduous and poplar meshes, using shared seasonal materials. No new art was generated. The old combined city-park game painting was removed at the user request; its original concept is preserved for reference. See README Natural Landmarks and `art/models/civic_center/README.md`.
+
 ## Northern wheat field (2026-11-01)
 
 - Built-in ImageGen map edit `art/source_images/wheat_field/direction-v1.png` was approved by the user. Derived production source: `ground-wheat-v1.png`; exact generation prompts are adjacent to both images. The separately optimized surface is integrated as `init/assets/textures/ground_wheat.png`. Implementation, preparation record and Godot verification: `art/source_images/wheat_field/README.md`. The user accepted the in-game result on 2026-11-01.

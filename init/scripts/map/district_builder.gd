@@ -190,12 +190,13 @@ func _rail_segment(from: Vector2, to: Vector2) -> void:
 
 func _build_lot(id: String, lot: Dictionary) -> void:
 	var entry: Dictionary = Catalog.CONTENTS[lot["content"]]
-	if id in ["tower_e2", "tower_e3"]:
+	if id in ["tower_e2", "tower_e3", "tower_e4"]:
 		entry = entry.duplicate()
-		entry["tower_variant"] = "e2"
+		# Match the northern tower's tan-brick textures at the same 3 m floor pitch.
+		entry["tower_variant"] = "e1"
 		entry["height"] = 36.0
 		entry["floors"] = 12
-		entry["roof"] = "res://assets/textures/facade_tower_roof_e2.png"
+		entry["roof"] = "res://assets/textures/facade_tower_roof_e1.png"
 	var center: Vector2 = Layout.lot_center(id)
 	if lot["type"] == "D":
 		center += _front_shift(lot, entry)
@@ -315,9 +316,8 @@ func _fill_plot(id: String, lot: Dictionary, boxes: Dictionary) -> void:
 		var spot: Vector2 = at.call(lerpf(-width / 2.0 + 7.0, width / 2.0 - 7.0, (i + 0.5) / fill["orchard"]), -depth / 2.0 + rng.randf_range(5.0, 12.0))
 		if map._is_occupied(spot, 2.0) or not _clear(Rect2(spot - Vector2(2, 2), Vector2(4, 4))):
 			continue
-		var tree: Sprite3D = map._tree(map._ground(spot))
+		var tree: Node3D = map._tree(map._ground(spot))
 		tree.scale *= 0.5
-		tree.position.y *= 0.5
 		map._occupy(spot, Vector2(3, 3))
 
 	if fill["shed"]:
