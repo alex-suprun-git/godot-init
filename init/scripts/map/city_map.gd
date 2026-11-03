@@ -126,7 +126,7 @@ const SEASONS := {
 }
 
 # Camera targets and rendering geometry use metres directly.
-const BOUNDS := Rect2(-620, -460, 1070, 880)
+const BOUNDS := Rect2(-620, -460, 1070, 1015)
 const ZOOM_DEFAULT := 350.0 # Camera distance that the zoom readout calls 100 %.
 const ZOOM_MIN := ZOOM_DEFAULT / 1.25 # Closest view: 125 %.
 const ZOOM_MAX := ZOOM_DEFAULT / 0.30 # Widest view: 30 %.
@@ -712,6 +712,11 @@ func _sidewalk_material(texture: Texture2D, repeat_metres: float, region: Vector
 # The strip minus every other road it runs into, as a list of rects.
 func _strip_pieces(strip: Rect2, along_x: bool, own: Dictionary, margin: float = 0.0) -> Array[Rect2]:
 	var cuts: Array[Vector2] = []
+	# The overpass owns its elevated sidewalks and structural median.
+	for bridge in DistrictLayout.BRIDGES:
+		if bridge.get("rail_overpass", false) and strip.intersects(bridge["rect"]):
+			var deck: Rect2 = bridge["rect"]
+			cuts.append(Vector2(deck.position.x, deck.end.x) if along_x else Vector2(deck.position.y, deck.end.y))
 	for other in DistrictLayout.ROADS:
 		if other == own:
 			continue
@@ -893,10 +898,11 @@ func _update_hero_car(delta: float) -> void:
 	var path: PackedVector2Array = me["path"]
 	var index: int = me["path_index"]
 	var lane := _lane_shift(me, true)
-	_hero_car.position = Vector3(pos.x + lane.x, 0.14, pos.y + lane.y)
+	_hero_car.position = _ground(pos + lane) + Vector3.UP * 0.14
 	if index < path.size() and pos.distance_to(path[index]) > 0.01:
 		var heading := path[index] - pos
 		_hero_car.rotation.y = lerp_angle(_hero_car.rotation.y, atan2(heading.x, heading.y), minf(1.0, delta * 8.0))
+		_hero_car.rotation.x = _overpass_pitch(pos + lane, heading)
 
 
 # Where the actor stands relative to the route's centerline while travelling.
@@ -931,7 +937,7 @@ func _move_tokens() -> void:
 			var world_gap := 64.0 * map_icon_scale() / maxf(pixels_per_metre, 0.001)
 			var spread := (i - (ids.size() - 1) / 2.0) * world_gap
 			var token: Node3D = _tokens[ids[i]]
-			var spot := Vector3(pos.x, 0.0, pos.y) + _view_right() * spread - _view_forward() * 6.0
+			var spot := origin + _view_right() * spread - _view_forward() * 6.0
 			token.position = token.position.lerp(spot, 0.35)
 
 
@@ -1163,7 +1169,7 @@ func _build_ambient() -> void:
 		var person: Dictionary = PEOPLE[look.randi() % PEOPLE.size()]
 		var sprite := _sprite(person["texture"], _ground(agent["pos"]), person["width"])
 		agent["visual"] = sprite
-		agent["lift"] = sprite.position.y
+		agent["lift"] = sprite.position.y - _ground(agent["pos"]).y
 	for i in AMBIENT_CARS:
 		var agent := _ambient.add(true, look.randf_range(7.0, 12.0))
 		if agent.is_empty():
@@ -1190,10 +1196,11 @@ func _move_ambient(delta: float) -> void:
 			car.visible = agent["visible"]
 			car.position = Vector3(at.x, _ground(at).y + 0.14, at.y)
 			car.rotation.y = atan2(heading.x, heading.y)
+			car.rotation.x = _overpass_pitch(at, heading)
 		else:
 			var sprite: Sprite3D = agent["visual"]
 			sprite.visible = agent["visible"]
-			sprite.position = Vector3(at.x, agent["lift"], at.y)
+			sprite.position = _ground(at) + Vector3.UP * float(agent["lift"])
 			# Face the way they walk as seen on screen.
 			sprite.flip_h = heading.x * right.x + heading.y * right.z < 0.0
 
@@ -1409,6 +1416,14 @@ func _bridge_height(at: Vector2) -> float:
 			var ramp: float = bridge["ramp"]
 			var south: float = INF if bridge.get("flat_end", false) else rect.end.y - at.y
 			return float(bridge["height"]) * clampf(minf(at.y - rect.position.y, south) / ramp, 0.0, 1.0)
+	return 0.0
+
+
+func _overpass_pitch(at: Vector2, heading: Vector2) -> float:
+	for bridge in DistrictLayout.BRIDGES:
+		if bridge.get("rail_overpass", false) and bridge["rect"].has_point(at):
+			var direction := heading.normalized()
+			return -atan2(_bridge_height(at + direction) - _bridge_height(at - direction), 2.0)
 	return 0.0
 
 

@@ -48,10 +48,10 @@ const LOTS := {
 	"slab_1": {"type": "W", "rect": Rect2(22, 190, 110, 14), "content": "admin_slab", "condition": "kept", "facing": "s"},
 	"slab_2": {"type": "W", "rect": Rect2(22, 232, 110, 14), "content": "admin_slab", "condition": "kept", "facing": "n"},
 	"church": {"type": "X", "rect": Rect2(245, 80, 60, 50), "content": "church", "condition": "fading", "facing": "w"},
-	"g_south": {"type": "G", "rect": Rect2(-430, 315, 200, 70), "content": "empty_lot", "condition": "worked", "facing": "n"},
-	"former_market": {"type": "N", "rect": Rect2(-215, 315, 185, 70), "content": "former_market", "condition": "kept", "facing": "n"},
-	# One painted site contains the market, bus bays and railway station.
-	"market": {"type": "X", "rect": Rect2(-20, 315, 250, 78), "content": "market", "condition": "kept", "facing": "n"},
+	"g_south": {"type": "G", "rect": Rect2(-430, 315, 140, 70), "content": "empty_lot", "condition": "worked", "facing": "n"},
+	"former_market": {"type": "N", "rect": Rect2(15, 315, 215, 78), "content": "former_market", "condition": "kept", "facing": "n"},
+	# Move the combined interim painting west, leaving the avenue/overpass corridor clear.
+	"market": {"type": "X", "rect": Rect2(-182, 344, 150, 46.8), "content": "market", "condition": "kept", "facing": "n"},
 	"cemetery": {"type": "N", "rect": Rect2(209, 84.5, 35, 46), "content": "cemetery", "condition": "fading", "facing": "n"},
 	"d_01": {"type": "D", "rect": Rect2(156.5, -40, 42, 38), "content": "house_poor", "condition": "fading", "facing": "n"},
 	"d_02": {"type": "D", "rect": Rect2(334.5, -40, 50, 38), "content": "house_kept", "condition": "kept", "facing": "n"},
@@ -82,7 +82,7 @@ const ROADS := [
 	{"id": "highway", "rect": Rect2(-450, -197.5, 890, 20), "kind": "asphalt", "walk": 0.0, "look": "highway", "speed": 2.0, "lanes_per_direction": 2},
 	{"id": "north_street", "rect": Rect2(-500, -90, 940, 10), "kind": "asphalt"},
 	{"id": "south_street", "rect": Rect2(-500, 300, 940, 10), "kind": "asphalt"},
-	{"id": "axis", "rect": Rect2(-17, -330, 24, 642), "kind": "asphalt", "median": 4.0, "lanes_per_direction": 2},
+	{"id": "axis", "rect": Rect2(-17, -330, 24, 885), "kind": "asphalt", "median": 4.0, "lanes_per_direction": 2},
 	{"id": "village_street", "rect": Rect2(140, -80, 10, 380), "kind": "asphalt"},
 	{"id": "housing_cross_path", "rect": Rect2(-480, 85.2, 463, 4), "kind": "yard", "traffic": "courtyard", "speed": 0.5, "vehicles": ["car"]}, # joins the axis edge; traffic uses the graph connection to its centreline
 	{"id": "housing_spine", "rect": Rect2(-202.4, -80, 4, 380), "kind": "yard", "traffic": "courtyard", "speed": 0.5, "vehicles": ["car"]},
@@ -127,9 +127,15 @@ const SIDING_RAMP := {"z": -245.0, "x_from": 315.0, "x_to": 402.0, "height": 6.0
 # Each ambient train keeps its own through track in both travel directions.
 const COMMUTER_TRAIN := {"track_index": 0}
 const FREIGHT_TRAIN := {"track_index": 1}
+# Low-detail planning geometry: a continuous passenger platform west/east of
+# the avenue, including the clear span underneath it. Near track centre is z=395.
+const STATION_PLATFORM := {"rect": Rect2(-100, 386.25, 180, 6.5), "height": 1.27}
 const WATER := Rect2(-450, -440, 900, 110)
 const FOREIGN_BANK := Rect2(-450, -500, 900, 60)
 const BRIDGES := [
+	# The avenue continues south over both through tracks. The 75 m approaches
+	# start beyond the south-street junction; the 30 m clear span covers both tracks.
+	{"id": "rail_overpass", "rect": Rect2(-19.5, 315, 29, 180), "height": 7.5, "ramp": 75.0, "kind": "road", "rail_overpass": true},
 	# The road bridge ends at the water's edge on the town side; its deck climbs to
 	# `height` over `ramp` metres at both ends, so cars and people ride on it.
 	# Same x range as the civic axis (-17..7), so the boulevard carries straight onto the bridge.
@@ -226,9 +232,9 @@ const DISTRICTS := {
 		"residents": 50, "foot": 1.5, "cars": 1.0,
 		"fleet": {"car": 0.5, "bus": 0.4, "truck": 0.1}, "hours": "market",
 		"subzones": {
-			"former_market": {"rect": Rect2(-215, 315, 185, 70), "foot": 0.2, "cars": 0.0},
-			"market": {"rect": Rect2(-20, 315, 150, 78), "foot": 2.5, "cars": 0.7, "fleet": {"car": 0.6, "truck": 0.4}},
-			"station": {"rect": Rect2(130, 315, 100, 78), "foot": 1.6, "cars": 1.2, "fleet": {"bus": 0.6, "car": 0.4}, "hours": "commute"},
+			"former_market": {"rect": LOTS["former_market"]["rect"], "foot": 0.2, "cars": 0.0},
+			"market": {"rect": Rect2(-182, 344, 90, 46.8), "foot": 2.5, "cars": 0.7, "fleet": {"car": 0.6, "truck": 0.4}},
+			"station": {"rect": Rect2(-100, 344, 180, 48.75), "foot": 1.6, "cars": 1.2, "fleet": {"bus": 0.6, "car": 0.4}, "hours": "commute"},
 		},
 	},
 }

@@ -187,9 +187,10 @@ const CONTENTS := {
 	"market": {
 		"kind": "painted_lot", "ground": "grass", "label": "Рынок · вокзал · автостанция",
 		"sprite": "market_hub_v7", "node_name": "MarketHubPainted",
-		"footprint": Vector2(244, 70), "width": 222.1, "offset": Vector2(0, 1.7),
+		"footprint": Vector2(146.4, 42), "width": 133.26, "offset": Vector2(0.8, 2.3),
 		# The revised painting already matches the map camera; do not stretch it.
-		# The opaque strip contour stays north of z=392.9; ballast starts at 393.1.
+		# 60% scale trial beside the actual five-storey blocks and rolling stock.
+		# Retain anchor (-33,390.7); the separate platform owns the passenger edge.
 		"anchor": Vector2(0.7913, 0.9867), "axes": Vector2(0.583, -0.600),
 		"dressing": [],
 	},

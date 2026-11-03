@@ -9,6 +9,8 @@ const STREAMS := {
 		{"entry": "highway_e", "exit": "highway_w", "roads": ["highway"]},
 	]},
 	"border": {"slots": 14, "fleet": {"truck": 0.8, "car": 0.2}, "trips": [
+		{"entry": "border_bridge", "exit": "axis_south", "roads": ["axis"]},
+		{"entry": "axis_south", "exit": "border_bridge", "roads": ["axis"]},
 		{"entry": "highway_w", "exit": "border_bridge", "roads": ["highway", "axis"]},
 		{"entry": "highway_e", "exit": "border_bridge", "roads": ["highway", "axis"]},
 		{"entry": "border_bridge", "exit": "highway_w", "roads": ["axis", "highway"]},

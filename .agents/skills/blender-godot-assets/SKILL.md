@@ -49,6 +49,7 @@ Reuse its helpers and stages without inheriting another vehicle's proportions.
 
 ## Build and export
 
+- User direction (2026-11-03): spend modeling/detail budgets on surfaces and silhouettes visible from the standard game camera. Hidden backs need only simple closing geometry; omit occluded interiors and invisible underside detail. Expand this scope only when a requested camera or visible effect requires it.
 - Decide the silhouette, intended camera distance, units and geometry/material/texture budgets first. Inspect a cheap multi-angle preview before expensive finishing.
 - Preserve unrelated scenes. Use named asset collections and save a `.blend` checkpoint before a long bake. Keep geometry, baking, export and preview stages separate; check whether a script supports rerunning before resuming it.
 - Use metres and document the forward axis. Lada uses Blender -Y, which exports as Godot +Z.

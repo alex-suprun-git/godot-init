@@ -219,7 +219,7 @@ func _add_entrances(segments: Array[Dictionary], lot_ids: Array) -> Array[Dictio
 		if bridge["kind"] == "road":
 			var rect: Rect2 = bridge["rect"]
 			# The end on our bank is the southern one.
-			wanted["bridge_road"] = Vector2(rect.get_center().x, rect.end.y)
+			wanted[bridge.get("id", "bridge_road")] = Vector2(rect.get_center().x, rect.end.y)
 	var links: Array[Dictionary] = []
 	for id in wanted:
 		var entrance: Vector2 = wanted[id]
