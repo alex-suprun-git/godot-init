@@ -1,6 +1,8 @@
 # Facade modules for the civic buildings; dimensions stay in metres.
 extends RefCounted
 
+const Floors = preload("res://scripts/map/facade_floors.gd")
+
 
 static func tower(map, group: Node3D, size: Vector2, height: float, variant: String, tint: Color) -> void:
 	var prefix := "res://assets/textures/facade_tower_"
@@ -18,8 +20,13 @@ static func tower(map, group: Node3D, size: Vector2, height: float, variant: Str
 		var width: float = face[0]
 		var origin: Vector3 = face[1]
 		var yaw: float = face[2]
-		_wall(map, group, Vector2(width, middle_height), origin + Vector3.UP * (3.0 + middle_height / 2.0), yaw, face[3], Vector2(width / 12.0, middle_height / 6.0), tint, Vector2.ZERO, Vector2.ONE)
-		_wall(map, group, Vector2(width, 3.0), origin + Vector3.UP * 1.5, yaw, face[3], Vector2(width / 12.0, 0.5), tint)
+		if variant == "e2":
+			var bands: Array = Floors.E2_LONG_BANDS if face[3] == long_wall else Floors.E2_END_BANDS
+			map._facade(Vector2(width, middle_height), origin + Vector3.UP * (3.0 + middle_height / 2.0), yaw, face[3], Vector2(width / 12.0, 1), tint, group, Vector2.ZERO, true, Vector2(1, 0), roundi(middle_height / 3.0), bands)
+			map._facade(Vector2(width, 3.0), origin + Vector3.UP * 1.5, yaw, face[3], Vector2(width / 12.0, 1), tint, group, Vector2.ZERO, true, Vector2(1, 0), 1, bands)
+		else:
+			_wall(map, group, Vector2(width, middle_height), origin + Vector3.UP * (3.0 + middle_height / 2.0), yaw, face[3], Vector2(width / 12.0, middle_height / 6.0), tint, Vector2.ZERO, Vector2.ONE)
+			_wall(map, group, Vector2(width, 3.0), origin + Vector3.UP * 1.5, yaw, face[3], Vector2(width / 12.0, 0.5), tint)
 		_wall(map, group, Vector2(width, 3.0), origin + Vector3.UP * (height - 1.5), yaw, crown, Vector2(width / 6.0, 1.0), tint)
 	var shop: Texture2D = load(prefix + "shop_" + variant + ".png")
 	var entrance: Texture2D = load(prefix + "entrance_" + variant + ".png")

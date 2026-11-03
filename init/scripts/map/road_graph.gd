@@ -243,6 +243,8 @@ func _facing_point(lot_id: String) -> Vector2:
 	if DistrictLayout.LOTS[lot_id].has("entrance"):
 		return DistrictLayout.LOTS[lot_id]["entrance"]
 	var lot: Dictionary = DistrictLayout.LOTS[lot_id]
+	if lot.has("entrance"):
+		return lot["entrance"]
 	var rect: Rect2 = lot["rect"]
 	var center := rect.get_center()
 	match lot["facing"]:

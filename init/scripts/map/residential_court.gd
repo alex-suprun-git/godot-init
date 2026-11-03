@@ -60,7 +60,7 @@ func build(district_builder) -> void:
 		for dx in [-4.0, 0.0, 4.0]:
 			_prop("bush", Vector2(x + dx, 77), 2.2, Vector2(2, 2))
 	for at in [Vector2(-47,-31), Vector2(-43,24), Vector2(-30,38), Vector2(20,-32), Vector2(44,10), Vector2(43,35), Vector2(-48,66), Vector2(49,69), Vector2(-45,-65), Vector2(48,-64)]:
-		var tree: Sprite3D = map._tree(map._ground(origin + at * SPACING))
+		var tree: Node3D = map._tree(map._ground(origin + at * SPACING))
 		tree.reparent(layers["Planting"])
 		map._occupy(origin + at * SPACING, Vector2(7, 7))
 	for at in [Vector2(-40,-24), Vector2(-39,-18), Vector2(-38,-12), Vector2(10,17), Vector2(16,17), Vector2(23,17), Vector2(38,26), Vector2(40,31), Vector2(-26,33), Vector2(-22,36)]:

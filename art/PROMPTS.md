@@ -12,6 +12,10 @@ Game-camera ensemble proposal: `art/models/station_hub/references/ensemble-game-
 
 Built-in ImageGen produced separate modeling sheets for market stalls, a lived-in 1970s–1980s railway station with 1997 advertising, and a matching bus-station pavilion/shelters. The latter uses the station sheet as its architectural reference. Untouched originals and exact prompts: `art/models/station_hub/references/`; status and review limitations: `art/models/station_hub/README.md`. All are proposals awaiting user review; no models or game integration in this pass. This supersedes the earlier deferral of separate 3D production below.
 
+## Whole-map 3D trees (2026-11-03)
+
+Standalone tree sprites are replaced by the original civic-centre deciduous and poplar meshes, using shared seasonal materials. No new art was generated. The old combined city-park game painting was removed at the user request; its original concept is preserved for reference. See README Natural Landmarks and `art/models/civic_center/README.md`.
+
 ## Northern wheat field (2026-11-01)
 
 - Built-in ImageGen map edit `art/source_images/wheat_field/direction-v1.png` was approved by the user. Derived production source: `ground-wheat-v1.png`; exact generation prompts are adjacent to both images. The separately optimized surface is integrated as `init/assets/textures/ground_wheat.png`. Implementation, preparation record and Godot verification: `art/source_images/wheat_field/README.md`. The user accepted the in-game result on 2026-11-01.
@@ -1166,3 +1170,7 @@ Use case: precise-object-edit. Correct this TWO-storey residential wall texture 
 # Early GAZ-2705 cargo van — original 3D asset
 
 Approved on 2026-11-02: early all-metal cargo van with rounded roof/bonnet, rectangular period headlights, shallow cargo-panel pressings and dual rear tires; white, muted blue and sand paint. Built as original Blender geometry from photographs, without generated raster artwork. Source and reference record: `art/models/gazelle/README.md` and `SOURCING.md`. The final 0.831725 uniform presentation scale is embedded in the three GLBs under `init/assets/models/vehicles/`; half of moving ZIL selections are replaced by probability.
+
+## Central buildings: 1997 commercial layers (2026-11-02)
+
+User-selected House of Culture direction: `art/source_images/culture_house/multiview-1997-v3.png`, with a cheap imported-electronics banner hung over part of the Soviet mosaic, video rental, event notices and modest wear. Original generated sheets and exact prompts are preserved beside the asset; no game integration or measured model approval. The user explicitly extended this mood to many central buildings: retain recognizable architecture beneath accumulated commercial banners, competing tenant signs, rented entrances and improvised advertising; public cultural use continues underneath. Vary coverage by building and preserve important silhouettes rather than blanketing every facade identically. User photo `art/source_images/culture_house/user-commercial-layer-reference.jpg` is a reference for commercial saturation and layering, not a verified 1997 photograph or a source of period-correct products. The game starts in August 1997: every depicted product, advertising medium and graphic treatment must fit that date; do not copy the photographed phones or other later technology into the game. This is user-approved concept direction, not a claim of live in-engine approval.

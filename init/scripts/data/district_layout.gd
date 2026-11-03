@@ -39,12 +39,14 @@ const LOTS := {
 	"b2_k": {"type": "K", "rect": Rect2(-152, 135.6, 88, 70.4), "content": "yard", "condition": "kept", "facing": "s"},
 	"police": {"type": "G", "rect": Rect2(-44, -75, 24, 32), "content": "police", "condition": "kept", "facing": "e"},
 	"polyclinic": {"type": "G", "rect": Rect2(-45, 135, 28, 42), "content": "polyclinic", "condition": "kept", "facing": "e"},
-	"ispolkom": {"type": "G", "rect": Rect2(25, 22, 115, 108), "content": "ispolkom", "condition": "kept", "facing": "w"},
+	"ispolkom": {"type": "G", "rect": Rect2(25, 22, 115, 108), "content": "ispolkom", "condition": "kept", "facing": "w", "entrance": Vector2(25, 72)},
 	"tower_e1": {"type": "W", "rect": Rect2(30, -60, 40, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
 	"department_store": {"type": "G", "rect": Rect2(30, -15, 45, 30), "content": "department_store", "condition": "kept", "facing": "w"},
 	"city_park": {"type": "N", "rect": Rect2(82, -72, 54, 84), "content": "city_park", "condition": "kept", "facing": "e"},
-	"tower_e2": {"type": "W", "rect": Rect2(30, 140, 40, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
-	"tower_e3": {"type": "W", "rect": Rect2(82, 140, 40, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
+	# Three matching southern towers, evenly spaced between the two streets.
+	"tower_e2": {"type": "W", "rect": Rect2(19.5, 140, 34, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
+	"tower_e3": {"type": "W", "rect": Rect2(56.5, 140, 34, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
+	"tower_e4": {"type": "W", "rect": Rect2(93.5, 140, 34, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
 	"slab_1": {"type": "W", "rect": Rect2(22, 190, 110, 14), "content": "admin_slab", "condition": "kept", "facing": "s"},
 	"slab_2": {"type": "W", "rect": Rect2(22, 232, 110, 14), "content": "admin_slab", "condition": "kept", "facing": "n"},
 	"church": {"type": "X", "rect": Rect2(245, 80, 60, 50), "content": "church", "condition": "fading", "facing": "w"},
@@ -88,10 +90,18 @@ const ROADS := [
 	{"id": "housing_spine", "rect": Rect2(-202.4, -80, 4, 380), "kind": "yard", "traffic": "courtyard", "speed": 0.5, "vehicles": ["car"]},
 	# Civic square / southern tower connection, and the lane between the two slabs.
 	{"id": "square_link", "rect": Rect2(7, 136, 133, 4), "kind": "yard"},
+	# Separate paths around the civic building; no path crosses its footprint.
+	{"id": "civic_front_walk", "rect": Rect2(7, 70.5, 34.25, 3), "kind": "yard"},
+	{"id": "civic_north_walk", "rect": Rect2(7, 41.5, 138, 3), "kind": "yard"},
+	{"id": "civic_south_walk", "rect": Rect2(7, 102.5, 138, 3), "kind": "yard"},
+	{"id": "civic_memorial_walk", "rect": Rect2(35, 82, 3, 22), "kind": "yard"},
+	{"id": "civic_park_spine", "rect": Rect2(120.5, 43, 3, 95), "kind": "yard"},
+	{"id": "civic_park_west", "rect": Rect2(95.5, 84, 3, 35), "kind": "yard"},
+	{"id": "civic_park_north", "rect": Rect2(97, 82.5, 25, 3), "kind": "yard"},
+	{"id": "civic_park_south", "rect": Rect2(97, 117.5, 25, 3), "kind": "yard"},
 	{"id": "civic_lane", "rect": Rect2(7, 209, 133, 5), "kind": "asphalt", "walk": 1.5},
-	# Short avenue links serving the northern and southern tower groups.
+	# Short avenue link serving the northern tower group.
 	{"id": "north_tower_link", "rect": Rect2(7, -8, 20, 3), "kind": "yard"},
-	{"id": "south_tower_link", "rect": Rect2(7, 172, 20, 3), "kind": "yard"},
 	# Actual graph connections for the shared forecourt. Its custom surface provides
 	# broad paved turning space; road strips retain routes/lanes without duplicate paint.
 	{"id": "station_entry", "rect": Rect2(-134, 305, 8, 43), "kind": "asphalt", "walk": 0.0, "hub_surface": true, "speed": 0.4},
@@ -195,7 +205,7 @@ static func parking_allowed(at: Vector2, footprint: Vector2) -> bool:
 const DISTRICTS := {
 	"admin": {
 		"name": "Administrative centre",
-		"rects": [Rect2(20, -80, 125, 350), Rect2(-44, -75, 24, 32), Rect2(-45, 135, 28, 42)],
+		"rects": [Rect2(19.5, -80, 125.5, 350), Rect2(-44, -75, 24, 32), Rect2(-45, 135, 28, 42)],
 		"residents": 1200, "foot": 1.4, "cars": 0.8,
 		"fleet": {"car": 0.8, "bus": 0.2}, "hours": "office",
 		"subzones": {
@@ -205,8 +215,9 @@ const DISTRICTS := {
 			"admin_park": {"rect": Rect2(82, -72, 54, 84), "foot": 0.9, "cars": 0.0, "hours": "leisure"},
 			"admin_shops": {"rect": Rect2(30, -15, 45, 30), "foot": 2.2, "hours": "market"},
 			"admin_elite": {"rect": Rect2(30, -60, 40, 38), "residents": 450, "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
-			"admin_elite_e2": {"rect": Rect2(30, 140, 40, 38), "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
-			"admin_elite_e3": {"rect": Rect2(82, 140, 40, 38), "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
+			"admin_elite_e2": {"rect": LOTS["tower_e2"]["rect"], "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
+			"admin_elite_e3": {"rect": LOTS["tower_e3"]["rect"], "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
+			"admin_elite_e4": {"rect": LOTS["tower_e4"]["rect"], "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
 			"admin_slab_1": {"rect": Rect2(22, 190, 110, 14), "hours": "commute"},
 			"admin_slab_2": {"rect": Rect2(22, 232, 110, 14), "hours": "commute"},
 		},

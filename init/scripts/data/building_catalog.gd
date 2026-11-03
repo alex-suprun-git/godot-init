@@ -52,18 +52,8 @@ const CONTENTS := {
 	"wheat_field": {"kind": "wheat_field", "ground": "grass", "label": "Пшеничное поле", "dressing": []},
 	"empty_lot": {"kind": "open", "footprint": Vector2.ZERO, "ground": "grass", "label": "Свободный участок", "dressing": []},
 	"ispolkom": {
-		# Lot centre is the square; the unchanged building sits at its eastern end.
-		"kind": "group", "footprint": Vector2.ZERO, "height": 15.0,
-		"ground": "paving", "label": "Райисполком", "parts": [{
-			"at": Vector2(37.5, 0), "footprint": Vector2(30, 25), "height": 15.0,
-			"doorstep": 3.0, # metres in front of the facade where people stand on arrival
-			"center_width": 30.0, "wing_width": 30.0, "wings": 0,
-			"facade_center": "res://assets/textures/facade_ispolkom_front.png",
-			"facade_wing": "res://assets/textures/facade_ispolkom_side.png",
-			"roof": "res://assets/textures/roof_tar.png", "placeholder_color": Color("d5d1c2"),
-		}], "dressing": [
-			{"sprite": "monument", "at": Vector2(-24, -14), "width": 7.0, "footprint": Vector2(6, 6)},
-		],
+		"kind": "civic_center", "footprint": Vector2.ZERO, "height": 18.0,
+		"ground": "grass", "label": "Райисполком", "dressing": [],
 	},
 	"police": {
 		"kind": "building", "footprint": Vector2(18, 10), "height": 6.0, "doorstep": 2.0,
@@ -105,12 +95,8 @@ const CONTENTS := {
 		"placeholder_color": Color("d4c5ae"), "label": "Универмаг", "dressing": [],
 	},
 	"city_park": {
-		"kind": "painted_lot", "ground": "grass", "label": "Городской сквер",
-		"sprite": "city_park_v1", "footprint": Vector2(52, 77.6), "width": 95.08,
-		# Calibrated ground corners in the unchanged 1536 x 1024 source. The near
-		# corner anchors the entire park, rather than the average alpha edge.
-		"anchor": Vector2(0.409, 0.992), "axes": Vector2(0.596, -0.712),
-		"dressing": [],
+		# Reserved for the park replacement on its separate branch.
+		"kind": "open", "ground": "grass", "label": "Городской сквер", "dressing": [],
 	},
 	"boiler_house": {
 		"kind": "building", "footprint": Vector2(28, 20), "height": 9.0, "doorstep": 3.0,
