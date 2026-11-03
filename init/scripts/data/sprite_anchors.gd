@@ -20,7 +20,6 @@ const ANCHORS := {
 	"carpet_beater_v2": {"anchor": Vector2(0.506, 0.976), "slope": -0.63},
 	"checkpoint_booth": {"anchor": Vector2(0.499, 0.976), "slope": -0.03},
 	"church": {"anchor": Vector2(0.508, 0.934), "slope": 0.03},
-	"city_park_v1": {"anchor": Vector2(0.504, 0.797), "slope": -0.39},
 	"coal_heap": {"anchor": Vector2(0.503, 0.873), "slope": 0.08},
 	"crane_truck": {"anchor": Vector2(0.486, 0.802), "slope": 0.34},
 	"fence_chainlink": {"anchor": Vector2(0.502, 0.688), "slope": 0.39},

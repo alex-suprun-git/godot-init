@@ -1,4 +1,6 @@
-# City park — first 2D integration
+# City park — first 2D integration (historical)
+
+Removed from the game on 2026-11-03 at the user request during the whole-map 3D tree migration. The original concept is preserved; the game PNG and its catalog recipe are removed. The unchanged lot remains grass for a replacement developed on another branch. The records below describe the former integration.
 
 ## Decision and files
 

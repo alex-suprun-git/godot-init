@@ -43,8 +43,10 @@ const LOTS := {
 	"tower_e1": {"type": "W", "rect": Rect2(30, -60, 40, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
 	"department_store": {"type": "G", "rect": Rect2(30, -15, 45, 30), "content": "department_store", "condition": "kept", "facing": "w"},
 	"city_park": {"type": "N", "rect": Rect2(82, -72, 54, 84), "content": "city_park", "condition": "kept", "facing": "e"},
-	"tower_e2": {"type": "W", "rect": Rect2(30, 140, 40, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
-	"tower_e3": {"type": "W", "rect": Rect2(82, 140, 40, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
+	# Three matching southern towers, evenly spaced between the two streets.
+	"tower_e2": {"type": "W", "rect": Rect2(19.5, 140, 34, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
+	"tower_e3": {"type": "W", "rect": Rect2(56.5, 140, 34, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
+	"tower_e4": {"type": "W", "rect": Rect2(93.5, 140, 34, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
 	"slab_1": {"type": "W", "rect": Rect2(22, 190, 110, 14), "content": "admin_slab", "condition": "kept", "facing": "s"},
 	"slab_2": {"type": "W", "rect": Rect2(22, 232, 110, 14), "content": "admin_slab", "condition": "kept", "facing": "n"},
 	"church": {"type": "X", "rect": Rect2(245, 80, 60, 50), "content": "church", "condition": "fading", "facing": "w"},
@@ -98,9 +100,8 @@ const ROADS := [
 	{"id": "civic_park_north", "rect": Rect2(97, 82.5, 25, 3), "kind": "yard"},
 	{"id": "civic_park_south", "rect": Rect2(97, 117.5, 25, 3), "kind": "yard"},
 	{"id": "civic_lane", "rect": Rect2(7, 209, 133, 5), "kind": "asphalt", "walk": 1.5},
-	# Short avenue links serving the northern and southern tower groups.
+	# Short avenue link serving the northern tower group.
 	{"id": "north_tower_link", "rect": Rect2(7, -8, 20, 3), "kind": "yard"},
-	{"id": "south_tower_link", "rect": Rect2(7, 172, 20, 3), "kind": "yard"},
 	# Village dirt roads form closed loops: H1 north, V1 west, H2 around the church,
 	# V2 east, H4 south, plus an east lane joining the ends of H1 and H3.
 	{"id": "village_north", "rect": Rect2(150, -45, 237.5, 5), "kind": "dirt"},
@@ -166,7 +167,7 @@ const AREAS := {
 const DISTRICTS := {
 	"admin": {
 		"name": "Administrative centre",
-		"rects": [Rect2(20, -80, 125, 350), Rect2(-44, -75, 24, 32), Rect2(-45, 135, 28, 42)],
+		"rects": [Rect2(19.5, -80, 125.5, 350), Rect2(-44, -75, 24, 32), Rect2(-45, 135, 28, 42)],
 		"residents": 1200, "foot": 1.4, "cars": 0.8,
 		"fleet": {"car": 0.8, "bus": 0.2}, "hours": "office",
 		"subzones": {
@@ -176,8 +177,9 @@ const DISTRICTS := {
 			"admin_park": {"rect": Rect2(82, -72, 54, 84), "foot": 0.9, "cars": 0.0, "hours": "leisure"},
 			"admin_shops": {"rect": Rect2(30, -15, 45, 30), "foot": 2.2, "hours": "market"},
 			"admin_elite": {"rect": Rect2(30, -60, 40, 38), "residents": 450, "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
-			"admin_elite_e2": {"rect": Rect2(30, 140, 40, 38), "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
-			"admin_elite_e3": {"rect": Rect2(82, 140, 40, 38), "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
+			"admin_elite_e2": {"rect": LOTS["tower_e2"]["rect"], "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
+			"admin_elite_e3": {"rect": LOTS["tower_e3"]["rect"], "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
+			"admin_elite_e4": {"rect": LOTS["tower_e4"]["rect"], "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
 			"admin_slab_1": {"rect": Rect2(22, 190, 110, 14), "hours": "commute"},
 			"admin_slab_2": {"rect": Rect2(22, 232, 110, 14), "hours": "commute"},
 		},

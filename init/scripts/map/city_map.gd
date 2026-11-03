@@ -14,6 +14,7 @@ const Week1 = preload("res://scripts/data/week1.gd")
 const Settings = preload("res://scripts/data/settings.gd")
 const SpriteAnchors = preload("res://scripts/data/sprite_anchors.gd")
 const GroundedProps = preload("res://scripts/map/grounded_props.gd")
+const VegetationModels = preload("res://scripts/map/vegetation_models.gd")
 const VehicleModels = preload("res://scripts/map/vehicle_models.gd")
 const TrafficVehicleModels = preload("res://scripts/map/traffic_vehicle_models.gd")
 const AmbientLife = preload("res://scripts/map/ambient_life.gd")
@@ -36,8 +37,6 @@ const PANEL_TINTS := [
 	Color(1.0, 1.0, 1.0), Color(1.0, 0.93, 0.74), Color(0.8, 0.9, 1.0),
 	Color(0.84, 0.97, 0.84), Color(1.0, 0.84, 0.78), Color(0.96, 0.96, 0.9),
 ]
-const TREE_BIRCH := preload("res://assets/sprites/tree_birch_august.png")
-const TREE_POPLAR := preload("res://assets/sprites/tree_poplar_august.png")
 const MARKET_TENT := preload("res://assets/sprites/market_tent.png")
 const CAR_VOLGA := preload("res://assets/sprites/car_volga_black_v3.png")
 const SCAFFOLDING := preload("res://assets/sprites/scaffolding.png")
@@ -72,10 +71,6 @@ const GROUND_SNOW_GRASS_DRY := preload("res://assets/textures/ground_snow_grass_
 const GROUND_SNOW_ASPHALT := preload("res://assets/textures/ground_snow_asphalt.png")
 const GROUND_SNOW_PAVING := preload("res://assets/textures/ground_snow_paving.png")
 const GROUND_SNOW_DIRT := preload("res://assets/textures/ground_snow_dirt.png")
-const TREE_BIRCH_OCTOBER := preload("res://assets/sprites/tree_birch_october.png")
-const TREE_POPLAR_OCTOBER := preload("res://assets/sprites/tree_poplar_october.png")
-const TREE_BIRCH_WINTER := preload("res://assets/sprites/tree_birch_winter.png")
-const TREE_POPLAR_WINTER := preload("res://assets/sprites/tree_poplar_winter.png")
 
 # Props that were boxes before the full sprite set arrived.
 const GARAGE_SINGLE := preload("res://assets/sprites/garage_single_v3.png")
@@ -92,7 +87,7 @@ const SEASONS := {
 		"grass": GROUND_GRASS, "grass_dry": GROUND_GRASS_DRY, "asphalt": GROUND_ASPHALT,
 		"paving": GROUND_PAVING, "dirt": GROUND_DIRT, "courtyard": GROUND_COURTYARD,
 		"water": GROUND_WATER, "rail": GROUND_RAIL,
-		"birch": TREE_BIRCH, "poplar": TREE_POPLAR, "bushes": true,
+		"bushes": true,
 		"grass_tint": Color(0.66, 0.78, 0.56), "asphalt_tint": Color.WHITE,
 		"sky_top": Color(0.45, 0.55, 0.68), "sky_horizon": Color(0.78, 0.74, 0.66),
 		"sun_rotation": Vector3(-55.0, -30.0, 0.0), "sun_color": Color(1.0, 0.97, 0.92), "sun_energy": 1.3,
@@ -104,7 +99,7 @@ const SEASONS := {
 		"grass": GROUND_GRASS, "grass_dry": GROUND_GRASS_DRY, "asphalt": GROUND_ASPHALT,
 		"paving": GROUND_PAVING, "dirt": GROUND_DIRT, "courtyard": GROUND_COURTYARD,
 		"water": GROUND_WATER, "rail": GROUND_RAIL,
-		"birch": TREE_BIRCH_OCTOBER, "poplar": TREE_POPLAR_OCTOBER, "bushes": true,
+		"bushes": true,
 		"grass_tint": Color(0.86, 0.74, 0.52), "asphalt_tint": Color.WHITE,
 		"sky_top": Color(0.5, 0.55, 0.62), "sky_horizon": Color(0.78, 0.72, 0.64),
 		"sun_rotation": Vector3(-42.0, -30.0, 0.0), "sun_color": Color(1.0, 0.9, 0.78), "sun_energy": 1.15,
@@ -116,7 +111,7 @@ const SEASONS := {
 		"grass": GROUND_SNOW_GRASS, "grass_dry": GROUND_SNOW_GRASS_DRY, "asphalt": GROUND_SNOW_ASPHALT,
 		"paving": GROUND_SNOW_PAVING, "dirt": GROUND_SNOW_DIRT, "courtyard": GROUND_SNOW_GRASS,
 		"water": GROUND_WATER, "rail": GROUND_RAIL,
-		"birch": TREE_BIRCH_WINTER, "poplar": TREE_POPLAR_WINTER, "bushes": false,
+		"bushes": false,
 		"grass_tint": Color(0.82, 0.86, 0.92), "asphalt_tint": Color(0.5, 0.53, 0.6),
 		"sky_top": Color(0.5, 0.56, 0.66), "sky_horizon": Color(0.74, 0.78, 0.84),
 		"sun_rotation": Vector3(-30.0, -30.0, 0.0), "sun_color": Color(0.9, 0.94, 1.0), "sun_energy": 1.15,
@@ -847,7 +842,6 @@ func _build_trees() -> void:
 				var tree := _tree(_ground(at))
 				if lot["type"] == "K" and lot["condition"] == "kept":
 					tree.scale *= 0.65
-					tree.position.y *= 0.65
 	for road in DistrictLayout.ROADS:
 		var rect: Rect2 = road["rect"]
 		if road["kind"] == "dirt":
@@ -857,7 +851,7 @@ func _build_trees() -> void:
 			var at := rect.position + (Vector2(i * 26, rect.size.y + 6) if along_x else Vector2(rect.size.x + 6, i * 26))
 			if not _is_occupied(at, 3.0) and not _near_traffic_light(at):
 				# This lot owns its 3D planting. Consume the same RNG values even
-				# when suppressing a roadside sprite, preserving all later trees.
+				# when suppressing a roadside tree, preserving all later trees.
 				_tree(_ground(at), not preload("res://scripts/map/civic_center.gd").PLANTING_RECT.has_point(at))
 
 
@@ -1378,25 +1372,19 @@ func _windows(base: Vector3, footprint: Vector2, floors: int, per_row: int, floo
 				_box(Vector3(0.1, floor_height * 0.45, end_spacing * 0.45), base + Vector3(side * (footprint.x / 2.0 + 0.05), window_y, z), WINDOW)
 
 
-func _tree(at: Vector3, spawn: bool = true) -> Sprite3D:
-	# Painted tree sprite standing upright and turning toward the camera:
-	# mostly birches, with taller poplars for variety.
+func _tree(at: Vector3, spawn: bool = true) -> Node3D:
+	# Preserve the original random sequence, even for suppressed trees.
 	var poplar := _rng.randf() < 0.25
 	var height := _rng.randf_range(13.0, 18.0) if poplar else _rng.randf_range(9.0, 13.0)
-	var tint := Color(1, 1, 1).lerp(Color(0.92, 0.95, 0.8), _rng.randf())
-	# Omitting a median tree must not reshuffle all later trees in the district.
+	var variation := _rng.randf()
 	if not spawn:
 		return null
-	var sprite := Sprite3D.new()
-	sprite.texture = _season["poplar"] if poplar else _season["birch"]
-	sprite.pixel_size = height / sprite.texture.get_height()
-	sprite.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
-	sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
-	sprite.shaded = true
-	sprite.modulate = tint
-	sprite.position = at + Vector3(0, height / 2.0, 0)
-	add_child(sprite)
-	return sprite
+	var id := "park_poplar" if poplar else "park_deciduous_tree"
+	var tree := VegetationModels.create(id, at)
+	tree.scale = Vector3.ONE * height / float(VegetationModels.HEIGHTS[id])
+	tree.rotation.y = variation * TAU
+	add_child(tree)
+	return tree
 
 
 func _ground(at: Vector2) -> Vector3:

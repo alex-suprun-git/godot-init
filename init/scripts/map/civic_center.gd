@@ -1,8 +1,8 @@
 # Persistent civic lot assembled from separate meshes and seasonal planting.
 extends RefCounted
 
+const VegetationModels = preload("res://scripts/map/vegetation_models.gd")
 const ASSET_DIR := "res://assets/models/civic_center/"
-const Settings = preload("res://scripts/data/settings.gd")
 const PLANTING_RECT := Rect2(9.5, 22, 130.5, 108)
 const BUILDING_AT := Vector2(53, 72)
 const DOORSTEP := Vector2(40.5, 72)
@@ -10,7 +10,6 @@ var builder
 var map
 var root: Node3D
 var scenes := {}
-var foliage_materials := {}
 var tree_positions: Array[Vector2] = []
 
 
@@ -83,6 +82,7 @@ func build(district_builder) -> void:
 			continue
 		asset("park_railing_2m", Vector3(137, 0.03, z), PI / 2)
 	plant_rear_reserve()
+	plant_south_buffer()
 	# Local planting must not reshuffle the rest of the city's trees and traffic.
 	map._rng.state = random_state
 
@@ -158,27 +158,34 @@ func plant_rear_reserve() -> void:
 	print("Civic rear reserve: ", count, " additional trees")
 
 
+func plant_south_buffer() -> void:
+	# Fill the lawn between the memorial/square and the southern tower row.
+	# Existing paths, seating, trunks and the monument court remain clear.
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 311126
+	var layout = preload("res://scripts/data/district_layout.gd")
+	var protected := [Rect2(22, 92, 18, 16).grow(3.0)]
+	for road in layout.ROADS:
+		protected.append(road["rect"].grow(3.0))
+	var count := 0
+	for row in 3:
+		for column in 9:
+			var at := Vector2(18 + column * 8.5 + (3.5 if row % 2 else 0.0), 111.5 + row * 8.5)
+			at += Vector2(rng.randf_range(-0.6, 0.6), rng.randf_range(-0.6, 0.6))
+			if protected.any(func(rect: Rect2) -> bool: return rect.has_point(at)):
+				continue
+			if tree_positions.any(func(point: Vector2) -> bool: return point.distance_to(at) < 7.2):
+				continue
+			if map._is_occupied(at, 3.0):
+				continue
+			tree(at, "conifer" if rng.randf() < 0.15 else "deciduous")
+			count += 1
+	print("Civic southern buffer: ", count, " additional trees")
+
+
 func vegetation(id: String, at: Vector3) -> Node3D:
-	var node := asset(id, at)
-	var evergreen := id == "park_conifer"
-	for mesh in node.find_children("*", "MeshInstance3D", true, false):
-		if not str(mesh.name).begins_with("Foliage"):
-			continue
-		if Settings.season == "winter" and not evergreen:
-			mesh.hide()
-			continue
-		if not foliage_materials.has(id):
-			var material := ShaderMaterial.new()
-			material.shader = preload("res://assets/shaders/civic_foliage.gdshader")
-			if Settings.season == "autumn" and not evergreen:
-				material.set_shader_parameter("season_tint", Color(1.8, 1.15, 0.55))
-			elif Settings.season == "autumn":
-				material.set_shader_parameter("colour_saturation", 0.45)
-				material.set_shader_parameter("season_tint", Color(1.03, 0.96, 0.78))
-			elif Settings.season == "winter":
-				material.set_shader_parameter("season_tint", Color(0.85, 0.95, 0.95))
-			foliage_materials[id] = material
-		mesh.material_override = foliage_materials[id]
+	var node := VegetationModels.create(id, at)
+	root.add_child(node)
 	return node
 
 
