@@ -1,5 +1,9 @@
 # Image Prompts: First Week
 
+## District modeling reference pack (2026-11-03)
+
+Built-in ImageGen sheets for the church/cemetery, three private-house types, the protagonist's proposed dormitory, separate school and kindergarten, two kiosks, two playgrounds and all existing industrial/service sites. Actual current Godot overview/village/bridge frames supply map-camera context; existing catalog dimensions guide industrial massing. The revised border-crossing proposal replaces the generic customs layout with a north–south bridge-aligned scheme and separate control/inspection flows. Exact prompts, selected versions, known projection/layout discrepancies and review status: `art/source_images/district_visual_pack/README.md`. These are proposals for user review, not approved textures or integrated models. The existing approved police UAZ reference/model is reused. User refinement reserves timber cottages for outer edges and gives every private parcel a proper fence, vehicle gate and wicket.
+
 ## Station-area 3D reference proposals (2026-11-03)
 
 The accepted composition and prepared images now guide a first integrated 3D assembly, exported from `art/models/station_hub/station_hub.blend` to `init/assets/models/station_hub/`. The prior combined painting is no longer rendered. This implementation creates no further ImageGen artwork; current geometry, material use and actual Godot review are in `art/models/station_hub/README.md`.

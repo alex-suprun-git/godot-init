@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="930" viewBox="0 0 1200 930">
+<defs>
+ <marker id="in" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L6 3L0 6Z" fill="#a33f38"/></marker>
+ <marker id="out" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L6 3L0 6Z" fill="#2b6794"/></marker>
+ <marker id="walk" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0L6 3L0 6Z" fill="#537b37"/></marker>
+ <style>text{font-family:Arial,sans-serif;fill:#292c2f}.small{font-size:3px}.label{font-size:3.6px;font-weight:bold}.building{fill:#d4c9b2;stroke:#62594e;stroke-width:.6}.in{fill:none;stroke:#a33f38;stroke-width:1.1;marker-end:url(#in)}.out{fill:none;stroke:#2b6794;stroke-width:1.1;marker-end:url(#out)}.walk{fill:none;stroke:#537b37;stroke-width:.7;marker-end:url(#walk)}</style>
+</defs>
+<rect width="1200" height="850" fill="#f5f2eb"/>
+<text x="70" y="40" font-size="25" font-weight="bold">BORDER CROSSING — CANONICAL FLOW PROPOSAL</text>
+<text x="70" y="68" font-size="15">North-up / existing 250 × 120 m parcel / original map geography retained / August 1997</text>
+<text x="70" y="93" font-size="14">Diagram defines control order and connections. Lane radii and building positions require measured Godot layout.</text>
+<g transform="translate(100 180) scale(4)">
+ <rect x="0" y="-21" width="250" height="18" fill="#91b4be"/>
+ <text x="10" y="-10" class="label">RIVER — NO NEW EAST–WEST ROAD</text>
+ <rect x="113" y="-21" width="24" height="21" fill="#777"/>
+ <path d="M125 -21V0" stroke="#e8e3d7" stroke-width=".4" stroke-dasharray="2 2"/>
+ <text x="139" y="-10" class="label">EXISTING BRIDGE</text>
+ <rect x="0" y="0" width="250" height="120" fill="#d5d2c7" stroke="#454a44" stroke-width="1"/>
+ <rect x="113" y="0" width="24" height="120" fill="#8d918f"/>
+ <path d="M125 0V120" stroke="#eee8dc" stroke-width="1"/>
+ <rect x="113" y="39" width="10" height="9" fill="#bcbfae" stroke="#667361" stroke-width=".4"/>
+ <rect x="127" y="39" width="10" height="9" fill="#bcbfae" stroke="#667361" stroke-width=".4"/>
+ <rect x="113" y="61" width="10" height="9" fill="#bcbfae" stroke="#667361" stroke-width=".4"/>
+ <rect x="127" y="61" width="10" height="9" fill="#bcbfae" stroke="#667361" stroke-width=".4"/>
+ <path class="in" d="M116 -16V34"/><path class="in" d="M116 49V58"/><path class="in" d="M116 73V116"/>
+ <path class="out" d="M134 117V75"/><path class="out" d="M134 59V50"/><path class="out" d="M134 36V-16"/>
+ <text x="97" y="44" class="label" text-anchor="end">PASSPORT</text><text x="97" y="67" class="label" text-anchor="end">CUSTOMS</text>
+ <text x="145" y="44" class="label">PASSPORT</text><text x="145" y="67" class="label">CUSTOMS</text>
+ <text x="106" y="7" class="small" text-anchor="end">IMPORT / SOUTHBOUND</text>
+ <text x="144" y="7" class="small">EXPORT / NORTHBOUND</text>
+ <path d="M120 3V117M130 3V117" stroke="#e8e3d7" stroke-width=".4" stroke-dasharray="2 2"/>
+ <text x="107" y="115" class="small" text-anchor="end">OUTER: TRUCK / INNER: CAR</text>
+ <rect class="building" x="20" y="45" width="30" height="18"/>
+ <text x="35" y="52" class="label" text-anchor="middle">BORDER +</text><text x="35" y="57" class="label" text-anchor="middle">CUSTOMS OFFICE</text>
+ <rect class="building" x="20" y="78" width="40" height="24"/>
+ <text x="40" y="87" class="label" text-anchor="middle">IMPORT</text><text x="40" y="93" class="label" text-anchor="middle">SECONDARY HALL</text>
+ <path class="in" d="M116 74H83Q73 74 67 83L60 89"/>
+ <path class="in" d="M40 102V108Q40 113 48 113H103Q116 113 116 117"/>
+ <rect class="building" x="190" y="29" width="40" height="24"/>
+ <text x="210" y="38" class="label" text-anchor="middle">EXPORT</text><text x="210" y="44" class="label" text-anchor="middle">SECONDARY HALL</text>
+ <path class="out" d="M134 59H171Q180 59 184 49L190 42"/>
+ <path class="out" d="M210 29V21H165V50H138"/>
+ <text x="171" y="17" class="small">REJOIN BEFORE PASSPORT</text>
+ <rect x="65" y="13" width="25" height="20" fill="#dfb5a3" stroke="#a33f38" stroke-width=".5"/>
+ <text x="77" y="21" class="small" text-anchor="middle">SHORT WAIT</text><text x="77" y="26" class="small" text-anchor="middle">IMPORT</text>
+ <path class="in" d="M116 11H62V35H110"/>
+ <rect x="178" y="81" width="25" height="20" fill="#b5ccdc" stroke="#2b6794" stroke-width=".5"/>
+ <text x="190" y="89" class="small" text-anchor="middle">SHORT WAIT</text><text x="190" y="94" class="small" text-anchor="middle">EXPORT</text>
+ <path class="out" d="M134 113H208V77H140"/>
+ <rect x="239" y="0" width="10" height="120" fill="#dde3cf" stroke="#537b37" stroke-width=".5" stroke-dasharray="1 1"/>
+ <rect class="building" x="238" y="83" width="11" height="12"/>
+ <text x="236" y="87" class="small" text-anchor="end">PEDESTRIAN CONTROL</text>
+ <path class="walk" d="M243 117V98"/><path class="walk" d="M243 79V9H143V-17"/>
+ <path class="walk" d="M146 -17V5H246V79"/><path class="walk" d="M246 98V117"/>
+ <text x="225" y="114" class="small" text-anchor="end">FENCED WALKS / IN + OUT</text>
+ <path d="M111 0H139M111 120H139" stroke="#674b2e" stroke-width="1.2" stroke-dasharray="2 2"/>
+ <rect x="113" y="120" width="24" height="17" fill="#777"/>
+ <path d="M125 121V137" stroke="#eee8dc" stroke-width=".4" stroke-dasharray="2 2"/>
+ <rect x="0" y="137" width="250" height="20" fill="#777"/>
+ <path d="M0 147H250" stroke="#eee8dc" stroke-width=".4" stroke-dasharray="3 3"/>
+ <text x="10" y="150" fill="white" class="label">EXISTING HIGHWAY — NO QUEUING ON CARRIAGEWAY</text>
+ <text x="143" y="131" class="label">CITY AVENUE</text>
+</g>
+<text x="70" y="850" font-size="14">Red: import → passport → customs → optional secondary → city. Blue: city → customs → optional secondary → passport → bridge.</text>
+<text x="70" y="877" font-size="14">Waiting pockets rejoin upstream of control. Secondary inspection is conditional; it is never a public bypass.</text>
+<text x="70" y="904" font-size="13">Open checks: 17 m truck turning envelopes, storage capacity, bus bay, walking-clearance geometry and staffing. No gameplay changes.</text>
+</svg>
