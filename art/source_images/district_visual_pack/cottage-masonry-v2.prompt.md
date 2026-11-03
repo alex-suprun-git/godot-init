@@ -1,0 +1,5 @@
+# cottage-masonry revision v2
+
+Built-in ImageGen. Image 1 is the v1 reference sheet (edit target); Image 2 is the actual Godot village screenshot (authoritative layout/camera reference). Proposal awaiting review.
+
+Keep the exact 1950s–1960s masonry/plastered house, its proportions and coherent elevations. Revise parcel/site/camera panels to show a complete approximately 38 by 38 m individually enclosed plot with a proper maintained perimeter: masonry piers and muted green painted steel fence panels along the street, simpler sound fence at sides/rear, paired steel vehicle gates about 3 m clear width and a distinct 1 m pedestrian wicket. Connect gate to a practical narrow driveway and wicket to house entrance. A small ordinary garage or service shed may stand at the rear beside the driveway. This is a settled urban private-sector plot with a maintained older house, not a primitive rural hamlet or luxury mansion. Preserve modest garden and period character. Keep house elevations unchanged and update fence/gate/site details coherently.
