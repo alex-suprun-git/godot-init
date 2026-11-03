@@ -32,6 +32,15 @@ const CONTENTS := {
 		"ground_floor": "res://assets/textures/facade_panel_groundfloor_shop.png",
 		"placeholder_color": Color("ccc9bd"), "label": "Пятиэтажный дом", "dressing": [],
 	},
+	# Interim intact dormitory using existing residential materials; dedicated art is pending.
+	"dormitory_placeholder": {
+		"kind": "panel", "footprint": Vector2(60, 14), "floors": 3, "doorstep": 2.0,
+		"facade": "res://assets/textures/facade_panel_late_5storey_lived.png",
+		"roof": "res://assets/textures/roof_panel_flat.png",
+		"entrance_base": "res://assets/textures/facade_panel_entrance.png",
+		"stair": "res://assets/textures/facade_panel_stair.png",
+		"placeholder_color": Color("ccc9bd"), "label": "Общежитие", "dressing": [],
+	},
 	"panel_9": {
 		"kind": "panel", "footprint": Vector2(78, 12), "floors": 9, "doorstep": 3.0,
 		"facade": "res://assets/textures/facade_panel_late_9storey_lived.png",

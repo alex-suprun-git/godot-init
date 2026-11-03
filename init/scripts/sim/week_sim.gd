@@ -17,13 +17,22 @@ signal promise_resolved(status: String) # "kept" or "broken"
 signal option_chosen(request_id: String, option_id: String, actor: String)
 signal week_ended
 signal day_started(day: int) # A new working day began; everyone is back at their start lot.
+signal workday_started # The protagonist has arrived at the administration at 08:00.
 
 const WEEK_HOURS := Week1.HOURS_PER_DAY * Week1.DAYS_PER_WEEK
 # What a request's card says about its wait when the data gives no wait_text.
 const URGENCY_WAIT := {"now": "Ждут на месте", "today": "Только сегодня", "days": "Может подождать", "week": "Задача недели"}
 const STEP := 0.25 # Simulation step in game hours; keeps event ordering stable at high speed.
 
-var t := 0.0 # Working hours since Monday 07:00 of the current week; nights are not counted.
+var t := 0.0 # Scheduled awake hours since Monday 06:00; overtime is separate.
+var _day := 0
+var overtime_hours := 0.0
+var last_day_end_hour := 22.0
+var _day_closing := false
+var _morning_started := false
+var at_work := false
+var _salary_months := {} # Calendar month keys already paid in this campaign.
+var rent_debt := 0
 var week := 1
 var money: int = Week1.START_MONEY
 var traces := 0
@@ -60,7 +69,7 @@ func _init(seed_value: int = 1997) -> void:
 		actors[id] = {
 			"pos": graph.entrance_position(Week1.LOTS[lot]["layout"]), "lot": lot, "state": "idle",
 			"request": "", "option": {}, "work_left": 0.0, "driver": false,
-			"path": PackedVector2Array(), "path_index": 0,
+			"path": PackedVector2Array(), "path_index": 0, "commute_target": "",
 		}
 	for data in Week1.REQUESTS:
 		requests[data["id"]] = {
@@ -70,33 +79,56 @@ func _init(seed_value: int = 1997) -> void:
 		request_order.append(data["id"])
 
 
-# Opens what is visible at Monday 08:00. Call after connecting signals.
+# Opens what is visible at Monday 06:00. Call after connecting signals.
 func begin() -> void:
+	_pay_salary_if_due()
 	_open_due_requests()
 
 
 func advance(hours: float) -> void:
 	while hours > 0.0 and not ended:
-		# Never step across midnight-equivalent: the day boundary is an event of its own.
-		var day_end := (floorf(t / Week1.HOURS_PER_DAY) + 1.0) * Week1.HOURS_PER_DAY
-		var step: float = minf(minf(hours, STEP), day_end - t)
+		_update_morning()
+		var day_end := float((_day + 1) * Week1.HOURS_PER_DAY)
+		var step: float = minf(hours, STEP)
+		if not _day_closing:
+			step = minf(step, day_end - t)
+			if not at_work:
+				var boundary := _morning_departure() if actors["me"]["state"] == "idle" else float(Week1.WORK_START_HOUR)
+				if boundary > clock_hour():
+					step = minf(step, boundary - clock_hour())
+		# Arrivals and job completions are exact events, even at high simulation speed.
+		for id in actors:
+			if actors[id]["state"] in ["travel", "work"]:
+				var left := actor_eta_hours(id)
+				if left > 0.00001:
+					step = minf(step, left)
 		hours -= step
+		var was_at_work := at_work
 		_tick(step)
-		if is_equal_approx(t, day_end) and not ended:
-			t = day_end # Exact, so the next day's boundary is computed from here.
-			_start_new_day()
-			break # The view pauses for the night; the rest of this frame's time is dropped.
+		_update_morning()
+		if not _day_closing and t >= day_end - 0.00001:
+			t = day_end
+			_day_closing = true
+		if _day_closing:
+			var me: Dictionary = actors["me"]
+			if me["state"] == "idle":
+				if me["lot"] == "dormitory":
+					_finish_day()
+					break
+				_begin_commute("dormitory")
+		if not was_at_work and at_work:
+			break # The view may pause for the boss's message on arrival.
 	time_changed.emit()
 
 
 # --- Queries -----------------------------------------------------------------
 
 static func to_hours(when: Dictionary) -> float:
-	return when["day"] * Week1.HOURS_PER_DAY + (when["hour"] - Week1.WORK_START_HOUR)
+	return when["day"] * Week1.HOURS_PER_DAY + (when["hour"] - Week1.DAY_START_HOUR)
 
 
 func day_index() -> int:
-	return min(int(t / Week1.HOURS_PER_DAY), Week1.DAYS_PER_WEEK - 1)
+	return _day
 
 
 # Where an actor starts each day: the doorstep of their start lot, or its entrance.
@@ -107,14 +139,12 @@ func home_position(id: String) -> Vector2:
 
 # Clock hour as a float (08:30 is 8.5), the same time clock_text() shows.
 func clock_hour() -> float:
-	return Week1.WORK_START_HOUR + (t - day_index() * Week1.HOURS_PER_DAY)
+	return Week1.DAY_START_HOUR + (t - _day * Week1.HOURS_PER_DAY) + overtime_hours
 
 
 func clock_text() -> String:
-	var in_day: float = t - day_index() * Week1.HOURS_PER_DAY
-	var total_minutes := int(in_day * 60.0)
-	var hour: int = Week1.WORK_START_HOUR + total_minutes / 60
-	return "%02d:%02d" % [hour, total_minutes % 60]
+	var total_minutes := int(round(clock_hour() * 60.0))
+	return "%02d:%02d" % [(total_minutes / 60) % 24, total_minutes % 60]
 
 
 func date_text(day: int = -1) -> String:
@@ -126,23 +156,20 @@ func date_text(day: int = -1) -> String:
 
 # Day of month and month (x, y) of a weekday in the current week.
 func day_date(day: int) -> Vector2i:
-	var date: int = Week1.FIRST_DAY + (week - 1) * 7 + day
-	var month: int = Week1.MONTH
-	if date > 31:
-		date -= 31
-		month += 1
-	return Vector2i(date, month)
+	var stamp := Time.get_unix_time_from_datetime_dict({"year": Week1.YEAR, "month": Week1.MONTH, "day": Week1.FIRST_DAY})
+	var date := Time.get_datetime_dict_from_unix_time(stamp + ((week - 1) * 7 + day) * 86400)
+	return Vector2i(date["day"], date["month"])
 
 
 func when_text(when: Dictionary) -> String:
 	return "%s %02d:00" % [Week1.DAY_NAMES[when["day"]], when["hour"]]
 
 
-# Working hours since Monday 07:00 as a weekday and clock time ("Ср 20:00").
+# Scheduled hours since Monday 06:00 as a weekday and clock time ("Ср 20:00").
 func hours_text(hours: float, with_day: bool = true) -> String:
 	var day: int = clampi(int(hours / Week1.HOURS_PER_DAY), 0, Week1.DAYS_PER_WEEK - 1)
 	var minutes := int(round((hours - day * Week1.HOURS_PER_DAY) * 60.0))
-	var clock := "%02d:%02d" % [Week1.WORK_START_HOUR + minutes / 60, minutes % 60]
+	var clock := "%02d:%02d" % [Week1.DAY_START_HOUR + minutes / 60, minutes % 60]
 	return "%s %s" % [Week1.DAY_NAMES[day], clock] if with_day else clock
 
 
@@ -192,7 +219,7 @@ func actor_status_text(id: String) -> String:
 	var lot_name: String = Week1.LOTS[actor["lot"]]["name"]
 	match actor["state"]:
 		"travel":
-			return "В пути: " + Week1.LOTS[_request_lot(actor["request"])]["name"]
+			return "В пути: " + Week1.LOTS[_actor_destination(actor)]["name"]
 		"work":
 			return "%s · ещё %d ч" % [requests[actor["request"]]["data"]["title"], ceil(actor["work_left"])]
 		"driving":
@@ -207,7 +234,7 @@ func actor_target_lot(id: String) -> String:
 	if actor["state"] == "driving":
 		return actor_target_lot("me")
 	if actor["state"] in ["travel", "work"]:
-		return _request_lot(actor["request"])
+		return _actor_destination(actor)
 	return ""
 
 
@@ -263,6 +290,10 @@ func request_time_left(request_id: String) -> float:
 
 # Empty string when the option can be chosen, otherwise the reason it cannot.
 func option_block_reason(request_id: String, option: Dictionary) -> String:
+	if ended or _day_closing:
+		return "День окончен · возвращение в общежитие"
+	if not at_work:
+		return "Рабочий день начинается в администрации в 08:00"
 	var request: Dictionary = requests[request_id]
 	if request["status"] != "open":
 		return "Уже в работе"
@@ -274,6 +305,8 @@ func option_block_reason(request_id: String, option: Dictionary) -> String:
 			if me["state"] != "idle" or me["lot"] != "office":
 				return "Телефон только в кабинете"
 			return ""
+	if not Week1.actor_enabled(option["actor"]):
+		return "Недоступен"
 	var actor: Dictionary = actors[option["actor"]]
 	if actor["state"] != "idle":
 		return "Занят"
@@ -300,7 +333,7 @@ func choose(request_id: String, option_id: String) -> void:
 			actor["option"] = option
 			actor["work_left"] = float(option.get("hours", 1))
 			actor["work_total"] = actor["work_left"]
-			if option["actor"] == "me" and actors["tolik"]["state"] == "idle":
+			if option["actor"] == "me" and Week1.actor_enabled("tolik") and actors["tolik"]["state"] == "idle":
 				actor["driver"] = true
 				actors["tolik"]["state"] = "driving"
 			# By car when Tolik drives, otherwise on foot; the route is fixed at the start.
@@ -315,6 +348,13 @@ func begin_next_week() -> Array[String]:
 	var changes: Array[String] = []
 	week += 1
 	t = 0.0
+	_day = 0
+	overtime_hours = 0.0
+	_day_closing = false
+	_morning_started = false
+	at_work = false
+	_reset_actors_for_morning()
+	_pay_salary_if_due()
 	for lot in next_week:
 		lot_states[lot] = next_week[lot]
 		lot_state_changed.emit(lot, next_week[lot])
@@ -358,20 +398,20 @@ func overlay_on(lot: String, overlay: String) -> bool:
 # --- Internals ---------------------------------------------------------------
 
 func _tick(step: float) -> void:
-	t = min(t + step, float(WEEK_HOURS))
-	_open_due_requests()
+	if _day_closing:
+		overtime_hours += step
+	else:
+		t += step
+		_open_due_requests()
 	_move_actors(step)
 	_escalate_requests()
 	_expire_requests()
 	_check_promises()
-	if t >= WEEK_HOURS:
-		ended = true
-		week_ended.emit()
 
 
 # The night: everyone goes back to their start lot. Unfinished jobs are kept;
 # in the morning the assignee sets off again and finishes the remaining work.
-func _start_new_day() -> void:
+func _reset_actors_for_morning() -> void:
 	for id in actors:
 		var actor: Dictionary = actors[id]
 		actor["pos"] = home_position(id)
@@ -383,7 +423,73 @@ func _start_new_day() -> void:
 			actor["path_index"] = 1
 	if actors["me"]["driver"]:
 		actors["tolik"]["pos"] = actors["me"]["pos"]
-	day_started.emit(day_index())
+
+
+func _morning_departure() -> float:
+	var me: Dictionary = actors["me"]
+	var path := graph.route(me["pos"], Week1.LOTS["office"]["layout"], "foot")
+	return maxf(Week1.DAY_START_HOUR, Week1.WORK_START_HOUR - RoadGraph.length(path) / Week1.ACTORS["me"]["speed"])
+
+
+func _update_morning() -> void:
+	if at_work or _day_closing:
+		return
+	var me: Dictionary = actors["me"]
+	if not _morning_started and clock_hour() >= _morning_departure() - 0.00001:
+		_morning_started = true
+		_begin_commute("office")
+	if _morning_started and me["state"] == "idle" and me["lot"] == "office" and clock_hour() >= Week1.WORK_START_HOUR - 0.00001:
+		at_work = true
+		_add_entry("08:00 · Вы в администрации. Рабочий день до 18:00.")
+		workday_started.emit()
+
+
+func _begin_commute(lot: String) -> void:
+	var me: Dictionary = actors["me"]
+	me["state"] = "travel"
+	me["commute_target"] = lot
+	me["driver"] = false
+	me["path"] = graph.route(me["pos"], Week1.LOTS[lot]["layout"], "foot")
+	me["path_index"] = 1
+	state_changed.emit()
+
+
+func _actor_destination(actor: Dictionary) -> String:
+	var commute: String = actor.get("commute_target", "")
+	return commute if commute != "" else _request_lot(actor["request"])
+
+
+func _finish_day() -> void:
+	last_day_end_hour = clock_hour()
+	if _day == Week1.DAYS_PER_WEEK - 1:
+		var paid := mini(money, Week1.WEEKLY_RENT)
+		money -= paid
+		rent_debt += Week1.WEEKLY_RENT - paid
+		_add_entry("Аренда общежития: −%d руб.%s" % [paid, " Долг: %d руб." % rent_debt if rent_debt > 0 else ""])
+		state_changed.emit()
+		ended = true
+		week_ended.emit()
+		return
+	_day += 1
+	t = float(_day * Week1.HOURS_PER_DAY)
+	overtime_hours = 0.0
+	_day_closing = false
+	_morning_started = false
+	at_work = false
+	_reset_actors_for_morning()
+	_pay_salary_if_due()
+	day_started.emit(_day)
+
+
+func _pay_salary_if_due() -> void:
+	var date := day_date(_day)
+	var month_key := "%d-%d" % [Week1.YEAR, date.y]
+	# Weekend days are skipped: pay on the first playable day on/after payday.
+	if date.x >= Week1.PAYDAY and date.x <= Week1.PAYDAY + 2 and not _salary_months.has(month_key):
+		_salary_months[month_key] = true
+		money += Week1.MONTHLY_SALARY
+		_add_entry("Зарплата за месяц: +%d руб." % Week1.MONTHLY_SALARY)
+		state_changed.emit()
 
 
 func _open_due_requests() -> void:
@@ -412,8 +518,8 @@ func _move_actors(step: float) -> void:
 			var pos: Vector2 = actor["pos"]
 			while index < path.size() and budget > 0.0:
 				var leg := pos.distance_to(path[index])
-				if leg <= budget:
-					budget -= leg
+				if leg <= budget + 0.0001:
+					budget = maxf(0.0, budget - leg)
 					pos = path[index]
 					index += 1
 				else:
@@ -422,11 +528,15 @@ func _move_actors(step: float) -> void:
 			actor["pos"] = pos
 			actor["path_index"] = index
 			if index >= path.size():
-				actor["state"] = "work"
-				actor["lot"] = _request_lot(actor["request"])
+				actor["lot"] = _actor_destination(actor)
+				if actor["commute_target"] != "":
+					actor["commute_target"] = ""
+					actor["state"] = "idle"
+				else:
+					actor["state"] = "work"
 		elif actor["state"] == "work":
 			actor["work_left"] -= step
-			if actor["work_left"] <= 0.0:
+			if actor["work_left"] <= 0.00001:
 				_resolve(actor["request"], actor["option"])
 	if actors["me"]["driver"]:
 		actors["tolik"]["pos"] = actors["me"]["pos"]

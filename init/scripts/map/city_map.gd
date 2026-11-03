@@ -445,11 +445,14 @@ func _build_environment() -> void:
 	add_child(camera)
 
 
-# Plays the night between two working days: the light runs from 22:00 to 07:00.
+# Plays the night after returning home, ending at 06:00.
 func play_night(seconds: float) -> void:
-	_night_hour = 22.0
+	_night_hour = sim.last_day_end_hour
 	var tween := create_tween()
-	tween.tween_property(self, "_night_hour", 31.0, seconds).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	var morning := (floorf(_night_hour / 24.0) + 1.0) * 24.0 + Week1.DAY_START_HOUR
+	if fmod(_night_hour, 24.0) < Week1.DAY_START_HOUR:
+		morning -= 24.0
+	tween.tween_property(self, "_night_hour", morning, seconds).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_callback(func(): _night_hour = -1.0)
 
 
@@ -858,7 +861,7 @@ func _build_trees() -> void:
 # --- Tokens ------------------------------------------------------------------
 
 func _build_tokens() -> void:
-	for id in Week1.ACTORS:
+	for id in Week1.enabled_actor_ids():
 		var info: Dictionary = Week1.ACTORS[id]
 		var token := Node3D.new()
 		add_child(token)
@@ -869,7 +872,7 @@ func _build_tokens() -> void:
 		_token_discs[id] = disc
 		# The face itself is drawn by the HUD, crisp and unaffected by map lighting.
 		var start: Vector2 = sim.actors[id]["pos"]
-		token.position = Vector3(start.x, 0, start.y + 6)
+		token.position = _ground(start)
 		_tokens[id] = token
 	_hero_car = _vehicle("volga", Vector3.ZERO, VehicleModels.map_length("volga"), "z", null, VehicleModels.PAINT_BLACK)
 	_hero_car.visible = false
@@ -882,7 +885,8 @@ func _update_hero_car(delta: float) -> void:
 	var riding: bool = me["state"] == "travel" and me["driver"]
 	_hero_car.visible = riding
 	_token_discs["me"].visible = not riding
-	_token_discs["tolik"].visible = not riding
+	if _token_discs.has("tolik"):
+		_token_discs["tolik"].visible = not riding
 	if not riding:
 		return
 	var pos: Vector2 = me["pos"]
@@ -927,8 +931,9 @@ func _move_tokens() -> void:
 			var world_gap := 64.0 * map_icon_scale() / maxf(pixels_per_metre, 0.001)
 			var spread := (i - (ids.size() - 1) / 2.0) * world_gap
 			var token: Node3D = _tokens[ids[i]]
-			var spot := Vector3(pos.x, 0.0, pos.y) + _view_right() * spread - _view_forward() * 6.0
-			token.position = token.position.lerp(spot, 0.35)
+			# Feet follow the simulation exactly. Smoothing world positions makes
+			# portraits lag behind on fast travel, pause and overnight relocation.
+			token.position = _ground(pos) + _view_right() * spread
 
 
 # --- Signal handlers ---------------------------------------------------------
