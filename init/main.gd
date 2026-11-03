@@ -134,8 +134,7 @@ func _on_day_started(day: int) -> void:
 	map.play_night(hud.DAY_CARD_SECONDS)
 	hud.show_day_card(day, func():
 		_night = false
-		set_speed(1.0)
-		hud._show_important_notice(hud.Week1.MORNING_NEWS))
+		set_speed(1.0))
 
 
 func _on_week_ended() -> void:

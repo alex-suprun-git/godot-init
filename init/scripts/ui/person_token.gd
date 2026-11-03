@@ -46,12 +46,12 @@ func _draw() -> void:
 		ring = RED
 	if state == "travel" or state == "driving":
 		ring = YELLOW
-	elif state == "work":
+	elif state in ["work", "paperwork"]:
 		ring = STEEL
 	draw_circle(CENTER, 27.0, INK)
 	PortraitDraw.circle(self, CENTER, 23.0, texture, region)
 	draw_arc(CENTER, 25.0, 0.0, TAU, 40, ring, 5.0 if is_player else 4.0)
-	if state == "work":
+	if state in ["work", "paperwork"]:
 		draw_arc(CENTER, 25.0, 0.0, TAU, 40, Color(0.15, 0.15, 0.14), 5.0)
 		draw_arc(CENTER, 25.0, -PI / 2.0, -PI / 2.0 + TAU * work_fraction, 40, STEEL, 5.0)
 

@@ -141,7 +141,7 @@ func _on_time_changed() -> void:
 	if dt <= 0.0 or dt > 3.0:
 		return
 	for id in sim.actors:
-		if sim.actors[id]["state"] != "idle":
+		if sim.actors[id]["state"] not in ["idle", "unavailable"]:
 			_busy_hours[id] += dt
 	# Is there anything for the player to decide right now?
 	var waiting_ids: Array[String] = []

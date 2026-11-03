@@ -21,6 +21,8 @@ const START_MONEY := 1_200 # Stable fictional rubles; no historical denomination
 const PAYDAY := 1
 const MONTHLY_SALARY := 1_500
 const WEEKLY_RENT := 250
+const PAPERWORK_HOURS := 20.0
+const PAPERWORK_BOSS_PENALTY := 10 # Initial balance setting for an unfinished weekly quota.
 
 # Hidden values; the player only sees words.
 const FACTIONS := {
@@ -52,6 +54,7 @@ const ACTORS := {
 		"portrait": "res://assets/portraits/protagonist.png", "face": Rect2(375, 176, 1237, 1237),
 	},
 	"mikhalych": {
+		"availability": {"start": 8, "end": 18},
 		"name": "Михалыч", "role": "Слесарь ЖЭКа", "start_lot": "office", "speed": 100.0,
 		"portrait": "res://assets/portraits/mikhalych.png", "face": Rect2(362, 229, 580, 580),
 	},
@@ -120,6 +123,7 @@ const MORNING_NEWS := {
 # The boss's order for the week. An objective is met when its flag is set and
 # failed when the request with the same id closes without it.
 const OBJECTIVES := [
+	{"id": "paperwork", "title": "Работа с документами", "deadline": "До конца пятницы", "lot": "office", "flag": "paperwork"},
 	{"id": "contractor", "title": "Выбрать подрядчика для котельной", "deadline": "До четверга", "lot": "boiler", "flag": "contractor"},
 	{"id": "boss_report", "title": "Явиться к боссу на отчёт", "deadline": "Пятница", "lot": "office", "flag": "report"},
 ]

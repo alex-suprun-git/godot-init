@@ -912,6 +912,9 @@ func _move_tokens() -> void:
 	# Spread tokens that share a spot side by side so faces never overlap.
 	var groups := {}
 	for id in _tokens:
+		_tokens[id].visible = sim.actor_available(id)
+		if not sim.actor_available(id):
+			continue
 		var pos: Vector2 = sim.actors[id]["pos"]
 		var key := Vector2i(roundi(pos.x), roundi(pos.y))
 		if not groups.has(key):

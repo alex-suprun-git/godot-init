@@ -33,6 +33,7 @@ var _morning_started := false
 var at_work := false
 var _salary_months := {} # Calendar month keys already paid in this campaign.
 var rent_debt := 0
+var paperwork_hours := 0.0 # Accumulated across days; reset only for a new week.
 var week := 1
 var money: int = Week1.START_MONEY
 var traces := 0
@@ -75,12 +76,14 @@ func _init(seed_value: int = 1997) -> void:
 		requests[data["id"]] = {
 			"data": data, "status": "pending", "promised": false,
 			"expire_t": _expire_hours(data), "escalated": 0,
+			"jobs": {}, # option id -> remaining on-site work; survives reassignment.
 		}
 		request_order.append(data["id"])
 
 
 # Opens what is visible at Monday 06:00. Call after connecting signals.
 func begin() -> void:
+	_sync_contact_availability()
 	_pay_salary_if_due()
 	_open_due_requests()
 
@@ -90,6 +93,13 @@ func advance(hours: float) -> void:
 		_update_morning()
 		var day_end := float((_day + 1) * Week1.HOURS_PER_DAY)
 		var step: float = minf(hours, STEP)
+		for id in Week1.enabled_actor_ids():
+			if id == "me":
+				continue
+			var availability: Dictionary = Week1.ACTORS[id].get("availability", {"start": Week1.WORK_START_HOUR, "end": Week1.WORK_END_HOUR})
+			for boundary in [availability["start"], availability["end"]]:
+				if float(boundary) > clock_hour() + 0.00001:
+					step = minf(step, float(boundary) - clock_hour())
 		if not _day_closing:
 			step = minf(step, day_end - t)
 			if not at_work:
@@ -102,6 +112,8 @@ func advance(hours: float) -> void:
 				var left := actor_eta_hours(id)
 				if left > 0.00001:
 					step = minf(step, left)
+		if actors["me"]["state"] == "paperwork":
+			step = minf(step, paperwork_left())
 		hours -= step
 		var was_at_work := at_work
 		_tick(step)
@@ -109,6 +121,8 @@ func advance(hours: float) -> void:
 		if not _day_closing and t >= day_end - 0.00001:
 			t = day_end
 			_day_closing = true
+			if actors["me"]["state"] == "paperwork":
+				pause_paperwork()
 		if _day_closing:
 			var me: Dictionary = actors["me"]
 			if me["state"] == "idle":
@@ -207,6 +221,10 @@ func visible_requests() -> Array[String]:
 
 
 func objective_status(objective: Dictionary) -> String:
+	if objective["id"] == "paperwork":
+		if paperwork_left() <= 0.00001:
+			return "done"
+		return "failed" if ended else "pending"
 	if objective.has("flag"):
 		if flags.has(objective["flag"]):
 			return "done"
@@ -215,9 +233,13 @@ func objective_status(objective: Dictionary) -> String:
 
 
 func actor_status_text(id: String) -> String:
+	if not actor_available(id):
+		return actor_unavailable_text(id)
 	var actor: Dictionary = actors[id]
 	var lot_name: String = Week1.LOTS[actor["lot"]]["name"]
 	match actor["state"]:
+		"paperwork":
+			return "Документы · осталось %.1f ч" % paperwork_left()
 		"travel":
 			return "В пути: " + Week1.LOTS[_actor_destination(actor)]["name"]
 		"work":
@@ -267,6 +289,8 @@ func actor_eta_hours(id: String) -> float:
 # 0..1 of the work already done, for the progress ring.
 func actor_work_fraction(id: String) -> float:
 	var actor: Dictionary = actors[id]
+	if actor["state"] == "paperwork":
+		return paperwork_hours / Week1.PAPERWORK_HOURS
 	if actor["state"] != "work":
 		return 0.0
 	return 1.0 - actor["work_left"] / max(actor.get("work_total", 1.0), 0.01)
@@ -302,18 +326,62 @@ func option_block_reason(request_id: String, option: Dictionary) -> String:
 			return "Уже обещано" if request["promised"] else ""
 		"phone":
 			var me: Dictionary = actors["me"]
-			if me["state"] != "idle" or me["lot"] != "office":
+			if me["state"] not in ["idle", "paperwork"] or me["lot"] != "office":
 				return "Телефон только в кабинете"
 			return ""
 	if not Week1.actor_enabled(option["actor"]):
 		return "Недоступен"
+	if not actor_available(option["actor"]):
+		return actor_unavailable_text(option["actor"])
 	var actor: Dictionary = actors[option["actor"]]
+	if actor["state"] == "paperwork":
+		return "Сначала отложите документы"
 	if actor["state"] != "idle":
 		return "Занят"
 	return ""
 
 
 # --- Commands ----------------------------------------------------------------
+
+func paperwork_left() -> float:
+	return maxf(0.0, Week1.PAPERWORK_HOURS - paperwork_hours)
+
+
+# The same office control starts/pauses paperwork, or walks back to the office.
+func paperwork_block_reason() -> String:
+	if ended or _day_closing:
+		return "Рабочий день окончен"
+	if not at_work:
+		return "После прибытия в администрацию в 08:00"
+	var me: Dictionary = actors["me"]
+	if me["state"] == "paperwork":
+		return ""
+	if me["state"] != "idle":
+		return "Вы заняты"
+	if me["lot"] == "office" and paperwork_left() <= 0.00001:
+		return "Норма недели выполнена"
+	return ""
+
+
+func start_paperwork() -> void:
+	if paperwork_block_reason() != "" or actors["me"]["lot"] != "office" or paperwork_left() <= 0.00001:
+		return
+	actors["me"]["state"] = "paperwork"
+	_add_entry("Вы сели за документы. На неделю осталось %.1f ч." % paperwork_left())
+	state_changed.emit()
+
+
+func pause_paperwork() -> void:
+	if actors["me"]["state"] != "paperwork":
+		return
+	actors["me"]["state"] = "idle"
+	_add_entry("Документы отложены. Сделано %.1f из %.0f ч; прогресс сохранён." % [paperwork_hours, Week1.PAPERWORK_HOURS])
+	state_changed.emit()
+
+
+func return_to_office() -> void:
+	if paperwork_block_reason() == "" and actors["me"]["state"] == "idle" and actors["me"]["lot"] != "office":
+		_begin_commute("office")
 
 func choose(request_id: String, option_id: String) -> void:
 	var request: Dictionary = requests[request_id]
@@ -331,8 +399,11 @@ func choose(request_id: String, option_id: String) -> void:
 			actor["state"] = "travel"
 			actor["request"] = request_id
 			actor["option"] = option
-			actor["work_left"] = float(option.get("hours", 1))
-			actor["work_total"] = actor["work_left"]
+			var jobs: Dictionary = request["jobs"]
+			if not jobs.has(option_id):
+				jobs[option_id] = {"left": float(option.get("hours", 1)), "total": float(option.get("hours", 1))}
+			actor["work_left"] = jobs[option_id]["left"]
+			actor["work_total"] = jobs[option_id]["total"]
 			if option["actor"] == "me" and Week1.actor_enabled("tolik") and actors["tolik"]["state"] == "idle":
 				actor["driver"] = true
 				actors["tolik"]["state"] = "driving"
@@ -353,6 +424,9 @@ func begin_next_week() -> Array[String]:
 	_day_closing = false
 	_morning_started = false
 	at_work = false
+	paperwork_hours = 0.0
+	flags.erase("paperwork")
+	ended = false
 	_reset_actors_for_morning()
 	_pay_salary_if_due()
 	for lot in next_week:
@@ -404,25 +478,64 @@ func _tick(step: float) -> void:
 		t += step
 		_open_due_requests()
 	_move_actors(step)
+	_sync_contact_availability()
 	_escalate_requests()
 	_expire_requests()
 	_check_promises()
 
 
-# The night: everyone goes back to their start lot. Unfinished jobs are kept;
-# in the morning the assignee sets off again and finishes the remaining work.
+# The night resets positions, not assignments: interrupted jobs await a new order.
 func _reset_actors_for_morning() -> void:
 	for id in actors:
 		var actor: Dictionary = actors[id]
 		actor["pos"] = home_position(id)
 		actor["lot"] = Week1.ACTORS[id]["start_lot"]
+	_sync_contact_availability()
+
+
+func actor_available(id: String) -> bool:
+	if not Week1.actor_enabled(id):
+		return false
+	if id == "me":
+		return true
+	var availability: Dictionary = Week1.ACTORS[id].get("availability", {"start": Week1.WORK_START_HOUR, "end": Week1.WORK_END_HOUR})
+	return clock_hour() >= float(availability["start"]) - 0.00001 and clock_hour() < float(availability["end"]) - 0.00001
+
+
+func actor_unavailable_text(id: String) -> String:
+	var availability: Dictionary = Week1.ACTORS[id].get("availability", {"start": Week1.WORK_START_HOUR, "end": Week1.WORK_END_HOUR})
+	return "Недоступен · часы связи %02d:00–%02d:00" % [availability["start"], availability["end"]]
+
+
+func _sync_contact_availability() -> void:
+	var changed := false
+	for id in Week1.enabled_actor_ids():
+		if id == "me":
+			continue
+		var actor: Dictionary = actors[id]
+		if actor_available(id):
+			if actor["state"] == "unavailable":
+				actor["state"] = "idle"
+				changed = true
+			continue
+		if actor["state"] == "unavailable":
+			continue
 		if actor["state"] in ["travel", "work"]:
-			var target: String = Week1.LOTS[_request_lot(actor["request"])]["layout"]
-			actor["state"] = "travel"
-			actor["path"] = graph.route(actor["pos"], target, "car" if actor["driver"] else "foot")
-			actor["path_index"] = 1
-	if actors["me"]["driver"]:
-		actors["tolik"]["pos"] = actors["me"]["pos"]
+			var request_id: String = actor["request"]
+			var request: Dictionary = requests[request_id]
+			request["status"] = "open"
+			_add_entry("%s больше недоступен. «%s» не закончено — назначьте продолжение вручную." % [Week1.ACTORS[id]["name"], request["data"]["title"]], "neutral")
+			actor["request"] = ""
+			actor["option"] = {}
+			request_changed.emit(request_id)
+		actor["state"] = "unavailable"
+		actor["path"] = PackedVector2Array()
+		actor["path_index"] = 0
+		actor["pos"] = home_position(id)
+		actor["lot"] = Week1.ACTORS[id]["start_lot"]
+		changed = true
+	if changed:
+		state_changed.emit()
 
 
 func _morning_departure() -> float:
@@ -462,6 +575,8 @@ func _actor_destination(actor: Dictionary) -> String:
 func _finish_day() -> void:
 	last_day_end_hour = clock_hour()
 	if _day == Week1.DAYS_PER_WEEK - 1:
+		if paperwork_left() > 0.00001:
+			_apply({"boss": -Week1.PAPERWORK_BOSS_PENALTY, "log": "Документы за неделю не закончены: %.1f из %.0f ч. Шеф недоволен." % [paperwork_hours, Week1.PAPERWORK_HOURS]}, {"lot": "office", "kind": "missed"})
 		var paid := mini(money, Week1.WEEKLY_RENT)
 		money -= paid
 		rent_debt += Week1.WEEKLY_RENT - paid
@@ -536,8 +651,15 @@ func _move_actors(step: float) -> void:
 					actor["state"] = "work"
 		elif actor["state"] == "work":
 			actor["work_left"] -= step
+			requests[actor["request"]]["jobs"][actor["option"]["id"]]["left"] = maxf(0.0, actor["work_left"])
 			if actor["work_left"] <= 0.00001:
 				_resolve(actor["request"], actor["option"])
+		elif actor["state"] == "paperwork":
+			paperwork_hours = minf(Week1.PAPERWORK_HOURS, paperwork_hours + step)
+			if paperwork_left() <= 0.00001:
+				paperwork_hours = Week1.PAPERWORK_HOURS
+				actor["state"] = "idle"
+				_apply({"flags": {"paperwork": true}, "log": "Работа с документами за неделю закончена: %.0f ч. Обязательная норма выполнена." % Week1.PAPERWORK_HOURS}, {"lot": "office", "kind": "done"})
 	if actors["me"]["driver"]:
 		actors["tolik"]["pos"] = actors["me"]["pos"]
 		actors["tolik"]["lot"] = actors["me"]["lot"]
@@ -547,6 +669,8 @@ func _resolve(request_id: String, option: Dictionary) -> void:
 	var request: Dictionary = requests[request_id]
 	var success: bool = rng.randf() < float(option.get("chance", 1.0))
 	var effects: Dictionary = option["success"] if success else option.get("fail", option["success"])
+	# A failed attempt may reopen a request; a new attempt starts its work afresh.
+	request["jobs"].clear()
 	_apply(effects, {"lot": request["data"]["lot"], "kind": "done" if success else "failed"})
 	request["status"] = "open" if effects.get("reopen", false) else "closed"
 	if request["status"] == "closed" and request["data"].has("overlay"):
