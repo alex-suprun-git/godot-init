@@ -856,7 +856,9 @@ func _build_trees() -> void:
 		for i in range(1, int(maxf(rect.size.x, rect.size.y) / 26.0)):
 			var at := rect.position + (Vector2(i * 26, rect.size.y + 6) if along_x else Vector2(rect.size.x + 6, i * 26))
 			if not _is_occupied(at, 3.0) and not _near_traffic_light(at):
-				_tree(_ground(at))
+				# This lot owns its 3D planting. Consume the same RNG values even
+				# when suppressing a roadside sprite, preserving all later trees.
+				_tree(_ground(at), not preload("res://scripts/map/civic_center.gd").PLANTING_RECT.has_point(at))
 
 
 # --- Tokens ------------------------------------------------------------------

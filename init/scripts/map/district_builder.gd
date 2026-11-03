@@ -201,6 +201,8 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 		center += _front_shift(lot, entry)
 	var kind: String = entry["kind"]
 	match kind:
+		"civic_center":
+			preload("res://scripts/map/civic_center.gd").new().build(self)
 		"panel", "building":
 			_building(lot, entry, center, id)
 		"group":

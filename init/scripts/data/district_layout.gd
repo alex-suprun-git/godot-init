@@ -39,7 +39,7 @@ const LOTS := {
 	"b2_k": {"type": "K", "rect": Rect2(-152, 135.6, 88, 70.4), "content": "yard", "condition": "kept", "facing": "s"},
 	"police": {"type": "G", "rect": Rect2(-44, -75, 24, 32), "content": "police", "condition": "kept", "facing": "e"},
 	"polyclinic": {"type": "G", "rect": Rect2(-45, 135, 28, 42), "content": "polyclinic", "condition": "kept", "facing": "e"},
-	"ispolkom": {"type": "G", "rect": Rect2(25, 22, 115, 108), "content": "ispolkom", "condition": "kept", "facing": "w"},
+	"ispolkom": {"type": "G", "rect": Rect2(25, 22, 115, 108), "content": "ispolkom", "condition": "kept", "facing": "w", "entrance": Vector2(25, 72)},
 	"tower_e1": {"type": "W", "rect": Rect2(30, -60, 40, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
 	"department_store": {"type": "G", "rect": Rect2(30, -15, 45, 30), "content": "department_store", "condition": "kept", "facing": "w"},
 	"city_park": {"type": "N", "rect": Rect2(82, -72, 54, 84), "content": "city_park", "condition": "kept", "facing": "e"},
@@ -88,6 +88,15 @@ const ROADS := [
 	{"id": "housing_spine", "rect": Rect2(-202.4, -80, 4, 380), "kind": "yard", "traffic": "courtyard", "speed": 0.5, "vehicles": ["car"]},
 	# Civic square / southern tower connection, and the lane between the two slabs.
 	{"id": "square_link", "rect": Rect2(7, 136, 133, 4), "kind": "yard"},
+	# Separate paths around the civic building; no path crosses its footprint.
+	{"id": "civic_front_walk", "rect": Rect2(7, 70.5, 34.25, 3), "kind": "yard"},
+	{"id": "civic_north_walk", "rect": Rect2(7, 41.5, 138, 3), "kind": "yard"},
+	{"id": "civic_south_walk", "rect": Rect2(7, 102.5, 138, 3), "kind": "yard"},
+	{"id": "civic_memorial_walk", "rect": Rect2(35, 82, 3, 22), "kind": "yard"},
+	{"id": "civic_park_spine", "rect": Rect2(120.5, 43, 3, 95), "kind": "yard"},
+	{"id": "civic_park_west", "rect": Rect2(95.5, 84, 3, 35), "kind": "yard"},
+	{"id": "civic_park_north", "rect": Rect2(97, 82.5, 25, 3), "kind": "yard"},
+	{"id": "civic_park_south", "rect": Rect2(97, 117.5, 25, 3), "kind": "yard"},
 	{"id": "civic_lane", "rect": Rect2(7, 209, 133, 5), "kind": "asphalt", "walk": 1.5},
 	# Short avenue links serving the northern and southern tower groups.
 	{"id": "north_tower_link", "rect": Rect2(7, -8, 20, 3), "kind": "yard"},

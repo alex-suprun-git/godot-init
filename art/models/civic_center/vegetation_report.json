@@ -1,0 +1,62 @@
+{
+  "park_deciduous_tree": {
+    "triangles": 16196,
+    "bounds_min": [
+      -3.5575575828552246,
+      -3.5204737186431885,
+      -0.005903088487684727
+    ],
+    "dimensions_m": [
+      7.307031869888306,
+      7.080507040023804,
+      11.170676075853407
+    ],
+    "meshes": 3,
+    "source": "review_exports/park_deciduous_tree.glb"
+  },
+  "park_conifer": {
+    "triangles": 13382,
+    "bounds_min": [
+      -2.2647409439086914,
+      -2.2944672107696533,
+      0.0
+    ],
+    "dimensions_m": [
+      4.655496597290039,
+      4.6238110065460205,
+      10.142024040222168
+    ],
+    "meshes": 3,
+    "source": "review_exports/park_conifer.glb"
+  },
+  "park_shrub": {
+    "triangles": 5880,
+    "bounds_min": [
+      -1.1947351694107056,
+      -0.8553204536437988,
+      -0.050457485020160675
+    ],
+    "dimensions_m": [
+      2.3044668436050415,
+      1.7432109713554382,
+      1.185261256992817
+    ],
+    "meshes": 3,
+    "source": "review_exports/park_shrub.glb"
+  },
+  "park_poplar": {
+    "triangles": 15536,
+    "bounds_min": [
+      -1.6347014904022217,
+      -1.4919025897979736,
+      -0.005903088487684727
+    ],
+    "dimensions_m": [
+      3.2955644130706787,
+      3.0107407569885254,
+      15.597871624864638
+    ],
+    "meshes": 3,
+    "source": "review_exports/park_deciduous_tree.glb"
+  }
+}
