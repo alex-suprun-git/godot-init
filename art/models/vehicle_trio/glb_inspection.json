@@ -1,0 +1,122 @@
+[
+  {
+    "file": "luxury_suv.glb",
+    "triangles": 35544,
+    "meshes": 1,
+    "nodes": 1,
+    "scenes": 1,
+    "primitives": 8,
+    "materials": [
+      "luxury_suv rubber",
+      "luxury_suv amber",
+      "luxury_suv steel",
+      "luxury_suv paint",
+      "luxury_suv glass",
+      "luxury_suv seam",
+      "luxury_suv lamp",
+      "luxury_suv red"
+    ],
+    "images": 0,
+    "animations": 0,
+    "cameras": 0,
+    "bounds_min": [
+      -1.0350000858306885,
+      0.0,
+      -2.259000301361084
+    ],
+    "bounds_max": [
+      1.0350000858306885,
+      1.9611694812774658,
+      2.259000301361084
+    ],
+    "dimensions_xyz_m": [
+      2.070000171661377,
+      1.9611694812774658,
+      4.518000602722168
+    ],
+    "forward": "+Z",
+    "origin": "ground centre",
+    "stage": "Fresh ImageGen v3 SUV shape refinement v6; awaiting user visual review",
+    "wheelbase_m": 2.85
+  },
+  {
+    "file": "luxury_sedan.glb",
+    "triangles": 25410,
+    "meshes": 1,
+    "nodes": 1,
+    "scenes": 1,
+    "primitives": 8,
+    "materials": [
+      "luxury_sedan rubber",
+      "luxury_sedan paint",
+      "luxury_sedan glass",
+      "luxury_sedan steel",
+      "luxury_sedan seam",
+      "luxury_sedan amber",
+      "luxury_sedan lamp",
+      "luxury_sedan red"
+    ],
+    "images": 0,
+    "animations": 0,
+    "cameras": 0,
+    "bounds_min": [
+      -1.0780000686645508,
+      0.0,
+      -2.6064999103546143
+    ],
+    "bounds_max": [
+      1.0780000686645508,
+      1.4808369874954224,
+      2.6064999103546143
+    ],
+    "dimensions_xyz_m": [
+      2.1560001373291016,
+      1.4808369874954224,
+      5.2129998207092285
+    ],
+    "forward": "+Z",
+    "origin": "ground centre",
+    "stage": "Revision v5: lower SUV glazing, dark burgundy, contoured rear lenses, raised Niva body; pending review",
+    "wheelbase_m": 3.14
+  },
+  {
+    "file": "rural_4x4.glb",
+    "triangles": 22032,
+    "meshes": 1,
+    "nodes": 1,
+    "scenes": 1,
+    "primitives": 8,
+    "materials": [
+      "rural_4x4 rubber",
+      "rural_4x4 paint",
+      "rural_4x4 glass",
+      "rural_4x4 seam",
+      "rural_4x4 steel",
+      "rural_4x4 amber",
+      "rural_4x4 lamp",
+      "rural_4x4 red"
+    ],
+    "images": 0,
+    "animations": 0,
+    "cameras": 0,
+    "bounds_min": [
+      -0.9070000052452087,
+      0.0,
+      -1.8600000143051147
+    ],
+    "bounds_max": [
+      0.9070000052452087,
+      1.638990044593811,
+      1.8600000143051147
+    ],
+    "dimensions_xyz_m": [
+      1.8140000104904175,
+      1.638990044593811,
+      3.7200000286102295
+    ],
+    "forward": "+Z",
+    "origin": "ground centre",
+    "stage": "Revision v5: lower SUV glazing, dark burgundy, contoured rear lenses, raised Niva body; pending review",
+    "wheelbase_m": 2.2
+  }
+]

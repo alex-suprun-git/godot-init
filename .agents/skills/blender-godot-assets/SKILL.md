@@ -17,6 +17,14 @@ User direction updated 2026-11-01: compare new vehicle models, including buses, 
 - Use the truck and Volga as references for compatible detail, materials and silhouette readability, choosing a budget for the new asset's screen size and instance count.
 - The Lada is a legacy implementation example, not the benchmark for new models. Its 4.37-to-4.3 m conversion is existing code behavior, not a prescribed scale factor for buses or future assets. Resolve integration scale against the current truck and Volga comparison instead of inheriting that factor automatically.
 
+## Read the existing vehicle reference sheets first
+
+User direction (2026-11-04): newer approved RAF, PAZ and ZIL models are the current vehicle finish benchmarks. Retain the existing dimensional checks, but follow the user's chosen comparison family rather than defaulting to the old Lada or Volga appearance.
+
+Before generating a new vehicle sheet or modelling from one, open an actual existing family reference, not just its README: `art/models/raf_ambulance/references/raf-22031-turnaround-v1.png`, `art/models/uaz_service/references/uaz-police-turnaround-v1.png`, or `art/models/public_transport/references/paz-3205-turnaround-v1.png`. Reuse the appropriate adjacent prompt/layout and supply the sheet as a style reference when generating a matching sheet. Their left/right/front/rear/top views, aligned ground baselines, clear rounded solid surfaces, neutral construction grid and small secondary three-quarter view are useful working examples; the grid is not calibrated. Inspect the actual outputs: matching prompt words alone do not establish a matching reference family.
+
+Vehicle-specific construction, attachment checks and lessons from rejected silhouettes are in [references/vehicle-modeling.md](references/vehicle-modeling.md). Read them before changing body proportions or fitting lamps/bumpers.
+
 ## Find before building
 
 For sourcing an asset or deciding whether to reuse one, read [references/asset-sourcing.md](references/asset-sourcing.md). Search and shortlist within the user's task; a research request alone does not authorize replacing game assets. Record candidates, evidence and a concrete adapt/build decision under `art/models/<asset>/SOURCING.md`. The first worked example is `art/models/volga/SOURCING.md`.

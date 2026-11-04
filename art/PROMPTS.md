@@ -1,5 +1,15 @@
 # Image Prompts: First Week
 
+## Luxury and rural vehicle projections (2026-11-04)
+
+User-requested fresh SUV generation: `art/source_images/vehicle_trio/luxury-suv-v3.png`, built-in ImageGen without input images; exact adjacent prompt. The resulting v6 model and known unfixed attachment gaps are documented in `art/models/vehicle_trio/README.md`. User subsequently chose to retain the current model and focus on workflow/error analysis. No new game raster or city integration.
+
+SUV revision `luxury-suv-v2.png` corrects the user-flagged extra passenger door on each side in v1; current proposal has two side doors per side and one rear tailgate. Exact edit prompt is adjacent to the image; awaiting user review.
+
+The user subsequently accepted v2 sufficiently to proceed. The first 3D studies were rejected for proportions and detail. Current v5 uses actual prototype photographs and dimensions, a darker burgundy sedan with reshaped rear lights, revised rural 4x4 body and lower SUV glazing. Actual Godot comparisons use RAF/PAZ/ZIL benchmarks and distinguish real dimensions from game presentation. Sources, exact stage, limitations and pending review: `art/models/vehicle_trio/README.md`. No further ImageGen artwork in these modeling revisions.
+
+Built-in ImageGen produced separate side/front/rear/top reference sheets plus appearance views for a long luxury SUV, a W140-inspired sedan and a short rural Niva-inspired 4x4. Untouched originals, exact prompts, inspection limitations and review status: `art/source_images/vehicle_trio/README.md`. Proposals awaiting user review; no models or game integration. Real prototypes remain recognizable; final styling and names are undecided.
+
 ## District modeling reference pack (2026-11-03)
 
 Built-in ImageGen sheets for the church/cemetery, three private-house types, the protagonist's proposed dormitory, separate school and kindergarten, two kiosks, two playgrounds and all existing industrial/service sites. Actual current Godot overview/village/bridge frames supply map-camera context; existing catalog dimensions guide industrial massing. The revised border-crossing proposal replaces the generic customs layout with a north–south bridge-aligned scheme and separate control/inspection flows. Exact prompts, selected versions, known projection/layout discrepancies and review status: `art/source_images/district_visual_pack/README.md`. These are proposals for user review, not approved textures or integrated models. The existing approved police UAZ reference/model is reused. User refinement reserves timber cottages for outer edges and gives every private parcel a proper fence, vehicle gate and wicket.
