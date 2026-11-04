@@ -1172,6 +1172,7 @@ func _build_ambient() -> void:
 	# Their own RNG: the look of background life must not shift the trees built later.
 	var look := RandomNumberGenerator.new()
 	look.seed = 2026
+	var base_walkers: Array[Dictionary] = []
 	for i in AMBIENT_WALKERS:
 		var agent := _ambient.add(false, look.randf_range(1.6, 2.4))
 		if agent.is_empty():
@@ -1180,6 +1181,7 @@ func _build_ambient() -> void:
 		var sprite := _sprite(person["texture"], _ground(agent["pos"]), person["width"])
 		agent["visual"] = sprite
 		agent["lift"] = sprite.position.y - _ground(agent["pos"]).y
+		base_walkers.append(agent)
 	for i in AMBIENT_CARS:
 		var agent := _ambient.add(true, look.randf_range(7.0, 12.0))
 		if agent.is_empty():
@@ -1188,6 +1190,17 @@ func _build_ambient() -> void:
 		var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(agent["pos"]) + Vector3.UP * 0.14)
 		add_child(car)
 		agent["visual"] = car
+	# Daytime reserve, hidden outside the centre/housing or 08:00–18:00.
+	# Keep this after the base pedestrians/cars so their random sequence is unchanged.
+	var workday_look := RandomNumberGenerator.new()
+	workday_look.seed = 2036
+	for original in base_walkers:
+		var agent := _ambient.add_workday_walker(original, workday_look.randf_range(1.6, 2.4))
+		var person: Dictionary = PEOPLE[workday_look.randi() % PEOPLE.size()]
+		var sprite := _sprite(person["texture"], _ground(agent["pos"]), person["width"])
+		agent["visual"] = sprite
+		agent["lift"] = sprite.position.y - _ground(agent["pos"]).y
+		sprite.visible = agent["visible"]
 
 
 func _move_ambient(delta: float) -> void:

@@ -1,0 +1,32 @@
+[
+  {
+    "surface": 0,
+    "physical_tile_m": 4,
+    "roughness_base": 0.92
+  },
+  {
+    "surface": 1,
+    "physical_tile_m": 4,
+    "roughness_base": 0.82
+  },
+  {
+    "surface": 2,
+    "physical_tile_m": 4,
+    "roughness_base": 0.84
+  },
+  {
+    "surface": 3,
+    "physical_tile_m": 4,
+    "roughness_base": 0.88
+  },
+  {
+    "surface": 4,
+    "physical_tile_m": 4,
+    "roughness_base": 0.28
+  },
+  {
+    "surface": 5,
+    "physical_tile_m": 4,
+    "roughness_base": 0.23
+  }
+]

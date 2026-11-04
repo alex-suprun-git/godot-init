@@ -19,6 +19,8 @@ const VILLAGE_FILL := {
 }
 
 const CONTENTS := {
+	"culture_house": {"kind": "civic_venue", "height": 12.6, "ground": "grass", "label": "Дом культуры", "dressing": []},
+	"private_restaurant": {"kind": "civic_venue", "height": 9.0, "ground": "grass", "label": "Ресторан-клуб", "dressing": []},
 	"housing_reserve": {"kind": "open", "ground": "grass", "label": "Резерв жилой застройки", "dressing": []},
 	"forest_clearing": {"kind": "open", "ground": "grass_dry", "label": "Лесная поляна", "dressing": []},
 	"cemetery": {"kind": "open", "ground": "grass_dry", "label": "Старое кладбище", "dressing": []},
@@ -96,12 +98,8 @@ const CONTENTS := {
 		"placeholder_color": Color("ccc9bd"), "label": "Пятиэтажный дом", "dressing": [],
 	},
 	"department_store": {
-		"kind": "building", "footprint": Vector2(24, 30), "height": 6.0, "doorstep": 2.0,
-		"civic_facade": true, "center_width": 12.0,
-		"facade_center": "res://assets/textures/facade_department_store_center.png",
-		"facade_wing": "res://assets/textures/facade_department_store_wing.png",
-		"roof": "res://assets/textures/roof_tar.png", "ground": "paving",
-		"placeholder_color": Color("d4c5ae"), "label": "Универмаг", "dressing": [],
+		"kind": "department_store_1997", "footprint": Vector2(24, 30), "height": 9.0, "doorstep": 2.0,
+		"ground": "paving", "label": "Универмаг", "dressing": [],
 	},
 	"city_park": {
 		# Reserved for the park replacement on its separate branch.
