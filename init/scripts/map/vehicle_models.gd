@@ -28,6 +28,8 @@ const BUS_VISUAL_SCALE := 0.80
 const VOLGA_VISUAL_SCALE := 0.90
 const AUTHORED_CAR_LENGTHS := {"luxury_sedan": 5.255, "luxury_suv": 4.518, "rural_4x4": 3.720}
 const AUTHORED_CAR_VISUAL_SCALE := 0.90
+# User-requested 10% increase over the rural 4x4's initial map presentation.
+const RURAL_4X4_VISUAL_ADJUSTMENT := 1.10
 const VOLGA_TRAFFIC_SHARE := 1.0 / 15.0
 const VOLGA_PAINT_SHADER := preload("res://assets/shaders/vehicle_paint.gdshader")
 # Curated period-inspired palette; red/pink and vivid colours excluded by art direction.
@@ -84,7 +86,10 @@ static func has_volga_model() -> bool:
 # Map length in metres. Bus scale was reviewed beside the truck and Volga.
 static func map_length(model_id: String) -> float:
 	if AUTHORED_CAR_LENGTHS.has(model_id):
-		return float(AUTHORED_CAR_LENGTHS[model_id]) * AUTHORED_CAR_VISUAL_SCALE
+		var visual_scale := AUTHORED_CAR_VISUAL_SCALE
+		if model_id == "rural_4x4":
+			visual_scale *= RURAL_4X4_VISUAL_ADJUSTMENT
+		return float(AUTHORED_CAR_LENGTHS[model_id]) * visual_scale
 	if model_id in ["kamaz_semi", "zil_flatbed", "zil_food"]:
 		return _source_length(model_id) * LADA_MAP_LENGTH / float(LENGTHS["lada"])
 	if BUS_LENGTHS.has(model_id):
