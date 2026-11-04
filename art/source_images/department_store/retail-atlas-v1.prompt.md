@@ -1,0 +1,16 @@
+# Department store retail albedo atlas
+
+Built-in ImageGen, 2026-11-03. Input: `in-context-1997-v1.png`, selected commercial-layer direction. This implements the user's requested store overhaul within the existing approved central-building 1997 direction. Original1536x1024; correct3x2 signs/display grid inspected. Separately prepared with `tools/optimize_asset.py --profile facade --approved` before embedding in GLB. Current output is still subject to live appearance review; this is not a claim that the user approved every generated texel.
+
+```text
+Create a production SIGNAGE / DISPLAY ALBEDO ATLAS for the1997 department store in the reference, NOT a picture of a building. User requested strong1990s rented retail layers within the established building. Landscape3:2 aspect ratio, EXACT3COLUMNS x2ROWS of equal square cells, edge-to-edge with NO gutters, grid rules, labels or watermark. Flat straight-on artwork only, no perspective, cast shadows, environment or lighting gradient. Each square contains one full-bleed design that will be mapped onto a rectangular facade sign or window. Do not draw physical frames, ropes or wall texture around artwork.
+TOP ROW left-to-right:
+1) Faded CREAM old institutional sign panel, big dark red simple Cyrillic lettering EXACTLY 'УНИВЕРМАГ', subtle weathering/old paint, plain industrial Soviet lettering, no ornamental font, no illustration.
+2) Cheap glossy1997 imported ELECTRONICS advertising, dark royal-blue background, big yellow/white Cyrillic EXACTLY 'ИМПОРТНАЯ ТЕХНИКА' and smaller 'ТЕЛЕВИЗОРЫ • ВИДЕО • АУДИО'. Three clear cutout illustrations of bulky CRT television, black VHS recorder and compact hi-fi with loudspeakers. No real brands, flat-screen TVs, smartphones or modern graphics.
+3) Provincial clothing/shoe shop banner, cream/burgundy background, simple dark red Cyrillic EXACTLY 'ОДЕЖДА • ОБУВЬ', tiny period leather shoes and folded shirt illustrations; human-readable modest1990s commercial design.
+BOTTOM ROW left-to-right:
+4) Muted green and cream hand-painted sign EXACTLY 'КОМИССИОННЫЙ', modest small illustrations of old radio/camera/second-hand household goods. Not a modern luxury pawn shop, no currency symbols or weapons.
+5) Faded burgundy and cream simple sign EXACTLY 'ХОЗТОВАРЫ', plain utilitarian Cyrillic, tiny paintbrush, metal bucket and cleaning brush illustration, no real brand.
+6) A SINGLE front-facing detailed SHOP WINDOW DISPLAY, no lettering: warm shadowed racks of ordinary1990s shirts/jackets, a few folded textiles, cardboard appliance boxes and shoes on shelves behind slightly dusty blue-grey glass. Vertical rectangular composition will be fitted to separate window bays; keep products large/readable, no people or printed reflections of buildings.
+Art direction: same restrained realistic painted1997 provincial setting as reference, practical inexpensive print rather than2020s branding, clear red/blue/green competing tenant identities; avoid decay/horror. Exact3x2 grid is essential. Complete designs fill their square cells; keep letters comfortably within each tile so rectangular UV fitting does not clip them. This is a reusable bitmap atlas for physically modeled signboards, canopies and window recesses, no whole facades or building drawings.
+```

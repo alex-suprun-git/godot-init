@@ -33,6 +33,7 @@ func build(city_map) -> void:
 	_build_ground()
 	for id in Layout.LOTS:
 		_build_lot(id, Layout.LOTS[id])
+	preload("res://scripts/map/civic_precinct.gd").new().build(map)
 	preload("res://scripts/map/station_platform.gd").new().build(map)
 	_build_village_plots()
 	_build_border_fence()
@@ -217,6 +218,10 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 		center += _front_shift(lot, entry)
 	var kind: String = entry["kind"]
 	match kind:
+		"department_store_1997":
+			preload("res://scripts/map/department_store.gd").new().build(self, lot, entry, id)
+		"civic_venue":
+			preload("res://scripts/map/civic_venues.gd").new().build(self, id, lot)
 		"civic_center":
 			preload("res://scripts/map/civic_center.gd").new().build(self)
 		"panel", "building":

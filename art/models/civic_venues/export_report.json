@@ -1,0 +1,86 @@
+[
+  {
+    "asset": "restaurant",
+    "triangles": 5464,
+    "materials": 9,
+    "dimensions_blender_m": [
+      26.889999389648438,
+      21.619998931884766,
+      8.949999809265137
+    ],
+    "export": "art/models/civic_venues/exports/restaurant.glb",
+    "objects_exported": 1
+  },
+  {
+    "asset": "restaurant_terrace",
+    "triangles": 860,
+    "materials": 4,
+    "dimensions_blender_m": [
+      3.799999952316284,
+      8.800000190734863,
+      2.700000047683716
+    ],
+    "export": "art/models/civic_venues/exports/restaurant_terrace.glb",
+    "objects_exported": 1
+  },
+  {
+    "asset": "culture_house",
+    "triangles": 12624,
+    "materials": 6,
+    "dimensions_blender_m": [
+      32.19999694824219,
+      29.059999465942383,
+      12.600000381469727
+    ],
+    "export": "art/models/civic_venues/exports/culture_house.glb",
+    "objects_exported": 1
+  },
+  {
+    "asset": "privacy_wall_6m",
+    "triangles": 76,
+    "materials": 3,
+    "dimensions_blender_m": [
+      6.400000095367432,
+      0.7799999713897705,
+      3.075000047683716
+    ],
+    "export": "art/models/civic_venues/exports/privacy_wall_6m.glb",
+    "objects_exported": 1
+  },
+  {
+    "asset": "gate_leaf",
+    "triangles": 252,
+    "materials": 1,
+    "dimensions_blender_m": [
+      3.799999952316284,
+      0.1550000011920929,
+      2.700000047683716
+    ],
+    "export": "art/models/civic_venues/exports/gate_leaf.glb",
+    "objects_exported": 1
+  },
+  {
+    "asset": "guardhouse",
+    "triangles": 308,
+    "materials": 6,
+    "dimensions_blender_m": [
+      4.5,
+      4.5,
+      3.1549999713897705
+    ],
+    "export": "art/models/civic_venues/exports/guardhouse.glb",
+    "objects_exported": 1
+  },
+  {
+    "asset": "security_guard",
+    "triangles": 508,
+    "materials": 2,
+    "dimensions_blender_m": [
+      0.757265567779541,
+      0.39000004529953003,
+      1.7649999856948853
+    ],
+    "export": "art/models/civic_venues/exports/security_guard.glb",
+    "objects_exported": 1
+  }
+]
