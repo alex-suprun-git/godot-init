@@ -2,12 +2,14 @@
   "body_m": [
     24,
     30,
-    6
+    7.2
   ],
+  "floor_pitch_m": 3.6,
+  "shop_door_height_m": 2.35,
   "bounds_blender_m": [
     26.375,
     32.290000915527344,
-    8.75
+    9.949999809265137
   ],
   "triangles": 10654,
   "materials": 16,

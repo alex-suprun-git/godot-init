@@ -98,7 +98,7 @@ const CONTENTS := {
 		"placeholder_color": Color("ccc9bd"), "label": "Пятиэтажный дом", "dressing": [],
 	},
 	"department_store": {
-		"kind": "department_store_1997", "footprint": Vector2(24, 30), "height": 9.0, "doorstep": 2.0,
+		"kind": "department_store_1997", "footprint": Vector2(24, 30), "height": 10.0, "doorstep": 2.0,
 		"ground": "paving", "label": "Универмаг", "dressing": [],
 	},
 	"city_park": {
