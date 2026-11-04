@@ -2,6 +2,8 @@
 
 ## Luxury and rural vehicle projections (2026-11-04)
 
+Post-checkpoint sedan sheet: `art/source_images/vehicle_trio/luxury-sedan-v2.png`. Built-in ImageGen with the actual RAF sheet as layout/style reference and a real W140 photograph as shape reference. Six views, neutral grey grid, dark burgundy; full prompt and input roles adjacent. Proposal awaiting review, no 3D or game changes.
+
 User-requested fresh SUV generation: `art/source_images/vehicle_trio/luxury-suv-v3.png`, built-in ImageGen without input images; exact adjacent prompt. The resulting v6 model and known unfixed attachment gaps are documented in `art/models/vehicle_trio/README.md`. User subsequently chose to retain the current model and focus on workflow/error analysis. No new game raster or city integration.
 
 SUV revision `luxury-suv-v2.png` corrects the user-flagged extra passenger door on each side in v1; current proposal has two side doors per side and one rear tailgate. Exact edit prompt is adjacent to the image; awaiting user review.

@@ -1,5 +1,7 @@
 # Vehicle trio: modeling reference proposals
 
+Current sedan proposal: `luxury-sedan-v2.png`, generated after checkpoint commit `843c8ca` at the user's request. Unlike v1, it uses the actual RAF sheet as the layout/style input and a real W140 photograph as the shape/paint input. Six labelled views, neutral-grey grid and dark burgundy body; exact prompt, input roles and inspection limitations in `luxury-sedan-v2.prompt.md`. Awaiting review; this pass changes no model.
+
 Latest SUV reference is `luxury-suv-v3.png`, a fresh built-in ImageGen generation explicitly requested on 2026-11-04, without input images. Exact prompt: `luxury-suv-v3.prompt.md`. It guided model v6; the user then chose to retain the current model and focus on failure analysis. The sheet is not a measured blueprint, and its white-background presentation does not match the existing neutral-grid RAF/PAZ/UAZ reference family. Current model state and known attachment gaps: `../../models/vehicle_trio/README.md`. The older v1/v2 records below describe earlier stages.
 
 User requested two wealthy-owner vehicles plus a rural Niva-like compact 4x4, starting with 2D projections. Built-in ImageGen produced three untouched reference sheets on 2026-11-04; exact prompts are in adjacent files.
