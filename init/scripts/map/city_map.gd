@@ -1182,12 +1182,15 @@ func _build_ambient() -> void:
 		agent["visual"] = sprite
 		agent["lift"] = sprite.position.y - _ground(agent["pos"]).y
 		base_walkers.append(agent)
+	var luxury_slots := ["luxury_sedan", "luxury_suv"]
 	for i in AMBIENT_CARS:
 		var agent := _ambient.add(true, look.randf_range(7.0, 12.0))
 		if agent.is_empty():
 			break
 		var seed_value := look.randi()
-		var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(agent["pos"]) + Vector3.UP * 0.14)
+		if agent["class"] == "car" and not luxury_slots.is_empty():
+			agent["luxury_model"] = luxury_slots.pop_front()
+		var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(agent["pos"]) + Vector3.UP * 0.14, agent.get("luxury_model", ""))
 		add_child(car)
 		agent["visual"] = car
 	# Daytime reserve, hidden outside the centre/housing or 08:00–18:00.
@@ -1234,7 +1237,7 @@ func _respawn_car(agent: Dictionary) -> void:
 	agent["visual"].queue_free()
 	var seed_value := _traffic_look.randi()
 	var at: Vector2 = agent["pos"]
-	var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(at) + Vector3.UP * 0.14)
+	var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(at) + Vector3.UP * 0.14, agent.get("luxury_model", ""))
 	add_child(car)
 	var heading: Vector2 = agent["heading"]
 	car.rotation.y = atan2(heading.x, heading.y)

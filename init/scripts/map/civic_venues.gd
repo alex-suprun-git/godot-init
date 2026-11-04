@@ -108,12 +108,13 @@ func _restaurant() -> void:
 	surface(Rect2(115, -57, 6, 30), 1, .20)
 	surface(Rect2(118, -8, 13, 4), 1, .20)
 	surface(Rect2(101, -28, 9, 5), 1, .17)
-	# Proper bay dimensions relative to the shared real Volga, four cars / nine spaces.
+	# Four luxury cars occupy the existing nine full-size parking spaces.
 	for i in 10:
 		box(Vector3(94 + i * 3.0, .155, -18), Vector3(.08, .025, 5.5), "c4c0ac")
 	for i in [0, 2, 4, 6]:
 		var at := Vector3(95.5 + i * 3.0, .145, -18)
-		var car := Vehicles.create("volga", at, Vehicles.map_length("volga"), "z", Vehicles.PAINT_BLACK)
+		var model := "luxury_sedan" if i % 4 == 0 else "luxury_suv"
+		var car := Vehicles.create(model, at, Vehicles.map_length(model), "z")
 		car.add_to_group("parked_vehicles")
 		car.set_meta("parking_footprint", Vector2(2.8, 5.5))
 		root.add_child(car)

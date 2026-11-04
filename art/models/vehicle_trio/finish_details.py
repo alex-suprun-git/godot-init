@@ -404,6 +404,9 @@ def refine(key,s,scene,root,ctx):
     print('REFINED',key,'objects',len(scene.objects))
 
 for key,old_spec in source['SPECS'].items():
+    if key=='luxury_sedan':
+        runpy.run_path(str(HERE/'build_sedan_v2.py'))
+        continue
     s={**old_spec,**TARGETS[key]}
     scene,root,ctx=source['build'](key,s)
     ctx['windows']=s['windows'];ctx['doors']=s['doors'];ctx['handle_y']=s['handles']

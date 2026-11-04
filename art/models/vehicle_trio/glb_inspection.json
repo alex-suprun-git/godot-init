@@ -41,42 +41,42 @@
   },
   {
     "file": "luxury_sedan.glb",
-    "triangles": 25410,
+    "triangles": 19920,
     "meshes": 1,
     "nodes": 1,
     "scenes": 1,
     "primitives": 8,
     "materials": [
-      "luxury_sedan rubber",
       "luxury_sedan paint",
       "luxury_sedan glass",
+      "luxury_sedan rubber",
       "luxury_sedan steel",
       "luxury_sedan seam",
-      "luxury_sedan amber",
       "luxury_sedan lamp",
-      "luxury_sedan red"
+      "luxury_sedan red",
+      "luxury_sedan amber"
     ],
     "images": 0,
     "animations": 0,
     "cameras": 0,
     "bounds_min": [
-      -1.0780000686645508,
+      -1.0485000610351562,
       0.0,
-      -2.6064999103546143
+      -2.627500057220459
     ],
     "bounds_max": [
-      1.0780000686645508,
-      1.4808369874954224,
-      2.6064999103546143
+      1.0485000610351562,
+      1.484278917312622,
+      2.627500057220459
     ],
     "dimensions_xyz_m": [
-      2.1560001373291016,
-      1.4808369874954224,
-      5.2129998207092285
+      2.0970001220703125,
+      1.484278917312622,
+      5.255000114440918
     ],
     "forward": "+Z",
     "origin": "ground centre",
-    "stage": "Revision v5: lower SUV glazing, dark burgundy, contoured rear lenses, raised Niva body; pending review",
+    "stage": "Sedan v2 reconstruction from RAF-family sheet; awaiting visual review",
     "wheelbase_m": 3.14
   },
   {

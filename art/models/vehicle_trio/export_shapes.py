@@ -3,13 +3,19 @@ from pathlib import Path
 import runpy
 import json
 import bpy
+import sys
 from mathutils import Vector
 
 HERE=Path(__file__).resolve().parent
 inspect_glb=runpy.run_path(str(HERE.parent/'uaz_service/export_vehicle.py'))['inspect_glb']
 out=HERE/'exports';out.mkdir(exist_ok=True)
 reports=[]
+only=next((arg.split('=',1)[1] for arg in sys.argv if arg.startswith('--only=')),None)
+existing=json.loads((HERE/'glb_inspection.json').read_text()) if (HERE/'glb_inspection.json').exists() else []
 for key in ['luxury_suv','luxury_sedan','rural_4x4']:
+    if only and key!=only:
+        reports.extend(r for r in existing if r['file']==key+'.glb')
+        continue
     scene=bpy.data.scenes[key];bpy.context.window.scene=scene
     bpy.ops.object.select_all(action='DESELECT')
     deps=bpy.context.evaluated_depsgraph_get();copies=[]
