@@ -2,6 +2,7 @@
 extends RefCounted
 
 const MODELS := {
+	"rural_4x4": preload("res://assets/models/vehicles/rural_4x4.glb"),
 	"luxury_sedan": preload("res://assets/models/vehicles/luxury_sedan.glb"),
 	"luxury_suv": preload("res://assets/models/vehicles/luxury_suv.glb"),
 	"lada": preload("res://assets/models/vehicles/lada_sedan_v2.glb"),
@@ -25,8 +26,8 @@ const ZIL_VISUAL_ADJUSTMENT := 1.05
 const BUS_VISUAL_SCALE := 0.80
 # Approved map presentation: all Volga variants are uniformly 10% smaller.
 const VOLGA_VISUAL_SCALE := 0.90
-const LUXURY_LENGTHS := {"luxury_sedan": 5.255, "luxury_suv": 4.518}
-const LUXURY_VISUAL_SCALE := 0.90
+const AUTHORED_CAR_LENGTHS := {"luxury_sedan": 5.255, "luxury_suv": 4.518, "rural_4x4": 3.720}
+const AUTHORED_CAR_VISUAL_SCALE := 0.90
 const VOLGA_TRAFFIC_SHARE := 1.0 / 15.0
 const VOLGA_PAINT_SHADER := preload("res://assets/shaders/vehicle_paint.gdshader")
 # Curated period-inspired palette; red/pink and vivid colours excluded by art direction.
@@ -82,8 +83,8 @@ static func has_volga_model() -> bool:
 
 # Map length in metres. Bus scale was reviewed beside the truck and Volga.
 static func map_length(model_id: String) -> float:
-	if LUXURY_LENGTHS.has(model_id):
-		return float(LUXURY_LENGTHS[model_id]) * LUXURY_VISUAL_SCALE
+	if AUTHORED_CAR_LENGTHS.has(model_id):
+		return float(AUTHORED_CAR_LENGTHS[model_id]) * AUTHORED_CAR_VISUAL_SCALE
 	if model_id in ["kamaz_semi", "zil_flatbed", "zil_food"]:
 		return _source_length(model_id) * LADA_MAP_LENGTH / float(LENGTHS["lada"])
 	if BUS_LENGTHS.has(model_id):
@@ -100,8 +101,8 @@ static func _scene(model_id: String) -> PackedScene:
 
 
 static func _source_length(model_id: String) -> float:
-	if LUXURY_LENGTHS.has(model_id):
-		return float(LUXURY_LENGTHS[model_id])
+	if AUTHORED_CAR_LENGTHS.has(model_id):
+		return float(AUTHORED_CAR_LENGTHS[model_id])
 	if BUS_LENGTHS.has(model_id):
 		return float(BUS_LENGTHS[model_id])
 	if model_id == "volga":
@@ -146,8 +147,8 @@ static func create(model_id: String, at: Vector3, length: float, axis: String, p
 			_repaint_volga(vehicle, _weighted_paint(paint, VOLGA_PAINT_WEIGHTS, "volga-paint"))
 	elif BUS_LENGTHS.has(model_id):
 		pass # Preserve the two-tone concept livery; car tints flatten both paint bands.
-	elif LUXURY_LENGTHS.has(model_id):
-		pass # Preserve the authored burgundy sedan and dark SUV paint.
+	elif AUTHORED_CAR_LENGTHS.has(model_id):
+		pass # Preserve the authored colours of the three new cars.
 	elif paint == PAINT_BLACK:
 		_repaint(vehicle, PAINT_BLACK)
 	elif paint >= 0:
