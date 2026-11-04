@@ -471,6 +471,15 @@ func _build_top_bar() -> void:
 	_start_button = _primary_button("Начать день →")
 	_start_button.pressed.connect(start_week_pressed.emit)
 	row.add_child(_start_button)
+	var restart := Button.new()
+	restart.name = "RestartSimulation"
+	restart.text = "Заново"
+	restart.tooltip_text = "Начать с первого понедельника, 06:00. Текущий прогресс будет сброшен."
+	restart.focus_mode = Control.FOCUS_NONE
+	restart.pressed.connect(func():
+		restart.disabled = true
+		restart_pressed.emit())
+	row.add_child(restart)
 	# The folder is a map control, independent of the time controls above.
 	_tasks_button = Button.new()
 	_tasks_button.text = ""
