@@ -42,9 +42,9 @@ const LOTS := {
 	"police": {"type": "G", "rect": Rect2(-44, -75, 24, 32), "content": "police", "condition": "kept", "facing": "e"},
 	"polyclinic": {"type": "G", "rect": Rect2(-45, 135, 28, 42), "content": "polyclinic", "condition": "kept", "facing": "e"},
 	"ispolkom": {"type": "G", "rect": Rect2(25, 22, 115, 108), "content": "ispolkom", "condition": "kept", "facing": "w", "entrance": Vector2(25, 72)},
-	"tower_e1": {"type": "W", "rect": Rect2(30, -60, 40, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
-	"department_store": {"type": "G", "rect": Rect2(30, -15, 45, 30), "content": "department_store", "condition": "kept", "facing": "w"},
-	"city_park": {"type": "N", "rect": Rect2(82, -72, 54, 84), "content": "city_park", "condition": "kept", "facing": "e"},
+	"tower_e1": {"type": "G", "rect": Rect2(30, -60, 40, 38), "content": "culture_house", "condition": "kept", "facing": "w"},
+	"department_store": {"type": "G", "rect": Rect2(9.5, 0.5, 30, 30), "content": "department_store", "condition": "kept", "facing": "w"},
+	"city_park": {"type": "G", "rect": Rect2(86.7, -77.7, 51, 80), "content": "private_restaurant", "condition": "kept", "facing": "e"},
 	# Three matching southern towers, evenly spaced between the two streets.
 	"tower_e2": {"type": "W", "rect": Rect2(19.5, 140, 34, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
 	"tower_e3": {"type": "W", "rect": Rect2(56.5, 140, 34, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
@@ -102,8 +102,14 @@ const ROADS := [
 	{"id": "civic_park_north", "rect": Rect2(97, 82.5, 25, 3), "kind": "yard"},
 	{"id": "civic_park_south", "rect": Rect2(97, 117.5, 25, 3), "kind": "yard"},
 	{"id": "civic_lane", "rect": Rect2(7, 209, 133, 5), "kind": "asphalt", "walk": 1.5},
-	# Short avenue link serving the northern tower group.
-	{"id": "north_tower_link", "rect": Rect2(7, -8, 20, 3), "kind": "yard"},
+	# Public walks join DK, both sides of the store, and the administration garden.
+	{"id": "store_north_walk", "rect": Rect2(7, -1.5, 40, 3), "kind": "yard"},
+	{"id": "store_south_walk", "rect": Rect2(7, 31, 40, 3), "kind": "yard"},
+	{"id": "civic_public_spine", "rect": Rect2(44, -23, 3, 67.5), "kind": "yard"},
+	{"id": "culture_garden_walk", "rect": Rect2(28, -23, 54, 3), "kind": "yard"},
+	{"id": "civic_garden_crosswalk", "rect": Rect2(45.5, 9.5, 99.5, 3), "kind": "yard"},
+	{"id": "civic_east_garden_walk", "rect": Rect2(79, -23, 3, 35.5), "kind": "yard"},
+	{"id": "culture_walk", "rect": Rect2(7, -43, 29, 4), "kind": "yard"},
 	# Actual graph connections for the shared forecourt. Its custom surface provides
 	# broad paved turning space; road strips retain routes/lanes without duplicate paint.
 	{"id": "station_entry", "rect": Rect2(-134, 305, 8, 43), "kind": "asphalt", "walk": 0.0, "hub_surface": true, "speed": 0.4},
@@ -207,16 +213,17 @@ static func parking_allowed(at: Vector2, footprint: Vector2) -> bool:
 const DISTRICTS := {
 	"admin": {
 		"name": "Administrative centre",
-		"rects": [Rect2(19.5, -80, 125.5, 350), Rect2(-44, -75, 24, 32), Rect2(-45, 135, 28, 42)],
+		# The relocated store reaches the avenue sidewalk, west of the main district rect.
+		"rects": [Rect2(19.5, -80, 125.5, 350), LOTS["department_store"]["rect"], Rect2(-44, -75, 24, 32), Rect2(-45, 135, 28, 42)],
 		"residents": 1200, "foot": 1.4, "cars": 0.8,
 		"fleet": {"car": 0.8, "bus": 0.2}, "hours": "office",
 		"subzones": {
 			"admin_police": {"rect": Rect2(-44, -75, 24, 32), "cars": 0.6},
 			"admin_polyclinic": {"rect": Rect2(-45, 135, 28, 42), "foot": 1.8, "hours": "commute"},
 			"admin_square": {"rect": Rect2(25, 22, 115, 108), "foot": 2.0, "cars": 0.3},
-			"admin_park": {"rect": Rect2(82, -72, 54, 84), "foot": 0.9, "cars": 0.0, "hours": "leisure"},
-			"admin_shops": {"rect": Rect2(30, -15, 45, 30), "foot": 2.2, "hours": "market"},
-			"admin_elite": {"rect": Rect2(30, -60, 40, 38), "residents": 450, "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
+			"admin_restaurant": {"rect": LOTS["city_park"]["rect"], "residents": 0, "foot": 0.0, "cars": 0.0, "hours": "leisure"},
+			"admin_shops": {"rect": LOTS["department_store"]["rect"], "foot": 2.2, "hours": "market"},
+			"admin_culture": {"rect": LOTS["tower_e1"]["rect"], "residents": 0, "foot": 0.8, "cars": 0.4, "fleet": {"car": 1.0}, "hours": "leisure"},
 			"admin_elite_e2": {"rect": LOTS["tower_e2"]["rect"], "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
 			"admin_elite_e3": {"rect": LOTS["tower_e3"]["rect"], "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
 			"admin_elite_e4": {"rect": LOTS["tower_e4"]["rect"], "foot": 0.5, "cars": 1.2, "fleet": {"car": 1.0}},
@@ -296,6 +303,18 @@ const HOURS := {
 # Also the profile of the through roads (the axis, the highway, the cross streets), which
 # belong to no district: nobody lives there, trucks and buses pass through.
 const DISTRICT_DEFAULTS := {"residents": 0, "foot": 0.5, "cars": 0.9, "fleet": {"car": 0.65, "truck": 0.2, "bus": 0.15}, "hours": "round_clock"}
+
+# A second pedestrian pool supplements these districts only during the workday.
+const WORKDAY_FOOT_HOURS := Vector2i(8, 18)
+const WORKDAY_FOOT_DISTRICTS := ["admin", "panel_housing"]
+const WORKDAY_FOOT_AXIS := Rect2(-20, -80, 40, 350) # District-free avenue pavements/crossings.
+
+
+static func workday_pedestrians_at(point: Vector2, hour: int) -> bool:
+	var h := posmod(hour, 24)
+	if h < WORKDAY_FOOT_HOURS.x or h >= WORKDAY_FOOT_HOURS.y:
+		return false
+	return district_at(point) in WORKDAY_FOOT_DISTRICTS or WORKDAY_FOOT_AXIS.has_point(point)
 
 
 # Id of the subzone under a point, "" if there is none.

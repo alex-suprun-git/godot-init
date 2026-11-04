@@ -1,5 +1,23 @@
 # Image Prompts: First Week
 
+## Civic buildings surface finish (2026-11-03)
+
+After the user's in-game screenshot exposed flat-looking roofs/walls, built-in ImageGen produced `art/source_images/civic_venues/pbr-v2/surfaces-albedo-v2.png`: felt roofing, standing-seam metal, brick, mineral facing, stone cladding and warm/cool glazing. Exact prompt adjacent. Tangent-normal/roughness maps are original analytic Blender preparation (`build_surface_maps.py`), separately optimizer-prepared along with albedo before GLB integration. Current maps, scale, Windows import/capture sequencing correction and actual final-frame review: `art/models/civic_venues/README.md`.
+
+## Department store 1997 rework (2026-11-03)
+
+Built-in ImageGen map-context rework and3x2 retail graphic atlas, within the user's central-building commercial-layer direction: `art/source_images/department_store/`, exact prompts adjacent. Original raster atlas separately optimizer-prepared before Blender use. Physical tenant fronts, canopies/displays, electronics advertising and the old red roof lettering are integrated in the existing store location. Latest user correction turns the roof sign toward the administration. Source/rebuild/visual verification: `art/models/department_store/README.md`.
+
+## Civic venues model production (2026-11-03)
+
+User authorized DK and modern restaurant 3D production, replacing the northern tower with DK and later reducing restaurant land by about 10%. Built-in ImageGen restaurant projections: `art/source_images/restaurant/multiview-modern-v1.png`; generated 4 x 2 material/mosaic/banner atlas: `art/source_images/civic_venues/material-atlas-v1.png`. Exact prompts adjacent. The atlas was separately optimizer-prepared before Blender use; original meshes and both sites are now integrated. Sources, material approval scope, real Godot captures and remaining appearance review: `art/models/civic_venues/README.md`.
+
+## Restaurant alternatives (2026-11-03)
+
+Built-in ImageGen: two user-requested in-context proposals replacing the rejected v7 restaurant direction, preserved under `art/source_images/restaurant/`: `option-a-new-club-v1.png` and `option-b-privatized-v1.png`, with exact adjacent prompts. A uses a current Godot civic-area capture; B edits A for a matched comparison. Review status and layout limitations: `art/source_images/ispolkom/README.md`, "Restaurant alternatives".
+
+The user selected A architecture, requested high fences/security/substantial grounds and rejected its arbitrary placement. `option-a-secured-site-v2.png` now uses a temporary measured Godot blockout of the confirmed 54 x84m city_park parcel behind the department store as the edit target; A is an architecture reference only. Exact prompt adjacent; revised site detail awaits review. Reproducible guide and site decisions are in the same asset record.
+
 ## District modeling reference pack (2026-11-03)
 
 Built-in ImageGen sheets for the church/cemetery, three private-house types, the protagonist's proposed dormitory, separate school and kindergarten, two kiosks, two playgrounds and all existing industrial/service sites. Actual current Godot overview/village/bridge frames supply map-camera context; existing catalog dimensions guide industrial massing. The revised border-crossing proposal replaces the generic customs layout with a north–south bridge-aligned scheme and separate control/inspection flows. Exact prompts, selected versions, known projection/layout discrepancies and review status: `art/source_images/district_visual_pack/README.md`. These are proposals for user review, not approved textures or integrated models. The existing approved police UAZ reference/model is reused. User refinement reserves timber cottages for outer edges and gives every private parcel a proper fence, vehicle gate and wicket.

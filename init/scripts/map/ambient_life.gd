@@ -39,6 +39,7 @@ var _gateways: Array[Dictionary] = []
 var _gateway_at_node := {} # graph node -> index into _gateways
 var _foot_graph := PedestrianGraph.new()
 var _rng := RandomNumberGenerator.new()
+var _workday_rng := RandomNumberGenerator.new()
 var _cursor := 0
 var _car_slots := 0
 var _routes: TrafficRoutes
@@ -47,6 +48,7 @@ var _routes: TrafficRoutes
 func _init(graph: RoadGraph, seed_value: int, gateways: Array[Dictionary] = []) -> void:
 	_graph = graph
 	_rng.seed = seed_value
+	_workday_rng.seed = seed_value + 4621
 	_gateways = gateways
 	for i in gateways.size():
 		_gateway_at_node[gateways[i]["node"]] = i
@@ -82,6 +84,26 @@ func add(is_car: bool, speed: float) -> Dictionary:
 		"state": "graph", "gateway": -1, "leg_from": Vector2.ZERO, "leg_dir": Vector2.ZERO,
 		"leg_len": 0.0, "wait": 0.0, "respawned": false, "turn": {},
 	}
+	agents.append(agent)
+	_place(agent, 1.0)
+	agent["lateral"] = agent["target_lateral"]
+	_place(agent, 1.0)
+	_update_visibility(agent)
+	return agent
+
+
+func add_workday_walker(original: Dictionary, speed: float) -> Dictionary:
+	# One independent extra per base slot avoids saturating the existing visibility cap.
+	# Separate RNG and creation after cars preserve all original agents and car choices.
+	var agent := original.duplicate()
+	agent["visual"] = null
+	agent["turn"] = {}
+	agent["workday_extra"] = true
+	agent["speed"] = speed
+	agent["threshold"] = _workday_rng.randf()
+	agent["side"] = 1.0 if _workday_rng.randf() < .5 else -1.0
+	var edge: Dictionary = agent["graph"].edges[agent["edge"]]
+	agent["along"] = fposmod(float(agent["along"]) + _workday_rng.randf_range(4.0, 18.0), float(edge["length"]))
 	agents.append(agent)
 	_place(agent, 1.0)
 	agent["lateral"] = agent["target_lateral"]
@@ -416,7 +438,7 @@ func _next_edge(agent: Dictionary, node: int) -> int:
 			options.append(candidate)
 	if options.is_empty():
 		return agent["edge"]
-	return _pick(options, agent["is_car"], false, graph)
+	return _pick(options, agent["is_car"], false, graph, _workday_rng if agent.get("workday_extra", false) else null)
 
 
 func _place(agent: Dictionary, delta: float) -> void:
@@ -447,7 +469,7 @@ func _density(edge: Dictionary, is_car: bool, graph) -> float:
 
 # Weighted random choice among edges; the weight is the district density, times the
 # edge length when picking a spawn point.
-func _pick(options: Array[int], is_car: bool, by_length: bool, graph) -> int:
+func _pick(options: Array[int], is_car: bool, by_length: bool, graph, rng: RandomNumberGenerator = null) -> int:
 	var weights := PackedFloat32Array()
 	var total := 0.0
 	for option in options:
@@ -455,7 +477,7 @@ func _pick(options: Array[int], is_car: bool, by_length: bool, graph) -> int:
 		var weight: float = _density(edge, is_car, graph) * (float(edge["length"]) if by_length else 1.0)
 		weights.append(weight)
 		total += weight
-	var roll := _rng.randf() * total
+	var roll := (_rng if rng == null else rng).randf() * total
 	for i in options.size():
 		roll -= weights[i]
 		if roll <= 0.0:
@@ -492,6 +514,9 @@ func _stream_class(stream: String, replacing_bus: bool = false) -> String:
 func _update_visibility(agent: Dictionary) -> void:
 	if agent["is_car"]:
 		agent["visible"] = agent["state"] != "wait"
+		return
+	if agent.get("workday_extra", false) and not DistrictLayout.workday_pedestrians_at(agent["pos"], int(hour)):
+		agent["visible"] = false
 		return
 	var level := DistrictLayout.crowd_at(agent["pos"], int(hour), false) / CROWD_CAP
 	agent["visible"] = agent["threshold"] < level
