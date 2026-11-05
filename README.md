@@ -387,5 +387,29 @@ The first stretch of the game is built around one concrete 1990s objective: the 
 
 ## Learning Approach
 
+### Performance profiling
+
+Two opt-in diagnostics are available (replace `Godot` with your executable and use a different absolute output directory per run):
+
+```text
+Godot --path init -- --autoplay --only=performance --no-log --shots=<absolute output directory>
+Godot --path init -- --autoplay --only=office,performance-camera,week --profile --no-log --shots=<absolute output directory>
+```
+
+The first compares ambient life enabled, hidden with CPU updates running, disabled, and enabled again at 08:00/12:00/17:00 and default/widest zoom. It saves `performance.json` and one screenshot; each phase has two seconds of warm-up and five seconds of samples (`--profile-seconds=15` extends sampling). The clock is pinned directly, without refreshing the HUD. Counts mean density-visible agents, not camera-visible agents; station crowds and parked vehicles remain in every phase. The second records every rendered frame through UI panels, two camera tours, the live week, nights, crises, summary and week two. It saves `session-profile.json` (including slow frames and phase summaries) and `session-frames.csv`. Screenshots are disabled, but panels remain visible briefly so their rendering is measured. Both record FPS, frame-time percentiles/maxima, ambient CPU work and render CPU/GPU/call/primitive metrics. CPU/GPU times overlap; do not sum them. Session reports distinguish logical viewport, window and render-target sizes.
+
+Use a rendered window, no `--turbo` or `--headless`; VSync and the FPS cap are temporarily disabled. Week autoplay uses the game's normal x4 option, not engine acceleration. Season/camera coverage can be repeated with `--season=winter` or `--season=autumn --camera=front`; put engine options such as `--resolution 1920x1080` before `--`. Raw results stay under ignored `.local/performance/` and `.local/performance-general/`. `--no-log` excludes playtest-log I/O; removing it includes that cost. Scene construction before autoplay, release builds, longer campaigns and other hardware have not been measured.
+
+Baseline measured 2026-11-04 for #12: Windows, Godot 4.7.2 Forward+/D3D12, Ryzen 7 9700X, GTX 1660 SUPER; current pools are 576 walkers (including daytime reserve) and 66 cars. The short ambient comparison measured 108–116 FPS at default zoom and 105 FPS at maximum zoom; ambient CPU work averaged 2.6–3.1 ms. Disabling ambient movement and rendering raised maximum-zoom FPS to 123, without a comparable gain at default zoom. Four extended runs recorded about 64,000 frames over 8.5 minutes, including repeated summer weeks, a winter week and an autumn perspective-camera tour. The final summer run used a 1920x1080 window, a reported 2304x1296 render target and a 1600x900 logical viewport:
+
+| Measured phase | Mean FPS | Frame time p99 | Largest frame |
+|---|---:|---:|---:|
+| Summer week, including transitions | 101 | 14.3 ms | 67.2 ms |
+| Summer camera tour | 111 | 20.1 ms | 27.5 ms |
+| Winter week, including transitions | 166 | 9.9 ms | 68.2 ms |
+| Autumn perspective-camera tour | 135 | 16.3 ms | 16.9 ms |
+
+Configurations differ, so this table describes coverage rather than an isolated season comparison. Forest legs were the heaviest summer camera segments (73–76 FPS average, p99 21–22 ms). Event stalls reproduced at Thursday's coal theft (67–80 ms) and Friday's boss report (47–49 ms); some UI openings took 44–54 ms. Synchronous banner loading in `hud.gd` is a candidate, not a confirmed cause. First sampled frames took 233–325 ms with normal cache access; the initial restricted run could not write the shader cache and took 2.8 s, so it is not a representative startup baseline. Full process startup is not timed. These measurements support investigating event/UI stalls and heavy views before a MultiMesh migration; they do not establish a population ceiling or guarantee locked 60 FPS. Next: time the event-opening work, optimize the confirmed cause and repeat these runs; then choose a population ceiling against an agreed hardware/frame-time budget.
+
 - Learn Godot through small prototypes, then gradually expand the game's systems.
 - Explain new Godot concepts through familiar Software Engineering ideas and apply them in the project.

@@ -20,6 +20,8 @@ const SCENARIOS := {
 	"crosswalks": "_run_crosswalk_review",
 	"traffic-lights": "_run_traffic_light_review",
 	"render-cost": "_run_render_cost",
+	"performance": "_run_performance",
+	"performance-camera": "_run_performance_camera",
 	"field": "_run_field_review",
 	"traffic": "_run_traffic_review",
 	"gazelle": "_run_gazelle_review",
@@ -35,6 +37,7 @@ var _crisis_handled := false
 var _picket_shot_taken := false
 var _leave_water_unfixed := false
 var _week_choices_made := false
+var _session_profiler
 
 
 func _ready() -> void:
@@ -71,10 +74,22 @@ func _scenarios() -> Array:
 
 
 func _run(scenarios: Array) -> void:
+	if OS.get_cmdline_user_args().has("--profile"):
+		if Engine.time_scale != 1.0 or DisplayServer.get_name() == "headless" or scenarios.has("performance"):
+			push_error("--profile needs a rendered run, no turbo, and no performance ablation scenario")
+			get_tree().quit(1)
+			return
+		_session_profiler = load("res://scripts/dev/session_profiler.gd").new()
+		add_child(_session_profiler)
+		_session_profiler.start(main, shots_dir)
 	await _wait(1.5)
 	for name in scenarios:
 		print("autoplay: scenario ", name)
+		if _session_profiler != null:
+			_session_profiler.scenario = name
 		await call(SCENARIOS[name])
+	if _session_profiler != null:
+		_session_profiler.finish()
 	# --keep-open leaves the game running where the last scenario stopped.
 	if not OS.get_cmdline_user_args().has("--keep-open"):
 		get_tree().quit()
@@ -575,6 +590,33 @@ func _run_render_cost() -> void:
 	viewport.mesh_lod_threshold = default_threshold
 
 
+func _run_performance() -> void:
+	_dismiss_briefing()
+	var profiler = load("res://scripts/dev/frame_profiler.gd").new()
+	add_child(profiler)
+	await profiler.run(main, shots_dir)
+	profiler.queue_free()
+
+
+func _run_performance_camera() -> void:
+	_dismiss_briefing()
+	# Keep the first traversal: shader/resource stalls must not disappear into warm-up.
+	# Revisit the same destinations/zoom targets to compare first use with steady load.
+	var points := [Vector2(-205, 85), Vector2(-520, 120), Vector2(120, -320),
+		main.map.DistrictLayout.lot_center("market"), Vector2(275, 105), Vector2(-15, 350)]
+	for pass_index in 2:
+		for i in points.size():
+			if _session_profiler != null:
+				_session_profiler.scenario = "camera_pass_%d_leg_%d" % [pass_index + 1, i + 1]
+			var point: Vector2 = points[i]
+			main.map._camera_goal = Vector3(point.x, 0, point.y)
+			var tween := create_tween()
+			tween.tween_property(main.map, "_zoom", main.map.ZOOM_MAX if i % 2 == 0 else main.map.ZOOM_MIN, 2.0)
+			await _wait(4.0)
+	main.map._camera_goal = main.map.DEFAULT_TARGET
+	main.map._zoom = main.map.ZOOM_DEFAULT
+
+
 func _render_info() -> Dictionary:
 	# Average the measured render time over a few frames; single frames are noisy.
 	var rid := get_viewport().get_viewport_rid()
@@ -602,6 +644,10 @@ func _map_shot(name: String, center: Vector2, zoom: float) -> void:
 
 
 func _shot(name: String) -> void:
+	# GPU readback/PNG encoding would create artificial stalls in a performance trace.
+	if _session_profiler != null:
+		await _wait(0.35) # Let each UI state render without reading pixels back.
+		return
 	await RenderingServer.frame_post_draw
 	if shots_dir == "":
 		return
