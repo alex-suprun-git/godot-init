@@ -103,23 +103,6 @@ const WEEKLY_MANDATE := {
 	"description": "Приказ главы района: к приезду комиссии котельные, сети и дома должны быть в порядке. С вас на этой неделе: подрядчик на котельную до четверга и отчёт у Петра Петровича в пятницу.",
 }
 
-# Optional press item, opened from the map's incoming tray. It reports the
-# existing hot-water request and does not change simulation state.
-const MORNING_NEWS := {
-	"style": "newspaper", "masthead": "Городские вести",
-	"eyebrow": "НЕЗАВИСИМАЯ ГОРОДСКАЯ ГАЗЕТА",
-	"issue": "№ 34 (218)", "section": "ГОРОДСКОЕ ХОЗЯЙСТВО",
-	"title": "Воду отключили. Объяснений пока нет.",
-	"lead": "Жители дома №5 четвёртый день греют воду в кастрюлях.",
-	"body": "По словам жильцов, это уже третье отключение за год. Когда закончится ремонт, в ЖЭКе пока не говорят.\n\nВ администрации района обещали разобраться в ситуации.",
-	"quote": "«Зима ещё не началась, а мы уже с тазиками»",
-	"quote_author": "Нина Ивановна, старшая по дому №5",
-	"illustration": "res://assets/portraits/baba_nina.png",
-	"illustration_region": Rect2(110, 35, 900, 760),
-	"caption": "Нина Ивановна. Горячей воды в доме нет с четверга.",
-	"button": "Отложить газету →",
-}
-
 # The boss's order for the week. An objective is met when its flag is set and
 # failed when the request with the same id closes without it.
 const OBJECTIVES := [

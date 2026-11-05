@@ -9,5 +9,6 @@ void fragment() {
 	vec3 paper = vec3(0.925, 0.88, 0.79);
 	paper += (grain - 0.5) * 0.022;
 	paper -= edge * 0.018 + fold * 0.012;
-	COLOR = vec4(paper, 1.0);
+	// Preserve the sheet edge and shadow alpha supplied by the StyleBox.
+	COLOR.rgb *= paper / vec3(0.925, 0.88, 0.79);
 }

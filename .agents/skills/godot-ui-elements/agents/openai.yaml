@@ -1,0 +1,4 @@
+interface:
+  display_name: "Godot UI Elements"
+  short_description: "Build and compare UI elements in the real game"
+  default_prompt: "Use $godot-ui-elements to implement this UI reference in the current Godot game and compare the actual result."

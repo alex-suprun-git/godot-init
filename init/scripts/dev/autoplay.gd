@@ -7,6 +7,10 @@
 extends Node
 
 const SCENARIOS := {
+	"press": "_run_press_review", # authored front page and actual next-week retrospective
+	"ui-motion": "_run_ui_motion", # left drawer motion, availability and quest pictograms
+	"newspaper": "_run_newspaper_review", # front-page layout only
+	"ui": "_run_ui_review", # newspaper, modal scroll, assigned markers, contacts drawer
 	"office": "_run_office", # briefing, week tasks, newspaper, contact, request card, planning
 	"map": "_run_map_tour", # overview, lot labels and the district map tour
 	"week": "_run_week", # plays the whole week live, then the summary and week two
@@ -333,7 +337,7 @@ func _run_office() -> void:
 		await _shot("0_week_tab_%d" % tab)
 	main.hud._week_tabs.current_tab = 0
 	main.hud._close_week_panel()
-	main.hud._show_important_notice(main.hud.Week1.MORNING_NEWS)
+	main.hud.show_newspaper()
 	await _shot("0_newspaper")
 	main.hud._close_important_notice()
 	main.map._camera_goal = main.map.DEFAULT_TARGET
@@ -448,6 +452,7 @@ func _run_week() -> void:
 	main.go_to_next_week()
 	await _wait(0.5)
 	await _shot("7_week2")
+	main.hud._close_important_notice()
 	main.hud._overlay_panel.visible = false
 	await _map_shot("7_boiler_repairing", main.hud.Week1.location_position("boiler"), 300.0)
 
@@ -772,3 +777,161 @@ func _run_gazelle_review() -> void:
 			return
 		await _wait(0.2)
 	print("Gazelle road capture orientations: ", captured.keys())
+
+
+# Focused live UI capture, with input-routing and widget dimensions in the log.
+func _run_ui_review() -> void:
+	_dismiss_briefing()
+	main.sim.advance(2.0)
+	_dismiss_briefing()
+	main.map._zoom = main.map.ZOOM_DEFAULT
+	main.map._camera_goal = main.map.DEFAULT_TARGET
+	main.hud.show_newspaper()
+	await _wait(0.3)
+	await _shot("ui_newspaper")
+	main.hud._close_important_notice()
+	main.start_week()
+	main.set_speed(0.0)
+	_dismiss_briefing()
+	print("UI newspaper shortcut after start: ", main.hud._newspaper_button.visible)
+	print("UI idle contact dock: ", main.hud._contacts_dock.size, " / active photo=", main.hud._contact_cards["mikhalych"].visible)
+	main.hud._show_week_panel()
+	await _wait(0.3)
+	var page: ScrollContainer = main.hud._week_tabs.get_child(0)
+	var zoom_before: float = main.map._zoom
+	var scroll_before: int = page.scroll_vertical
+	for index in 3:
+		await _ui_wheel_at(page.get_global_rect().get_center())
+	await _ui_wheel_at(Vector2(30, 400))
+	var magnify := InputEventMagnifyGesture.new()
+	magnify.factor = 1.5
+	magnify.position = Vector2(30, 400)
+	Input.parse_input_event(magnify)
+	await get_tree().process_frame
+	print("UI folder input: zoom ", zoom_before, " -> ", main.map._zoom, " / scroll ", scroll_before, " -> ", page.scroll_vertical)
+	print("UI paperwork indicator: ", main.hud._paperwork_progress.size)
+	await _shot("ui_folder")
+	main.hud._close_week_panel()
+	await _ui_wheel_at(Vector2(30, 400))
+	print("UI map wheel after close: ", zoom_before, " -> ", main.map._zoom)
+	main.map._zoom = main.map.ZOOM_DEFAULT
+	main.sim.choose("hot_water", "send_mikhalych")
+	main.sim.advance(0.25)
+	await _map_shot("ui_assigned_marker", main.hud.Week1.location_position("block5"), main.map.ZOOM_DEFAULT)
+	main.sim.advance(3.0)
+	await _wait(0.3)
+	print("UI active contact: ", main.sim.actors["mikhalych"]["state"], " / visible=", main.hud._contact_cards["mikhalych"].visible, " / progress size=", main.hud._contact_progress["mikhalych"].size)
+	main.hud._toggle_contacts_drawer()
+	await _wait(0.2)
+	var drawer_zoom: float = main.map._zoom
+	await _ui_wheel_at(main.hud._contact_drawer.get_global_rect().get_center())
+	await _ui_wheel_at(Vector2(30, 400))
+	print("UI drawer input: zoom ", drawer_zoom, " -> ", main.map._zoom)
+	await _shot("ui_contacts")
+	main.hud._close_contacts_drawer()
+
+
+func _ui_wheel_at(at: Vector2) -> void:
+	var motion := InputEventMouseMotion.new()
+	motion.position = at
+	motion.global_position = at
+	Input.parse_input_event(motion)
+	await get_tree().process_frame
+	var wheel := InputEventMouseButton.new()
+	wheel.position = at
+	wheel.global_position = at
+	wheel.button_index = MOUSE_BUTTON_WHEEL_DOWN
+	wheel.pressed = true
+	wheel.factor = 1
+	Input.parse_input_event(wheel)
+	await get_tree().process_frame
+
+
+func _run_newspaper_review() -> void:
+	_dismiss_briefing()
+	main.sim.advance(2.0)
+	_dismiss_briefing()
+	main.hud.show_newspaper()
+	await _wait(0.3)
+	await _shot("press_week1_front")
+
+
+func _run_ui_motion() -> void:
+	_dismiss_briefing()
+	main.sim.advance(2.0)
+	_dismiss_briefing()
+	main.map._zoom = main.map.ZOOM_DEFAULT
+	main.map._camera_goal = main.map.DEFAULT_TARGET
+	await _wait(0.3)
+	main.hud._toggle_contacts_drawer()
+	var start: float = main.hud._contact_drawer.position.x
+	await _wait(0.08)
+	print("UI drawer motion: start=", start, " / middle=", main.hud._contact_drawer.position.x)
+	await _shot("ui_drawer_mid")
+	await _wait(0.3)
+	print("UI drawer open x=", main.hud._contact_drawer.position.x, " / lamp=", main.hud._contact_drawer_dots["mikhalych"].color)
+	await _shot("ui_drawer_open")
+	var legend: PanelContainer = main.hud._paper_panel()
+	legend.anchor_left = 1
+	legend.anchor_right = 1
+	legend.offset_left = -320
+	legend.offset_right = -16
+	legend.offset_top = 90
+	legend.offset_bottom = 390
+	main.hud._root.add_child(legend)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 18)
+	legend.add_child(column)
+	column.add_child(main.hud._heading("Типы обращений", 22))
+	for kind in ["plea", "conflict", "crisis", "offer"]:
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 14)
+		row.add_child(main.hud._icon(main.hud.OfficeIcons.QUEST_TYPES[kind], 32))
+		row.add_child(main.hud._paper_label(main.hud.TYPE_NAMES[kind], 17))
+		column.add_child(row)
+	await _shot("ui_quest_icons")
+	legend.queue_free()
+	main.hud._close_contacts_drawer()
+	await _wait(0.05)
+	main.hud._toggle_contacts_drawer()
+	await _wait(0.3)
+	print("UI interrupted close/reopen: open=", main.hud._contact_drawer_open, " / x=", main.hud._contact_drawer.position.x)
+	main.sim.advance(11.0)
+	await _wait(0.1)
+	print("UI unavailable lamp=", main.hud._contact_drawer_dots["mikhalych"].color, " / text=", main.hud._contact_drawer_status["mikhalych"].text)
+	await _shot("ui_drawer_unavailable")
+	main.hud._close_contacts_drawer()
+	await _wait(0.25)
+	print("UI drawer closed: visible=", main.hud._contact_drawer.visible, " / map blocked=", main.map._ui_input_blocked)
+
+
+func _run_press_review() -> void:
+	_dismiss_briefing()
+	main.hud.show_newspaper()
+	await _wait(0.25)
+	print("Press font: ", main.hud._notice_panel.TEXT_FONT.get_font_name(), " / Cyrillic=", main.hud._notice_panel.TEXT_FONT.has_char(1046))
+	await _shot("press_week1_front")
+	await _wait(0.2)
+	main.hud._close_important_notice()
+	main.start_week()
+	main.set_speed(0.0)
+	main.sim.advance(2.0)
+	_dismiss_briefing()
+	main.sim.choose("hot_water", "send_mikhalych")
+	main.sim.choose("contractor", "pick_gusev")
+	while not main.sim.ended:
+		if main._night:
+			main.hud.continue_day()
+			await _wait(0.45)
+		main.set_speed(0.0)
+		_dismiss_briefing()
+		main.sim.advance(32.0)
+	main.go_to_next_week()
+	await _wait(0.25)
+	print("Press completed-week history: ", JSON.stringify(main.sim.press_history))
+	print("Press issue/date: ", main.hud._notice_panel._edition["issue"], " / ", main.hud._notice_panel._date)
+	await _wait(0.2)
+	await _shot("press_week2_front")
+	main.hud._close_important_notice()
+	await _wait(0.1)
+	print("Press dismissed: prototype overlay visible=", is_instance_valid(main.hud._overlay_panel) and main.hud._overlay_panel.visible)

@@ -1,11 +1,9 @@
-# A request on the map. Its shape tells the type at a glance (circle: plea,
-# diamond: conflict, triangle: crisis, square: offer) and the ring around it
-# runs down toward the deadline. Drawn in the UI layer, so map lighting never
-# dulls it. Text appears only as a tooltip.
+# Paper request marker: a portrait (requester or assigned worker), a small
+# printed type symbol and a thin deadline/work line. No mixed frame shapes.
 extends Control
 
 const OfficeTheme = preload("res://scripts/ui/office_theme.gd")
-const PortraitDraw = preload("res://scripts/ui/portrait_draw.gd")
+const OfficeIcons = preload("res://scripts/ui/office_icons.gd")
 
 signal pressed
 
@@ -29,11 +27,15 @@ var worker_texture: Texture2D # the face of whoever is on it, when assigned
 var worker_region := Rect2()
 var work_fraction := 0.0
 var edge_direction := Vector2.ZERO # not zero when stuck to the screen edge
+var _quest_icon: Texture2D
+var _quest_badge: Texture2D
 var _hover := false
 var _time := 0.0
 
 
 func _ready() -> void:
+	_quest_icon = OfficeIcons.quest_texture(kind, 64)
+	_quest_badge = OfficeIcons.quest_texture(kind, 36)
 	custom_minimum_size = BODY
 	size = BODY
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -47,7 +49,7 @@ func _process(delta: float) -> void:
 
 
 func _has_point(point: Vector2) -> bool:
-	return point.distance_to(CENTER) <= 33.0
+	return Rect2(CENTER - Vector2(27, 29), Vector2(54, 58)).has_point(point)
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -57,68 +59,36 @@ func _gui_input(event: InputEvent) -> void:
 
 
 func _draw() -> void:
-	# Stem and ground shadow: the tip is the spot on the ground.
-	draw_line(Vector2(CENTER.x, 60), Vector2(CENTER.x, 70), INK, 2.0)
-	draw_set_transform(Vector2(CENTER.x, 71), 0.0, Vector2(1.0, 0.35))
-	draw_circle(Vector2.ZERO, 9.0, Color(0, 0, 0, 0.4))
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-
-	var fill: Color = COLORS[kind]
-	if assigned:
-		fill = fill.darkened(0.45)
+	# One paper/photo language for open requests and assigned people.
+	# Type is a small printed corner symbol; progress never surrounds the photo.
+	draw_line(Vector2(32, 57), Vector2(32, 70), INK, 2)
+	draw_line(Vector2(32, 57), Vector2(32, 70), CREAM, 1)
+	draw_circle(Vector2(32, 71), 3, CREAM)
+	var frame := Rect2(CENTER - Vector2(23, 25), Vector2(46, 50))
+	draw_rect(Rect2(frame.position + Vector2(2, 2), frame.size), Color(0, 0, 0, 0.24))
+	draw_rect(frame, CREAM)
+	draw_rect(frame, OfficeTheme.EDGE, false, 1.5)
+	var portrait: Texture2D = worker_texture if assigned and worker_texture != null else asker_texture
+	var crop := worker_region if assigned and worker_texture != null else asker_region
+	if portrait != null:
+		draw_texture_rect_region(portrait, Rect2(CENTER - Vector2(20, 22), Vector2(40, 40)), crop)
+	else:
+		draw_texture_rect(_quest_icon, Rect2(CENTER - Vector2(14, 14), Vector2(28, 28)), false, RED if kind == "crisis" else INK)
+	if portrait != null:
+		var badge := Rect2(CENTER + Vector2(11, -30), Vector2(18, 18))
+		draw_rect(badge.grow(1), CREAM)
+		draw_texture_rect(_quest_badge, badge.grow(-1), false, RED if kind == "crisis" else INK)
+	if assigned or show_deadline:
+		var fraction := clampf(work_fraction if assigned else time_left, 0, 1)
+		var line := Rect2(frame.position + Vector2(3, 45), Vector2(40, 3))
+		draw_rect(line, OfficeTheme.EDGE)
+		draw_rect(Rect2(line.position, Vector2(40 * fraction, 3)), RED if assigned or time_left < 0.25 else AMBER)
+	if _hover:
+		draw_rect(frame.grow(2), CREAM, false, 1.5)
 	if kind == "crisis" and not assigned and show_deadline:
 		var pulse := fmod(_time, 1.4) / 1.4
-		draw_arc(CENTER, 28.0 + pulse * 12.0, 0.0, TAU, 48, Color(RED, 1.0 - pulse), 3.0)
-
-	# Time ring: full when it just appeared, shrinking to the deadline.
-	if show_deadline:
-		draw_arc(CENTER, 28.0, 0.0, TAU, 48, Color(0.1, 0.1, 0.09, 0.85), 6.0)
-	if show_deadline and time_left > 0.0:
-		var ring := RED if time_left < 0.25 else (AMBER if not assigned else Color(0.55, 0.52, 0.45))
-		draw_arc(CENTER, 28.0, -PI / 2.0, -PI / 2.0 + TAU * time_left, 48, ring, 6.0)
-
-	match kind:
-		"plea":
-			draw_circle(CENTER, 22.0, fill)
-			if asker_texture != null and not assigned:
-				PortraitDraw.circle(self, CENTER, 20.0, asker_texture, asker_region)
-			else:
-				_glyph("?", INK)
-			draw_arc(CENTER, 22.0, 0.0, TAU, 40, INK, 2.5)
-		"conflict":
-			var diamond := PackedVector2Array([CENTER + Vector2(0, -25), CENTER + Vector2(25, 0), CENTER + Vector2(0, 25), CENTER + Vector2(-25, 0)])
-			draw_colored_polygon(diamond, fill)
-			draw_polyline(diamond + PackedVector2Array([diamond[0]]), CREAM, 3.0)
-			draw_line(CENTER + Vector2(-8, -8), CENTER + Vector2(8, 8), INK, 4.0)
-			draw_line(CENTER + Vector2(8, -8), CENTER + Vector2(-8, 8), INK, 4.0)
-		"crisis":
-			var triangle := PackedVector2Array([CENTER + Vector2(0, -27), CENTER + Vector2(28, 21), CENTER + Vector2(-28, 21)])
-			draw_colored_polygon(triangle, fill)
-			draw_polyline(triangle + PackedVector2Array([triangle[0]]), CREAM, 3.0)
-			_glyph("!", CREAM, 8.0)
-		"offer":
-			var square := Rect2(CENTER - Vector2(19, 19), Vector2(38, 38))
-			draw_rect(square, fill)
-			draw_rect(square, CREAM, false, 3.0)
-			_glyph("₽", CREAM)
-	if _hover:
-		draw_arc(CENTER, 33.0, 0.0, TAU, 48, CREAM, 2.0)
-
-	# Who is on it: a small face badge with a progress ring.
-	if assigned and worker_texture != null:
-		var badge := CENTER + Vector2(22, 22)
-		draw_circle(badge, 15.0, INK)
-		PortraitDraw.circle(self, badge, 12.0, worker_texture, worker_region)
-		draw_arc(badge, 14.0, 0.0, TAU, 32, Color(0.2, 0.2, 0.2), 3.0)
-		draw_arc(badge, 14.0, -PI / 2.0, -PI / 2.0 + TAU * work_fraction, 32, STEEL, 3.0)
-
-	# Stuck to the edge: an arrow showing which way it really is.
+		draw_rect(frame.grow(2 + pulse * 5), Color(RED, 0.6 * (1 - pulse)), false, 1.5)
 	if edge_direction != Vector2.ZERO:
-		var tip := CENTER + edge_direction * 46.0
+		var tip := CENTER + edge_direction * 42
 		var side := edge_direction.orthogonal()
-		draw_colored_polygon(PackedVector2Array([tip + edge_direction * 6.0, tip + side * 8.0, tip - side * 8.0]), CREAM)
-
-
-func _glyph(text: String, color: Color, lift: float = 0.0) -> void:
-	var font := OfficeTheme.BODY_FONT
-	draw_string(font, CENTER + Vector2(-20, 8.0 - lift), text, HORIZONTAL_ALIGNMENT_CENTER, 40.0, 24, color)
+		draw_colored_polygon(PackedVector2Array([tip + edge_direction * 6, tip + side * 6, tip - side * 6]), CREAM)

@@ -1196,3 +1196,31 @@ Approved on 2026-11-02: early all-metal cargo van with rounded roof/bonnet, rect
 ## Central buildings: 1997 commercial layers (2026-11-02)
 
 User-selected House of Culture direction: `art/source_images/culture_house/multiview-1997-v3.png`, with a cheap imported-electronics banner hung over part of the Soviet mosaic, video rental, event notices and modest wear. Original generated sheets and exact prompts are preserved beside the asset; no game integration or measured model approval. The user explicitly extended this mood to many central buildings: retain recognizable architecture beneath accumulated commercial banners, competing tenant signs, rented entrances and improvised advertising; public cultural use continues underneath. Vary coverage by building and preserve important silhouettes rather than blanketing every facade identically. User photo `art/source_images/culture_house/user-commercial-layer-reference.jpg` is a reference for commercial saturation and layering, not a verified 1997 photograph or a source of period-correct products. The game starts in August 1997: every depicted product, advertising medium and graphic treatment must fit that date; do not copy the photographed phones or other later technology into the game. This is user-approved concept direction, not a claim of live in-engine approval.
+
+## Living Chancellery UI: folder skin (2026-11-04)
+
+Original: `art/source_images/office_ui/work-folder-v1.png`. Prepared copy: `init/assets/ui/work_folder.png`. Built-in imagegen edit, using the map HUD concept as reference. The user requested implementation of that concept; this is its isolated folder material, not approval of the later live implementation. No text is baked in. Prepared separately with `uv run tools/optimize_asset.py art/source_images/office_ui/work-folder-v1.png --profile ui --output init/assets/ui/work_folder.png --approved`. The interior label also supplies paper grain to live panels via a Godot texture region.
+
+Prompt:
+
+> Extract and recreate only the small buff cardboard work folder UI button at the bottom right of the reference screenshot as a separate transparent game UI asset. Remove all text, icons, symbols and checkmarks. Orthographic straight-on 2D artwork: a shallow horizontal tan manila folder, projecting index tab at upper left, three cream sheet edges along the top, blank cream rectangular label across the lower front. Preserve the reference's tactile cardboard, subtle wear, contact shadows and clean edges. No parchment aging. Readable at 254 x 96 pixels. Approximate aspect 2.65:1, tightly framed with transparent padding for shadows. No city, map or other UI.
+
+### Incoming slips
+
+Built-in imagegen derivatives of the same selected map HUD reference. Prepared separately with the optimizer's `ui` profile: `memo-v2.png` to `init/assets/ui/memo.png`, and `newspaper-slip-v1.png` to `init/assets/ui/newspaper_slip.png`. Sources stay in `art/source_images/office_ui/`. Memo v1 is rejected: its alpha never reached zero. Memo v2 corrects transparency. Live labels remain native controls; the engine result is pending user review.
+
+Memo prompt: isolate a blank clean cream municipal memo with one small burgundy clip at upper left, a subtle second sheet and contact shadow; horizontal front-on paper slip, no map, text, icons or nameplate; center/right reserved for live type. Corrective edit: preserve the object and change only transparency, with solid paper and a clean transparent exterior except the narrow shadow.
+
+Newspaper prompt: isolate the miniature folded cream newspaper in the reference, with stacked page edges and a lower-right curl, fine printed rules and short strokes at the outer edges; no text, logos or icons; reserve the center for live masthead and subtitle. True transparent background, front-on horizontal UI object.
+
+### Newspaper production layers (2026-11-05)
+
+Approved concept: `art/source_images/office_ui/newspaper-front-concept-v2.png`.
+Built-in imagegen extracted blank paper to `newspaper-paper-v1.png`; exact prompt
+is in `newspaper-paper-v1.prompt.md` beside it. Prepared separately with
+`uv run tools/optimize_asset.py ... --profile ui --approved`: paper uses max-edge
+1536 for a full-height desktop sheet; the approved concept uses max-edge 2048
+as `init/assets/ui/newspaper_art_atlas.png` to preserve native photo/detail size.
+Only school-photo and television regions of that atlas are rendered in Godot;
+all newspaper text and rules are live. The complete concept is not a game panel.
+No bulk migration of existing artwork. Optimization reports are ignored locally.
