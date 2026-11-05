@@ -11,8 +11,10 @@ const GAZELLES := {
 const GAZELLE_PAINTS := ["gazelle_white", "gazelle_blue", "gazelle_sand"]
 
 
-static func create(vehicle_class: String, seed_value: int, at: Vector3) -> Node3D:
+static func create(vehicle_class: String, seed_value: int, at: Vector3, rare_car_model: String = "") -> Node3D:
 	var model := VehicleModels.model_for_class(vehicle_class, seed_value)
+	if vehicle_class == "car" and VehicleModels.AUTHORED_CAR_LENGTHS.has(rare_car_model):
+		model = rare_car_model
 	# Separate salted choices preserve existing class RNG and KamAZ selection.
 	if model in ["zil_flatbed", "zil_food"]:
 		var roll := posmod(hash("gazelle-share:%d" % seed_value), 10000)
