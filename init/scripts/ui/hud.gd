@@ -43,6 +43,12 @@ var play_log # PlayLog; optional, records card opens and closes for playtests
 var phase := "planning"
 
 var _root: Control
+var _top_bar: PanelContainer
+var _top_row: HBoxContainer
+var _day_label: Label
+var _clock_label: Label
+var _phase_detail: Label
+var _current_speed := 0.0
 var _date_label: Label
 var _phase_label: Label
 var _money_label: Label
@@ -176,23 +182,24 @@ func set_phase(new_phase: String) -> void:
 		_close_contacts_drawer()
 	match phase:
 		"planning":
-			_phase_label.text = "ПЛАНИРОВАНИЕ · ВРЕМЯ СТОИТ"
+			pass
 		"live":
-			_phase_label.text = "ЖИВАЯ НЕДЕЛЯ"
+			pass
 		"summary":
-			_phase_label.text = "ИТОГИ НЕДЕЛИ"
+			pass
 			_close_card(false)
 			_show_summary()
 		"week2":
-			_phase_label.text = "УТРО ПОНЕДЕЛЬНИКА"
+			pass
 	_refresh_all()
+	_layout_top_bar.call_deferred()
 
 
 func set_speed(speed: float) -> void:
+	_current_speed = speed
 	for value in _speed_buttons:
 		_speed_buttons[value].set_pressed_no_signal(is_equal_approx(value, speed))
-	if phase == "live":
-		_phase_label.text = "ПАУЗА" if is_zero_approx(speed) else "ЖИВАЯ НЕДЕЛЯ · ×%d" % speed
+	_refresh_time_status()
 
 
 const DAY_FULL_NAMES := ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
@@ -447,24 +454,46 @@ func _build_map_controls() -> void:
 
 func _build_top_bar() -> void:
 	var bar := _panel(OfficeTheme.PAPER)
+	_top_bar = bar
 	bar.theme = _paper_theme
-	bar.add_theme_stylebox_override("panel", OfficeTheme.paper(12))
+	var stock := OfficeTheme.paper(12)
+	stock.set_border_width_all(0)
+	stock.shadow_size = 2
+	bar.add_theme_stylebox_override("panel", stock)
 	_decorate_paper(bar)
-	bar.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	_root.add_child(bar)
 	var row := HBoxContainer.new()
+	_top_row = row
 	row.add_theme_constant_override("separation", 16)
 	row.custom_minimum_size.y = 44
 	bar.add_child(row)
-	_date_label = _heading("", 22, OfficeTheme.BURGUNDY)
+	var calendar := VBoxContainer.new()
+	calendar.add_theme_constant_override("separation", 0)
+	calendar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(calendar)
+	_day_label = _heading("", 14)
+	_day_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	calendar.add_child(_day_label)
+	_date_label = _heading("", 21, OfficeTheme.BURGUNDY)
 	_date_label.autowrap_mode = TextServer.AUTOWRAP_OFF
-	_date_label.size_flags_vertical = Control.SIZE_FILL
-	_date_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	row.add_child(_date_label)
+	calendar.add_child(_date_label)
 	row.add_child(VSeparator.new())
-	_phase_label = _label("", 13, OfficeTheme.SECONDARY)
-	_phase_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	row.add_child(_phase_label)
+	_clock_label = _heading("", 24, OfficeTheme.BURGUNDY)
+	_clock_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	_clock_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	row.add_child(_clock_label)
+	row.add_child(VSeparator.new())
+	var status := VBoxContainer.new()
+	status.add_theme_constant_override("separation", 2)
+	status.custom_minimum_size.x = 240
+	status.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(status)
+	_phase_label = _heading("", 16, OfficeTheme.BURGUNDY)
+	_phase_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	status.add_child(_phase_label)
+	_phase_detail = _heading("", 14)
+	_phase_detail.autowrap_mode = TextServer.AUTOWRAP_OFF
+	status.add_child(_phase_detail)
 	var spacer := Control.new()
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(spacer)
@@ -486,6 +515,7 @@ func _build_top_bar() -> void:
 	for key in Settings.SEASONS:
 		var button := Button.new()
 		button.text = SeasonLabels[key]
+		_style_strip_button(button)
 		button.toggle_mode = true
 		button.button_pressed = Settings.season == key
 		button.tooltip_text = "Карта: " + SeasonLabels[key].to_lower() + " (перезапустит неделю)"
@@ -501,6 +531,7 @@ func _build_top_bar() -> void:
 	for speed in Settings.TIME_SPEEDS:
 		var button := Button.new()
 		button.text = "Ⅱ" if speed == 0.0 else "×%d" % speed
+		_style_strip_button(button)
 		button.toggle_mode = true
 		button.button_group = speed_group
 		button.custom_minimum_size = Vector2(46, 44)
@@ -515,12 +546,16 @@ func _build_top_bar() -> void:
 	var restart := Button.new()
 	restart.name = "RestartSimulation"
 	restart.text = "Заново"
+	_style_strip_button(restart)
 	restart.tooltip_text = "Начать с первого понедельника, 06:00. Текущий прогресс будет сброшен."
 	restart.focus_mode = Control.FOCUS_NONE
 	restart.pressed.connect(func():
 		restart.disabled = true
 		restart_pressed.emit())
 	row.add_child(restart)
+	get_viewport().size_changed.connect(_layout_top_bar)
+	_top_row.minimum_size_changed.connect(func(): _layout_top_bar.call_deferred())
+	_layout_top_bar.call_deferred()
 	# The folder is a map control, independent of the time controls above.
 	_tasks_button = Button.new()
 	_tasks_button.text = ""
@@ -1056,18 +1091,15 @@ func _refresh_all() -> void:
 
 
 func _refresh_clock() -> void:
-	_date_label.text = "%s · %s" % [sim.date_text(), sim.clock_text()]
+	var date: Vector2i = sim.day_date(sim.day_index())
+	_day_label.text = DAY_FULL_NAMES[sim.day_index()].to_upper()
+	_date_label.text = "%d %s %d" % [date.x, MONTHS_GENITIVE[date.y - 1].to_upper(), Week1.YEAR]
+	_clock_label.text = sim.clock_text()
+	_refresh_time_status()
 	if _boss_notice_button != null:
 		_boss_notice_button.visible = sim.flags.get("boss_briefing_received", false)
 	_tasks_button.visible = phase in ["planning", "live"] and sim.flags.get("boss_briefing_received", false)
 	_refresh_paperwork()
-	if phase == "live" and not _speed_buttons[0.0].button_pressed:
-		if sim._day_closing:
-			_phase_label.text = "ОВЕРТАЙМ · ЗАВЕРШИТЬ ДЕЛА И ДОМОЙ"
-		elif not sim.at_work:
-			_phase_label.text = "УТРО · К 08:00 В АДМИНИСТРАЦИЮ"
-		elif sim.clock_hour() >= Week1.WORK_END_HOUR:
-			_phase_label.text = "ПОСЛЕ РАБОТЫ · ДО 22:00"
 	for id in _contact_cards:
 		_contact_cards[id].visible = sim.actor_available(id) and sim.actors[id]["state"] in ["travel", "work", "driving"]
 		_contact_drawer_status[id].text = sim.actor_status_text(id)
@@ -2058,3 +2090,67 @@ func show_newspaper() -> void:
 		return
 	edition["date"] = sim.date_text(0)
 	_show_important_notice(edition)
+
+
+# Shared scale preference is introduced on the header first; map anchors remain
+# in viewport coordinates. Other HUD regions must opt in after layout review.
+func set_interface_scale(value: float) -> void:
+	Settings.ui_scale = clampf(value, 0.85, 1.15)
+	_layout_top_bar()
+
+func _layout_top_bar() -> void:
+	if not is_instance_valid(_top_bar):
+		return
+	var viewport_width := get_viewport().get_visible_rect().size.x
+	var required := maxf(_top_row.get_combined_minimum_size().x + 24, 1)
+	var factor := minf(Settings.ui_scale, viewport_width / required)
+	_top_bar.scale = Vector2.ONE * factor
+	_top_bar.position = Vector2.ZERO
+	_top_bar.size = Vector2(viewport_width / factor, 68)
+
+func _refresh_time_status() -> void:
+	if not is_instance_valid(_phase_detail):
+		return
+	var title := "ПЛАНИРОВАНИЕ"
+	var detail := "Время остановлено"
+	if phase == "summary":
+		title = "ИТОГИ НЕДЕЛИ"
+	elif phase == "week2":
+		title = "УТРО ПОНЕДЕЛЬНИКА"
+	elif phase == "live":
+		if sim._day_closing:
+			if sim.actors["me"].get("commute_target", "") == "dormitory":
+				title = "ДОРОГА ДОМОЙ"
+				detail = "День завершится по прибытии"
+			else:
+				title = "СВЕРХУРОЧНО"
+				detail = "Завершаете начатое дело"
+		elif not sim.at_work:
+			title = "ДОРОГА НА РАБОТУ" if sim.actors["me"].get("commute_target", "") == "office" else "УТРО"
+			detail = "К 08:00 в администрацию"
+		elif sim.clock_hour() >= Week1.WORK_END_HOUR:
+			title = "ПОСЛЕ РАБОТЫ"
+			detail = "Личное время · до 22:00"
+		else:
+			title = "РАБОЧЕЕ ВРЕМЯ"
+			detail = "До 18:00"
+		if is_zero_approx(_current_speed):
+			detail = "Пауза · " + detail.left(1).to_lower() + detail.substr(1)
+	_phase_label.text = title
+	_phase_detail.text = detail
+
+func _style_strip_button(button: Button) -> void:
+	for state in ["normal", "hover", "pressed", "disabled"]:
+		var fill := Color(0, 0, 0, 0)
+		if state == "hover":
+			fill = Color(OfficeTheme.BURGUNDY, 0.10)
+		elif state == "pressed":
+			fill = OfficeTheme.BURGUNDY
+		var style := OfficeTheme.box(fill, OfficeTheme.BURGUNDY, 10)
+		style.set_border_width_all(0)
+		button.add_theme_stylebox_override(state, style)
+		var color := OfficeTheme.LIGHT_TEXT if state == "pressed" else OfficeTheme.TEXT
+		if state == "disabled":
+			color = OfficeTheme.SECONDARY
+		button.add_theme_color_override("font_color" if state == "normal" else "font_%s_color" % state, color)
+	button.add_theme_color_override("font_hover_pressed_color", OfficeTheme.LIGHT_TEXT)

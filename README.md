@@ -415,3 +415,7 @@ Configurations differ, so this table describes coverage rather than an isolated 
 
 - Learn Godot through small prototypes, then gradually expand the game's systems.
 - Explain new Godot concepts through familiar Software Engineering ideas and apply them in the project.
+
+### Calendar header and interface scaling
+
+The calendar strip separates weekday/date, clock and activity status. Working hours, evening, overtime and the trip home remain identifiable while paused. Header buttons use flat printed states. `Settings.ui_scale` (0.85–1.15) is currently applied only to this strip through `hud.set_interface_scale()`, with a width-fit safeguard; global HUD scaling and a settings slider are not implemented. Graphical review: `--autoplay --only=header --turbo`.

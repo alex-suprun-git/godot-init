@@ -76,3 +76,32 @@ Project: C:\Users\alexe\.codex\worktrees\83a5\godot-init\init
 User correction, 2026-11-05: newspaper masthead must use upright letters. Removed the FontVariation shear transform; verified with the newspaper autoplay capture in .local/newspaper-review/upright/press_week1_front.png. Review process exited normally.
 
 User spacing revision: inset the printed composition uniformly to 97.5% around the sheet centre; total printed type size is 95% of the previous version. Paper and external dismiss button retain their size. Visually checked the newspaper autoplay capture in .local/newspaper-review/margins/press_week1_front.png; run exited normally.
+
+## Navigation refinement candidate — 2026-11-06
+
+User requested navigation and interface buttons be updated within existing
+PR #92. Current scope: top calendar/phase/control strip, Contacts launcher and
+bottom map navigation, with consistent hover/pressed/disabled states later.
+Built-in imagegen mockup `art/source_images/office_ui/navigation-concept-v1.png`
+uses the fresh actual office autoplay frame at
+`.local/navigation-review/baseline/3_planning.png`. Candidate shows a two-line
+calendar/phase header, burgundy-spined contact index and folded-plan navigation
+with flat ink controls. This is a generated proposal, not an engine result;
+minor incidental map/generated details are not implementation requirements.
+Await user approval before changing game UI. Baseline office autoplay completed
+and exited normally. Existing dirty import metadata/project settings untouched.
+
+### Calendar header implementation — 2026-11-06
+
+User accepted the header direction and asked to begin with time states. Header
+now separates weekday/date, actual clock and two-line activity state. Pausing
+does not erase overtime/homeward status. Season/speed/restart controls use flat
+paper styling with hover, pressed, disabled and inherited keyboard focus states.
+`Settings.ui_scale` and `hud.set_interface_scale(0.85..1.15)` currently apply ONLY
+to the header, with a width-fit safeguard. This is groundwork for a future
+settings control, not completed global HUD scaling; map markers remain unchanged.
+Graphical --only=header --turbo verified planning, real overtime, homeward state
+and header scale bounds. Final frame: .local/navigation-review/header/header_planning.png.
+Initial clock wrapping was corrected by keeping all calendar metadata on one line.
+Contact-index launcher and folded-plan navigation are still the next stage.
+User also requested merging latest origin/main into this feature branch.

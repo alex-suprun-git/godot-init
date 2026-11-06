@@ -16,3 +16,6 @@ static var season := "summer"
 # streets. F2 switches between them while playing; --camera=front|iso at start.
 const CAMERAS := ["iso", "front"]
 static var camera_mode := "iso"
+
+# Header scale preference; remaining HUD regions will opt in after layout review.
+static var ui_scale := 1.0

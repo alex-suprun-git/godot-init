@@ -7,6 +7,7 @@
 extends Node
 
 const SCENARIOS := {
+	"header": "_run_header_review", # calendar, paused overtime and scale fit
 	"press": "_run_press_review", # authored front page and actual next-week retrospective
 	"ui-motion": "_run_ui_motion", # left drawer motion, availability and quest pictograms
 	"newspaper": "_run_newspaper_review", # front-page layout only
@@ -935,3 +936,32 @@ func _run_press_review() -> void:
 	main.hud._close_important_notice()
 	await _wait(0.1)
 	print("Press dismissed: prototype overlay visible=", is_instance_valid(main.hud._overlay_panel) and main.hud._overlay_panel.visible)
+
+
+func _run_header_review() -> void:
+	_dismiss_briefing()
+	main.hud.set_phase("planning")
+	await _wait(0.3)
+	await _shot("header_planning")
+	for value in [0.85, 1.15]:
+		main.hud.set_interface_scale(value)
+		await _wait(0.2)
+		print("Header requested scale=", value, " effective=", main.hud._top_bar.scale.x, " width=", main.hud._top_bar.size.x * main.hud._top_bar.scale.x)
+	main.hud.set_interface_scale(1.0)
+	main.start_week()
+	main.set_speed(0.0)
+	main.sim.advance(2.0)
+	_dismiss_briefing()
+	main.sim.advance(13.5)
+	main.sim.choose("hot_water", "go_myself")
+	main.sim.advance(1.0)
+	main.hud._close_card(false)
+	await _wait(0.3)
+	print("Header overtime: ", main.hud._phase_label.text, " / ", main.hud._phase_detail.text)
+	await _shot("header_overtime")
+	for step in 200:
+		if main.sim.actors["me"].get("commute_target", "") == "dormitory":
+			break
+		main.sim.advance(0.02)
+	await _wait(0.3)
+	print("Header return home: ", main.hud._phase_label.text, " / ", main.hud._phase_detail.text)
