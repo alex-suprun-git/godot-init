@@ -14,10 +14,10 @@ const COVER := Color("b89c82")
 const EDGE := Color("baa18b")
 const LINK := Color("77564d")
 
-static func heading_font(weight: float = 500.0) -> FontVariation:
+static func heading_font(weight: float = 700.0) -> FontVariation:
 	var font := FontVariation.new()
 	font.base_font = TITLE_FONT
-	font.variation_opentype = {"wght": weight}
+	font.variation_opentype = {2003265652: weight}
 	return font
 
 
@@ -35,19 +35,26 @@ static func make_theme(on_paper: bool = false) -> Theme:
 	var theme := Theme.new()
 	theme.default_font = BODY_FONT
 	theme.default_font_size = 16
+	if on_paper:
+		theme.set_font("font", "Button", heading_font(600.0))
 	var foreground := TEXT if on_paper else LIGHT_TEXT
 	var muted := SECONDARY if on_paper else LIGHT_MUTED
 	var surface := PAPER if on_paper else GRAPHITE
 	for type in ["Label", "Button", "TabContainer"]:
 		theme.set_color("font_color", type, foreground)
 	theme.set_color("font_hover_color", "Button", foreground)
-	theme.set_color("font_pressed_color", "Button", foreground)
+	theme.set_color("font_pressed_color", "Button", LIGHT_TEXT)
 	theme.set_color("font_focus_color", "Button", foreground)
-	theme.set_color("font_hover_pressed_color", "Button", foreground)
+	theme.set_color("font_hover_pressed_color", "Button", LIGHT_TEXT)
 	theme.set_color("font_disabled_color", "Button", muted)
-	theme.set_stylebox("normal", "Button", box(surface, EDGE, 10))
+	var normal := box(surface, SECONDARY.lightened(0.28) if on_paper else EDGE, 10)
+	normal.set_corner_radius_all(3)
+	normal.shadow_color = Color(0.12, 0.08, 0.06, 0.18)
+	normal.shadow_size = 2
+	normal.shadow_offset = Vector2(0, 1)
+	theme.set_stylebox("normal", "Button", normal)
 	theme.set_stylebox("hover", "Button", box(surface.lightened(0.07), BURGUNDY, 10))
-	theme.set_stylebox("pressed", "Button", box(COVER if on_paper else BURGUNDY, BURGUNDY, 10))
+	theme.set_stylebox("pressed", "Button", box(BURGUNDY, BURGUNDY, 10))
 	theme.set_stylebox("disabled", "Button", box(surface.darkened(0.04), EDGE.darkened(0.1), 10))
 	var focus := box(Color(0, 0, 0, 0), COVER, 0)
 	focus.set_border_width_all(2)
@@ -78,3 +85,13 @@ static func make_theme(on_paper: bool = false) -> Theme:
 	theme.set_stylebox("background", "ProgressBar", box(GRAPHITE, GRAPHITE, 0))
 	theme.set_stylebox("fill", "ProgressBar", box(COVER, COVER, 0))
 	return theme
+
+
+# A clean sheet with a fine cut edge and a small contact shadow.
+static func paper(margin: int = 12, fill: Color = PAPER) -> StyleBoxFlat:
+	var style := box(fill, EDGE, margin)
+	style.set_corner_radius_all(2)
+	style.shadow_color = Color(0.12, 0.08, 0.06, 0.28)
+	style.shadow_size = 4
+	style.shadow_offset = Vector2(1, 3)
+	return style

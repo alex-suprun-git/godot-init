@@ -145,6 +145,7 @@ var _camera_target := DEFAULT_TARGET
 var _camera_goal := DEFAULT_TARGET
 var _zoom := ZOOM_DEFAULT
 var _dragging := false
+var _ui_input_blocked := false
 var _tokens := {} # actor id -> Node3D
 var _overlays := {} # "lot:name" -> Node3D
 var _lot_states := {} # lot -> {state -> Node3D}
@@ -252,6 +253,8 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _ui_input_blocked:
+		return
 	if event is InputEventMagnifyGesture:
 		zoom_by(1.0 / maxf(event.factor, 0.01))
 		get_viewport().set_input_as_handled()
@@ -355,6 +358,8 @@ func show_overview() -> void:
 
 
 func _pan_with_keys(delta: float) -> void:
+	if _ui_input_blocked:
+		return
 	var direction := Vector3.ZERO
 	if Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP):
 		direction += _view_forward()
@@ -1676,3 +1681,11 @@ func _near_traffic_light(at: Vector2) -> bool:
 		if at.distance_to(spot) < 8.0:
 			return true
 	return false
+
+
+# Modal ownership is explicit; wheel bubbling and held keys cannot move the map.
+func set_ui_input_blocked(blocked: bool) -> void:
+	if blocked and not _ui_input_blocked:
+		_dragging = false
+		_camera_goal = _camera_target
+	_ui_input_blocked = blocked

@@ -1,0 +1,5 @@
+# Newspaper paper extraction
+
+Built-in imagegen, approved concept `newspaper-front-concept-v2.png` as input. Production material derivative; text and rules remain live in Godot.
+
+Extract only the blank newspaper paper sheet from this approved game UI concept into a standalone transparent PNG game asset. Preserve the approved grey-ivory paper tone, fine worn fibrous texture, thin irregular edges, subtle fold marks, slightly curled top-right corner and contact shadow. Remove ALL text, ALL ink/rules/borders, photograph, advertisement and illustration: the entire interior must be uninterrupted blank paper matching the original. Remove ALL city/map/HUD/button/background. True transparent exterior, solid opaque paper interior. Front-facing flat rectangular sheet, same 1.285 width-to-height proportions as original sheet. No perspective or rotation. Tight canvas with about 12 px transparent shadow padding around paper. Do not age it more or change the material. This is a production extraction of an already approved material; blank interior for native live text.

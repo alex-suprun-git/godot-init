@@ -35,6 +35,7 @@ var _salary_months := {} # Calendar month keys already paid in this campaign.
 var rent_debt := 0
 var paperwork_hours := 0.0 # Accumulated across days; reset only for a new week.
 var week := 1
+var press_history := {} # Completed-week public facts; no private choices or money.
 var money: int = Week1.START_MONEY
 var traces := 0
 var factions := {}
@@ -448,6 +449,13 @@ func choose(request_id: String, option_id: String) -> void:
 
 
 func begin_next_week() -> Array[String]:
+	press_history[week] = {
+		"recorded": true,
+		"water_restored": bool(flags.get("hot_water", false)),
+		"picket": overlay_on("block5", "picket"),
+		"boiler_repairs": next_week.get("boiler", lot_states.get("boiler", "")) == "repairing",
+		"coal_loss": bool(flags.get("coal_stolen", false)),
+	}
 	var changes: Array[String] = []
 	week += 1
 	t = 0.0
