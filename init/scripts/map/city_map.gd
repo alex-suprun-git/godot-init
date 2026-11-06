@@ -38,7 +38,6 @@ const PANEL_TINTS := [
 	Color(0.84, 0.97, 0.84), Color(1.0, 0.84, 0.78), Color(0.96, 0.96, 0.9),
 ]
 const MARKET_TENT := preload("res://assets/sprites/market_tent.png")
-const CAR_VOLGA := preload("res://assets/sprites/car_volga_black_v3.png")
 const SCAFFOLDING := preload("res://assets/sprites/scaffolding.png")
 const PEOPLE := [
 	{"texture": preload("res://assets/sprites/person_walk_man.png"), "width": PropDimensions.PEOPLE_WIDTHS["person_walk_man"]},

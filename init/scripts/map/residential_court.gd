@@ -50,7 +50,10 @@ func build(district_builder) -> void:
 	var lada_at := origin + Vector2(25, -55) * SPACING
 	map._vehicle("lada", map._ground(lada_at) + Vector3.UP * 0.075, 4.3, "x", layers["Furniture"])
 	map._occupy(lada_at, Vector2(5, 2.2))
-	_prop("car_volga_black_v3", Vector2(38, -55), 4.8, Vector2(5, 2), "x")
+	var volga_at := origin + Vector2(38, -55) * SPACING
+	map._vehicle("volga", map._ground(volga_at) + Vector3.UP * 0.075,
+		map.VehicleModels.map_length("volga"), "x", layers["Furniture"], map.VehicleModels.PAINT_BLACK)
+	map._occupy(volga_at, Vector2(5, 2))
 	_surface(Vector2(46, 64), Vector2(10, 7), "courtyard")
 	for x in [43.0, 46.0, 49.0]:
 		_box(Vector3(1.8, 1.3, 1.6), Vector2(x, 64), 0.65, Color("586759"))
