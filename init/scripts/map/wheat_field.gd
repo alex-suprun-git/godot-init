@@ -15,8 +15,8 @@ const TRACK_WIDTH := 0.36
 
 func build(map, lot: Dictionary) -> void:
 	var site: Rect2 = lot["rect"]
-	var soil := site.grow(-VERGE)
-	var crop := soil.grow(-HEADLAND)
+	var soil := site.grow(-float(lot.get("verge", VERGE)))
+	var crop := soil.grow(-float(lot.get("headland", HEADLAND)))
 	map._occupy(crop.get_center(), crop.size)
 	map._ground_quad(soil.get_center(), soil.size, 0.035, map._season["dirt"], 8.0)
 	if Settings.season != "summer":

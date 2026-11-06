@@ -3,6 +3,16 @@ extends RefCounted
 
 const Layout = preload("res://scripts/data/district_layout.gd")
 const Settings = preload("res://scripts/data/settings.gd")
+const Vegetation = preload("res://scripts/map/vegetation_models.gd")
+# Overlapping groves keep the outskirts irregular; road/lot clearances are applied below.
+const OUTSKIRT_GROVES := [
+	{"center": Vector2(-580, -265), "radius": Vector2(140, 65)}, # NW, beyond the highway
+	{"center": Vector2(-648, 125), "radius": Vector2(76, 205)}, # extend the western forest
+	{"center": Vector2(-560, 350), "radius": Vector2(145, 38)}, # west of the station
+	{"center": Vector2(-350, 525), "radius": Vector2(365, 88)}, # beyond the southern rails
+	{"center": Vector2(230, 530), "radius": Vector2(240, 90)},
+	{"center": Vector2(490, 100), "radius": Vector2(55, 245)}, # beyond the eastern rail embankment
+]
 var map
 var builder
 var root: Node3D
@@ -18,6 +28,8 @@ func build(district_builder) -> void:
 	map.add_child(root)
 	_pond()
 	_forest()
+	_outskirts()
+	_wild_bank_shrubs()
 
 
 func _pond() -> void:
@@ -85,6 +97,56 @@ func _forest() -> void:
 	_box(Vector3(3.5, 0.5, 0.12), Vector3(clearing.x - 8, 1, clearing.y + 8.3), Color("82735a"))
 	for dx in [-1.2, 1.2]:
 		_box(Vector3(0.16, 0.6, 0.5), Vector3(clearing.x - 8 + dx, 0.3, clearing.y + 8), Color("535c55"))
+
+
+func _outskirts() -> void:
+	# Independent placement/appearance RNG leaves existing district trees unchanged.
+	var scatter := RandomNumberGenerator.new()
+	scatter.seed = 6111997
+	var trees := Node3D.new()
+	trees.name = "OutskirtsForest"
+	root.add_child(trees)
+	for x in range(-720, 550, 14):
+		for z in range(-325, 625, 14):
+			var at := Vector2(x, z) + Vector2(scatter.randf_range(-4, 4), scatter.randf_range(-4, 4))
+			var edge := INF
+			for grove in OUTSKIRT_GROVES:
+				var offset: Vector2 = (at - grove["center"]) / grove["radius"]
+				edge = minf(edge, offset.length_squared())
+			if edge > scatter.randf_range(0.85, 1.12):
+				continue
+			# The original grove already owns this canopy and its event clearing.
+			var original_edge := pow((at.x + 563) / 79.0, 2) + pow((at.y - 126) / 174.0, 2)
+			if (at.x >= -632 and at.x <= -484 and at.y >= -38 and at.y <= 292 and original_edge < 1.2) or map._is_occupied(at, 7.0):
+				continue
+			var in_lot := false
+			for lot in Layout.LOTS.values():
+				var rect: Rect2 = lot["rect"]
+				if rect.grow(7.0).has_point(at):
+					in_lot = true
+					break
+			if in_lot:
+				continue
+			var poplar := scatter.randf() < 0.18
+			var id := "park_poplar" if poplar else "park_deciduous_tree"
+			var height := scatter.randf_range(13, 18) if poplar else scatter.randf_range(9, 13)
+			var tree := Vegetation.create(id, map._ground(at))
+			tree.scale = Vector3.ONE * height / float(Vegetation.HEIGHTS[id])
+			tree.rotation.y = scatter.randf_range(0, TAU)
+			trees.add_child(tree)
+
+
+func _wild_bank_shrubs() -> void:
+	var scatter := RandomNumberGenerator.new()
+	scatter.seed = 3301997
+	var shrubs := Node3D.new()
+	shrubs.name = "WildBankShrubs"
+	root.add_child(shrubs)
+	for x in range(-780, -462, 17):
+		var shrub := Vegetation.create("park_shrub", Vector3(x + scatter.randf_range(-4, 4), 0.03, -327 + scatter.randf_range(-1.5, 2.0)))
+		shrub.scale = Vector3.ONE * scatter.randf_range(0.7, 1.3)
+		shrub.rotation.y = scatter.randf_range(0, TAU)
+		shrubs.add_child(shrub)
 
 
 func _box(size: Vector3, at: Vector3, color: Color) -> void:

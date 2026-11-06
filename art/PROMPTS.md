@@ -1,5 +1,9 @@
 # Image Prompts: First Week
 
+## Dormitory model (2026-11-06)
+
+The user authorized the existing `district_visual_pack/dormitory-v1.png` direction for a four-storey L-shaped Blender model. The game now uses the original mesh and an analytically generated, separately optimizer-prepared silicate-brick albedo; no new ImageGen artwork. Sources, build stages, actual Godot inspection and pending visual approval: `art/models/dormitory/README.md`.
+
 ## Luxury and rural vehicle projections (2026-11-04)
 
 Post-checkpoint sedan sheet: `art/source_images/vehicle_trio/luxury-sedan-v2.png`. Built-in ImageGen with the actual RAF sheet as layout/style reference and a real W140 photograph as shape reference. Six views, neutral grey grid, dark burgundy; full prompt and input roles adjacent. Proposal awaiting review, no 3D or game changes.
