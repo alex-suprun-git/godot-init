@@ -45,6 +45,31 @@ leaving a generic trapezoid under detailed trim.
 - Compare bumper height, depth, endcaps and guards against the reference as a
   group. Reducing just the chrome beam can leave massive surrounding blocks.
 
+## Recover from a rejected silhouette
+
+The 2026-11-04 SUV iterations exposed two distinct failures: a convincing generated reference was reduced to a generic box/loft, and later detail was added without fixing the silhouette. Do not use more fittings or higher triangle counts as evidence that a rejected shape has improved.
+
+- Preserve the last export for comparison. Compare its side/front/top silhouette directly with the actual source sheet or prototype photo. Identify a small set of discrepancies (for example hood rake, cabin taper, rear-wall rake, glass height, wheel exposure and fender shape) and change the shared landmarks/surfaces that cause them.
+- Resolve the main masses before finishing. Use a cheap matched before/after engine view to inspect the changed silhouette; retain camera, world scale and lighting. A favourable new camera cannot validate the revision.
+- Keep physical dimensions separate from game presentation. Restore embedded scale when comparing real-size assets; use each approved model's actual map factor for the game-scale comparison. Label any proposed factor for a new asset. A real-size car beside a reduced RAF/PAZ/ZIL is a misleading comparison.
+- Resolve generated projection inconsistencies rather than blindly tracing them. Use real prototype dimensions for the chosen variant and tyre/track settings; use the sheet to guide coherent form. Record ambiguities such as spare-wheel length conventions. Do not claim that arbitrary landmark adjustments are factory measurements.
+
+## Preserve vehicle identity within the shared style
+
+The sedan/Volga comparison on 2026-11-04 showed that matching overall length, width and height did not preserve W140-like identity: both read as a generic long three-box sedan, while the new car's cabin/glass was more compressed. In that construction, window insets consumed about 0.135 m of a roughly 0.405 m cabin height, leaving only about 0.27 m of glass. Those numbers describe that failed construction, not recommended dimensions.
+
+Use approved fleet assets as finish/material/readability references, not as a universal cabin/body template. Compare the new model against its own prototype/sheet as well as the fleet benchmark. Inspect actual glass openings after seals/insets, pillar thickness, roof crown, belt/deck heights, shoulder sections and front/rear overhangs. Check their ratios in side and front views: bounding-box dimensions alone cannot establish shape accuracy. If changing colour, lamps and grille is doing most of the identity work, revisit the large surfaces before adding detail. Do not claim a new vehicle meets the benchmark merely because it has more geometry or a longer fittings list.
+
+## Attach fittings to the revised shell
+
+The 2026-11-04 SUV's headlamp/front panel floated because the shell ended behind separately positioned face geometry. Three-quarter reviews missed the visible side gap. Similar independent offsets can detach bumper corners, lens housings, indicators and trim after a body edit.
+
+- Define a shared body/end surface or attachment frame. Derive housing backs, bumper returns and mounting points from that surface; derive lens faces from their housings. Do not maintain unrelated world-coordinate offsets for these layers.
+- Build the visible connecting geometry: rear/side walls of lamp pods, the panel between face and shell, and bumper returns or brackets where the reference exposes them. Joining disconnected objects into one mesh does not fill the gap. Separate meshes are fine when their actual geometry seats correctly.
+- Check each attachment's inward face against the local shell, accounting for curved/tapered corners and rolled edges. Use a deliberate seated overlap or a modelled recess; reserve a small outward offset for surface trim and lenses. Do not hide a centimetre-scale gap with a thicker decorative surround.
+- After changes to length, nose slope, bumper depth or panel curvature, recompute those attachments together. Inspect a strict side and top view of the actual export in addition to the usual three-quarter view. Look specifically for daylight behind lamps, hovering indicators, open gaps behind bumper corners, buried lenses and doubled/floating trim. A broad overview alone is insufficient.
+- Treat a visible disconnected fitting as an unfinished model, not a lighting issue or an acceptable simplification at map scale. Fix the attachment before further decorative work or a completion claim. These are construction/visual checks, not a request to add automated tests.
+
 ## Spend geometry on the silhouette
 
 Choose budgets for the asset's screen size and number of visible instances.

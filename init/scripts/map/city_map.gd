@@ -154,6 +154,11 @@ var _crosswalk_material: ShaderMaterial
 var _road_paint_material: ShaderMaterial
 var _lot_labels: Node3D
 var _ambient: AmbientLife # Background pedestrians and cars wandering the road graph.
+var profile_ambient := false
+var profile_hide_ambient := false
+var profile_skip_ambient := false
+var profile_step_ms := 0.0
+var profile_visual_ms := 0.0
 var _traffic_light_positions := PackedVector2Array()
 var _hero_car: Node3D # The administration car; shown while you ride with Tolik.
 var _token_discs := {} # actor id -> disc under the token, hidden while riding.
@@ -1191,12 +1196,15 @@ func _build_ambient() -> void:
 		agent["visual"] = sprite
 		agent["lift"] = sprite.position.y - _ground(agent["pos"]).y
 		base_walkers.append(agent)
+	var rare_car_slots := ["luxury_sedan", "luxury_suv", "rural_4x4"]
 	for i in AMBIENT_CARS:
 		var agent := _ambient.add(true, look.randf_range(7.0, 12.0))
 		if agent.is_empty():
 			break
 		var seed_value := look.randi()
-		var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(agent["pos"]) + Vector3.UP * 0.14)
+		if agent["class"] == "car" and not rare_car_slots.is_empty():
+			agent["rare_car_model"] = rare_car_slots.pop_front()
+		var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(agent["pos"]) + Vector3.UP * 0.14, agent.get("rare_car_model", ""))
 		add_child(car)
 		agent["visual"] = car
 	# Daytime reserve, hidden outside the centre/housing or 08:00–18:00.
@@ -1213,8 +1221,14 @@ func _build_ambient() -> void:
 
 
 func _move_ambient(delta: float) -> void:
+	if profile_skip_ambient:
+		profile_step_ms = 0.0
+		profile_visual_ms = 0.0
+		return
+	var started := Time.get_ticks_usec() if profile_ambient else 0
 	_ambient.hour = sim.clock_hour()
 	_ambient.step(delta)
+	var stepped := Time.get_ticks_usec() if profile_ambient else 0
 	if OS.get_cmdline_user_args().has("--traffic-debug"):
 		_print_traffic_stats(delta)
 	var right := _view_right()
@@ -1225,16 +1239,19 @@ func _move_ambient(delta: float) -> void:
 			if agent["respawned"]:
 				_respawn_car(agent)
 			var car: Node3D = agent["visual"]
-			car.visible = agent["visible"]
+			car.visible = agent["visible"] and not profile_hide_ambient
 			car.position = Vector3(at.x, _ground(at).y + 0.14, at.y)
 			car.rotation.y = atan2(heading.x, heading.y)
 			car.rotation.x = _overpass_pitch(at, heading)
 		else:
 			var sprite: Sprite3D = agent["visual"]
-			sprite.visible = agent["visible"]
+			sprite.visible = agent["visible"] and not profile_hide_ambient
 			sprite.position = _ground(at) + Vector3.UP * float(agent["lift"])
 			# Face the way they walk as seen on screen.
 			sprite.flip_h = heading.x * right.x + heading.y * right.z < 0.0
+	if profile_ambient:
+		profile_step_ms = (stepped - started) / 1000.0
+		profile_visual_ms = (Time.get_ticks_usec() - stepped) / 1000.0
 
 
 # A slot that re-entered the map gets a new car: the class follows the entry road's fleet.
@@ -1243,7 +1260,7 @@ func _respawn_car(agent: Dictionary) -> void:
 	agent["visual"].queue_free()
 	var seed_value := _traffic_look.randi()
 	var at: Vector2 = agent["pos"]
-	var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(at) + Vector3.UP * 0.14)
+	var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(at) + Vector3.UP * 0.14, agent.get("rare_car_model", ""))
 	add_child(car)
 	var heading: Vector2 = agent["heading"]
 	car.rotation.y = atan2(heading.x, heading.y)
