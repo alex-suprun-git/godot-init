@@ -13,6 +13,7 @@ const CivicRoofs = preload("res://scripts/map/civic_roofs.gd")
 
 const YARD_ROAD_TINT := Color(1.18, 1.12, 1.02)
 const WATER_LEVEL := -3.5 # River bed depth: deep enough for a barge to pass under the bridges.
+const WEST_QUAY_START := -450.0
 const VILLAGE_SETBACK := 4.0
 const FENCE_INSET := 0.6
 const FENCE_STEP := 3.0
@@ -64,7 +65,8 @@ func _build_ground() -> void:
 	var wall_color := Color("6c685a")
 	var wall_height := -WATER_LEVEL + 0.1
 	for z in [north_edge, south_edge]:
-		map._box(Vector3(2600, wall_height, 0.4), Vector3(0, WATER_LEVEL + wall_height / 2.0, z), wall_color)
+		var start_x := WEST_QUAY_START if z == south_edge else -1300.0
+		map._box(Vector3(1300.0 - start_x, wall_height, 0.4), Vector3((start_x + 1300.0) / 2.0, WATER_LEVEL + wall_height / 2.0, z), wall_color)
 	map._box(Vector3(2600, 0.5, Layout.WATER.size.y), Vector3(0, WATER_LEVEL - 0.5, (north_edge + south_edge) / 2.0), Color("3f4a47"))
 	var bank: Rect2 = Layout.FOREIGN_BANK
 	bank.position.x = -1300
@@ -76,8 +78,9 @@ func _build_ground() -> void:
 	river.position.x = -1300
 	river.size.x = 2600
 	_patch(river, "water", WATER_LEVEL)
-	# Continue the quay beneath fully opaque edge haze, like the roads.
-	_patch(Rect2(Boundaries.west_far_x(), Layout.WATER.end.y, Boundaries.east_far_x() - Boundaries.west_far_x(), 6), "paving", 0.05)
+	# The quay serves the city; beyond the western industrial edge it becomes wild bank.
+	_patch(Rect2(WEST_QUAY_START, south_edge, Boundaries.east_far_x() - WEST_QUAY_START, 6), "paving", 0.05)
+	_build_wild_west_bank()
 	for area in Layout.AREAS.values():
 		_patch(area["rect"], area["ground"], 0.018)
 	# Lot surfaces come before roads. Asphalt and tracks retain their own height.
@@ -135,6 +138,42 @@ func _build_ground() -> void:
 	_build_embankment()
 	_build_siding_ramp()
 	map._build_road_markings()
+
+
+func _build_wild_west_bank() -> void:
+	var grass := SurfaceTool.new()
+	var earth := SurfaceTool.new()
+	grass.begin(Mesh.PRIMITIVE_TRIANGLES)
+	earth.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var previous: Array[Vector3] = []
+	for i in range(86):
+		var x := lerpf(-1300.0, WEST_QUAY_START, float(i) / 85.0)
+		# Meet the existing city retaining wall at the eastern end.
+		var blend := clampf((WEST_QUAY_START - x) / 28.0, 0.0, 1.0)
+		var wobble := sin(x * 0.037) * 1.2 + sin(x * 0.091) * 0.6
+		var shore: float = Layout.WATER.end.y - (2.2 + wobble) * blend
+		var section: Array[Vector3] = [
+			Vector3(x, 0.03, Layout.WATER.end.y + 7.0),
+			Vector3(x, 0.025, shore),
+			Vector3(x, WATER_LEVEL - 0.15, shore - (8.0 + wobble) * blend),
+		]
+		if not previous.is_empty():
+			_strip_quad(grass, previous[0], section[0], section[1], previous[1])
+			_strip_quad(earth, previous[1], section[1], section[2], previous[2])
+		previous = section
+	for layer in [[grass, "grass", "WildBankGrass"], [earth, "dirt", "WildBankSlope"]]:
+		var surface: SurfaceTool = layer[0]
+		surface.generate_normals()
+		var material := StandardMaterial3D.new()
+		material.albedo_texture = map._season[layer[1]]
+		material.albedo_color = map._season["grass_tint"] if layer[1] == "grass" else Color("9b917c")
+		material.roughness = 1.0
+		material.cull_mode = BaseMaterial3D.CULL_DISABLED
+		var node := MeshInstance3D.new()
+		node.name = layer[2]
+		node.mesh = surface.commit()
+		node.material_override = material
+		map.add_child(node)
 
 
 func _patch(rect: Rect2, ground: String, height: float, condition_tint: Color = Color.WHITE, highway: bool = false) -> void:
@@ -218,6 +257,8 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 		center += _front_shift(lot, entry)
 	var kind: String = entry["kind"]
 	match kind:
+		"dormitory":
+			preload("res://scripts/map/dormitory.gd").new().build(map, lot)
 		"department_store_1997":
 			preload("res://scripts/map/department_store.gd").new().build(self, lot, entry, id)
 		"civic_venue":

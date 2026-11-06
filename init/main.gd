@@ -41,7 +41,6 @@ func _ready() -> void:
 	map = CityMap.new()
 	add_child(map)
 	map.setup(sim)
-	map.focus_on("dormitory")
 	hud = Hud.new()
 	add_child(hud)
 	hud.setup(sim, map, audio, play_log)

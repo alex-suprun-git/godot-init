@@ -226,6 +226,10 @@ func setup(week_sim) -> void:
 	sim.lot_state_changed.connect(_on_lot_state_changed)
 	for lot in sim.lot_states:
 		_on_lot_state_changed(lot, sim.lot_states[lot])
+	# Start on the hero's actual doorstep, before the first rendered frame.
+	var hero_position: Vector2 = sim.actors["me"]["pos"]
+	_set_goal(Vector3(hero_position.x, 0.0, hero_position.y))
+	_camera_target = _camera_goal
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--cam="):
 			var parts := arg.trim_prefix("--cam=").split(",")
