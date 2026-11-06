@@ -7,6 +7,10 @@ const JUNCTIONS := {
 	"axis_highway": {"roads": ["axis", "highway"]},
 	"axis_north": {"roads": ["axis", "north_street"]},
 	"axis_station": {"roads": ["axis", "south_street"]},
+	"west_north": {"roads": ["west_street", "north_street"]},
+	"west_south": {"roads": ["west_street", "south_street"]},
+	"village_north": {"roads": ["village_street", "north_street"]},
+	"village_south": {"roads": ["village_street", "south_street"]},
 }
 
 

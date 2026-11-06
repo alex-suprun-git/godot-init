@@ -32,6 +32,9 @@ const SCENARIOS := {
 	"performance-camera": "_run_performance_camera",
 	"field": "_run_field_review",
 	"traffic": "_run_traffic_review",
+	"semi-bypass": "_run_semi_bypass_review",
+	"station-junction": "_run_station_junction_review",
+	"lane-change": "_run_lane_change_review",
 	"gazelle": "_run_gazelle_review",
 	"trains": "_run_train_review",
 }
@@ -689,7 +692,7 @@ func _run_crosswalk_review() -> void:
 			break
 
 
-# Static placement at every registered junction plus a dev-only lens preview.
+# Capture the actual running signals at each registered junction.
 func _run_traffic_light_review() -> void:
 	_dismiss_briefing()
 	var registry = main.map.TrafficIntersections
@@ -700,27 +703,14 @@ func _run_traffic_light_review() -> void:
 		await _map_shot("signals_" + id, data["center"], 120.0)
 		print("Traffic light junction ", id, ": ", registry.fixtures(id).size(), " approaches; crossings ", data["crossing_ids"])
 	await _map_shot("signals_play_zoom", registry.junction("axis_north")["center"], main.map.ZOOM_MIN)
-	var first = lights[0]
-	for light in lights:
-		if light.binding["id"] == "axis_north/south":
-			first = light
-	var at := Vector2(first.position.x, first.position.z)
-	await _map_shot("signal_detail_off", at, 28.0)
-	first.set_signal("green")
-	await _map_shot("signal_detail_green", at, 28.0)
-	first.set_signal("red_amber")
-	await _map_shot("signal_detail_red_amber", at, 28.0)
-	first.set_signal("off")
-	var previous: String = main.map.Settings.camera_mode
-	main.map.Settings.camera_mode = "front"
-	await _map_shot("signals_perspective", registry.junction("axis_north")["center"], 100.0)
-	main.map.Settings.camera_mode = previous
-	main.map._debug_hour = 22.0
-	await _map_shot("signals_night_off", registry.junction("axis_north")["center"], 100.0)
-	main.map.Settings.camera_mode = previous
-	first.set_signal("red_amber")
-	await _map_shot("signal_detail_night_red_amber", at, 28.0)
-	first.set_signal("off")
+	var controller = main.map._ambient.signals["axis_highway"]
+	var center: Vector2 = registry.junction("axis_highway")["center"]
+	for i in 800:
+		if controller.phase == controller.WALK:
+			await _map_shot("signals_highway_walk", center, 90.0)
+			return
+		await _wait(0.2)
+	push_warning("Highway did not reach the pedestrian phase during review.")
 
 
 func _run_field_review() -> void:
@@ -731,12 +721,92 @@ func _run_field_review() -> void:
 	await _map_shot("field_roadside", Vector2(205, -132), 180.0)
 
 
+func _run_lane_change_review() -> void:
+	_dismiss_briefing()
+	main.map._debug_hour = 12.0
+	for i in 900:
+		for car in main.map._ambient.agents:
+			if not car.get("changing_lane", false):
+				continue
+			var vehicle: Node3D = car["visual"]
+			if not vehicle.has_meta("front_wheels"):
+				continue
+			var progress := (float(car["along"]) - float(car["change_start"])) / float(car["change_length"])
+			if progress < 0.15 or progress > 0.7:
+				continue
+			print("Lane change: ", vehicle.get_meta("traffic_model"), " front wheels=", vehicle.get_meta("front_wheels").size(),
+				" steering degrees=", rad_to_deg(vehicle.get_meta("steer_angle", 0.0)), " progress=", progress)
+			await _map_shot("lane_change_steering", car["pos"], 65.0)
+			return
+		await _wait(0.1)
+	push_warning("No moving Lada lane change seen in this capture.")
+
+
+func _run_station_junction_review() -> void:
+	_dismiss_briefing()
+	var center: Vector2 = main.map._ambient._graph.points[main.map._ambient._station_node]
+	await _map_shot("station_ramp_initial", center, 160.0)
+	var ambient = main.map._ambient
+	for i in 600:
+		await _wait(0.2)
+		for car in ambient.agents:
+			var slot: int = car.get("slot", -1)
+			if not ambient.signals["axis_station"].waiting.has(slot) or car["speed_scale"] > 0.02:
+				continue
+			var approach: Vector2 = ambient.signals["axis_station"].waiting[slot]["in"]
+			for junction in ambient._junctions:
+				if junction["node"] != ambient._station_node:
+					continue
+				var toward: Vector2 = center - car["pos"]
+				var distance: float = toward.dot(approach) - float(junction["stop_lines"][approach]) - ambient.Occupancy.half_length(car)
+				if absf(distance - ambient.ZEBRA_CLEARANCE) < 0.15:
+					print("Station zebra: stopped bumper ", distance, " m from paint")
+					await _map_shot("station_ramp_traffic", center, 130.0)
+					return
+	await _map_shot("station_ramp_traffic", center, 130.0)
+
+
+func _run_semi_bypass_review() -> void:
+	_dismiss_briefing()
+	for i in 3000:
+		for car in main.map._ambient.agents:
+			if not car["is_car"] or car["state"] != "graph" or not car["trip"].get("semi_bypass", false):
+				continue
+			var road: Dictionary = main.map.DistrictLayout.ROADS[main.map._ambient._graph.edges[car["edge"]]["road"]]
+			if road["id"] == "west_street":
+				print("Container semi bypass: ", car["visual"].get_meta("traffic_model"), " on ", road["id"])
+				await _map_shot("semi_western_bypass", car["pos"], 170.0)
+				return
+		await _wait(0.2)
+	push_warning("No semi reached west street during this capture.")
+
+
 func _run_traffic_review() -> void:
 	_dismiss_briefing()
 	main.map._debug_hour = 12.0
 	await _map_shot("traffic_west_reserve", Vector2(-420, 110), 580.0)
 	await _wait(2.0)
 	await _map_shot("traffic_highway_border", Vector2(-5, -205), 220.0)
+	# Capture a real coexisting turn and straight at the highway junction.
+	var ambient = main.map._ambient
+	for i in 300:
+		var straight := false
+		var turning := false
+		for car in ambient.agents:
+			if not ambient.signals["axis_highway"].inside.has(car.get("slot", -1)):
+				continue
+			var at: Vector2 = car["pos"]
+			if at.distance_to(ambient._graph.points[ambient._highway_node]) > 20.0:
+				continue
+			var route: Dictionary = ambient.signals["axis_highway"].inside[car["slot"]]
+			if route["in"] == route["out"]:
+				straight = true
+			else:
+				turning = true
+		if straight and turning:
+			await _map_shot("traffic_highway_shared", ambient._graph.points[ambient._highway_node], 125.0)
+			break
+		await _wait(0.2)
 	# Keep the camera on a real courtyard car, without adding review-only vehicles.
 	for agent in main.map._ambient.agents:
 		if agent.get("stream", "") != "courtyard":
