@@ -105,3 +105,10 @@ and header scale bounds. Final frame: .local/navigation-review/header/header_pla
 Initial clock wrapping was corrected by keeping all calendar metadata on one line.
 Contact-index launcher and folded-plan navigation are still the next stage.
 User also requested merging latest origin/main into this feature branch.
+
+Latest origin/main 2b3b5c6 was merged without conflicts in 949e0f0 after header
+commit 5540950. Preserved local import/project metadata was restored. Post-merge
+Godot import and graphical --only=header --turbo completed with no script errors;
+planning, paused overtime, return-home status and scale checks passed. Captures:
+.local/navigation-review/post-merge/. Global UI scaling and the two lower
+navigation components remain pending; no settings slider was added.
