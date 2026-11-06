@@ -154,3 +154,5 @@ which the shared button style had accidentally reduced. Autoplay UI waits now
 ignore engine time scale, matching the actual UI Tweens; folder captures no
 longer show an unfinished opening fade. Latest layout, folder and settings
 frames in layout-corrected were inspected. No review instance remains open.
+
+Clock alignment correction: the time Label now fills the header row vertically before centring its text. Verified in .local/navigation-review/clock-alignment/navigation_100.png.

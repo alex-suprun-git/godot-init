@@ -515,6 +515,7 @@ func _build_top_bar() -> void:
 	row.add_child(VSeparator.new())
 	_clock_label = _heading("", 24, OfficeTheme.BURGUNDY)
 	_clock_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	_clock_label.size_flags_vertical = Control.SIZE_FILL
 	_clock_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	row.add_child(_clock_label)
 	row.add_child(VSeparator.new())
