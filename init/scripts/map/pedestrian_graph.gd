@@ -24,10 +24,15 @@ func _init() -> void:
 			for side in [-1.0, 1.0]:
 				var shift := Vector2(0, half * side) if horizontal else Vector2(half * side, 0)
 				lines.append(_line(a + shift, b + shift))
+		elif road.get("traffic", "") == "courtyard":
+			# Keep walkers on the verge, clear of both driving lanes.
+			var verge := minf(rect.size.x, rect.size.y) * 0.5 + 0.65
+			var shift := Vector2(0.0, verge) if horizontal else Vector2(verge, 0.0)
+			lines.append(_line(a + shift, b + shift))
 		else:
 			lines.append(_line(a, b))
 	for crossing in DistrictLayout.crosswalks():
-		lines.append(_line(crossing["a"], crossing["b"], true))
+		lines.append(_line(crossing["a"], crossing["b"], crossing["id"]))
 	for line in lines:
 		for other in lines:
 			var hit = Geometry2D.segment_intersects_segment(line["a"], line["b"], other["a"], other["b"])
@@ -42,12 +47,12 @@ func _init() -> void:
 		for i in cuts.size() - 1:
 			var a: Vector2 = cuts[i]
 			var b: Vector2 = cuts[i + 1]
-			if a.distance_to(b) < 0.01 or (not line["crossing"] and _on_road((a + b) / 2.0)):
+			if a.distance_to(b) < 0.01 or (line["crossing"] == "" and _on_road((a + b) / 2.0)):
 				continue
 			_add_edge(a, b, line["crossing"])
 
 
-func _line(a: Vector2, b: Vector2, crossing: bool = false) -> Dictionary:
+func _line(a: Vector2, b: Vector2, crossing: String = "") -> Dictionary:
 	return {"a": a, "b": b, "cuts": [a, b], "crossing": crossing}
 
 
@@ -66,14 +71,17 @@ func _node(point: Vector2) -> int:
 	return _nodes[key]
 
 
-func _add_edge(a: Vector2, b: Vector2, crossing: bool) -> void:
+func _add_edge(a: Vector2, b: Vector2, crossing: String) -> void:
 	var from := _node(a)
 	var to := _node(b)
 	for index in adjacent_edges(from):
 		if other_end(index, from) == to:
+			if crossing != "":
+				edges[index]["crossing"] = true
+				edges[index]["crossing_id"] = crossing
 			return
 	var index := edges.size()
-	edges.append({"a": from, "b": to, "kind": "pavement", "crossing": crossing, "half": 0.0, "walk": 0.0, "length": a.distance_to(b)})
+	edges.append({"a": from, "b": to, "kind": "pavement", "crossing": crossing != "", "crossing_id": crossing, "half": 0.0, "walk": 0.0, "length": a.distance_to(b)})
 	for node in [from, to]:
 		if not _adjacent.has(node):
 			_adjacent[node] = []

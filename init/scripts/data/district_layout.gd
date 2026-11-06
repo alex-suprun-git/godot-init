@@ -79,6 +79,7 @@ const LOTS := {
 # Asphalt roads get a pavement on both sides (SIDEWALK_WIDTH); a road may override it
 # with "walk": 0.0. The highway along the river has no pedestrian zone.
 const SIDEWALK_WIDTH := 2.5
+const CROSSWALK_DEPTH := 3.5
 
 const ROADS := [
 	# "speed" scales car speed (default 1.0); courtyard traffic is opt-in and passenger-only.

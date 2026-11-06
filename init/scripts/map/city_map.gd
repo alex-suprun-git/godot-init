@@ -160,6 +160,7 @@ var profile_hide_ambient := false
 var profile_skip_ambient := false
 var profile_step_ms := 0.0
 var profile_visual_ms := 0.0
+var _signal_lights: Array[TrafficLight] = []
 var _traffic_light_positions := PackedVector2Array()
 var _hero_car: Node3D # The administration car; shown while you ride with Tolik.
 var _token_discs := {} # actor id -> disc under the token, hidden while riding.
@@ -181,7 +182,6 @@ var _debug_hour := -1.0 # Dev: --hour=18.5 pins the clock for lighting checks.
 var _weather: CPUParticles3D # Snow or falling leaves, following the camera.
 var _edges: Node3D # Full-screen haze that hides the map edges.
 var _gateways: Array[Dictionary] = [] # Where ambient cars leave and enter the map.
-var _traffic_look := RandomNumberGenerator.new() # Model and paint of cars that re-enter the map.
 var _traffic_debug_clock := 0.0
 
 
@@ -1100,7 +1100,7 @@ func _paint_patch(size: Vector2, at: Vector2, y: float, crossing: bool = false) 
 func _crosswalk(at: Vector2, road_width: float, along_z: bool, y: float) -> void:
 	const BAR := 0.45
 	const GAP := 0.45
-	const DEPTH := 3.5
+	const DEPTH := DistrictLayout.CROSSWALK_DEPTH
 	var count := int((road_width - 1.0 + GAP) / (BAR + GAP))
 	for i in count:
 		var offset := (i - (count - 1) / 2.0) * (BAR + GAP)
@@ -1187,7 +1187,6 @@ const AMBIENT_CARS := preload("res://scripts/data/traffic_flows.gd").CAR_COUNT
 func _build_ambient() -> void:
 	_gateways = MapBoundaries.resolve(sim.graph)
 	_ambient = AmbientLife.new(sim.graph, 1997, _gateways)
-	_traffic_look.seed = 7070
 	if OS.get_cmdline_user_args().has("--traffic-debug"):
 		print("map gateways resolved: %d / %d" % [_gateways.size(), MapBoundaries.GATEWAYS.size()])
 		for gateway in _gateways:
@@ -1207,14 +1206,16 @@ func _build_ambient() -> void:
 		base_walkers.append(agent)
 	var rare_car_slots := ["luxury_sedan", "luxury_suv", "rural_4x4"]
 	for i in AMBIENT_CARS:
-		var agent := _ambient.add(true, look.randf_range(7.0, 12.0))
+		var speed := look.randf_range(7.0, 12.0)
+		var seed_value := look.randi()
+		var agent := _ambient.add(true, speed, seed_value)
 		if agent.is_empty():
 			break
-		var seed_value := look.randi()
 		if agent["class"] == "car" and not rare_car_slots.is_empty():
 			agent["rare_car_model"] = rare_car_slots.pop_front()
 		var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(agent["pos"]) + Vector3.UP * 0.14, agent.get("rare_car_model", ""))
 		add_child(car)
+		agent["half_extent"] = car.get_meta("traffic_half_extent")
 		agent["visual"] = car
 	# Daytime reserve, hidden outside the centre/housing or 08:00–18:00.
 	# Keep this after the base pedestrians/cars so their random sequence is unchanged.
@@ -1237,6 +1238,15 @@ func _move_ambient(delta: float) -> void:
 	var started := Time.get_ticks_usec() if profile_ambient else 0
 	_ambient.hour = sim.clock_hour()
 	_ambient.step(delta)
+	for light in _signal_lights:
+		var controller = _ambient.signals[light.binding["intersection_id"]]
+		var color: String
+		if light.binding.get("pedestrian", false):
+			color = "green" if controller.phase == controller.WALK else "red"
+		else:
+			color = controller.vehicle_color(light.binding["travel_direction"].x != 0.0)
+		if color != light.signal_state:
+			light.set_signal(color)
 	var stepped := Time.get_ticks_usec() if profile_ambient else 0
 	if OS.get_cmdline_user_args().has("--traffic-debug"):
 		_print_traffic_stats(delta)
@@ -1249,6 +1259,8 @@ func _move_ambient(delta: float) -> void:
 				_respawn_car(agent)
 			var car: Node3D = agent["visual"]
 			car.visible = agent["visible"] and not profile_hide_ambient
+			if car.has_meta("front_wheels"):
+				_steer_front_wheels(car, at, heading, delta)
 			car.position = Vector3(at.x, _ground(at).y + 0.14, at.y)
 			car.rotation.y = atan2(heading.x, heading.y)
 			car.rotation.x = _overpass_pitch(at, heading)
@@ -1263,16 +1275,32 @@ func _move_ambient(delta: float) -> void:
 		profile_visual_ms = (Time.get_ticks_usec() - stepped) / 1000.0
 
 
+# Steering comes from the curvature of the path actually travelled. Both Ladas
+# have separate front wheels and a 2.42 m wheelbase.
+func _steer_front_wheels(car: Node3D, at: Vector2, heading: Vector2, delta: float) -> void:
+	var distance := at.distance_to(Vector2(car.position.x, car.position.z))
+	var angle: float = car.get_meta("steer_angle", 0.0)
+	var target := angle
+	if distance > 0.002:
+		var yaw := wrapf(atan2(heading.x, heading.y) - car.rotation.y, -PI, PI)
+		target = clampf(atan(2.42 * yaw / distance), -0.55, 0.55)
+	angle = move_toward(angle, target, 1.5 * delta)
+	for wheel: Dictionary in car.get_meta("front_wheels"):
+		wheel["node"].basis = Basis(Vector3.UP, angle) * wheel["rest"]
+	car.set_meta("steer_angle", angle)
+
+
 # A slot that re-entered the map gets a new car: the class follows the entry road's fleet.
 func _respawn_car(agent: Dictionary) -> void:
 	agent["respawned"] = false
 	agent["visual"].queue_free()
-	var seed_value := _traffic_look.randi()
+	var seed_value: int = agent["appearance_seed"]
 	var at: Vector2 = agent["pos"]
 	var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(at) + Vector3.UP * 0.14, agent.get("rare_car_model", ""))
 	add_child(car)
 	var heading: Vector2 = agent["heading"]
 	car.rotation.y = atan2(heading.x, heading.y)
+	agent["half_extent"] = car.get_meta("traffic_half_extent")
 	agent["visual"] = car
 
 
@@ -1286,15 +1314,38 @@ func _print_traffic_stats(delta: float) -> void:
 	var cars := 0
 	var streams := {}
 	var buses := 0
+	var overlaps := 0
 	for agent in _ambient.agents:
 		if agent["is_car"]:
 			cars += 1
+			if agent["visible"] and not _ambient._space.clear_pose(agent, _ambient._space.nearby(agent["pos"], 20.0)):
+				overlaps += 1
 			streams[agent["stream"]] = streams.get(agent["stream"], 0) + 1
 			if agent["class"] == "bus":
 				buses += 1
 			states[agent["state"]] += 1
 	print("traffic: exits ", _ambient.stats["exits"], " arrivals ", _ambient.stats["arrivals"], " states ", states)
 	print("traffic motion: max_step=", _ambient.stats["max_step"], " max_excess=", _ambient.stats["max_excess"], " warnings=", _ambient.stats["motion_warnings"])
+	for id in _ambient.signals:
+		var controller = _ambient.signals[id]
+		if controller.phase in [controller.CLEAR_EW,controller.CLEAR_NS] and controller.elapsed > 12 and OS.get_cmdline_user_args().has("--signal-trace"):
+			for j in _ambient._junctions:
+				if j["owner"] > 0:
+					for owner in _ambient.agents:
+						if owner.get("slot",-1) == j["owner"]:
+							print("LOCK ",j["node"]," ",j["center"]," owner ",owner["slot"]," pos ",owner["pos"]," limit ",owner["limit"]," reason ",owner.get("stop_reason",""))
+			print("SIGNAL_WAIT ",id," waiting ",controller.waiting.keys()," walking ",controller.walking)
+			for a in _ambient.agents:
+				if not controller.inside.has(a.get("slot",-1)):
+					continue
+				print("STUCK ",id," ",a["slot"]," ",a["pos"]," ",a["heading"]," gap ",a["limit"], " blocked ",a.get("blocked_by",""), " class ",a["class"])
+				for b in _ambient._space.nearby(a["pos"],18):
+					if not is_same(a,b):
+						print(" neighbor ",b.get("slot",-1)," ",b["pos"]," ",b["heading"]," ",b["speed_scale"]," why ",b.get("stop_reason","")," atedge ",b["edge"]," from ",b["from"]," turning ", b["turn"].get("node",-1))
+		print("signal ", id, " phase=", controller.phase, " elapsed=", snappedf(controller.elapsed, 0.1),
+			" walking=",controller.walking," pedestrian_entries=",controller.pedestrian_entries," cleared=",controller.cleared)
+	print("traffic observed road speed factors: ", _ambient.stats["road_speeds"])
+	print("traffic passing: started=", _ambient.stats["passes_started"], " returned=", _ambient.stats["passes_finished"], " vehicles overlapping=", overlaps)
 	print("traffic flows: ", streams, " buses=", buses, " completed_loops=", _ambient.stats["loops"])
 	if cars != AMBIENT_CARS or states["graph"] + states["out"] + states["wait"] + states["in"] != AMBIENT_CARS:
 		print("TRAFFIC INVARIANT BROKEN: ", cars, " cars, states ", states)
@@ -1672,7 +1723,21 @@ func _build_traffic_lights() -> void:
 			_traffic_light_positions.append(fixture["position"])
 			var light := TrafficLight.new(fixture)
 			add_child(light)
+			_signal_lights.append(light)
 			light.add_to_group("traffic_lights")
+		var data := TrafficIntersections.junction(id)
+		for zebra in DistrictLayout.crosswalks():
+			if not zebra["id"] in data["crossing_ids"]:
+				continue
+			var toward_center: Vector2 = (data["center"] - zebra["at"]).normalized()
+			for end in ["a", "b"]:
+				var at: Vector2 = zebra[end]
+				var binding := {"pedestrian": true, "id": zebra["id"] + "/" + end, "intersection_id": id,
+					"position": at + toward_center * 2.1, "facing": (zebra["at"] - at).normalized(), "surface_height": 0.15}
+				var light := TrafficLight.new(binding)
+				add_child(light)
+				_signal_lights.append(light)
+				_traffic_light_positions.append(binding["position"])
 
 
 # Keep roadside tree crowns from covering the nearby signal head.
