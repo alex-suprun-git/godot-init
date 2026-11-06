@@ -325,6 +325,15 @@ func focus_on(lot: String) -> void:
 
 # --- Camera ------------------------------------------------------------------
 
+func audio_proximity() -> float:
+	# Magnification, not physical camera height: also works for orthographic view.
+	return clampf(inverse_lerp(ZOOM_DEFAULT / ZOOM_MAX, ZOOM_DEFAULT / ZOOM_MIN, ZOOM_DEFAULT / _zoom), 0.0, 1.0)
+
+
+func cancel_camera_drag() -> void:
+	_dragging = false
+
+
 func zoom_by(factor: float) -> void:
 	_zoom = clampf(_zoom * factor, ZOOM_MIN, ZOOM_MAX)
 
