@@ -7,6 +7,8 @@
 extends Node
 
 const SCENARIOS := {
+	"stamp": "_run_stamp_review", # single folder frame for placement feedback
+	"marker-anchors": "_run_marker_anchor_review", # boiler projections and folder note
 	"ui-scale": "_run_ui_scale_review", # whole HUD and settings at scale limits
 	"header": "_run_header_review", # calendar, paused overtime and scale fit
 	"press": "_run_press_review", # authored front page and actual next-week retrospective
@@ -1040,3 +1042,39 @@ func _ui_click_at(at: Vector2) -> void:
 # UI Tweens ignore engine time scale, so their review waits must do so too.
 func _ui_settle(seconds: float) -> void:
 	await get_tree().create_timer(seconds, true, false, true).timeout
+
+
+func _run_marker_anchor_review() -> void:
+	_dismiss_briefing()
+	main.sim.advance(2.0)
+	_dismiss_briefing()
+	main.hud.set_interface_scale(1.0)
+	await _ui_settle(0.3)
+	var marker = main.hud._markers["contractor"]
+	print("Boiler default: offscreen=", marker.get_meta("offscreen"), " direction=", marker.edge_direction, " marker=", marker.position, " projected=", main.map.lot_screen_position("boiler", 14.0))
+	await _shot("boiler_offscreen")
+	await _ui_click_at(marker.get_global_rect().get_center())
+	await _ui_settle(0.4)
+	print("Offscreen boiler click: card=", main.hud._card_request, " camera goal=", main.map._camera_goal)
+	main.hud._close_card(false)
+	for value in [0.75, 1.0, 1.5]:
+		main.hud.set_interface_scale(value)
+		main.map.focus_on("boiler")
+		await _ui_settle(0.8)
+		var pin: Vector2 = main.hud._root.get_global_transform() * (marker.position + Vector2(32, 71) * marker.scale)
+		print("Boiler scale ", value, " offscreen=", marker.get_meta("offscreen"), " anchor gap=", pin.distance_to(main.map.lot_screen_position("boiler", 14.0)))
+		if value == 1.0:
+			await _shot("boiler_onscreen")
+	main.hud.set_interface_scale(1.0)
+	main.hud._show_week_panel()
+	await _ui_settle(0.3)
+	await _shot("folder_typed_note")
+
+
+func _run_stamp_review() -> void:
+	_dismiss_briefing()
+	main.sim.advance(2.0)
+	_dismiss_briefing()
+	main.hud._show_week_panel()
+	await _ui_settle(0.3)
+	await _shot("execution_stamp")

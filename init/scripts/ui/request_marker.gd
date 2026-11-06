@@ -26,6 +26,8 @@ var asker_region := Rect2()
 var worker_texture: Texture2D # the face of whoever is on it, when assigned
 var worker_region := Rect2()
 var work_fraction := 0.0
+var location_name := ""
+var anchor_tip := Vector2(32, 71)
 var edge_direction := Vector2.ZERO # not zero when stuck to the screen edge
 var _quest_icon: Texture2D
 var _quest_badge: Texture2D
@@ -61,9 +63,10 @@ func _gui_input(event: InputEvent) -> void:
 func _draw() -> void:
 	# One paper/photo language for open requests and assigned people.
 	# Type is a small printed corner symbol; progress never surrounds the photo.
-	draw_line(Vector2(32, 57), Vector2(32, 70), INK, 2)
-	draw_line(Vector2(32, 57), Vector2(32, 70), CREAM, 1)
-	draw_circle(Vector2(32, 71), 3, CREAM)
+	if edge_direction == Vector2.ZERO:
+		draw_line(Vector2(32, 57), anchor_tip, INK, 2)
+		draw_line(Vector2(32, 57), anchor_tip, CREAM, 1)
+		draw_circle(anchor_tip, 3, CREAM)
 	var frame := Rect2(CENTER - Vector2(23, 25), Vector2(46, 50))
 	draw_rect(Rect2(frame.position + Vector2(2, 2), frame.size), Color(0, 0, 0, 0.24))
 	draw_rect(frame, CREAM)
@@ -89,6 +92,12 @@ func _draw() -> void:
 		var pulse := fmod(_time, 1.4) / 1.4
 		draw_rect(frame.grow(2 + pulse * 5), Color(RED, 0.6 * (1 - pulse)), false, 1.5)
 	if edge_direction != Vector2.ZERO:
-		var tip := CENTER + edge_direction * 42
+		var tip := CENTER + edge_direction * 33
 		var side := edge_direction.orthogonal()
-		draw_colored_polygon(PackedVector2Array([tip + edge_direction * 6, tip + side * 6, tip - side * 6]), CREAM)
+		draw_colored_polygon(PackedVector2Array([tip + edge_direction * 5, tip + side * 5, tip - side * 5]), CREAM)
+
+		var font := OfficeTheme.BODY_FONT
+		var width := minf(100, font.get_string_size(location_name, HORIZONTAL_ALIGNMENT_LEFT, -1, 11).x)
+		var label := Rect2(Vector2(32 - width / 2 - 3, 61), Vector2(width + 6, 18))
+		draw_rect(label, CREAM)
+		draw_string(font, label.position + Vector2(3, 13), location_name, HORIZONTAL_ALIGNMENT_LEFT, width, 11, INK)

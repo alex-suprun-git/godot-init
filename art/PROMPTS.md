@@ -1247,3 +1247,13 @@ Sources remain outside init. Both were prepared separately via
 as `init/assets/ui/contact_index.png` and `navigation_plan.png`. The latter uses
 an AtlasTexture region to exclude transparent padding. Text, dividers and input
 remain native Godot controls; no full-screen mockup is used as the interface.
+
+### Execution stamp (2026-11-06)
+
+User-approved dark blue-grey ink direction: execution-stamp-concept-v2.png under
+art/source_images/office_ui. Built-in imagegen extracted horizontal ink only as
+execution-stamp-ink-v1.png; exact prompt is alongside it. Prepared separately:
+`uv run tools/optimize_asset.py art/source_images/office_ui/execution-stamp-ink-v1.png --profile ui --approved --output init/assets/ui/execution_stamp.png`.
+Atlas region (33, 106, 957, 130) excludes transparent padding; alpha was checked.
+Godot controls position/size/angle through EXECUTION_STAMP_* constants in hud.gd.
+The stamp is a non-interactive paper overlay and scales with the folder.

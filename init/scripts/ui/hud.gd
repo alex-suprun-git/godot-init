@@ -17,6 +17,11 @@ const RequestMarker = preload("res://scripts/ui/request_marker.gd")
 const PersonToken = preload("res://scripts/ui/person_token.gd")
 const PathLayer = preload("res://scripts/ui/path_layer.gd")
 const Settings = preload("res://scripts/data/settings.gd")
+# Execution-stamp tuning: logical pixels relative to the work-folder paper.
+const EXECUTION_STAMP_SIZE := Vector2(252, 252.0 * 130.0 / 957.0)
+const EXECUTION_STAMP_ANCHOR := Vector2(0.795, 0.0)
+const EXECUTION_STAMP_OFFSET := Vector2(0, 114)
+const EXECUTION_STAMP_ANGLE := -45.0
 const SeasonLabels := {"summer": "Лето", "autumn": "Осень", "winter": "Зима"}
 
 signal start_week_pressed
@@ -363,6 +368,8 @@ func _update_markers(area: Rect2) -> void:
 		var tip: Vector2 = _root.get_global_transform().affine_inverse() * map.lot_screen_position(lot, 14.0)
 		var center := tip - Vector2(0, 39 + index * 76) * icon_scale
 		var offscreen := not area.has_point(center)
+		marker.location_name = Week1.LOTS[lot]["name"]
+		marker.tooltip_text = sim.requests[id]["data"]["title"] + " · " + marker.location_name
 		marker.edge_direction = Vector2.ZERO
 		var marker_scale := icon_scale
 		if offscreen:
@@ -374,6 +381,7 @@ func _update_markers(area: Rect2) -> void:
 			center = _clear_marker_center(center, area, occupied, icon_scale)
 		marker.scale = Vector2.ONE * marker_scale
 		marker.position = center - Vector2(32, 32) * marker_scale
+		marker.anchor_tip = (tip - marker.position) / marker_scale
 		occupied.append(Rect2(center - Vector2.ONE * 40 * marker_scale, Vector2.ONE * 80 * marker_scale))
 		marker.set_meta("offscreen", offscreen)
 		marker.time_left = sim.request_time_left(id)
@@ -703,17 +711,6 @@ func _build_week_panel() -> void:
 	title_column.add_child(_heading("Дела недели", 38))
 	title_column.add_child(_paper_label("%s — %s" % [sim.date_text(0), sim.date_text(4)], 15, OfficeTheme.SECONDARY))
 	header.add_child(title_column)
-	var stamp := _paper_panel()
-	stamp.custom_minimum_size.x = 190
-	stamp.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	stamp.add_theme_stylebox_override("panel", OfficeTheme.box(OfficeTheme.PAPER, OfficeTheme.BURGUNDY, 8))
-	var stamp_text := _heading("К ИСПОЛНЕНИЮ", 17, OfficeTheme.BURGUNDY)
-	stamp_text.autowrap_mode = TextServer.AUTOWRAP_OFF
-	stamp_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	stamp_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	stamp_text.size_flags_vertical = Control.SIZE_FILL
-	stamp.add_child(stamp_text)
-	header.add_child(stamp)
 	layout.add_child(header)
 	_week_tabs = TabContainer.new()
 	# Arrow keys belong to the map; clicking a tab must not capture them.
@@ -737,6 +734,25 @@ func _build_week_panel() -> void:
 	_standing_box = _folder_page("Положение")
 	_wire_box = _folder_page("События")
 	layout.add_child(_paper_label("Помощник главы района · личный экземпляр", 12, OfficeTheme.SECONDARY))
+	# An ink-only overlay: it never reserves layout space or receives input.
+	var overlay := Control.new()
+	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	page.add_child(overlay)
+	var stamp := TextureRect.new()
+	stamp.name = "ExecutionStamp"
+	var ink := AtlasTexture.new()
+	ink.atlas = preload("res://assets/ui/execution_stamp.png")
+	ink.region = Rect2(33, 106, 957, 130)
+	stamp.texture = ink
+	stamp.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	stamp.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	stamp.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay.add_child(stamp)
+	var position_stamp := func(): _position_execution_stamp(page, overlay, stamp)
+	page.resized.connect(position_stamp)
+	overlay.resized.connect(position_stamp)
+	position_stamp.call_deferred()
+
 
 
 func _folder_page(title: String) -> VBoxContainer:
@@ -1894,7 +1910,8 @@ func _on_marker_pressed(id: String) -> void:
 # The part of the screen where the map is visible, between the panels.
 func _map_area() -> Rect2:
 	var size := _root.size
-	return Rect2(Vector2(12, 68), Vector2(size.x - 24, size.y - 68 - 116))
+	var top := maxf(84, _top_bar.size.y * _top_bar.scale.y + 12)
+	return Rect2(Vector2(12, top), Vector2(size.x - 24, size.y - top - 116))
 
 
 func _markers_at_lot(lot: String) -> Array:
@@ -2256,3 +2273,10 @@ func _skin(control: Control, texture: Texture2D) -> void:
 		control.mouse_exited.connect(func(): art.self_modulate = Color.WHITE)
 		control.button_down.connect(func(): art.self_modulate = Color(0.83, 0.78, 0.74))
 		control.button_up.connect(func(): art.self_modulate = Color.WHITE)
+
+
+func _position_execution_stamp(page: Control, overlay: Control, stamp: TextureRect) -> void:
+	stamp.size = EXECUTION_STAMP_SIZE
+	stamp.pivot_offset = stamp.size / 2
+	stamp.position = page.size * EXECUTION_STAMP_ANCHOR + EXECUTION_STAMP_OFFSET - overlay.position - stamp.pivot_offset
+	stamp.rotation_degrees = EXECUTION_STAMP_ANGLE

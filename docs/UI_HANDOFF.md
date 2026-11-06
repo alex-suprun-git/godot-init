@@ -156,3 +156,31 @@ longer show an unfinished opening fade. Latest layout, folder and settings
 frames in layout-corrected were inspected. No review instance remains open.
 
 Clock alignment correction: the time Label now fills the header row vertically before centring its text. Verified in .local/navigation-review/clock-alignment/navigation_100.png.
+
+## Execution stamp and boiler marker revision
+
+User rejected the red monospace note. They accepted a dark blue-grey textured
+ink-impression concept and requested a larger stamp at about 45 degrees,
+shifted left/up on the page. Generated mockups are preserved as
+execution-stamp-concept-v1.png and v2.png under art/source_images/office_ui.
+These are proposals over a real folder capture, not engine implementation.
+Implemented: transparent horizontal ink asset, separately optimized as
+init/assets/ui/execution_stamp.png and rotated -45 degrees in the folder.
+The non-interactive overlay is attached to the paper and follows UI scaling. Do not use a red label
+or a button-like rectangular outline.
+
+Boiler marker investigation: default camera projects boiler outside viewport;
+the edge-clamped marker retained a misleading downward map pin. Current local
+fix removes that pin offscreen, adds place name/direction, keeps arrow clear of
+header, and draws the true projected anchor when an onscreen marker is displaced.
+Focused marker-anchors replay confirmed onscreen boiler anchor error under
+0.001 pixels at 75/100/150% preferences. .local/boiler-review/after contains
+review frames. This fix is included with stamp integration in PR #92.
+
+Placement revision: user retained the 10% reduction (252 logical px width) and
+asked the agent to compose the location visually. Current stamp is wholly in
+the blank right header, separate from the close button, tabs and request copy.
+Tuning is in hud.gd EXECUTION_STAMP_* constants: anchor (0.795, 0), offset
+(0, 114), angle -45. Runtime frame inspected at
+.local/execution-stamp-review/composed/execution_stamp.png. Placement remains
+accepted by the user on 2026-11-06; stamp and marker revisions are being committed to PR #92.
