@@ -7,6 +7,7 @@
 extends Node
 
 const SCENARIOS := {
+	"ui-scale": "_run_ui_scale_review", # whole HUD and settings at scale limits
 	"header": "_run_header_review", # calendar, paused overtime and scale fit
 	"press": "_run_press_review", # authored front page and actual next-week retrospective
 	"ui-motion": "_run_ui_motion", # left drawer motion, availability and quest pictograms
@@ -965,3 +966,77 @@ func _run_header_review() -> void:
 		main.sim.advance(0.02)
 	await _wait(0.3)
 	print("Header return home: ", main.hud._phase_label.text, " / ", main.hud._phase_detail.text)
+
+
+func _run_ui_scale_review() -> void:
+	_dismiss_briefing()
+	main.sim.advance(2.0)
+	_dismiss_briefing()
+	for value in [1.0, 0.75, 1.5]:
+		main.hud.set_interface_scale(value)
+		await _ui_settle(0.4)
+		var token: Control = main.hud._tokens["me"]
+		var foot: Vector2 = main.hud._root.get_global_transform() * (token.position + Vector2(32, 80) * token.scale)
+		print("UI scale ", value, " effective ", main.hud._root.scale.x, " projected foot gap=", foot.distance_to(main.map.token_screen_position("me")))
+		if value == 1.0:
+			await _shot("navigation_100")
+		var zoom_before: float = main.map._zoom
+		await _ui_click_at(main.hud._map_controls.get_child(1).get_child(0).get_global_rect().get_center())
+		print("Navigation click zoom ", zoom_before, " -> ", main.map._zoom)
+		main.hud._show_week_panel()
+		await _ui_settle(0.25)
+		print("Folder bounds ", main.hud._week_panel.get_global_rect(), " / viewport ", get_viewport().get_visible_rect())
+		if value == 1.5:
+			await _shot("folder_scale_150")
+		main.hud._close_week_panel()
+		await _ui_click_at(main.hud._contacts_button.get_global_rect().get_center())
+		await _ui_settle(0.3)
+		print("Contact launcher click: ", main.hud._contact_drawer_open)
+		main.hud._close_contacts_drawer(false)
+		main.hud.show_newspaper()
+		await _ui_settle(0.25)
+		main.hud._close_important_notice()
+		main.hud.open_card("hot_water")
+		await _ui_settle(0.2)
+		print("Request bounds ", main.hud._card.get_global_rect())
+		main.hud._close_card(false)
+	main.hud.set_interface_scale(1.0)
+	await _ui_settle(0.3)
+	var menu
+	for child in main.get_children():
+		if child.get_script() != null and child.get_script().resource_path.ends_with("audio_settings.gd"):
+			menu = child
+	if menu != null:
+		menu._open()
+		menu._scale_slider.value = 150
+		await _ui_settle(0.3)
+		print("Settings slider applied ", main.hud.Settings.ui_scale, " / paused ", get_tree().paused)
+		await _shot("settings_scale_150")
+		menu._scale_slider.value = 100
+		menu._close()
+		main.hud.Settings.ui_scale = 0.85
+		main.hud.Settings._interface_loaded = false
+		main.hud.Settings.load_interface_preferences()
+		print("Saved scale reloaded: ", main.hud.Settings.ui_scale)
+	main.hud.set_interface_scale(1.0)
+
+
+func _ui_click_at(at: Vector2) -> void:
+	var motion := InputEventMouseMotion.new()
+	motion.position = at
+	motion.global_position = at
+	Input.parse_input_event(motion)
+	await get_tree().process_frame
+	for pressed in [true, false]:
+		var event := InputEventMouseButton.new()
+		event.position = at
+		event.global_position = at
+		event.button_index = MOUSE_BUTTON_LEFT
+		event.pressed = pressed
+		Input.parse_input_event(event)
+		await get_tree().process_frame
+
+
+# UI Tweens ignore engine time scale, so their review waits must do so too.
+func _ui_settle(seconds: float) -> void:
+	await get_tree().create_timer(seconds, true, false, true).timeout

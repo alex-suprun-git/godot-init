@@ -3,6 +3,8 @@ extends RefCounted
 
 const QUEST_TYPES := {"plea": "request", "conflict": "balance", "crisis": "alarm", "offer": "handshake"}
 const PATHS := {
+	"zoom_out": '<path d="M6 16h20"/>',
+	"index_card": '<path d="M3 9h26v20H3ZM6 9V5h20v4M8 15h16M8 20h16M8 25h10"/>',
 	"request": '<path d="M3 13v15h26V13M3 13l13 10 13-10M3 13l6-5m14 0 6 5M9 17V3h14v14M12 7h8m-8 4h6"/>',
 	"balance": '<path d="M16 3v25M8 29h16M4 9h24M7 9 2 21h10ZM25 9l-5 12h10ZM13 5l3-3 3 3"/>',
 	"alarm": '<path d="M5 24h22v5H5ZM8 24V15a8 8 0 0 1 16 0v9M16 1v3M3 7l3 3m23-3-3 3M1 17h3m24 0h3"/>',

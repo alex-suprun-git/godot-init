@@ -1236,3 +1236,14 @@ as `init/assets/ui/newspaper_art_atlas.png` to preserve native photo/detail size
 Only school-photo and television regions of that atlas are rendered in Godot;
 all newspaper text and rules are live. The complete concept is not a game panel.
 No bulk migration of existing artwork. Optimization reports are ignored locally.
+
+### Navigation material extraction (2026-11-06)
+
+Approved target: `art/source_images/office_ui/navigation-concept-v1.png`.
+Built-in imagegen isolated the blank address-card cover and folded-plan strip;
+exact prompts are in `contact-index-v1.prompt.md` and `navigation-plan-v1.prompt.md`.
+Sources remain outside init. Both were prepared separately via
+`uv run tools/optimize_asset.py <source> --profile ui --approved --output <target>`
+as `init/assets/ui/contact_index.png` and `navigation_plan.png`. The latter uses
+an AtlasTexture region to exclude transparent padding. Text, dividers and input
+remain native Godot controls; no full-screen mockup is used as the interface.

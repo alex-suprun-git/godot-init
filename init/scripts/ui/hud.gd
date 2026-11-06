@@ -3,6 +3,7 @@
 # the prototype layout is still changing quickly.
 extends CanvasLayer
 
+const OfficeSkin = preload("res://scripts/ui/office_skin.gd")
 const OfficeTheme = preload("res://scripts/ui/office_theme.gd")
 const OfficeIcons = preload("res://scripts/ui/office_icons.gd")
 const OfficePaper = preload("res://scripts/ui/office_paper.gd")
@@ -61,6 +62,7 @@ var _start_button: Button
 var _tasks_button: Button
 var _map_controls: PanelContainer
 var _speed_buttons := {}
+var _time_controls: HBoxContainer
 var _season_buttons := {}
 var _season_controls: HBoxContainer
 var _objectives_box: VBoxContainer
@@ -114,10 +116,14 @@ func setup(week_sim, city_map, audio_manager = null, playtest_log = null) -> voi
 	audio = audio_manager
 	play_log = playtest_log
 	_root = Control.new()
-	_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_root.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_root.theme = _make_theme()
 	add_child(_root)
+	Settings.load_interface_preferences()
+	Settings.ui_events.scale_changed.connect(_apply_interface_scale)
+	get_viewport().size_changed.connect(_apply_interface_scale)
+	_apply_interface_scale()
 
 	# Map overlays, bottom to top: travel paths, people, request markers.
 	_path_layer = PathLayer.new()
@@ -173,6 +179,7 @@ func set_phase(new_phase: String) -> void:
 	_incoming_tray.visible = phase in ["planning", "live"]
 	_newspaper_button.visible = phase == "planning" and NewspaperIssues.ISSUES.has(sim.week)
 	_season_controls.visible = phase == "planning"
+	_time_controls.visible = phase == "live"
 	for speed in _speed_buttons:
 		_speed_buttons[speed].visible = phase == "live"
 	if phase != "planning":
@@ -318,7 +325,7 @@ func _update_tokens() -> void:
 		if not token.visible:
 			continue
 		var actor: Dictionary = sim.actors[id]
-		var feet: Vector2 = map.token_screen_position(id)
+		var feet: Vector2 = _root.get_global_transform().affine_inverse() * map.token_screen_position(id)
 		token.scale = Vector2.ONE * icon_scale
 		token.position = feet - Vector2(32, 80) * icon_scale
 		token.state = actor["state"]
@@ -331,7 +338,7 @@ func _update_tokens() -> void:
 				var route: PackedVector2Array = sim.actor_route(id)
 				var line := PackedVector2Array([feet - Vector2(0, 50) * icon_scale])
 				for i in range(1, route.size()):
-					line.append(map.ground_screen_position(route[i]))
+					line.append(_root.get_global_transform().affine_inverse() * map.ground_screen_position(route[i]))
 				paths.append(line)
 	_path_layer.paths = paths
 	_path_layer.queue_redraw()
@@ -353,7 +360,7 @@ func _update_markers(area: Rect2) -> void:
 		var marker: Control = _markers[id]
 		var lot: String = sim.requests[id]["data"]["lot"]
 		var index: int = _markers_at_lot(lot).find(id)
-		var tip: Vector2 = map.lot_screen_position(lot, 14.0)
+		var tip: Vector2 = _root.get_global_transform().affine_inverse() * map.lot_screen_position(lot, 14.0)
 		var center := tip - Vector2(0, 39 + index * 76) * icon_scale
 		var offscreen := not area.has_point(center)
 		marker.edge_direction = Vector2.ZERO
@@ -414,42 +421,66 @@ func _eta_text(hours: float) -> String:
 func _build_map_controls() -> void:
 	_map_controls = _panel(OfficeTheme.PAPER)
 	_map_controls.theme = _paper_theme
-	_map_controls.add_theme_stylebox_override("panel", OfficeTheme.paper(7))
+	_map_controls.add_theme_stylebox_override("panel", _clear_surface(40, 6))
+	var plan := AtlasTexture.new()
+	plan.atlas = preload("res://assets/ui/navigation_plan.png")
+	plan.region = Rect2(9, 102, 1008, 131)
+	_skin(_map_controls, plan)
 	_map_controls.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	_map_controls.offset_left = -150
-	_map_controls.offset_right = 150
-	_map_controls.offset_top = -50
+	_map_controls.offset_left = -225
+	_map_controls.offset_right = 225
+	_map_controls.offset_top = -58
 	_map_controls.offset_bottom = -14
 	_root.add_child(_map_controls)
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 4)
+	row.add_theme_constant_override("separation", 8)
 	_map_controls.add_child(row)
 	var out := Button.new()
-	out.text = "−"
+	out.text = ""
+	var minus := ColorRect.new()
+	minus.color = OfficeTheme.TEXT
+	minus.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	out.add_child(minus)
+	minus.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	minus.offset_left = -7
+	minus.offset_right = 7
+	minus.offset_top = -1
+	minus.offset_bottom = 1
+	_style_strip_button(out)
+	out.custom_minimum_size.x = 48
 	out.tooltip_text = "Отдалить карту · колесо вниз или −"
-	out.custom_minimum_size = Vector2(28, 28)
+	out.custom_minimum_size = Vector2(48, 28)
 	out.pressed.connect(map.zoom_by.bind(1.25))
 	row.add_child(out)
+	row.add_child(VSeparator.new())
 	var closer := Button.new()
 	closer.text = "+"
+	_style_strip_button(closer)
+	closer.custom_minimum_size.x = 48
 	closer.tooltip_text = "Приблизить карту · колесо вверх или +"
-	closer.custom_minimum_size = Vector2(28, 28)
+	closer.custom_minimum_size = Vector2(48, 28)
 	closer.pressed.connect(map.zoom_by.bind(0.8))
 	row.add_child(closer)
+	row.add_child(VSeparator.new())
 	var home := Button.new()
 	home.text = "К себе"
+	_style_strip_button(home)
 	_button_icon(home, "locate")
 	home.tooltip_text = "Вернуться к ГГ и обычному масштабу · Home"
-	home.add_theme_font_size_override("font_size", 14)
+	home.add_theme_font_size_override("font_size", 18)
 	home.pressed.connect(map.reset_view)
 	row.add_child(home)
+	row.add_child(VSeparator.new())
 	var overview := Button.new()
 	overview.text = "Район"
+	_style_strip_button(overview)
 	_button_icon(overview, "map")
 	overview.tooltip_text = "Показать весь район"
-	overview.add_theme_font_size_override("font_size", 14)
+	overview.add_theme_font_size_override("font_size", 18)
 	overview.pressed.connect(map.show_overview)
 	row.add_child(overview)
+	for button in [out, closer, home, overview]:
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 
 func _build_top_bar() -> void:
@@ -457,6 +488,10 @@ func _build_top_bar() -> void:
 	_top_bar = bar
 	bar.theme = _paper_theme
 	var stock := OfficeTheme.paper(12)
+	stock.content_margin_left = 24
+	stock.content_margin_right = 24
+	stock.content_margin_top = 8
+	stock.content_margin_bottom = 8
 	stock.set_border_width_all(0)
 	stock.shadow_size = 2
 	bar.add_theme_stylebox_override("panel", stock)
@@ -471,10 +506,10 @@ func _build_top_bar() -> void:
 	calendar.add_theme_constant_override("separation", 0)
 	calendar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(calendar)
-	_day_label = _heading("", 14)
+	_day_label = _heading("", 16)
 	_day_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 	calendar.add_child(_day_label)
-	_date_label = _heading("", 21, OfficeTheme.BURGUNDY)
+	_date_label = _heading("", 24, OfficeTheme.BURGUNDY)
 	_date_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 	calendar.add_child(_date_label)
 	row.add_child(VSeparator.new())
@@ -485,13 +520,13 @@ func _build_top_bar() -> void:
 	row.add_child(VSeparator.new())
 	var status := VBoxContainer.new()
 	status.add_theme_constant_override("separation", 2)
-	status.custom_minimum_size.x = 240
+	status.custom_minimum_size.x = 255
 	status.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(status)
-	_phase_label = _heading("", 16, OfficeTheme.BURGUNDY)
+	_phase_label = _heading("", 18, OfficeTheme.BURGUNDY)
 	_phase_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 	status.add_child(_phase_label)
-	_phase_detail = _heading("", 14)
+	_phase_detail = _heading("", 16)
 	_phase_detail.autowrap_mode = TextServer.AUTOWRAP_OFF
 	status.add_child(_phase_detail)
 	var spacer := Control.new()
@@ -511,6 +546,7 @@ func _build_top_bar() -> void:
 	row.add_child(wallet)
 	_season_controls = HBoxContainer.new()
 	_season_controls.add_theme_constant_override("separation", 4)
+	row.add_child(VSeparator.new())
 	row.add_child(_season_controls)
 	for key in Settings.SEASONS:
 		var button := Button.new()
@@ -524,6 +560,7 @@ func _build_top_bar() -> void:
 		_season_buttons[key] = button
 	row.add_child(VSeparator.new())
 	var time_controls := HBoxContainer.new()
+	_time_controls = time_controls
 	time_controls.add_theme_constant_override("separation", 8)
 	row.add_child(time_controls)
 	var speed_group := ButtonGroup.new()
@@ -541,6 +578,7 @@ func _build_top_bar() -> void:
 		time_controls.add_child(button)
 		_speed_buttons[speed] = button
 	_start_button = _primary_button("Начать день →")
+	_start_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_start_button.pressed.connect(start_week_pressed.emit)
 	row.add_child(_start_button)
 	var restart := Button.new()
@@ -552,6 +590,7 @@ func _build_top_bar() -> void:
 	restart.pressed.connect(func():
 		restart.disabled = true
 		restart_pressed.emit())
+	row.add_child(VSeparator.new())
 	row.add_child(restart)
 	get_viewport().size_changed.connect(_layout_top_bar)
 	_top_row.minimum_size_changed.connect(func(): _layout_top_bar.call_deferred())
@@ -845,20 +884,28 @@ func _build_contacts_bar() -> void:
 	_contacts_dock.theme = _paper_theme
 	_contacts_dock.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	_contacts_dock.offset_left = 16
-	_contacts_dock.offset_bottom = -16
-	_contacts_dock.add_theme_stylebox_override("panel", OfficeTheme.paper(10))
+	_contacts_dock.offset_bottom = -10
+	_contacts_dock.add_theme_stylebox_override("panel", _clear_surface(0, 0))
 	_root.add_child(_contacts_dock)
-	_decorate_paper(_contacts_dock)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)
 	_contacts_dock.add_child(row)
 	_contacts_button = Button.new()
-	_contacts_button.text = "Связи"
+	_contacts_button.text = ""
+	_skin(_contacts_button, preload("res://assets/ui/contact_index.png"))
 	_contacts_button.tooltip_text = "Все контакты"
-	_contacts_button.custom_minimum_size = Vector2(120, 44)
+	_contacts_button.custom_minimum_size = Vector2(174, 80)
+	_style_strip_button(_contacts_button)
+	var label := _heading("│  СВЯЗИ", 18)
+	label.autowrap_mode = TextServer.AUTOWRAP_OFF
+	label.position = Vector2(60, 30)
+	var card_icon := _icon("index_card", 25)
+	card_icon.position = Vector2(30, 29)
+	_contacts_button.add_child(card_icon)
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_contacts_button.add_child(label)
 	_contacts_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_contacts_button.add_theme_font_size_override("font_size", 14)
-	_button_icon(_contacts_button, "residents")
 	_contacts_button.pressed.connect(_toggle_contacts_drawer)
 	row.add_child(_contacts_button)
 	_contacts_scroll = ScrollContainer.new()
@@ -921,13 +968,13 @@ func _layout_contacts_dock() -> void:
 	for button: Button in _contact_cards.values():
 		if button.visible:
 			active += 1
-	var desired := 140 + (8 + active * 64 + maxi(0, active - 1) * 8 if active > 0 else 0)
-	var available := maxf(140, _root.get_viewport_rect().size.x / 2 - 170)
+	var desired := 174 + (8 + active * 64 + maxi(0, active - 1) * 8 if active > 0 else 0)
+	var available := maxf(174, _root.size.x / 2 - 240)
 	var width := minf(desired, available)
 	_contacts_dock.offset_right = 16 + width
 	_contacts_scroll.visible = active > 0
 	_contacts_scroll.custom_minimum_size.y = 88 if desired > width else 68
-	_contacts_dock.offset_top = -(16 + 20 + (88 if desired > width else 68)) if active > 0 else -80
+	_contacts_dock.offset_top = -(16 + 20 + (88 if desired > width else 68)) if active > 0 else -90
 
 
 func _build_contacts_drawer() -> void:
@@ -1136,8 +1183,8 @@ func _show_contact_detail(actor_id: String) -> void:
 	_contact_detail_actor = actor_id
 	var info: Dictionary = Week1.ACTORS[actor_id]
 	var source: Control = _contact_cards[actor_id] if _contact_cards[actor_id].visible else _contacts_button
-	var card_rect := source.get_global_rect()
-	var viewport_size: Vector2 = _root.get_viewport_rect().size
+	var card_rect := _root.get_global_transform().affine_inverse() * source.get_global_rect()
+	var viewport_size: Vector2 = _root.size
 	var detail_size := Vector2(360, 218)
 	var detail_x: float = clampf(card_rect.position.x, 8.0, maxf(8.0, viewport_size.x - detail_size.x - 8.0))
 	var detail_y: float = maxf(68.0, card_rect.position.y - detail_size.y - 8.0)
@@ -1845,7 +1892,7 @@ func _on_marker_pressed(id: String) -> void:
 
 # The part of the screen where the map is visible, between the panels.
 func _map_area() -> Rect2:
-	var size := _root.get_viewport_rect().size
+	var size := _root.size
 	return Rect2(Vector2(12, 68), Vector2(size.x - 24, size.y - 68 - 116))
 
 
@@ -2072,6 +2119,7 @@ func _input(_event: InputEvent) -> void:
 
 
 func _sync_modal_input() -> void:
+	_fit_interface_windows()
 	if map == null:
 		return
 	var modal_open: bool = (
@@ -2092,18 +2140,47 @@ func show_newspaper() -> void:
 	_show_important_notice(edition)
 
 
-# Shared scale preference is introduced on the header first; map anchors remain
-# in viewport coordinates. Other HUD regions must opt in after layout review.
+# Settings drives every HUD element; map projections are converted to local space.
 func set_interface_scale(value: float) -> void:
-	Settings.ui_scale = clampf(value, 0.85, 1.15)
-	_layout_top_bar()
+	Settings.set_interface_scale(value)
+
+func _apply_interface_scale(_value: float = 1.0) -> void:
+	var viewport := get_viewport().get_visible_rect().size
+	var factor := Settings.fitted_interface_scale(viewport)
+	_root.scale = Vector2.ONE * factor
+	_root.size = viewport / factor
+	if not _tokens.is_empty():
+		_update_tokens()
+		_update_markers(_map_area())
+	if is_instance_valid(_top_bar):
+		_layout_top_bar.call_deferred()
+	_fit_interface_windows.call_deferred()
+
+func _fit_interface_windows() -> void:
+	for child in _root.get_children():
+		if not child is PanelContainer or child in [_top_bar, _map_controls, _contacts_dock, _contact_drawer]:
+			continue
+		if child == _notice_panel and _notice_is_newspaper:
+			continue # Newspaper computes its own proportional fit.
+		var panel: PanelContainer = child
+		var fit_key := Vector4(_root.size.x, _root.size.y, panel.size.x, panel.size.y)
+		if panel.get_meta("fit_key", Vector4.ZERO) == fit_key:
+			continue
+		panel.set_meta("fit_key", fit_key)
+		var available := _root.size - Vector2(24, 100)
+		var factor := minf(1, minf(available.x / maxf(panel.size.x, 1), available.y / maxf(panel.size.y, 1)))
+		panel.pivot_offset = panel.size * Vector2(panel.anchor_left, panel.anchor_top)
+		panel.scale = Vector2.ONE * factor
+		var corner := panel.position + panel.pivot_offset * (1 - factor)
+		var desired := corner.clamp(Vector2(12, 80), _root.size - Vector2(12, 12) - panel.size * factor)
+		panel.position += desired - corner
 
 func _layout_top_bar() -> void:
 	if not is_instance_valid(_top_bar):
 		return
-	var viewport_width := get_viewport().get_visible_rect().size.x
-	var required := maxf(_top_row.get_combined_minimum_size().x + 24, 1)
-	var factor := minf(Settings.ui_scale, viewport_width / required)
+	var viewport_width := _root.size.x
+	var required := maxf(_top_row.get_combined_minimum_size().x + 48, 1)
+	var factor := minf(1.0, viewport_width / required)
 	_top_bar.scale = Vector2.ONE * factor
 	_top_bar.position = Vector2.ZERO
 	_top_bar.size = Vector2(viewport_width / factor, 68)
@@ -2140,13 +2217,15 @@ func _refresh_time_status() -> void:
 	_phase_detail.text = detail
 
 func _style_strip_button(button: Button) -> void:
+	button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	button.custom_minimum_size.y = maxf(button.custom_minimum_size.y, 40)
 	for state in ["normal", "hover", "pressed", "disabled"]:
 		var fill := Color(0, 0, 0, 0)
 		if state == "hover":
 			fill = Color(OfficeTheme.BURGUNDY, 0.10)
 		elif state == "pressed":
 			fill = OfficeTheme.BURGUNDY
-		var style := OfficeTheme.box(fill, OfficeTheme.BURGUNDY, 10)
+		var style := OfficeTheme.box(fill, OfficeTheme.BURGUNDY, 6)
 		style.set_border_width_all(0)
 		button.add_theme_stylebox_override(state, style)
 		var color := OfficeTheme.LIGHT_TEXT if state == "pressed" else OfficeTheme.TEXT
@@ -2154,3 +2233,25 @@ func _style_strip_button(button: Button) -> void:
 			color = OfficeTheme.SECONDARY
 		button.add_theme_color_override("font_color" if state == "normal" else "font_%s_color" % state, color)
 	button.add_theme_color_override("font_hover_pressed_color", OfficeTheme.LIGHT_TEXT)
+
+
+func _clear_surface(horizontal: int, vertical: int) -> StyleBoxEmpty:
+	var style := StyleBoxEmpty.new()
+	style.content_margin_left = horizontal
+	style.content_margin_right = horizontal
+	style.content_margin_top = vertical
+	style.content_margin_bottom = vertical
+	return style
+
+func _skin(control: Control, texture: Texture2D) -> void:
+	var art := OfficeSkin.new()
+	art.texture = texture
+	art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	control.add_child(art)
+	control.move_child(art, 0)
+	if control is Button:
+		control.mouse_entered.connect(func(): art.self_modulate = Color(1.08, 1.04, 1))
+		control.mouse_exited.connect(func(): art.self_modulate = Color.WHITE)
+		control.button_down.connect(func(): art.self_modulate = Color(0.83, 0.78, 0.74))
+		control.button_up.connect(func(): art.self_modulate = Color.WHITE)

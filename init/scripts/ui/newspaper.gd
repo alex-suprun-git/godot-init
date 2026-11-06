@@ -45,11 +45,11 @@ func build(edition: Dictionary, date: String, dismiss: Callable) -> void:
 	_close.add_theme_font_size_override("font_size", 20)
 	_close.pressed.connect(dismiss)
 	_canvas.add_child(_close)
-	get_viewport().size_changed.connect(_fit_viewport)
+	get_parent().resized.connect(_fit_viewport)
 	_fit_viewport()
 
 func _fit_viewport() -> void:
-	var viewport := get_viewport_rect().size
+	var viewport: Vector2 = get_parent().size
 	_factor = minf((viewport.x - 40) / DESIGN.x, (viewport.y - 65) / DESIGN.y)
 	set_anchors_preset(Control.PRESET_TOP_LEFT)
 	size = DESIGN * _factor

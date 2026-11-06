@@ -112,3 +112,45 @@ Godot import and graphical --only=header --turbo completed with no script errors
 planning, paused overtime, return-home status and scale checks passed. Captures:
 .local/navigation-review/post-merge/. Global UI scaling and the two lower
 navigation components remain pending; no settings slider was added.
+
+
+## Full interface scaling and navigation completion — 2026-11-06
+
+This supersedes the earlier header-only scaling scope. All HUD controls/windows,
+newspaper, map portraits/markers and Esc settings now share Settings.ui_scale
+(75–150%). Preferences persist in user://interface.cfg. Effective scale keeps
+a minimum 1280x720 logical workspace; at a 1600x900 viewport a requested 150%
+is therefore 125%, reported in the menu. Large HUD windows fit available space.
+Camera projections are converted through the root inverse transform, including
+when changing scale while the settings menu pauses the tree.
+
+Header spacing/type now follow the approved concept more closely. Bottom map
+controls use extracted folded-plan artwork; Contacts uses a separate index-card
+asset with live label and vector icon. Sources/prompts and prepared copies are
+separate; both processed with optimize_asset.py --profile ui --approved.
+
+Graphical --only=ui-scale --turbo checked 75/100/150% preferences, folder bounds,
+newspaper and drawer openings, actual navigation and launcher mouse clicks,
+paused settings slider and saved preference reload. Projected portrait foot gap
+was below 0.001 logical pixels. No unit tests added. No review instance left open.
+Full final captures/log: .local/navigation-review/full-final/. Runtime appearance
+is ready for user review; do not claim pixel-identical transfer of generated art.
+
+### Intermediate screenshot comparison correction
+
+User required intermediate engine screenshots and direct comparisons at every
+layout stage. Functional checks did not catch visual defects: empty time-control
+container reserved header space, nav cells did not fill the material, the minus
+sat in the decorated edge, and PanelContainer margins shrank the paper artwork.
+Corrected by hiding empty time controls, centring fixed-height strip buttons,
+using expanding nav cells with safe side padding, and OfficeSkin drawing artwork
+across its parent independently of content margins. Current intermediate frame:
+.local/navigation-review/layout-corrected/navigation_100.png. Compared with
+navigation-concept-v1.png; runtime checks at scale limits passed again. User
+visual review is still pending. These refinements are being submitted to PR #92 as a visual review candidate.
+
+Final correction also preserves the contact launcher's 80px minimum height,
+which the shared button style had accidentally reduced. Autoplay UI waits now
+ignore engine time scale, matching the actual UI Tweens; folder captures no
+longer show an unfinished opening fade. Latest layout, folder and settings
+frames in layout-corrected were inspected. No review instance remains open.
