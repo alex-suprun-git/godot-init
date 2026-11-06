@@ -86,8 +86,7 @@ func _fill_branches() -> void:
 	_picker.clear()
 	var elsewhere := _branches_in_other_worktrees()
 	var branches := _git(["for-each-ref", "--sort=-committerdate", "--format=%(refname:short)", "refs/heads"])
-	for branch in branches["output"].split("
-", false):
+	for branch in _lines(branches["output"]):
 		_picker.add_item(branch)
 		var index := _picker.item_count - 1
 		_picker.set_item_metadata(index, branch)
@@ -104,8 +103,7 @@ func _fill_branches() -> void:
 func _branches_in_other_worktrees() -> Dictionary:
 	var result := {}
 	var folder := ""
-	for line in _git(["worktree", "list", "--porcelain"])["output"].split("
-"):
+	for line in _lines(_git(["worktree", "list", "--porcelain"])["output"]):
 		if line.begins_with("worktree "):
 			folder = line.trim_prefix("worktree ")
 		elif line.begins_with("branch refs/heads/") and folder.trim_suffix("/") != _repo_root.trim_suffix("/"):
@@ -181,7 +179,13 @@ func _update_from_upstream(branch: String) -> String:
 
 
 func _names(arguments: Array) -> PackedStringArray:
-	return _git(arguments)["output"].split("\n", false)
+	return _lines(_git(arguments)["output"])
+
+
+# Splits git output into non-empty lines; written with escapes (not literal line
+# breaks) and CR-tolerant so it does not depend on the file's or git's line endings.
+func _lines(text: String) -> PackedStringArray:
+	return text.replace("\r", "").split("\n", false)
 
 
 # stderr stays out unless asked for: git prints a line-ending warning per file there.
