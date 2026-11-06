@@ -103,6 +103,17 @@ func _pose(train: Dictionary) -> void:
 		car["node"].transform = Transform3D(basis.scaled(car["scale"]), (front + rear) / 2.0)
 
 
+func audio_emitters() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for i in _fleet.size():
+		var train: Dictionary = _fleet[i]
+		var positions: Array[Vector3] = []
+		for car in train["cars"]:
+			positions.append(car["node"].global_position)
+		result.append({"id": "er2" if i == 0 else "freight", "running": train["running"], "positions": positions})
+	return result
+
+
 func snapshot() -> Dictionary:
 	var result := {"seconds": _clock, "active_indices": [], "departures": _departures, "trains": []}
 	for i in range(_fleet.size()):

@@ -330,6 +330,10 @@ func audio_proximity() -> float:
 	return clampf(inverse_lerp(ZOOM_DEFAULT / ZOOM_MAX, ZOOM_DEFAULT / ZOOM_MIN, ZOOM_DEFAULT / _zoom), 0.0, 1.0)
 
 
+func audio_listener_position() -> Vector3:
+	return _camera_target
+
+
 func cancel_camera_drag() -> void:
 	_dragging = false
 
