@@ -1,5 +1,17 @@
 # Image Prompts: First Week
 
+## Luxury and rural vehicle projections (2026-11-04)
+
+Post-checkpoint sedan sheet: `art/source_images/vehicle_trio/luxury-sedan-v2.png`. Built-in ImageGen with the actual RAF sheet as layout/style reference and a real W140 photograph as shape reference. Six views, neutral grey grid, dark burgundy; full prompt and input roles adjacent. Proposal awaiting review, no 3D or game changes.
+
+User-requested fresh SUV generation: `art/source_images/vehicle_trio/luxury-suv-v3.png`, built-in ImageGen without input images; exact adjacent prompt. The resulting v6 model and known unfixed attachment gaps are documented in `art/models/vehicle_trio/README.md`. User subsequently chose to retain the current model and focus on workflow/error analysis. No new game raster or city integration.
+
+SUV revision `luxury-suv-v2.png` corrects the user-flagged extra passenger door on each side in v1; current proposal has two side doors per side and one rear tailgate. Exact edit prompt is adjacent to the image; awaiting user review.
+
+The user subsequently accepted v2 sufficiently to proceed. The first 3D studies were rejected for proportions and detail. Current v5 uses actual prototype photographs and dimensions, a darker burgundy sedan with reshaped rear lights, revised rural 4x4 body and lower SUV glazing. Actual Godot comparisons use RAF/PAZ/ZIL benchmarks and distinguish real dimensions from game presentation. Sources, exact stage, limitations and pending review: `art/models/vehicle_trio/README.md`. No further ImageGen artwork in these modeling revisions.
+
+Built-in ImageGen produced separate side/front/rear/top reference sheets plus appearance views for a long luxury SUV, a W140-inspired sedan and a short rural Niva-inspired 4x4. Untouched originals, exact prompts, inspection limitations and review status: `art/source_images/vehicle_trio/README.md`. Proposals awaiting user review; no models or game integration. Real prototypes remain recognizable; final styling and names are undecided.
+
 ## Civic buildings surface finish (2026-11-03)
 
 After the user's in-game screenshot exposed flat-looking roofs/walls, built-in ImageGen produced `art/source_images/civic_venues/pbr-v2/surfaces-albedo-v2.png`: felt roofing, standing-seam metal, brick, mineral facing, stone cladding and warm/cool glazing. Exact prompt adjacent. Tangent-normal/roughness maps are original analytic Blender preparation (`build_surface_maps.py`), separately optimizer-prepared along with albedo before GLB integration. Current maps, scale, Windows import/capture sequencing correction and actual final-frame review: `art/models/civic_venues/README.md`.

@@ -6,6 +6,7 @@ const WeekSim = preload("res://scripts/sim/week_sim.gd")
 const CityMap = preload("res://scripts/map/city_map.gd")
 const Hud = preload("res://scripts/ui/hud.gd")
 const AudioManager = preload("res://scripts/audio/audio_manager.gd")
+const AudioSettings = preload("res://scripts/ui/audio_settings.gd")
 const AudioDebug = preload("res://scripts/audio/audio_debug.gd")
 const PlayLog = preload("res://scripts/dev/play_log.gd")
 const Settings = preload("res://scripts/data/settings.gd")
@@ -47,6 +48,13 @@ func _ready() -> void:
 	audio_debug = AudioDebug.new()
 	add_child(audio_debug)
 	audio_debug.setup(audio)
+	var audio_settings := AudioSettings.new()
+	add_child(audio_settings)
+	audio_settings.setup(audio, map)
+	audio.set_camera_proximity(map.audio_proximity())
+	var map_audio := preload("res://scripts/audio/map_audio.gd").new()
+	audio.add_child(map_audio)
+	map_audio.setup(audio, map)
 	hud.start_week_pressed.connect(start_week)
 	hud.speed_selected.connect(set_speed)
 	hud.next_week_pressed.connect(go_to_next_week)
@@ -78,6 +86,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	audio.set_camera_proximity(map.audio_proximity())
 	if phase == "live" and speed > 0.0 and not _night:
 		sim.advance(delta * speed / Settings.GAME_HOUR_SECONDS)
 

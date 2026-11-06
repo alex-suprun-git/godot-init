@@ -5,6 +5,7 @@
 extends Node
 
 const AudioEvents = preload("res://scripts/data/audio_events.gd")
+const AudioLayer = preload("res://scripts/audio/audio_layer.gd")
 const CityAmbience = preload("res://scripts/audio/city_ambience.gd")
 
 signal event_fired(id: String)
@@ -20,14 +21,19 @@ var _last_variant := {} # event id -> index of the last played variant
 var _last_played_msec := {} # event id -> when it last actually played
 var _streams := {} # path -> loaded stream
 var _rng := RandomNumberGenerator.new()
+var music
+var layers := {} # Named continuous beds, independent of the event pool.
 var city_ambience
 
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	_rng.randomize()
 	_ensure_buses()
 	city_ambience = CityAmbience.new()
 	add_child(city_ambience)
+	layers["city"] = city_ambience
+	music = add_layer("music", preload("res://assets/audio/music/city_theme.mp3"), "Music", 1.0, 3.0)
 	for i in POOL_SIZE:
 		var player := AudioStreamPlayer.new()
 		add_child(player)
@@ -118,3 +124,49 @@ func _ensure_buses() -> void:
 			var index := AudioServer.bus_count - 1
 			AudioServer.set_bus_name(index, bus_name)
 			AudioServer.set_bus_send(index, "Master")
+			if bus_name == "Music":
+				set_channel_level("Music", 0.3)
+
+# Future camera/location controllers can blend named beds without touching UI/SFX.
+func add_layer(id: String, source: AudioStream, bus_name: String, gain: float = 0.0, overlap: float = 2.0) -> Node:
+	if layers.has(id):
+		return layers[id]
+	var layer := AudioLayer.new()
+	layer.name = id
+	layer.stream = source
+	layer.bus = bus_name
+	layer.level = clampf(gain, 0.0, 1.0)
+	layer.overlap_seconds = overlap
+	layers[id] = layer
+	add_child(layer)
+	return layer
+
+
+func set_layer_level(id: String, gain: float, seconds: float = 1.0) -> void:
+	if layers.has(id):
+		layers[id].set_level(gain, seconds)
+
+
+func remove_layer(id: String) -> void:
+	if layers.has(id) and id != "city" and id != "music":
+		layers[id].queue_free()
+		layers.erase(id)
+
+
+func set_camera_proximity(proximity: float) -> void:
+	# Overview retains a distant city bed; close view reaches the user's level.
+	city_ambience.context_gain = lerpf(0.2, 1.0, smoothstep(0.0, 1.0, proximity))
+
+
+func set_channel_level(channel: String, value: float) -> void:
+	var index := AudioServer.get_bus_index(channel)
+	if index < 0:
+		return
+	value = clampf(value, 0.0, 1.0)
+	AudioServer.set_bus_mute(index, is_zero_approx(value))
+	AudioServer.set_bus_volume_db(index, linear_to_db(maxf(value, 0.0001)))
+
+
+func get_channel_level(channel: String) -> float:
+	var index := AudioServer.get_bus_index(channel)
+	return 0.0 if AudioServer.is_bus_mute(index) else db_to_linear(AudioServer.get_bus_volume_db(index))

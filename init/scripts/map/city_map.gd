@@ -328,6 +328,19 @@ func focus_on(lot: String) -> void:
 
 # --- Camera ------------------------------------------------------------------
 
+func audio_proximity() -> float:
+	# Magnification, not physical camera height: also works for orthographic view.
+	return clampf(inverse_lerp(ZOOM_DEFAULT / ZOOM_MAX, ZOOM_DEFAULT / ZOOM_MIN, ZOOM_DEFAULT / _zoom), 0.0, 1.0)
+
+
+func audio_listener_position() -> Vector3:
+	return _camera_target
+
+
+func cancel_camera_drag() -> void:
+	_dragging = false
+
+
 func zoom_by(factor: float) -> void:
 	_zoom = clampf(_zoom * factor, ZOOM_MIN, ZOOM_MAX)
 
@@ -1192,12 +1205,15 @@ func _build_ambient() -> void:
 		agent["visual"] = sprite
 		agent["lift"] = sprite.position.y - _ground(agent["pos"]).y
 		base_walkers.append(agent)
+	var rare_car_slots := ["luxury_sedan", "luxury_suv", "rural_4x4"]
 	for i in AMBIENT_CARS:
 		var agent := _ambient.add(true, look.randf_range(7.0, 12.0))
 		if agent.is_empty():
 			break
 		var seed_value := look.randi()
-		var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(agent["pos"]) + Vector3.UP * 0.14)
+		if agent["class"] == "car" and not rare_car_slots.is_empty():
+			agent["rare_car_model"] = rare_car_slots.pop_front()
+		var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(agent["pos"]) + Vector3.UP * 0.14, agent.get("rare_car_model", ""))
 		add_child(car)
 		agent["visual"] = car
 	# Daytime reserve, hidden outside the centre/housing or 08:00–18:00.
@@ -1253,7 +1269,7 @@ func _respawn_car(agent: Dictionary) -> void:
 	agent["visual"].queue_free()
 	var seed_value := _traffic_look.randi()
 	var at: Vector2 = agent["pos"]
-	var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(at) + Vector3.UP * 0.14)
+	var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(at) + Vector3.UP * 0.14, agent.get("rare_car_model", ""))
 	add_child(car)
 	var heading: Vector2 = agent["heading"]
 	car.rotation.y = atan2(heading.x, heading.y)
