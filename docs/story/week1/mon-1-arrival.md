@@ -34,6 +34,18 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 > Each stop: the camera holds on the place for a few seconds, the caption names it, and one or two lines play. Route, as the user described it: station, left past the dormitory, the highway, the industrial zone, the border, the turn at the restaurant, the village loop, the avenue, the executive committee. Lot ids are for Codex to map; the restaurant lot has no id yet.
 
+> Timing (decided): the drive is an in-game cutscene and the game clock keeps running, but slowed so that two game hours (06:00 to 08:00) take about 60 to 90 real seconds, which is roughly nine times slower than the normal rate of 4 real seconds per game hour. The player arrives at the executive committee at 08:00, on time. The clock is keyed to the stops and interpolates between them (proposed values below), so the pacing stays under authorial control. Skippable on replay, not on the first play (default; the user has not said otherwise).
+
+| Stop | Clock |
+|---|---|
+| Station and market | 06:00 |
+| Dormitory | 06:20 |
+| Highway and industrial zone | 06:45 |
+| Border | 07:10 |
+| Restaurant | 07:30 |
+| Village | 07:45 |
+| Executive committee | 08:00 |
+
 ### Stop 1. Station and market
 
 [Вокзал и рынок]
@@ -64,9 +76,9 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 ТОЛИК: Граница. Нам туда не надо. Им сюда надо. Очередь на двое суток, а сборы, говорят, поднимут.
 
-ТОЛИК: Ночью тут иногда шумно. Окна по ночам не открывайте, это совет, а не приказ.
+ТОЛИК: Будку у шлагбаума в июле меняли. Старая, говорят, не выдержала.
 
-*Фуры стоят в два ряда. Водители спят на подножках.*
+*Фуры стоят в два ряда. Водители спят на подножках. Краска на новой будке свежее, чем на всём вокруг.*
 
 ### Stop 5. The restaurant
 
@@ -98,13 +110,17 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 ТОЛИК: Стучите громче. Он плохо слышит, когда не хочет.
 
+ТОЛИК: Ровно восемь. Вы вовремя. Редкость.
+
 *Толик уехал, не оглядываясь. Волга свернула за угол.*
 
 ## Scene 0.3. At the door
 
-[Приёмная исполкома, 08:30]
+[Приёмная исполкома, 08:00]
 
-> Open: how the hours until 10:00 are filled. Proposal: a short wait with a time-skip caption. No secretary character is introduced. The boss's entrance leads straight into the monologue in `mon-2-boss-and-block5.md`.
+> The wait from 08:00 to 10:04 is a short time skip with captions (proposal). No secretary character is introduced. The boss's entrance leads straight into the monologue in `mon-2-boss-and-block5.md`.
+
+*Ровно восемь. Вы пришли вовремя. В здании это, кажется, заметили только часы.*
 
 *Дверь с табличкой «Глава района». Закрыта.*
 
@@ -133,6 +149,5 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 ## Open
 
-- Whether Tolik's line about the border ("окна не открывайте") is too direct for a first drive.
 - Whether the wait at the door needs the cleaner and the phone, or a plain time skip.
-- Total real-time length of the drive (target 60 to 90 seconds) and whether it is skippable on the first play.
+- Whether the drive may be skipped on the first play (default: no).
