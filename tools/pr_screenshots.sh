@@ -6,7 +6,7 @@
 # Output: ignored .local/pr-assets/<feature-slug>/<shot>.jpg (maximum edge 1600 px, JPEG quality 80).
 set -euo pipefail
 
-GODOT="${GODOT:-/Users/oleksiisuprun/Desktop/Godot.app/Contents/MacOS/Godot}"
+GODOT="${GODOT:-/c/Users/alexe/Desktop/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SLUG="${1:?usage: tools/pr_screenshots.sh <feature-slug> [--from <dir>] [--pick <shot>...]}"
 shift
@@ -23,8 +23,11 @@ done
 
 if [ -z "$FROM" ]; then
   FROM="$(mktemp -d)"
+  # Native Windows Godot cannot read Git Bash paths such as /tmp/...; convert them.
+  NATIVE_FROM="$(cygpath -m "$FROM" 2>/dev/null || echo "$FROM")"
+  NATIVE_ROOT="$(cygpath -m "$ROOT" 2>/dev/null || echo "$ROOT")"
   echo "Running the autoplay into $FROM (about 40 seconds)..."
-  "$GODOT" --path "$ROOT/init" --no-log -- --autoplay --shots="$FROM" > "$FROM/autoplay.log" 2>&1 &
+  "$GODOT" --path "$NATIVE_ROOT/init" -- --autoplay --no-log --shots="$NATIVE_FROM" > "$FROM/autoplay.log" 2>&1 &
   PID=$!
   for _ in $(seq 1 120); do
     kill -0 "$PID" 2>/dev/null || break
@@ -44,7 +47,13 @@ mkdir -p "$OUT"
 for shot in "${PICKS[@]}"; do
   src="$FROM/$shot.png"
   [ -f "$src" ] || { echo "missing: $src" >&2; exit 1; }
-  sips -Z 1600 -s format jpeg -s formatOptions 80 "$src" --out "$OUT/$shot.jpg" > /dev/null
+  uv run --quiet --no-project --with Pillow==12.0.0 python -c '
+import sys
+from PIL import Image
+image = Image.open(sys.argv[1]).convert("RGB")
+image.thumbnail((1600, 1600))
+image.save(sys.argv[2], "JPEG", quality=80)
+' "$src" "$OUT/$shot.jpg"
   echo "$OUT/$shot.jpg ($(du -k "$OUT/$shot.jpg" | cut -f1) KB)"
 done
 echo "Next: inspect these local images, then upload them with gh pr create/edit --attach (docs/PR_WORKFLOW.md). Do not commit them."

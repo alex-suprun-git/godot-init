@@ -126,12 +126,14 @@ Facts checked in the source on 2026-11-01:
 
 **Verify with** (stripe check first, then real frames; read every PNG):
 ```sh
-G=/Users/oleksiisuprun/Desktop/Godot.app/Contents/MacOS/Godot
+# Git Bash on Windows
+G=/c/Users/alexe/Desktop/Godot_v4.7.2-stable_win64.exe/Godot_v4.7.2-stable_win64_console.exe
+S="$(cygpath -m "$TEMP")/map-edges-traffic-shots"
 $G --headless --path init --import
-$G --path init -- --edges-only --haze-stripes --shots=/private/tmp/map-edges-traffic-shots/stripes --no-log
-$G --path init -- --edges-only --shots=/private/tmp/map-edges-traffic-shots/summer --no-log
-$G --path init -- --edges-only --season=winter --hour=22 --shots=/private/tmp/map-edges-traffic-shots/winter_night --no-log
-$G --path init -- --autoplay --shots=/private/tmp/map-edges-traffic-shots/autoplay --no-log
+$G --path init -- --edges-only --haze-stripes --shots=$S/stripes --no-log
+$G --path init -- --edges-only --shots=$S/summer --no-log
+$G --path init -- --edges-only --season=winter --hour=22 --shots=$S/winter_night --no-log
+$G --path init -- --autoplay --shots=$S/autoplay --no-log
 ```
 Stripes must stay glued to the ground (same stripe under the same building in every frame, both modes). If they slide or curve, the depth reconstruction is wrong: fix it before tuning anything.
 

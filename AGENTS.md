@@ -15,7 +15,8 @@
 ## Goals and Roles
 
 - The user is the creative lead and sets the game's ideas, tone, and intended feel.
-- Codex acts as the development team and learning partner: handle technical implementation, briefly explain relevant decisions, and ask about genuine design choices.
+- Codex is the development team and learning partner: it implements code, scenes, maps and assets, briefly explains relevant decisions, and asks about genuine design choices.
+- Claude Code is the lead reviewer and the user's narrative partner: it reviews Codex's results, the project skills, briefs and agent docs for factual errors, contradictions and vague wording, proposes new skills where they would simplify Codex's work, and helps the user with story, quests and Russian player-facing text. It does not take over routine implementation unless the user asks.
 - The project is also a practical way for the user to learn Godot while building a game.
 
 ## Explanation Style
@@ -30,22 +31,27 @@
 - For small, clear tasks, edit project files directly and show the result in Godot where practical.
 - Match the pace to the task: use manageable steps for learning, and complete small features when appropriate.
 - Align on creative direction and intended behavior; resolve technical details independently when they do not materially change the game's scope.
-- Project files are under `init/`; the main scene is `init/main.tscn`. The project uses Godot 4.7.1.
+- Project files are under `init/`; the main scene is `init/main.tscn`. The project uses Godot 4.7.2 on Windows. In the commands below, `Godot` means `C:\Users\alexe\Desktop\Godot_v4.7.2-stable_win64.exe\Godot_v4.7.2-stable_win64_console.exe` (the console build, so output reaches the terminal); the editor binary without `_console` sits in the same folder. Neither is on `PATH`, so call them by full path.
 - The editor plugin `init/addons/branch_indicator/` shows the checked-out branch in the toolbar and can switch it: it refuses while tracked files have real (not line-ending-only) changes and restarts the editor without saving. Close the editor before switching branches from a terminal.
 - When delivering work from a worktree, always include the exact absolute Godot editor launch command (`<Godot binary> --editor --path <worktree>/init`) and identify that project folder, so the user can open the correct copy.
 - Run the game locally with F5. Running Godot and local game builds does not incur usage fees.
-- Do not add or run automated tests unless the user asks. For visual changes, launch and inspect the game where practical.
-- To check a visual or gameplay change without clicking, run the dev autoplay, which plays the first week and saves screenshots of each phase: `Godot --path init -- --autoplay --shots=<absolute output dir>` (Godot is at `/Users/oleksiisuprun/Desktop/Godot.app/Contents/MacOS/Godot`). Read the PNGs it writes. Run only the parts a change needs with `--only=<scenario>[,...]` (`office` for UI panels and the request card, about 10 s; `map` for the district map tour; `week` for the live week, summary and week two, about 100 s; plus `edges`, `vehicles`, `crosswalks`, `traffic-lights`, `render-cost`); without it the full `office,map,week` run plays. Add `--turbo` (or `--turbo=N`, default 10) to speed up the engine clock for quick agent checks: `week` drops to about 15 s with the same results; use the normal speed when judging animation or pacing. Run `Godot --headless --path init --import` first when new assets were added.
-- Every run writes a playtest log (JSON lines plus a week summary with waiting time, request latency and contact utilization) to `~/Library/Application Support/Godot/app_userdata/Init/playtests/`; files ending in `_player.jsonl` are real plays, `_autoplay.jsonl` come from the dev autoplay, and `--no-log` turns it off. When asked to analyze a playtest, read the latest `_player` log first, find where the week drags or stalls, and only then compare with the user's own feedback.
+- Do not add new automated tests unless the user asks. The existing CI checks are not optional: before finishing any change under `init/`, run the same three checks as `.github/workflows/ci.yml` and fix what they report:
+  1. `Godot --headless --path init --import`
+  2. `Godot --headless --path init --quit -- --no-log`; the output must contain no `SCRIPT ERROR`, `Parse Error` or `Compile Error`. Keep `--no-log` after `--`: without it this check writes a fake `_player.jsonl` playtest log.
+  3. `Godot --headless --path init --script res://scripts/dev/check_data.gd`; it exits with 0 and prints `check_data: ok`.
+- For visual changes, launch and inspect the game where practical.
+- To check a visual or gameplay change without clicking, run the dev autoplay, which saves screenshots of each phase: `Godot --path init -- --autoplay --shots=<absolute output dir>`. Read the PNGs it writes. Without `--only` it plays the full `office,map,week` run. Run only the parts a change needs with `--only=<scenario>[,...]`. The scenario list with a one-line purpose for each is the `SCENARIOS` dictionary at the top of `init/scripts/dev/autoplay.gd`; it is the source of truth, so read it rather than relying on this summary. The most used ones: `office` for UI panels and the request card (about 10 s), `ui` for modals, markers and the contacts drawer, `map` for the district map tour, `week` for the live week, summary and week two (about 100 s), `vehicles` for vehicle models. Add `--turbo` (or `--turbo=N`, default 10) to speed up the engine clock for quick agent checks: `week` drops to about 15 s with the same results; use the normal speed when judging animation or pacing. Run the import first when new assets were added. The older `--vehicles-only`-style flags still work but are legacy; use `--only=`.
+- Run one graphical Godot instance at a time. The autoplay quits by itself unless `--keep-open` is given; use that only when the user wants to interact with the live instance. Before starting another capture, and before ending your turn, check with PowerShell `Get-Process Godot* -ErrorAction SilentlyContinue` and stop the instances you started (`Stop-Process -Id <id>`). Never stop the user's own editor.
+- Every run writes a playtest log (JSON lines plus a week summary with waiting time, request latency and contact utilization) to `%APPDATA%\Godot\app_userdata\Init\playtests\`; files ending in `_player.jsonl` are real plays, `_autoplay.jsonl` come from the dev autoplay, and `--no-log` (after `--`) turns it off. When asked to analyze a playtest, read the latest `_player` log first, find where the week drags or stalls, and only then compare with the user's own feedback.
 - After sprites are added or redrawn, run `Godot --headless --path init --script res://scripts/dev/measure_sprite_anchors.gd` to refresh `scripts/data/sprite_anchors.gd` (where each sprite touches the ground and which map axis it is drawn along).
 - Generated art is described in `art/PROMPTS.md`; game-ready images live under `init/assets/`, concepts under `art/concepts/`.
 - For map-area visuals, start from an actual current Godot screenshot and the project's existing style work. Develop and integrate the area in its real map context; an approved combined 2D painting can occupy one moved/resized lot as an interim implementation. Standalone polished object concept art is produced only when explicitly requested, not as the default map workflow. See `art/ASSET_PIPELINE.md`.
-- For new or replaced generated raster art, follow `art/ASSET_PIPELINE.md`: preserve the original outside `init/`, review and obtain the applicable visual approval, run `uv run tools/optimize_asset.py` as a separate preparation step, then integrate the optimized copy into Godot. Do not bypass optimization or retroactively bulk-process existing assets without a migration task.
+- For new or replaced generated raster art, follow `art/ASSET_PIPELINE.md`: preserve the original outside `init/`, review and obtain visual approval as defined in `art/ASSET_PIPELINE.md` ("Visual approval"), run `uv run tools/optimize_asset.py` as a separate preparation step, then integrate the optimized copy into Godot. Do not bypass optimization or retroactively bulk-process existing assets without a migration task.
 - Do not commit or push unless explicitly asked.
 
 ## Roles and Parallel Work
 
-- Claude Code and Codex run as two equal desktop sessions on the same checkout, each in its own chat on its own topic. The user coordinates them; neither session assigns work to the other and neither is a "lead" or a "worker". Briefs in `tasks/` are shared notes, not dispatch orders.
+- Claude Code and Codex run as desktop sessions on the same checkout, each in its own chat on its own topic, with the roles in "Goals and Roles". The user coordinates them; neither session assigns work to the other. Claude Code's reviews and proposals go to the user, who decides what Codex does. Briefs in `tasks/` are shared notes, not dispatch orders.
 - Before editing, run `git status` and `git diff --stat`. A file that is already modified and is not yours may be mid-edit in the other session: do not touch it, and ask the user whether the other session is finished. Never overwrite, revert or stage another session's changes.
 - Stage by path when committing, so a commit contains only your own topic.
 - `tools/dispatch_task.sh <id>` (a brief run with `codex exec` in `../godot-worktrees/<id>`) is optional and not the usual flow. If a brief is run in a worktree, write only to its *Outputs* and record needed changes to `init/scripts/`, scenes, `sprite_anchors.gd`, `README.md` or `AGENTS.md` in the brief's report. See `tasks/README.md`.
@@ -63,11 +69,10 @@ Tokens are the scarcest resource; spend them on the result, not on ceremony.
 
 ## Blender and 3D Assets
 
-- For new vehicle models, use the current truck and Volga as the benchmarks for dimensions, proportions and visual quality. Follow the comparison rules in the project Blender skill; the Lada scale factor is legacy implementation behavior, not the default for new assets.
-
+- For new vehicle models, the RAF, PAZ and ZIL models are the benchmarks for dimensions, proportions and visual quality. Follow the comparison rules in the project Blender skill; the truck, Volga and Lada are no longer benchmarks, and the Lada scale factor is legacy implementation behavior, not the default for new assets.
 - Use the project skill at `.agents/skills/blender-godot-assets/SKILL.md` for Blender modeling, export and Godot integration. The reusable MCP client is `tools/blender_mcp.py`; prefer the working API over repeated UI attempts.
 - For downloaded models, read the skill's `references/asset-sourcing.md`: it records acquisition, automated inspection, adaptation, previews and the division of work with the user. Handle routine technical work independently; involve the user for meaningful creative choices or a concrete acquisition blocker.
-- Resume asset work from `art/models/<asset>/SOURCING.md` and its asset README, not from assumed chat memory. The Volga shortlist and pending acquisition are recorded in `art/models/volga/SOURCING.md`.
+- Resume asset work from `art/models/<asset>/SOURCING.md` and its asset README, not from assumed chat memory. Asset records are the source of truth for their asset's state. The editable Volga sources are lost (see `art/models/volga/SOURCING.md`); only its game GLB remains.
 - Match the reference and intended map camera. Inspect the silhouette from several angles before expensive detailing, baking or rendering; show an actual Godot frame when reporting in-game results.
 - Choose geometry, material and texture budgets for the intended viewing distance before detailing. Keep the editable Blender source separate from its game export.
 - Keep build, material bake, export and preview as resumable stages. Record progress for long operations; an MCP timeout does not cancel Blender work, so check status and outputs before retrying.
@@ -89,7 +94,7 @@ These rules extend and, where they differ, replace "Do not commit or push unless
 - **Branch names:** `feat/<slug>`, `fix/<slug>`, `art/<slug>`, `docs/<slug>`, `chore/<slug>`; briefs for workers use `task/<id>` (see `tasks/README.md`).
 - **Pull requests** use `.github/pull_request_template.md`: summary, scope, what changed, screenshots per feature, how to verify, risks and what was not verified. The title says what the PR does in one line; the body is English. Follow `docs/PR_WORKFLOW.md` for the screenshots.
 - **Label every PR when opening it** (`gh pr create --label ...`, or `gh pr edit --add-label` afterwards), using the Backlog labels: every `area:*` the diff touches (tooling, CI and agent docs are `area:process`), exactly one `type:*`, and the linked issue's `leverage:*`. Never put `ready` on a PR. If the scope changes later, update the labels too.
-- A worker's result (`task/<id>` branch) is integrated by the lead through its own PR, one PR per brief or per coherent group the user approves.
+- A worker's result (`task/<id>` branch) is integrated by the integrating session (normally Codex) through its own PR, one PR per brief or per coherent group the user approves.
 
 ## Backlog
 

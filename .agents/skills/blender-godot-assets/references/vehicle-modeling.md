@@ -1,6 +1,6 @@
 # Vehicle modelling and shape revisions
 
-Use for original vehicles, including buses, and body-shape edits. Use the current truck and Volga as the dimension and visual-quality benchmarks defined in SKILL.md. Sourcing/acquisition remains
+Use for original vehicles, including buses, and body-shape edits. The RAF, PAZ and ZIL models are the dimension and visual-quality benchmarks; SKILL.md ("Vehicle benchmarks") defines how to compare against them. Sourcing/acquisition remains
 in `asset-sourcing.md`; MCP execution and export scoping remain in `SKILL.md`.
 
 ## Establish the vehicle, then its form
@@ -118,24 +118,18 @@ Keep current measurements, rebuild commands, inspected preview paths, accepted
 visual directions and remaining review points in the asset README/task report.
 Do not claim a generic inspector or a universal vehicle generator exists.
 
-## Verified worked example: Volga (2026-10-31)
+## Worked examples in the repository
 
-The staged workflow was executed in
-`../godot-worktrees/volga-gaz24-model/art/models/volga/`. Read its `README.md`
-and task report to locate the current source; after integration, prefer the
-corresponding asset record in the main checkout. Do not assume the worktree
-has been merged or that its game export is the version currently used in town.
+Use the RAF and PAZ sources as the staged workflow to copy: body build,
+finish/bake, export with GLB measurements and a matched Godot preview.
 
-- `build_volga.py`: shared helpers, assembly and studio.
-- `build_body_shell.py`: crowned bonnet/boot, rolled shoulders and wheel cuts.
-- `build_upper_body.py`: coordinated roof, curved glass and rounded frames.
-- `finish_volga.py`: three surfaces, atlas baking and fitting reduction.
-- `export_volga.py`: selected-asset export and actual GLB measurements.
-- `preview_volga.py` / `preview_volga.gd`: matched comparisons / Godot frames.
+- `art/models/raf_ambulance/`: `build_raf.py`, `export_raf.py`,
+  `glb_inspection.json`, `raf_ambulance.blend` and the asset README.
+- `art/models/public_transport/`: `build_buses.py`, `finish_buses.py`,
+  `preview_buses.py`, `preview_buses.gd` and the asset README.
 
-The user positively reviewed the curved upper-body direction before requesting
-bonnet/boot rounding. The last checked deck revision exported 7,775 triangles,
-three materials and four embedded 1024px maps, with successful Godot import and
-visual inspection. The user also positively reviewed the rounded deck result
-before asking to preserve this workflow. These are verified example results,
-not promised costs or automatic settings for a UAZ.
+The Volga's editable sources (`build_volga.py` and its stage scripts) were
+kept only in a worktree and are lost; only `volga_gaz24.glb` remains. Do not
+look for them or describe them as available. The Volga figures above (about
+8k triangles, three atlas materials) remain a useful budget data point, not a
+benchmark.

@@ -1,9 +1,15 @@
 # Current implementation checkpoint (2026-10-31)
 
 The download research below is historical and superseded. The project now uses
-an original procedural GAZ-24 derived from the Lada workflow. Editable sources
-and build documentation remain in
-`../godot-worktrees/volga-gaz24-model/art/models/volga/README.md`.
+an original procedural GAZ-24 derived from the Lada workflow.
+
+Sources lost (recorded 2026-11-07): the editable sources and build
+documentation (`build_volga.py` and its stage scripts, the asset README) were
+kept only in the worktree `../godot-worktrees/volga-gaz24-model/`, which no
+longer exists, and were never committed. Only the game GLB and its extracted
+textures remain. A shape revision means rebuilding from scratch, starting from
+the RAF/PAZ workflow in the Blender skill. The Volga is no longer a vehicle
+benchmark.
 
 The latest rounded-body GLB (7,775 triangles, three materials) is copied into
 the main project's `init/assets/models/vehicles/volga_gaz24.glb` and loaded by
