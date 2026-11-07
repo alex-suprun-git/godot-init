@@ -51,4 +51,4 @@ _Filled in by the worker._
 
 ## Review notes
 
-_Filled in by the lead after each review round._
+_Filled in by the integrator after each review round._

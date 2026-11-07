@@ -8,6 +8,12 @@ description: "Design, implement, and visually compare HUDs, windows, icons, and 
 Deliver the interface in the running game. A generated mockup is a reference,
 not evidence that the implementation matches it. Read README.md for current
 design and art/ASSET_PIPELINE.md when preparing generated raster artwork.
+"Approval" means what art/ASSET_PIPELINE.md ("Visual approval") defines: the
+user's explicit approval of a named version, recorded with date and scope.
+For UI, the approved design direction goes into README.md (the design source
+of truth); the line naming the inspected version (concept file or capture)
+goes into docs/UI_HANDOFF.md. `Godot` is the full binary path
+from AGENTS.md (Workflow).
 
 ## Establish the comparison
 
@@ -62,23 +68,45 @@ design and art/ASSET_PIPELINE.md when preparing generated raster artwork.
 - Modal input ownership includes wheel, magnify gestures and held navigation
   keys. Prevent the map handler and its per-frame key polling while a modal or
   drawer is open, without consuming the event before the GUI can scroll.
-- The main implementation is init/scripts/ui/hud.gd; shared style is in
-  office_theme.gd, pictograms in office_icons.gd, map photos in person_token.gd,
-  and request type/deadline cues in request_marker.gd in that same directory.
+- The main implementation is init/scripts/ui/hud.gd. In the same directory:
+  shared style in office_theme.gd and office_skin.gd, paper backgrounds in
+  office_paper.gd, motion in office_motion.gd, progress marks in
+  office_progress.gd, status lamps in office_status.gd, pictograms in
+  office_icons.gd, the newspaper in newspaper.gd, map photos in
+  person_token.gd and request type/deadline cues in request_marker.gd. Check
+  the directory listing before adding a new file; a helper may already exist.
 
 ## Inspect and report
 
-Use the narrowest applicable project autoplay, not a new automated test suite.
-For HUDs and windows, office covers the map, contact detail, task tabs and
-request card. Add contacts for availability changes; add week when changing
-the summary. Keep captures in scratch or an ignored local folder.
+Use the narrowest applicable project autoplay, not a new automated test suite:
+`Godot --path init -- --autoplay --only=<scenario>[,...] --no-log --shots=<absolute dir>`.
+The `SCENARIOS` dictionary at the top of init/scripts/dev/autoplay.gd is the
+authoritative list with a one-line purpose for each; read it before choosing.
+UI scenarios at the time of writing:
 
-Run one graphical review instance at a time and track its process. Prefer the
-autoplay's normal automatic exit; use --keep-open only when the user asks to
-interact with that live instance. Close your previous instance before another
-capture, and verify its termination. Do not leave a renderer running while
-waiting for feedback. A request to close or stop takes priority over capture
-and visual-verification steps.
+| Change | Scenario |
+| --- | --- |
+| modals, scrolling, assigned markers, contacts drawer | `ui` |
+| drawer motion, availability and quest pictograms | `ui-motion` |
+| whole HUD and settings at scale limits | `ui-scale` |
+| calendar header, overtime, scale fit | `header` |
+| newspaper front page only | `newspaper` |
+| authored front page and next-week retrospective | `press` |
+| briefing, task folder, contact detail, request card, planning | `office` |
+| contact availability and reassignment | `contacts` |
+| portrait/photo tokens on the map | `tokens` |
+| week summary | `week` (slow; add `--turbo` unless judging motion) |
+
+Keep captures in the scratchpad or an ignored local folder.
+
+Run one graphical review instance at a time. The autoplay quits by itself;
+use --keep-open only when the user asks to interact with that live instance.
+Before another capture and before ending your turn, list instances with
+PowerShell `Get-Process Godot* -ErrorAction SilentlyContinue`, stop the ones
+you started with `Stop-Process -Id <id>`, and run the listing again to confirm
+they are gone. Never stop the user's own editor. Do not leave a renderer
+running while waiting for feedback. A request to close or stop takes priority
+over capture and visual-verification steps.
 Compare a reference and engine result at the same apparent scale. A successful
 launch only establishes that it runs. If the shape, material, type hierarchy or
 clarity is visibly weaker, name the gap and fix its cause before calling the

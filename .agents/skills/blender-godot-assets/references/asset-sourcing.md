@@ -23,7 +23,7 @@ When implementation is authorized, download from the legitimate source into an a
 
 Keep the original archive and license evidence where their terms permit. Treat downloaded scripts as untrusted and do not enable Blender auto-run for them. Record a SHA-256 hash and the attribution text before adaptation.
 
-Inspect the file in Blender: dimensions/axes, actual mesh/triangle/material counts, UVs and missing textures, separate movable parts and render appearance. Produce front, side and three-quarter previews. Adapt the game copy, export GLB using this skill, and inspect it beside the current truck and Volga under the actual map camera before final acceptance, following the benchmark rules in SKILL.md. Preserve the original source and list modifications.
+Inspect the file in Blender: dimensions/axes, actual mesh/triangle/material counts, UVs and missing textures, separate movable parts and render appearance. Produce front, side and three-quarter previews. Adapt the game copy, export GLB using this skill, and inspect it beside the closest RAF, PAZ or ZIL benchmark under the actual map camera before final acceptance, following the benchmark rules in SKILL.md. Preserve the original source and list modifications.
 
 ## Automation boundary
 

@@ -78,3 +78,5 @@ _Filled in by the lead after each review round._
 - Integration note for the lead: `VehicleModels.create()` scales every model to the length passed by the caller, and `city_map.gd` passes 4.3 for all cars. A Volga placed that way would be shrunk to Lada length. Add its source length to `LENGTHS` and place it at ≈ 4.91 m (4.99 × the Lada's 4.3 / 4.37 map factor).
 
 - Audit 2026-11-01: the integration note above predates the current implementation; source-length handling is already present.
+
+- 2026-11-07: the asset worktree no longer exists, and the editable sources, build scripts and source README were never committed, so the consolidation requested above can no longer happen. They are recorded as lost in `art/models/volga/SOURCING.md`; only the game GLB and textures remain. The Volga is no longer a vehicle benchmark (see the Blender skill).

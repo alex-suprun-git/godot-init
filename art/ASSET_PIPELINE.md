@@ -2,6 +2,16 @@
 
 The optimizer is a standalone Python tool outside the Godot project. Run it after visual approval and before adding a generated raster image to the game. It uses Pillow; ImageMagick is not required. `uv` installs the pinned dependency in an isolated script environment on first run.
 
+## Visual approval
+
+This definition applies to raster art, 3D models and UI elements; the project skills refer to it.
+
+- **Who approves:** only the user, in chat. An agent's own inspection, a successful launch or a reviewer session's opinion is not approval.
+- **What is approved:** one specific, named version: a concept or source file (path and version), or an actual in-game capture of a named build. Approval of a concept approves the direction, not in-engine parity; the in-game result needs its own approval.
+- **Where it is recorded:** in the asset's README (or the brief's *Report* while a brief is open), as one line: date, what was approved (file or capture), and its scope, for example "direction only", "batch of eleven banners" or "final in-game appearance". Without such a line the asset counts as unapproved. Approval statements already written before 2026-11-07 (in asset READMEs, `docs/UI_HANDOFF.md`, `README.md` or briefs) count as recorded, with the scope their wording gives; this format applies to new ones.
+- **What it covers:** routine processing inside the recorded scope (optimization, import, re-export, recolours that the user already chose) needs no new approval. A new visual direction, a changed silhouette or proportions, or a different material treatment does.
+- **Without approval:** you may prepare the asset, run the optimizer with `--dry-run`, integrate it on a branch for review and show captures. Do not describe the asset as approved, do not write its look into docs as a rule, and ask the user before replacing an approved asset with an unapproved one.
+
 ## Agent workflow
 
 For map areas, use an actual current Godot screenshot as the authoritative camera/layout reference and existing project art as the style reference. Keep map context throughout the iterations. The user may choose one combined transparent 2D painting in a moved/resized lot as an interim implementation before separate models. Standalone polished object concept art requires a separate explicit request; do not substitute it for the map-based workflow. Preserve and document the reference screenshot and the approved version beside the asset.
@@ -9,7 +19,7 @@ For map areas, use an actual current Godot screenshot as the authoritative camer
 When extracting an approved area, preserve its composition and object proportions. Do not ask for a new diorama camera or force a differently projected source to fit through large affine stretches. Avoid duplicate paving under an asset whose own ground outline is visible. Calibrate the actual opaque boundary against adjacent roads/rails, then inspect an in-game overview and a close-up of critical joins. For the station market, both through tracks must remain outside the painting; the fenced market edge and platform safety edge share one straight boundary.
 
 1. Generate and save the untouched original under `art/source_images/` (or keep an existing source under `art/concepts/`). Never generate directly into `init/assets/`. Keep the original filename/version and record the prompt in `art/PROMPTS.md`.
-2. Review the image against the art brief. Present meaningful new visual directions to the user. Existing approval of a batch or visual direction applies within its agreed scope; do not request repeated approval for routine processing. Do not claim unapproved art has been approved.
+2. Review the image against the art brief. Present meaningful new visual directions to the user and record approval as defined in "Visual approval" above. Do not request repeated approval for routine processing within the recorded scope. Do not claim unapproved art has been approved.
 3. Run `tools/optimize_asset.py` with the relevant profile and `--approved`. Write the optimized game copy to the asset's intended path under `init/assets/`. This step is required even if dimensions already fit: it normalizes PNG output and records provenance.
 4. Read the report and briefly inspect the optimized image for lost detail or damaged transparency. Inspect alpha data when uncertain; a dark preview background is not proof of an opaque PNG. If the budget loses important detail, choose an explicit `--max-edge` with `--reason`; do not resize repeatedly from an optimized copy.
 5. Connect the optimized copy in Godot. Run the normal asset import; regenerate sprite anchors for added/redrawn sprites. Inspect one relevant game view where practical. Report material issues without repeating full playtests for each image.
