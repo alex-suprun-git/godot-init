@@ -2,6 +2,8 @@
 
 Authored text for the week 1 redesign described in the root `README.md` ("Week 1 Redesign: Arrival and Introductions"). Documentation is English; the lines the player reads are Russian. One file per scene group, in play order. Drafts are written by Claude Code and approved by the user before Codex wires them into data.
 
+How to write and what Claude may decide alone: see `docs/story/GUIDE.md`.
+
 ## Conventions
 
 - `[Place, time]` marks a location card or a time skip.
