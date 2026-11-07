@@ -64,6 +64,7 @@ Tokens are the scarcest resource; spend them on the result, not on ceremony.
 
 - Start a new chat per task. Long chats re-send the whole history, including every image, on each step.
 - Reuse existing frames before capturing new ones; if the frame you need does not exist, take it once with the narrowest `--only=` scenario and `--turbo`.
+- After Godot imports, inspect the substantive `.import` diff separately from line-ending-only changes. Include only intentional import-setting changes in the task's commit; preserve pre-existing changes and do not restore files in bulk by extension to clean the working tree.
 - Look at no more than two or three images per task. Judge visuals from the default game camera, not from isolated tiles; a night, alternate-camera or material-preview frame is taken only when the change concerns it or the user asks.
 - Map screenshots and capture logs are not repository content: keep them in the scratchpad or an ignored folder (`art/bridges/`, `art/sidewalks/` and similar are in `.gitignore`). Upload selected PR images as GitHub attachments with `gh pr create/edit --attach`; keep prepared JPEGs in ignored `.local/pr-assets/<slug>/`. Do not commit new review images. Existing tracked `docs/pr-assets/` images stay until the separately authorized later cleanup; see `docs/PR_WORKFLOW.md`.
 - Documentation stays short: one section in one existing README per feature. No byte counts, no copied logs, no repeated status in several files.
@@ -72,7 +73,7 @@ Tokens are the scarcest resource; spend them on the result, not on ceremony.
 ## Blender and 3D Assets
 
 - For new vehicle models, the RAF, PAZ and ZIL models are the benchmarks for dimensions, proportions and visual quality. Follow the comparison rules in the project Blender skill; the truck, Volga and Lada are no longer benchmarks, and the Lada scale factor is legacy implementation behavior, not the default for new assets.
-- Use the project skill at `.agents/skills/blender-godot-assets/SKILL.md` for Blender modeling, export and Godot integration. The reusable MCP client is `tools/blender_mcp.py`; prefer the working API over repeated UI attempts.
+- Use the project skill at `.agents/skills/blender-godot-assets/SKILL.md` for Blender modeling, export, Godot integration and arranging existing buildings with their surrounding streets and courts. The reusable MCP client is `tools/blender_mcp.py`; prefer the working API over repeated UI attempts.
 - For downloaded models, read the skill's `references/asset-sourcing.md`: it records acquisition, automated inspection, adaptation, previews and the division of work with the user. Handle routine technical work independently; involve the user for meaningful creative choices or a concrete acquisition blocker.
 - Resume asset work from `art/models/<asset>/SOURCING.md` and its asset README, not from assumed chat memory. Asset records are the source of truth for their asset's state. The editable Volga sources are lost (see `art/models/volga/SOURCING.md`); only its game GLB remains.
 - Match the reference and intended map camera. Inspect the silhouette from several angles before expensive detailing, baking or rendering; show an actual Godot frame when reporting in-game results.

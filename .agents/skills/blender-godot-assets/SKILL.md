@@ -1,6 +1,6 @@
 ---
 name: blender-godot-assets
-description: Use when sourcing, modelling, revising, exporting or integrating any 3D asset for this Godot project's city map, including vehicles, buildings, building ensembles and industrial or service sites (kiosks, churches, houses, depots). Covers Blender MCP execution, GLB export, grounding and in-game inspection. Not for HUD/UI elements (use godot-ui-elements) or 2D raster art preparation alone (follow art/ASSET_PIPELINE.md).
+description: Use when sourcing, modelling, revising, exporting or integrating 3D assets for this Godot project's city map, or arranging existing buildings, courts and their surrounding streets. Covers site composition, Blender MCP execution, GLB export, grounding and in-game inspection. Not for HUD/UI elements (use godot-ui-elements) or 2D raster art preparation alone (follow art/ASSET_PIPELINE.md).
 ---
 
 # Blender to Godot Assets
@@ -11,7 +11,7 @@ The rules below are the current ones. When the user changes a rule, replace the 
 
 ## Compose complete map locations
 
-For building ensembles and industrial/service compounds, read [references/site-composition.md](references/site-composition.md). The approved ATP is the worked example for purposeful site composition, circulation, material finish and landscaping; its dimensions, source stages and remaining limitations are in [the ATP asset record](../../../art/models/industrial_sites/README.md). Its exact dimensions and enclosure are location-specific. Industrial refinement proceeds one location at a time.
+For building ensembles, industrial/service compounds and rearrangement of existing map components, read [references/site-composition.md](references/site-composition.md). For existing components, follow its layout workflow before editing positions; Blender and new asset production are needed only when the task requires asset changes. The approved ATP is the worked example for purposeful site composition, circulation, material finish and landscaping; its dimensions, source stages and remaining limitations are in [the ATP asset record](../../../art/models/industrial_sites/README.md). Its exact dimensions and enclosure are location-specific. Industrial refinement proceeds one location at a time.
 
 ## Vehicle benchmarks
 
