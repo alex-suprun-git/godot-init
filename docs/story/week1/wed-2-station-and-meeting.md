@@ -58,7 +58,7 @@ Wednesday 27 August 1997, afternoon and evening. The first part of the kiosk sto
 - **A. Пообещать патрули.** «Мы добьёмся, чтобы на окраинах появились ночные патрули.»
   *(residents +, police: the major tenses, he did not agree; boss: unhappy, he has dealings with these people; the criminal side hears it and notices the new man)*
 - **B. Обвинить милицию.** «Милиция должна отвечать за порядок. А сейчас она отвечает за процент.»
-  *(residents ++, police −−, the criminal side notices the new man; a flag `spoke_sharply`; this later draws Gureev's interest)*
+  *(residents ++, police −−, the criminal side notices the new man; a flag `spoke_sharply`; this later draws Sedov's interest)*
 - **C. Задать наивный вопрос.** «Скажите, кому выгодно, чтобы по ночам стреляли?»
   *(the hall goes quiet; residents +, the boss: a nervous glance; flag `asked_who_benefits`; Nina writes something down and underlines it)*
 - **D. Говорить мягко.** «Администрация знает о проблеме и работает над ней.»

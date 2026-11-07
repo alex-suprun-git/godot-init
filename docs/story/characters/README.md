@@ -11,7 +11,7 @@ One sheet per character: role and scenes, a pointer to the look, voice with samp
 | `tolik.md` | approved |
 | `gusev.md` | approved |
 | `journalist.md` (Vera Lisitsyna) | proposal, `art/PROMPTS.md` W9 |
-| `gureev.md` | proposal, `art/PROMPTS.md` W10 |
+| `sedov.md` | proposal, `art/PROMPTS.md` W10 |
 | `georgy.md` (Father Georgy) | proposal, `art/PROMPTS.md` W11 |
 | `korotkov.md` (the engineer) | proposal, `art/PROMPTS.md` W12 |
 

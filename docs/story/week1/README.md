@@ -27,7 +27,7 @@ How to write and what Claude may decide alone: see `docs/story/GUIDE.md`. Charac
 | `wed-2-station-and-meeting.md` | The kiosk with the bullet hole, the meeting in the House of Culture | Draft v0 |
 | `thu-1-gusev-day-and-inspection.md` | Gusev's two asks, the inspection announced, the five-part chain | Draft v0 |
 | `fri-1-inspection.md` | The engineer's inspection, Vera's article | Draft v0 |
-| `fri-2-restaurant.md` | The report, the restaurant, Gureev | Draft v0 |
+| `fri-2-restaurant.md` | The report, the restaurant, Sedov | Draft v0 |
 
 ## Cross-day threads (for consistency)
 
@@ -36,6 +36,6 @@ How to write and what Claude may decide alone: see `docs/story/GUIDE.md`. Charac
 | The false repair act | Nina (Mon), Gusev (Tue), the polite men (Tue) | Thursday evening, Friday noon |
 | Vera's identity | Kitchen (Mon) | Steps of the executive committee (Tue), the article (Fri) |
 | The restaurant | Tolik's silence (Mon) | The dinner (Fri) |
-| The border shootings | The new booth (Mon), Georgy (Wed), the kiosk glass (Wed) | The meeting (Wed), Gureev (Fri) |
+| The border shootings | The new booth (Mon), Georgy (Wed), the kiosk glass (Wed) | The meeting (Wed), Sedov (Fri) |
 | Gusev's favour | The introduction (Tue) | Thursday's two asks, week 2 |
-| The language | The sister, the translator trait | Gureev's remark (Fri) |
+| The language | The sister, the translator trait | Sedov's remark (Fri) |

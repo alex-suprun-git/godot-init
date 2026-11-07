@@ -300,9 +300,9 @@ Work look:
 
 > [Window style block] Bust portrait, three-quarter view, matching the framing, background, and manner of the portraits in `init/assets/portraits/`. The same woman of 25 as in the home look: dark graphite second-hand blazer, ironed white blouse, hair pulled back in a neat ponytail, a burgundy lanyard with a press card, a steno notebook held to her chest, a small dictaphone in the pocket, one eyebrow slightly raised, alert and composed. Cool morning daylight, the steps of a district administration building blurred behind. Portrait 3:4.
 
-### W10. Portrait: Gureev, fixer
+### W10. Portrait: Sedov, fixer
 
-Status: proposal, not generated. Character sheet: `docs/story/characters/gureev.md`. Path: `init/assets/portraits/gureev.png`.
+Status: proposal, not generated. Character sheet: `docs/story/characters/sedov.md`. Path: `init/assets/portraits/sedov.png`.
 
 > [Window style block] Bust portrait, three-quarter view, matching the framing, background, and manner of the portraits in `init/assets/portraits/`. A lean man of about forty-five, clean-shaven, neat thinning hair, a faint half smile and attentive watchful eyes; a grey-blue single-breasted suit that looks expensive and cheap at once, a white shirt with no tie, a plain wedding ring, a pen in the breast pocket. He looks like an accountant, not a gangster: the opposite of Gusev's flash. Portrait 3:4.
 

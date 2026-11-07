@@ -1,4 +1,4 @@
-# Gureev (fixer)
+# Sedov (fixer)
 
 Status: Draft v0 (voice and secrets written by the narrative partner; the look comes from the approved portrait where one exists). The look is defined once, in `art/PROMPTS.md`; this sheet only points to it.
 

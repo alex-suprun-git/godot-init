@@ -42,13 +42,13 @@ Each card: voice, wants, hides. The full sheet for each character (voice with sa
 
 | Character | Voice | Wants | Hides |
 |---|---|---|---|
-| **Pyotr Petrovich** (boss) | Heavy, unhurried, sardonic; never raises his voice; "ты" | Quiet, a clean report, to hold on until retirement | Kickback on the fuel oil; dealings with the criminals through Gureev |
+| **Pyotr Petrovich** (boss) | Heavy, unhurried, sardonic; never raises his voice; "ты" | Quiet, a clean report, to hold on until retirement | Kickback on the fuel oil; dealings with the criminals through Sedov |
 | **Tolik** (driver) | Cheerful, talkative, warm, self-mocking; knows more than he says | To be liked, to keep the Volga running | Stops talking at the restaurant; he knows who eats there |
 | **Baba Nina** | Sharp, suspicious, short punchy lines, a notebook; tests newcomers | Hot water and someone who comes to the yard and tells people the truth | Nothing; she writes it all down |
 | **Mikhalych** (fitter) | Quiet, ashamed, dry self-deprecating humor | Not to be asked about last autumn | He signed the false completion act; two polite men visited |
 | **Gusev** (businessman, contractor) | Friendly, expansive, generous with promises | Contracts, the wasteland, a friend in the administration | His backing; the envelope is removed for now |
 | **Vera Lisitsyna** (journalist, neighbour) | Curious, quick, lightly ironic; does not know who the protagonist is until Tuesday; full sheet in `docs/story/characters/journalist.md` | A story that is true | That she is a journalist (Monday); an old story about the boiler repairs nobody would print |
-| **Gureev** (fixer) | Smooth, reasonable, speaks the language of both sides; mirror of the protagonist | To stay useful to both sides | He works with the criminals, not for them, and is called in when force is needed |
+| **Sedov** (fixer) | Smooth, reasonable, speaks the language of both sides; mirror of the protagonist | To stay useful to both sides | He works with the criminals, not for them, and is called in when force is needed |
 | **Father Georgy** | Gentle, humorous, a good listener; strong tea | Heat for the church, a shelter | What he hears in confession |
 | **The commission engineer** | Dry, procedural, tired; appears only on Friday of week 1 | A signed report | What he does with a forged act |
 | **The protagonist** | Dry inner voice; translator of the neighbour's language; poor; a sister studying in the neighbour's capital | A way up, for someone | Everything; his name is never shown |

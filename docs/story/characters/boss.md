@@ -24,7 +24,7 @@ Quiet, a clean report, to hold on until retirement.
 
 ## Hides
 
-A kickback on the fuel-oil contract; his dealings with the criminals through Gureev.
+A kickback on the fuel-oil contract; his dealings with the criminals through Sedov.
 
 ## How the bond grows
 
