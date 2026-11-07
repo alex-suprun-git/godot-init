@@ -4,7 +4,7 @@ Status: Draft v0 (voice and secrets written by the narrative partner; the look c
 
 ## Name
 
-**Шумилов Борис Саввич.** Everyone says «Борис Саввич» to his face; behind his back the staff say «Савич». The previous placeholder name was Pyotr Petrovich; the data file `init/scripts/data/week1.gd` (the `BOSS` name and about ten strings) still uses it and should be updated by the integrator.
+**Шумилов Борис Саввич.** Everyone says «Борис Саввич» to his face; behind his back the staff say «Савич». The previous placeholder name was Pyotr Petrovich; the data file `init/scripts/data/week1.gd` and the HUD caption were updated to the new name on 2026-11-07.
 
 ## Role and scenes
 
