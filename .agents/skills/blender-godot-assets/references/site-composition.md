@@ -26,6 +26,20 @@ Approximate reference sizes for a starting estimate (a cited real reference wins
 | Small district boiler house with chimney and coal yard | about 50 × 60 m |
 | Courtyard playground | about 15 × 20 m |
 
+Large reference objects that already exist in the game, so that small and big places are sized against each other. The values come from `init/scripts/data/building_catalog.gd` and `init/scripts/data/district_layout.gd` (read 2026-11-07; recheck the files, they change). The lot is the rectangle reserved in the district layout, which is larger than the building itself:
+
+| Object | Building footprint | Height | Lot |
+| --- | --- | --- | --- |
+| Five-storey panel block (`panel_5`) | 84 × 11 m | 5 floors | 90 × 24 m |
+| Nine-storey panel block (`panel_9`) | 78 × 12 m | 9 floors | 90 × 24 m |
+| Administration slab (`admin_slab`) | 108 × 11 m | 5 floors | 110 × 14 m |
+| Dormitory (`dormitory`) | 30 × 23 m, L-shaped | 4 floors, 13.6 m | 38 × 45 m with entrance court |
+| Tower next to the executive committee (`elite_tower_placeholder`, a placeholder) | 24 × 20 m | 14 floors, 42 m | 34 × 38 m |
+| Executive committee (`ispolkom`, civic centre with its square) | built compound | 18 m | 115 × 108 m, one of the largest lots |
+| ATP hall (`atp`, the approved depot) | 64 × 24 m | 8 m | 120 × 82 m for the whole compound |
+
+Use both tables to check scale: set the largest building of a new location beside the nearest object here in the standard camera frame, and make sure a church, a depot or a kiosk is neither lost next to a panel block nor as large as one. When a location needs a multi-storey building, take its floor count and height from this table or from the catalog, not from a guess.
+
 ## Compose a lived-in place
 
 Correct dimensions are a requirement, not a result. Report these composition checks, not only measurements:
