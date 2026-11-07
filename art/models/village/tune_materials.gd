@@ -54,8 +54,8 @@ func _initialize() -> void:
 		material.set_shader_parameter("normal_texture",_map(stem,"normal"))
 		material.set_shader_parameter("response_texture",_map(stem,"roughness"))
 		if label == "Ordinary brown wood":
-			material.set_shader_parameter("albedo_texture",load("res://assets/models/church_ensemble/wood.png"))
-			material.set_shader_parameter("normal_texture",load("res://assets/models/church_ensemble/wood_normal.png"))
+			material.set_shader_parameter("albedo_texture",load("res://assets/materials/church_ensemble/wood.png"))
+			material.set_shader_parameter("normal_texture",load("res://assets/materials/church_ensemble/wood_normal.png"))
 		material.set_shader_parameter("colour_tint",spec[1])
 		material.set_shader_parameter("roughness_floor",spec[2])
 		material.set_shader_parameter("metal_amount",spec[3])

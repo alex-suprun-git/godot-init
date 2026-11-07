@@ -28,7 +28,9 @@ The user requested denser graves and purposeful planting on 2026-11-07. Seventy-
 - `build_assets.py`: original measured geometry, editable-source build, independent GLB export and a cheap two-angle shape review. Only asset collections are exported; each GLB was inspected for one scene and one mesh. A background Blender process is used because the live MCP endpoint was unavailable; no interactive scene was modified.
 - `church_ensemble.blend`: editable meshes with packed prepared materials, saved before game-copy joins.
 - `prepare_surfaces.py`: extracts the four ImageGen albedo tiles and authors subtle portable normal/roughness response. The untouched atlas and exact prompt are under `art/source_images/church_ensemble/`. Each of twelve surface maps was separately prepared with `tools/optimize_asset.py --profile surface --approved`, under the accepted material direction, before Blender integration. The two-metre UV repeat and modeled roof folds avoid oversized painted detail. Do not bypass preparation when revising them.
-- `init/assets/models/church_ensemble/`: ten game GLBs, prepared textures and Godot-generated import resources.
+- `art/models/church_ensemble/textures/`: the twelve prepared surface maps that Blender reads (not part of the Godot project).
+- `init/assets/models/church_ensemble/`: ten game GLBs without embedded textures and their import resources.
+- `init/assets/materials/church_ensemble/`: the maps the game actually uses, once each (11 distinct images, VRAM-compressed), and four `<material_slug>.tres` files. `build_assets.py export` runs `tools/strip_glb_textures.py` on every GLB; `init/scripts/dev/church_material_import.gd` (set as `import_script/path` in each `.glb.import`) swaps the shared material back in by name. The roughness maps here are the ones Blender exported, which differ from the prepared inputs; `art/models/church_ensemble/build_shared_materials.gd` built the library from the previously extracted copies. Before: 25.7 MB of GLBs plus 63 extracted PNGs holding 15 distinct images; after: 1.0 MB of GLBs, all resolved materials identical, and 24.9 MB less texture memory at the church camera (1030.4 to 1005.5 MB, `RENDER_TEXTURE_MEM_USED`).
 - `init/scripts/map/church_ensemble.gd`: composition, paths, landscaping and repeated modules; replaces the church sprite and old procedural cemetery through `district_builder.gd`. The catalog footprint and graph entrances now describe the actual model/site.
 
 Run from the repository root with the installed Blender executable:
@@ -36,7 +38,7 @@ Run from the repository root with the installed Blender executable:
 ```powershell
 & "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" --background --factory-startup --python art/models/church_ensemble/prepare_surfaces.py
 # Separately prepare each plaster/green_metal/limestone/wood map and its _normal/_roughness maps:
-uv run tools/optimize_asset.py art/source_images/church_ensemble/plaster.png --profile surface --output init/assets/models/church_ensemble/plaster.png --approved
+uv run tools/optimize_asset.py art/source_images/church_ensemble/plaster.png --profile surface --output art/models/church_ensemble/textures/plaster.png --approved
 & "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" --background --factory-startup --python art/models/church_ensemble/build_assets.py -- blockout
 & "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" --background --factory-startup --python art/models/church_ensemble/build_assets.py -- build
 & "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" --background --factory-startup --python art/models/church_ensemble/build_assets.py -- export

@@ -1,0 +1,19 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/materials/church_ensemble/green_metal.png" id="1_x6ddd"]
+[ext_resource type="Texture2D" path="res://assets/materials/church_ensemble/green_metal_roughness.png" id="2_h4hdv"]
+[ext_resource type="Texture2D" path="res://assets/materials/church_ensemble/green_metal_normal.png" id="3_fc52l"]
+
+[resource]
+resource_name = "Muted green roof steel"
+cull_mode = 2
+albedo_texture = ExtResource("1_x6ddd")
+metallic = 0.18
+metallic_texture = ExtResource("2_h4hdv")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_h4hdv")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_scale = 0.45
+normal_texture = ExtResource("3_fc52l")
+metadata/_gltf_primary_texture_coord = 0

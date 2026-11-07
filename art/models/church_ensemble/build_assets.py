@@ -10,6 +10,8 @@ from mathutils.geometry import tessellate_polygon
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[2]
 OUT=ROOT/'init/assets/models/church_ensemble'
+TEXTURES=HERE/'textures'  # prepared surface maps (Blender inputs), kept out of the Godot project
+SHARED_MATERIALS=ROOT/'init/assets/materials/church_ensemble'  # shared runtime maps + <material_slug>.tres
 SCRATCH=ROOT/'.local/church-ensemble'
 PLAN=json.loads((ROOT/'init/scripts/data/church_site.json').read_text())
 STAGE=sys.argv[sys.argv.index('--')+1] if '--' in sys.argv else 'build'
@@ -23,6 +25,16 @@ scene=bpy.context.scene
 scene.unit_settings.system='METRIC';scene.unit_settings.scale_length=1
 parts=[];collection=None
 
+def strip_shared_textures(path):
+    """Church models share their textured materials (init/assets/materials/church_ensemble).
+    Remove the per-model embedded textures; church_material_import.gd restores them by name."""
+    import importlib.util
+    spec=importlib.util.spec_from_file_location('strip_glb_textures',ROOT/'tools/strip_glb_textures.py')
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    document,binary=module.read_glb(path)
+    document,binary,_=module.strip(document,binary,SHARED_MATERIALS)
+    module.write_glb(path,document,binary)
+
 def material(name,color,texture=None,rough=.8,metal=0):
     m=bpy.data.materials.new(name);m.diffuse_color=(*color,1);m.use_nodes=True
     n=m.node_tree.nodes;l=m.node_tree.links
@@ -31,7 +43,7 @@ def material(name,color,texture=None,rough=.8,metal=0):
     p.inputs['Roughness'].default_value=rough;p.inputs['Metallic'].default_value=metal
     if DETAIL and texture:
         for suffix,socket in [('', 'Base Color'),('_roughness','Roughness'),('_normal','Normal')]:
-            path=OUT/(texture+suffix+'.png')
+            path=TEXTURES/(texture+suffix+'.png')
             if not path.exists():raise RuntimeError('Prepare texture first: '+str(path))
             image=bpy.data.images.load(str(path),check_existing=True)
             t=n.new('ShaderNodeTexImage');t.image=image
@@ -343,6 +355,7 @@ if STAGE=='export':
         maximum=PLAN['budget']['church_triangles_max' if name=='church' else 'support_asset_triangles_max']
         if tri>maximum:raise RuntimeError(f'{name} exceeds triangle budget: {tri}>{maximum}')
         bpy.ops.export_scene.gltf(filepath=str(OUT/(name+'.glb')),export_format='GLB',use_selection=True,use_active_scene=True,export_yup=True,export_materials='EXPORT')
+        strip_shared_textures(OUT/(name+'.glb'))
         data=(OUT/(name+'.glb')).read_bytes();size,kind=struct.unpack_from('<II',data,12);doc=json.loads(data[20:20+size])
         if len(doc.get('meshes',[]))!=1 or len(doc.get('scenes',[]))!=1:raise RuntimeError('Unexpected GLB contents: '+name)
         bounds=[Vector(v) for v in ob.bound_box]
