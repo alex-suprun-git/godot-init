@@ -1,4 +1,4 @@
-# Wednesday, part 2: the station square and the House of Culture (draft v0)
+# Wednesday, part 2: the station square and the House of Culture (draft v1, rewritten in the new spoken register)
 
 Wednesday 27 August 1997, afternoon and evening. The first part of the kiosk story (vendors and police at the station square), then the residents' meeting in the House of Culture. The two are linked by one bullet hole in a kiosk window.
 
@@ -16,16 +16,16 @@ Wednesday 27 August 1997, afternoon and evening. The first part of the kiosk sto
 
 *В стекле круглая дырочка с лучами трещин. Стекло заклеено скотчем, но дыра осталась.*
 
-ПРОДАВЩИЦА: Вот. В субботу ночью. Я не из пугливых, но вечером я теперь не торгую.
+ПРОДАВЩИЦА: Вот, видите, в субботу ночью, я не из пугливых, я тут десять лет стою, но вечером теперь не торгую, мало ли.
 
-ПРОДАВЩИЦА: Милиция потом пришла, посмотрела, спросила, кому мы мешаем. А мы кому мешаем?
+ПРОДАВЩИЦА: Милиция потом пришла, посмотрела, записала, а спросила только, кому мы мешаем, а мы кому мешаем, мы же просто торгуем.
 
 > **Choice: what the player says (the conversation is one beat)**
 
 - **«Кто стрелял?»**
-  ПРОДАВЩИЦА: Если бы я знала, я бы вам не сказала. Не потому, что боюсь. Потому что вы всё равно ничего не сделаете.
+  ПРОДАВЩИЦА: Если б я знала, то и не сказала бы вам, не потому, что боюсь, а потому, что вы всё равно ничего не сделаете.
 - **«Что вам нужно?»**
-  ПРОДАВЩИЦА: Чтобы милиция ходила не за процентом, а за порядком. Это же очень большая просьба, да?
+  ПРОДАВЩИЦА: Чтобы милиция ходила не за процентом, а за порядком, но это, наверное, слишком много просить.
 - **Промолчать и записать.**
   *(the player writes the details; flag `saw_the_kiosk`)*
 
@@ -57,7 +57,7 @@ Wednesday 27 August 1997, afternoon and evening. The first part of the kiosk sto
 
 - **A. Пообещать патрули.** «Мы добьёмся, чтобы на окраинах появились ночные патрули.»
   *(residents +, police: the major tenses, he did not agree; boss: unhappy, he has dealings with these people; the criminal side hears it and notices the new man)*
-- **B. Обвинить милицию.** «Милиция должна отвечать за порядок. А сейчас она отвечает за процент.»
+- **B. Обвинить милицию.** «Милиция должна отвечать за порядок, а получается, что она отвечает за процент.»
   *(residents ++, police −−, the criminal side notices the new man; a flag `spoke_sharply`; this later draws Sedov's interest)*
 - **C. Задать наивный вопрос.** «Скажите, кому выгодно, чтобы по ночам стреляли?»
   *(the hall goes quiet; residents +, the boss: a nervous glance; flag `asked_who_benefits`; Nina writes something down and underlines it)*
@@ -72,11 +72,11 @@ Wednesday 27 August 1997, afternoon and evening. The first part of the kiosk sto
 - **Честно отказать.** «Срока пока назвать не могу. Работаем.» *(residents slightly −, Nina's note: honest)*
 - **Передать вопрос главе.** *(boss +, residents −)*
 
-*Зал расходится медленно. Люди переговариваются тихо, как после похорон, на которые никто не собирался.*
+*Зал расходится медленно, люди переговариваются тихо.*
 
 *Нина останавливается у вашего стула.*
 
-НИНА: Вы сказали. А это уже не молчание. Запишу.
+НИНА: Ну вот, вы сказали, это уже не молчание, я запишу.
 
 [22:10]
 

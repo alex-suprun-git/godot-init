@@ -11,7 +11,7 @@ Status: Draft v0. Name, paper and age are assumptions made by the narrative part
 
 ## Voice
 
-Quick, lightly ironic, curious, a little tired. Asks one question more than is polite. Never says what she is doing for a living in the first scene; she says "я больше по буквам". Warm when she decides to be, and she decides slowly. Uses "вы" with strangers and switches to "ты" only after a real conversation.
+Quick, curious, a little tired. Asks a lot of questions, corrects herself mid-sentence, uses «ну» and «как бы»; less ironic than curious. Sample: «Вы к Сергеичу, на третью койку? Ну, держитесь, он ночью такое выводит, что я вообще не понимаю, как стены стоят.» She says what she does for a living last: «я всё больше по буквам».
 
 ## What she wants and hides
 

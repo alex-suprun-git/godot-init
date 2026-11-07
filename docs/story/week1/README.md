@@ -17,17 +17,17 @@ How to write and what Claude may decide alone: see `docs/story/GUIDE.md`. Charac
 
 | File | Content | Status |
 |---|---|---|
-| `mon-1-arrival.md` | Train newspaper, Tolik's drive, the wait at the boss's door, the empty interface | Draft v1 (Tolik's voice approved) |
-| `mon-2-boss-and-block5.md` | Boss monologue, the first conversation with Nina | Draft v0 |
-| `mon-3-dormitory.md` | Going home as a quest, Vera in the kitchen | Draft v0 |
-| `tue-1-vera-at-work.md` | Vera as press at the executive committee | Draft v0 |
-| `tue-2-mikhalych.md` | The pub, getting Mikhalych out, the repair | Draft v0 |
-| `tue-3-gusev-and-evening.md` | Gusev's introduction, the first training evening | Draft v0 |
-| `wed-1-father-georgy.md` | Tea with the priest, `church_heat` | Draft v0 |
-| `wed-2-station-and-meeting.md` | The kiosk with the bullet hole, the meeting in the House of Culture | Draft v0 |
-| `thu-1-gusev-day-and-inspection.md` | Gusev's two asks, the inspection announced, the five-part chain | Draft v0 |
-| `fri-1-inspection.md` | The engineer's inspection, Vera's article | Draft v0 |
-| `fri-2-restaurant.md` | The report, the restaurant, Sedov | Draft v0 |
+| `mon-1-arrival.md` | Train newspaper, Tolik's drive, the wait at the boss's door, the empty interface | Draft v2 (new spoken register) |
+| `mon-2-boss-and-block5.md` | Boss monologue, the first conversation with Nina | Draft v1 (new spoken register) |
+| `mon-3-dormitory.md` | Going home as a quest, Vera in the kitchen | Draft v1 (new spoken register) |
+| `tue-1-vera-at-work.md` | Vera as press at the executive committee | Draft v1 (new spoken register) |
+| `tue-2-mikhalych.md` | The pub, getting Mikhalych out, the repair | Draft v1 (new spoken register) |
+| `tue-3-gusev-and-evening.md` | Gusev's introduction, the first training evening | Draft v1 (new spoken register) |
+| `wed-1-father-georgy.md` | Tea with the priest, `church_heat` | Draft v1 (new spoken register) |
+| `wed-2-station-and-meeting.md` | The kiosk with the bullet hole, the meeting in the House of Culture | Draft v1 (new spoken register) |
+| `thu-1-gusev-day-and-inspection.md` | Gusev's two asks, the inspection announced, the five-part chain | Draft v1 (new spoken register) |
+| `fri-1-inspection.md` | The engineer's inspection, Vera's article | Draft v1 (new spoken register) |
+| `fri-2-restaurant.md` | The report, the restaurant, Sedov | Draft v1 (new spoken register) |
 
 ## Cross-day threads (for consistency)
 

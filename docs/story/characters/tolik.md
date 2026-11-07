@@ -16,7 +16,7 @@ Approved portrait: `init/assets/portraits/tolik.png`. Canonical look: `art/PROMP
 
 Cheerful, talkative, warm, mocks himself, loves the Volga. Long flowing sentences and small jokes. Goes quiet on the one subject he must not discuss.
 Habits: points at everything with the hand that is not on the wheel; waves at windows without looking at the road.
-Sample: «Толик я, водитель, и вообще человек, которому всё известно и никто не верит.» / «Тут обедают.»
+Sample: «Вот вокзал, а рядом рынок, тут весь район кормится, вы только кошелёк держите поближе, а то он у нас быстро находит нового хозяина.»
 
 ## Wants
 

@@ -35,6 +35,11 @@ Read before writing: root `README.md` sections "Setting and Tone", "Factions", "
 - Effects shown to the player are direction only ("жители будут довольны"), never numbers, except taxi fares and prices.
 - Log and summary lines are one dry sentence about what happened, not what the player should feel.
 - Avoid repeating the same joke structure within a scene. One good joke per beat, not three.
+- **No punchline in every line.** One dry remark per scene at most; the rest is ordinary talk. If a joke only works once someone explains it, cut it.
+- **Rhythm is part of the character.** Real people talk in run-on sentences with commas, «ну», «значит», «вот», and break off and restart; do not chop speech into short sentences ending in full stops. Reserve short, abrupt lines for moments where someone is shutting a topic down (the boss, Tolik at the restaurant).
+- **Concrete things instead of images.** «Восемь стариков, один лежачий» beats a metaphor.
+- **Each voice has its own register:** Nina long, complaining, with numbers; Vera quick, curious, asking questions and correcting herself; Gusev a warm salesman with asides and anecdotes; Sedov slow, formal and complete, no slang, no jokes; Tolik a gossip who digresses; the boss laconic but not choppy; Mikhalych mumbling and trailing off; Korotkov precise and impersonal; Georgy gentle and unhurried.
+- **Less stage-direction prose.** Only what the player would see on screen.
 
 ## Characters (voice cards)
 

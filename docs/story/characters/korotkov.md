@@ -16,7 +16,7 @@ No approved portrait yet. Proposal: `art/PROMPTS.md`, W12 (not generated). In sh
 
 Dry, tired, procedural. Greets everyone in turn, even the dog. Asks one precise question at a time.
 Habits: touches radiators with his palm, counts aloud; writes everything down and says so.
-Sample: «Я возражать не буду. Я вообще редко возражаю.» / «Листа нет. Я не говорю, что вы его убрали. Я говорю, что его нет.»
+Sample: «Листа нет. Я не утверждаю, что его убрали вы, я лишь констатирую, что его нет.»
 
 ## Wants
 

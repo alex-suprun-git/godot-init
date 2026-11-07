@@ -20,7 +20,7 @@ Approved portrait: `init/assets/portraits/boss.png`. Canonical look: `art/PROMPT
 
 Heavy, unhurried, sardonic. Never raises his voice. Says «ты», names things plainly and leaves the unsaid unsaid.
 Habits: asks a question and answers it himself («Вопросы есть? Нет. Вот и хорошо.»); makes people close the door.
-Sample: «Спрашивать будут с меня. А я буду спрашивать с тебя.» / «Не всех слушай, но и не отмахивайся.»
+Sample: «Спрашивать будут с меня, ну а я, соответственно, с тебя.»
 
 ## Wants
 

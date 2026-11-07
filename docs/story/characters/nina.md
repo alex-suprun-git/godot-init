@@ -14,9 +14,9 @@ Approved portrait: `init/assets/portraits/baba_nina.png`. Canonical look: `art/P
 
 ## Voice
 
-Sharp, suspicious, short punchy lines. A dry metaphor now and then. Calls the protagonist «молодой человек»; writes him down as «новый помощник» until she knows more.
+Sharp and suspicious, but she speaks in long run-on complaints with commas, concrete numbers (eight old people, one bedridden) and no metaphors. Calls the protagonist «молодой человек» or «милый»; writes him down as «новый помощник» until she knows more.
 Habits: opens the notebook at a bookmark before she answers; counts things aloud; refuses to be hurried.
-Sample: «Принято к сведению. Как будто это не вода, а дань.» / «Не вам, я воде.»
+Sample: «С четверга у нас горячей воды нет, это уже третий раз за год, а год-то ещё не кончился.»
 
 ## Wants
 

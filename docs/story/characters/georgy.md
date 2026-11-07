@@ -16,7 +16,7 @@ No approved portrait yet. Proposal: `art/PROMPTS.md`, W11 (not generated). In sh
 
 Gentle, humorous, a good listener. Distinguishes verbs the protagonist uses carelessly («прошу» is not «хочу»).
 Habits: refills the glass before asking; goes on cleaning while he talks.
-Sample: «Лампады гаснут. Это не метафора.» / «Я ничего не хочу. Я прошу. Это разные глаголы.»
+Sample: «Нужно, чтобы лампады не гасли от холода, я не в переносном смысле, они у нас и правда гаснут, масло густеет.»
 
 ## Wants
 

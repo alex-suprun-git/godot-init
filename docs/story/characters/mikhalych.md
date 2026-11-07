@@ -14,9 +14,9 @@ Approved portrait: `init/assets/portraits/mikhalych.png`. Canonical look: `art/P
 
 ## Voice
 
-Quiet, ashamed, dry self-deprecating humor, speaks to his hands more than to people.
+Quiet, ashamed, a little dry self-mockery. Broken sentences with «это...», «ну...», trailing off; speaks to his hands more than to people.
 Habits: puts his palms flat on the table as if they were not his; repeats the end of a sentence under his breath.
-Sample: «Я эту котельную знаю, как свою печень. Обе в плохом состоянии.» / «Меня там нет.»
+Sample: «Ко мне осенью приходили, двое, такие вежливые, чаю попили, ничего не сказали, вот это хуже всего и было, что ничего.»
 
 ## Wants
 

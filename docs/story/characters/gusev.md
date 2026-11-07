@@ -14,9 +14,9 @@ Approved portrait: `init/assets/portraits/gusev.png` (see `art/PROMPTS.md`, W3 a
 
 ## Voice
 
-Friendly, expansive, generous with promises. Turns every request into a favour on both sides. Calls things «вопрос», never «проблема».
+Friendly, expansive, generous with promises. Warm run-on sentences with asides («вы не подумайте»), pleased with himself, never an aphorism. Calls things «вопрос», never «проблема».
 Habits: lets a pause hang until the other person fills it; hands over a card with his phone number.
-Sample: «Знакомство дороже денег, а стоит дешевле.» / «Чаю не обещаю, а договор всегда найдётся.»
+Sample: «Меня Гусев зовут, фирма «Стройремонт», вы не подумайте, мне от вас ничего не надо, честное слово.»
 
 ## Wants
 

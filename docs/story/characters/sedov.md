@@ -14,9 +14,9 @@ No approved portrait yet. Proposal: `art/PROMPTS.md`, W10 (not generated). In sh
 
 ## Voice
 
-Smooth, reasonable, polite, speaks the language of both sides. Never raises his voice. Repeats the other person's key word back as a question.
+Smooth, reasonable, polite, slow. Complete formal sentences, no slang, no jokes; never raises his voice. Repeats the other person's key word back as a question.
 Habits: pours for everyone but the boss; watches the room while he talks.
-Sample: «Решает вопросы. Звучит почти как профессия.» / «Пока ничего. Запомните, что я так сказал.»
+Sample: «Я не люблю, когда люди заранее решают, что они мне должны, поэтому давайте просто поужинаем.»
 
 ## Wants
 
