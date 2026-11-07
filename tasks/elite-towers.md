@@ -10,13 +10,13 @@ branch: art/civic-facade-textures
 
 ## Goal
 
-The administrative centre (planned district D4, see `README.md` "Starting District Layout" and `art/concepts/district_areas_v2.svg`) gets three elite towers around the square: late-Soviet "improved layout" blocks of 12-14 storeys. Work in two stages, using the same method as the buses and the ER2 (`art/models/public_transport/references/`): first generated orthographic reference sheets, then game-ready facade textures cut from the approved look. A 3D model is a third, optional stage that starts only after the user has seen the textures on a plain box.
+The administrative centre (planned district D4, see `docs/MAP_AND_DISTRICT.md` "Starting District Layout" and `art/concepts/district_areas_v2.svg`) gets three elite towers around the square: late-Soviet "improved layout" blocks of 12-14 storeys. Work in two stages, using the same method as the buses and the ER2 (`art/models/public_transport/references/`): first generated orthographic reference sheets, then game-ready facade textures cut from the approved look. A 3D model is a third, optional stage that starts only after the user has seen the textures on a plain box.
 
 ## Inputs
 
 Read first, in order:
 
-1. `README.md`, the "Planned rework of the civic area" bullet, and `art/PROMPTS.md` "Rules" and texture rules.
+1. `docs/MAP_AND_DISTRICT.md`, the "Planned rework of the civic area" bullet, and `art/PROMPTS.md` "Rules" and texture rules.
 2. `art/DISTRICT_ART_REQUEST.md`: "Facade assembly" and the canvas rule (2:1 canvases, whole 3 m storeys, overlays, tileable edges). The tower follows these rules; it does not invent its own piece system.
 3. `art/ASSET_PIPELINE.md` for originals, approval and optimization.
 4. The method and prompt style in `art/models/public_transport/references/README.md`.

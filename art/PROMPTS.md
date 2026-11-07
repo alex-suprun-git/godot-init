@@ -58,7 +58,7 @@ Built-in ImageGen produced separate modeling sheets for market stalls, a lived-i
 
 ## Whole-map 3D trees (2026-11-03)
 
-Standalone tree sprites are replaced by the original civic-centre deciduous and poplar meshes, using shared seasonal materials. No new art was generated. The old combined city-park game painting was removed at the user request; its original concept is preserved for reference. See README Natural Landmarks and `art/models/civic_center/README.md`.
+Standalone tree sprites are replaced by the original civic-centre deciduous and poplar meshes, using shared seasonal materials. No new art was generated. The old combined city-park game painting was removed at the user request; its original concept is preserved for reference. See `docs/MAP_AND_DISTRICT.md` (Natural Landmarks) and `art/models/civic_center/README.md`.
 
 ## Northern wheat field (2026-11-01)
 
@@ -100,7 +100,7 @@ Prompts for the art needed by the first playable week (the heating-season openin
 - Full prompt: `art/concepts/far-bank-city-v1.prompt.md`.
 - Generator: built-in ImageGen; edit target/style/geography reference: `art/concepts/border-direction-v1.png`.
 - Purpose: explore a distinct inhabited town across the river in the brotherly republic, with an older pitched-roof urban fabric, market square and residential waterfront. This replaces the sparse far bank of the earlier concept while retaining the near-bank district, river and two crossings.
-- Status: exploratory, awaiting user feedback. Source concept only; no optimization, game integration or visual approval is implied. Gameplay intent and open questions are in README's Far-Bank City section.
+- Status: exploratory, awaiting user feedback. Source concept only; no optimization, game integration or visual approval is implied. Gameplay intent and open questions are in `docs/MAP_AND_DISTRICT.md` (Far-Bank City section).
 
 ## City park concept (2026-11-01)
 

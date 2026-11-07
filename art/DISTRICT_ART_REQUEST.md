@@ -2,14 +2,14 @@
 
 For Codex. Read these first, in order:
 
-1. `README.md`, section "Starting District Layout": what the district is and why it looks the way it does.
+1. `docs/MAP_AND_DISTRICT.md`, section "Starting District Layout": what the district is and why it looks the way it does.
 2. `art/PROMPTS.md`: style blocks, texture rules, sprite rules, established looks.
 3. `art/REDRAW_REQUEST.md`: the projection rules and the slope check. They apply to every sprite below.
 4. `art/concepts/district_layout_v3.svg`: where each thing stands. Lot ids in this file match the ids in the layout.
 
 ## What changed and why
 
-The map is being rebuilt as an outskirts district: border, port, transport hub, railway junction, late panel housing, and an emptying village. See README. This needs new buildings and props and retires some old ones.
+The map is being rebuilt as an outskirts district: border, port, transport hub, railway junction, late panel housing, and an emptying village. See `docs/MAP_AND_DISTRICT.md`. This needs new buildings and props and retires some old ones.
 
 The second change is condition. The map style block in `PROMPTS.md` currently tells every image to look worn: "worn concrete, rusted metal, peeling paint, water stains, autumn grime". That is wrong for most of this district. The housing was built in the late 1980s and is only 10–15 years old in 1997. Wear must come from the layer a building belongs to, not from a blanket rule.
 
@@ -121,7 +121,7 @@ Every building with a single main entrance (school, police, polyclinic, executiv
 | B20 | `textures/facade_ispolkom_side.png` | wing tile | kept | tile = 30 m wide, 15 m high | The same building's side and rear walls: the same window bands and spandrels, no entrance. |
 | B21 | `textures/facade_polyclinic_entrance.png` | center | kept | 30 m wide, 15 m high | The polyclinic's main entrance part: a glazed entrance hall on the ground storey under a canopy, the red cross symbol above it, the same window grid as B6 above. |
 
-The executive committee is late-Soviet modernist (decided, see README). `facade_admin_stalinist.png` is no longer its target look; the map keeps it only as a placeholder until B19 and B20 exist.
+The executive committee is late-Soviet modernist (decided, see `docs/MAP_AND_DISTRICT.md`). `facade_admin_stalinist.png` is no longer its target look; the map keeps it only as a placeholder until B19 and B20 exist.
 
 ## Batch C: the market and its people
 

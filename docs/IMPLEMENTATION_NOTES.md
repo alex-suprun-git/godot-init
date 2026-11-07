@@ -1,0 +1,64 @@
+# Implementation notes
+
+Moved verbatim from the root `README.md` on 2026-11-07. These are implementation, prototype and profiling notes that record what exists in the game. Design canon stays in the README; new implementation notes go here.
+
+## UI and newspaper (moved from "Core Loop")
+
+- Approved UI direction: "Living Chancellery" — cream paper, warm graphite, burgundy ink, Roboto Slab headings, and Golos Text controls/body copy. Weekly objectives are lines in a personal work folder; contact availability uses small framed photos with status marks and work progress. The player is excluded from the contacts dock; they remain on the map and can act personally on requests. Character messages and optional press items have distinct document layouts. Font binaries and their licenses are bundled under `init/assets/fonts/`.
+- Current UI implementation pass (awaiting live visual approval): the map uses a light calendar strip, a wallet symbol for personal funds, distinct incoming memo/newspaper slips, a contacts drawer with a bounded dock for assigned people, and a textured work-folder button. Shared single-ink pictograms appear in map controls, faction standings, decision consequences, and the weekly summary. Folder and incoming-slip artwork are prepared separately from their sources; map people use passport-photo frames with travel/work indicators. All labels, values, and interactions remain live Godot controls. The morning newspaper shortcut disappears after planning, and modal windows/drawers own wheel, gesture and keyboard map input while open. Contact progress is a thin drawn line; weekly paperwork uses twenty small hour marks. Request types use shared pictograms: letter for plea, scales for conflict, alarm beacon for crisis, and handshake for offer (current implementation awaiting visual review). Drawer motion and common window fades use Tweens independent of simulation speed. Focused captures: `--autoplay --only=ui` and `--only=ui-motion`.
+- Map portraits and on-map request markers shrink smoothly to a minimum of 78% when zooming out. People at the same position remain centered as a group, with portrait spacing reduced from 64 screen pixels at close/default zoom to about 50 in the overview. On-screen request markers seek a nearby free position around portraits, names and previously placed request markers; off-screen request indicators retain their full size. Travel paths remain attached to the scaled portraits.
+- Approved newspaper direction (2026-11-04): headline-led reading as in This Is the Police, without full articles or a detailed reading mode. City news, notices, sport/culture and national/international events communicate both public consequences of player actions and the independently developing world. Later radio continues this role, including the war and tonal shift. Editorial allegiance remains undecided. The user rejected the current newspaper appearance, typography, copy and column layout; the user selected Podmoskovnye Izvestiya (1997) as the visual reference for a new opening edition, retaining headline-led reading. The user approved the first generated mockup composition, typography and paper treatment; the only requested change is unrelated everyday advertising in the empty area below the boiler story. The revised concept adds a TV/VCR repair advertisement. This approves the concept direction, not in-engine visual parity.
+- Newspaper implementation: a single proportionally scaled headline-led sheet with native text/rules, prepared paper and separate atlas photo/advert artwork, based on approved concept v2. Oswald Bold headlines, Roboto Slab masthead and Source Serif 4 supporting print remain live. Authored weeks 1 and 2 use completed-week public facts from press_history; private money and hidden deals never enter print. There is no article reading or pagination. Advert copy and photo region are editable edition data; random ad rotation is not implemented. The previous two-page version was replaced. Graphical --only=press verifies rollover; final in-engine visual approval is pending.
+
+## City Audio (Prototype)
+
+- The user-provided ElevenLabs instrumental and quiet ambience now play together, replacing the previous city-outskirts bed. Originals remain on the Desktop; game copies are `assets/audio/music/city_theme.mp3` and `assets/audio/ambience/city_quiet.mp3`. Provenance is recorded in `init/assets/audio/ATTRIBUTION.md`.
+- `AudioManager` owns independent Music and Ambience layers alongside the existing pooled UI/SFX events. Each continuous `AudioLayer` uses two players with an equal-power loop overlap (music: three seconds; ambience: two) and a two-second startup fade. Playback and gain envelopes use real time, unaffected by simulation pause or speed. Default gains are provisional: Music bus 30% (music bed 100%), ambience bed 50%; F3 adjusts each separately, including mute without restarting. Settings last for the current run.
+- Extension API: `add_layer(id, stream, bus, gain, overlap)`, `set_layer_level(id, gain, seconds)` and `remove_layer(id)` support additional continuous beds and smooth blending. The map now drives city ambience from normalized magnification in both camera modes: overview uses 20% of the selected bed level, closest view 100%, with a smooth curve and a 0.35-second real-time response. Music is unaffected. Automatic ducking, persistent preferences and additional UI recordings are not implemented yet. Existing UI event hooks and cooldowns remain ready for recordings.
+- Esc opens a modal audio mixer for Master, Music, Ambience, UI and SFX buses. It pauses the scene while audio continues, blocks map interaction, and restores the previous pause state on Esc or Continue. Bus levels survive scene reloads for this application session; zero mutes. F3 remains the separate development tool for individual bed gains and event counts.
+- Moving trains now use the supplied ER2 and freight recordings through separate internal panner buses feeding Ambience. The virtual listener follows the camera ground focus in both views; distance to the nearest carriage, zoom and screen position drive smoothed gain and stereo pan. Hidden/waiting formations fade out. Loops keep their natural pitch during speed changes and the Esc mixer. Initial calibration lives in `scripts/data/world_audio.gd`: source stream, gain, near/far radius and loop overlap; these levels await listening approval. Other object/zone bindings remain future work.
+- These are initial listening settings, awaiting in-game listening approval; a crossfade softens the file seam but does not guarantee a musically seamless phrase transition.
+
+## Courtyard Detail Pilot
+
+- B1 (House 5 / Baba Nina) is the first detailed residential superblock: inhabited but neglected, with intact housing, worn play equipment, benches, entrance gardens, narrow paths, a small service loop and a few parked cars. It should not read as a dump.
+- Roads and the district skeleton remain the reference; residential buildings may move within a block when composition requires it.
+- The school/kindergarten core remains available for future development. Ground surfaces, furniture, planting and residents are grouped separately for later seasonal and event changes; additional seasonal/event variants are not yet implemented.
+
+## Heating Infrastructure Detail Pilot
+
+- House 5 has a small paired basement heating inlet, valve wheels, basement grilles and inspection covers. A short paired main on supports leaves the boiler house and descends underground. Most residential distribution remains buried.
+- These are static geometry props, slightly emphasized for map readability. They do not imply a new leak or active heating; steam, repair/damage variants and thawed winter routes are not implemented. Named groups allow later authored event states.
+
+## Learning Approach
+
+### Performance profiling
+
+Two opt-in diagnostics are available (replace `Godot` with your executable and use a different absolute output directory per run):
+
+```text
+Godot --path init -- --autoplay --only=performance --no-log --shots=<absolute output directory>
+Godot --path init -- --autoplay --only=office,performance-camera,week --profile --no-log --shots=<absolute output directory>
+```
+
+The first compares ambient life enabled, hidden with CPU updates running, disabled, and enabled again at 08:00/12:00/17:00 and default/widest zoom. It saves `performance.json` and one screenshot; each phase has two seconds of warm-up and five seconds of samples (`--profile-seconds=15` extends sampling). The clock is pinned directly, without refreshing the HUD. Counts mean density-visible agents, not camera-visible agents; station crowds and parked vehicles remain in every phase. The second records every rendered frame through UI panels, two camera tours, the live week, nights, crises, summary and week two. It saves `session-profile.json` (including slow frames and phase summaries) and `session-frames.csv`. Screenshots are disabled, but panels remain visible briefly so their rendering is measured. Both record FPS, frame-time percentiles/maxima, ambient CPU work and render CPU/GPU/call/primitive metrics. CPU/GPU times overlap; do not sum them. Session reports distinguish logical viewport, window and render-target sizes.
+
+Use a rendered window, no `--turbo` or `--headless`; VSync and the FPS cap are temporarily disabled. Week autoplay uses the game's normal x4 option, not engine acceleration. Season/camera coverage can be repeated with `--season=winter` or `--season=autumn --camera=front`; put engine options such as `--resolution 1920x1080` before `--`. Raw results stay under ignored `.local/performance/` and `.local/performance-general/`. `--no-log` excludes playtest-log I/O; removing it includes that cost. Scene construction before autoplay, release builds, longer campaigns and other hardware have not been measured.
+
+Baseline measured 2026-11-04 for #12: Windows, Godot 4.7.2 Forward+/D3D12, Ryzen 7 9700X, GTX 1660 SUPER; the measured pools were 576 walkers (including daytime reserve) and 66 cars. The short ambient comparison measured 108–116 FPS at default zoom and 105 FPS at maximum zoom; ambient CPU work averaged 2.6–3.1 ms. Disabling ambient movement and rendering raised maximum-zoom FPS to 123, without a comparable gain at default zoom. Four extended runs recorded about 64,000 frames over 8.5 minutes, including repeated summer weeks, a winter week and an autumn perspective-camera tour. The final summer run used a 1920x1080 window, a reported 2304x1296 render target and a 1600x900 logical viewport:
+
+| Measured phase | Mean FPS | Frame time p99 | Largest frame |
+|---|---:|---:|---:|
+| Summer week, including transitions | 101 | 14.3 ms | 67.2 ms |
+| Summer camera tour | 111 | 20.1 ms | 27.5 ms |
+| Winter week, including transitions | 166 | 9.9 ms | 68.2 ms |
+| Autumn perspective-camera tour | 135 | 16.3 ms | 16.9 ms |
+
+Configurations differ, so this table describes coverage rather than an isolated season comparison. Forest legs were the heaviest summer camera segments (73–76 FPS average, p99 21–22 ms). Event stalls reproduced at Thursday's coal theft (67–80 ms) and Friday's boss report (47–49 ms); some UI openings took 44–54 ms. Synchronous banner loading in `hud.gd` is a candidate, not a confirmed cause. First sampled frames took 233–325 ms with normal cache access; the initial restricted run could not write the shader cache and took 2.8 s, so it is not a representative startup baseline. Full process startup is not timed. These measurements support investigating event/UI stalls and heavy views before a MultiMesh migration; they do not establish a population ceiling or guarantee locked 60 FPS. Next: time the event-opening work, optimize the confirmed cause and repeat these runs; then choose a population ceiling against an agreed hardware/frame-time budget.
+
+- Learn Godot through small prototypes, then gradually expand the game's systems.
+- Explain new Godot concepts through familiar Software Engineering ideas and apply them in the project.
+
+### Calendar header and interface scaling
+
+The calendar strip separates weekday/date, clock and activity status; pauses retain overtime/homeward context. The lower launcher uses an address-card index and navigation uses a folded district plan with live controls. Esc opens audio and interface settings. The shared 75–150% UI scale is saved in user://interface.cfg and applies to HUD windows, newspaper, controls, portraits, markers and the settings panel. Camera-projected anchors are converted into logical UI coordinates. Effective scale is limited to retain at least a 1280×720 logical workspace; large windows additionally fit within it. The menu reports the effective percentage when limited. Graphical review: --autoplay --only=ui-scale --turbo.
