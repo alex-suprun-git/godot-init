@@ -1,0 +1,12 @@
+[
+  {
+    "asset": "atp_hall",
+    "path": "init/assets/models/industrial_sites/atp_hall.glb",
+    "source": "art/models/industrial_sites/atp/atp.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 17158,
+    "materials": 14,
+    "embedded_images": 16
+  }
+]

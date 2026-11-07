@@ -7,6 +7,10 @@ description: Find and evaluate reusable 3D models, or create, revise and integra
 
 Run commands from the repository root. Read `art/PROMPTS.md` and the relevant asset README for its reference, current version and approval state. Use the current truck and Volga as the project benchmarks for new vehicle models; see the comparison rules below. Reuse suitable existing helpers before rebuilding them.
 
+## Compose complete map locations
+
+For building ensembles and industrial/service compounds, read [references/site-composition.md](references/site-composition.md). The user approved the compact ATP in its actual game context on 2026-11-06; use it as the worked example for purposeful site composition, circulation, material finish and landscaping. Resume its concrete dimensions, source stages and remaining limitations from [the ATP asset record](../../../art/models/industrial_sites/README.md). Its exact dimensions and enclosure are location-specific. The current industrial refinement proceeds one location at a time.
+
 ## Current vehicle benchmarks
 
 User direction updated 2026-11-01: compare new vehicle models, including buses, with the existing truck and Volga for dimensions, proportions, visual finish and map readability.

@@ -12,7 +12,7 @@ const LOTS := {
 	"housing_reserve_s": {"type": "R", "rect": Rect2(-390, 261, 365, 34), "content": "housing_reserve", "condition": "kept", "facing": "n"},
 	"forest_clearing": {"type": "N", "rect": Rect2(-567, 108, 28, 24), "content": "forest_clearing", "condition": "kept", "facing": "e"},
 	"pond_bank": {"type": "N", "rect": Rect2(265, -20, 24, 10), "content": "pond_bank", "condition": "kept", "facing": "s"},
-	"atp": {"type": "X", "rect": Rect2(-430, -320, 140, 120), "content": "atp", "condition": "worked", "facing": "s"},
+	"atp": {"type": "X", "rect": Rect2(-420, -282, 120, 82), "content": "atp", "condition": "worked", "facing": "s"},
 	"truck_stop": {"type": "X", "rect": Rect2(-280, -320, 140, 120), "content": "truck_stop", "condition": "worked", "facing": "s"},
 	"checkpoint": {"type": "X", "rect": Rect2(-130, -320, 250, 120), "content": "checkpoint", "condition": "kept", "facing": "s"},
 	"port": {"type": "X", "rect": Rect2(130, -320, 160, 120), "content": "port", "condition": "worked", "facing": "n"},
@@ -243,7 +243,7 @@ const DISTRICTS := {
 		"subzones": {
 			"border_crossing": {"rect": Rect2(-130, -320, 250, 120), "foot": 0.7, "cars": 2.2, "fleet": {"truck": 0.8, "car": 0.2}},
 			"truck_stop": {"rect": Rect2(-280, -320, 140, 120), "foot": 0.5, "fleet": {"truck": 0.85, "car": 0.15}},
-			"atp_depot": {"rect": Rect2(-430, -320, 140, 120), "foot": 0.4, "fleet": {"truck": 0.5, "bus": 0.4, "car": 0.1}, "hours": "office"},
+			"atp_depot": {"rect": Rect2(-420, -282, 120, 82), "foot": 0.4, "fleet": {"truck": 0.5, "bus": 0.4, "car": 0.1}, "hours": "office"},
 			"river_port": {"rect": Rect2(130, -320, 160, 120), "foot": 0.4, "fleet": {"truck": 0.9, "car": 0.1}},
 			"fuel_depot": {"rect": Rect2(300, -320, 95, 120), "foot": 0.1, "cars": 0.6, "fleet": {"truck": 1.0}},
 		},

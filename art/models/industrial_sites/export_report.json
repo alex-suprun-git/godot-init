@@ -1,0 +1,280 @@
+[
+  {
+    "asset": "atp_hall",
+    "path": "init/assets/models/industrial_sites/atp_hall.glb",
+    "source": "art/models/industrial_sites/atp/atp.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 17158,
+    "materials": 14,
+    "embedded_images": 16
+  },
+  {
+    "asset": "truck_cafe",
+    "path": "init/assets/models/industrial_sites/truck_cafe.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 2356,
+    "materials": 8,
+    "embedded_images": 3
+  },
+  {
+    "asset": "customs_office",
+    "path": "init/assets/models/industrial_sites/customs_office.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 5496,
+    "materials": 7,
+    "embedded_images": 3
+  },
+  {
+    "asset": "inspection_hall",
+    "path": "init/assets/models/industrial_sites/inspection_hall.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 4066,
+    "materials": 7,
+    "embedded_images": 2
+  },
+  {
+    "asset": "control_canopy",
+    "path": "init/assets/models/industrial_sites/control_canopy.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 228,
+    "materials": 4,
+    "embedded_images": 1
+  },
+  {
+    "asset": "control_booth",
+    "path": "init/assets/models/industrial_sites/control_booth.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 780,
+    "materials": 6,
+    "embedded_images": 3
+  },
+  {
+    "asset": "pedestrian_control",
+    "path": "init/assets/models/industrial_sites/pedestrian_control.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 2476,
+    "materials": 7,
+    "embedded_images": 3
+  },
+  {
+    "asset": "port_warehouse_main",
+    "path": "init/assets/models/industrial_sites/port_warehouse_main.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 8194,
+    "materials": 7,
+    "embedded_images": 2
+  },
+  {
+    "asset": "port_warehouse_small",
+    "path": "init/assets/models/industrial_sites/port_warehouse_small.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 5554,
+    "materials": 7,
+    "embedded_images": 2
+  },
+  {
+    "asset": "fuel_warehouse",
+    "path": "init/assets/models/industrial_sites/fuel_warehouse.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 3850,
+    "materials": 7,
+    "embedded_images": 2
+  },
+  {
+    "asset": "fuel_tank",
+    "path": "init/assets/models/industrial_sites/fuel_tank.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 1952,
+    "materials": 5,
+    "embedded_images": 1
+  },
+  {
+    "asset": "water_tower",
+    "path": "init/assets/models/industrial_sites/water_tower.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 720,
+    "materials": 4,
+    "embedded_images": 2
+  },
+  {
+    "asset": "boiler_house",
+    "path": "init/assets/models/industrial_sites/boiler_house.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 3932,
+    "materials": 7,
+    "embedded_images": 3
+  },
+  {
+    "asset": "boiler_chimney",
+    "path": "init/assets/models/industrial_sites/boiler_chimney.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 2088,
+    "materials": 4,
+    "embedded_images": 2
+  },
+  {
+    "asset": "garage_row_0",
+    "path": "init/assets/models/industrial_sites/garage_row_0.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 3818,
+    "materials": 10,
+    "embedded_images": 2
+  },
+  {
+    "asset": "garage_row_1",
+    "path": "init/assets/models/industrial_sites/garage_row_1.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 3438,
+    "materials": 10,
+    "embedded_images": 2
+  },
+  {
+    "asset": "port_crane",
+    "path": "init/assets/models/industrial_sites/port_crane.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 836,
+    "materials": 5,
+    "embedded_images": 1
+  },
+  {
+    "asset": "river_barge",
+    "path": "init/assets/models/industrial_sites/river_barge.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 916,
+    "materials": 7,
+    "embedded_images": 1
+  },
+  {
+    "asset": "fence_4m",
+    "path": "init/assets/models/industrial_sites/fence_4m.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 312,
+    "materials": 2,
+    "embedded_images": 1
+  },
+  {
+    "asset": "gate_6m",
+    "path": "init/assets/models/industrial_sites/gate_6m.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 300,
+    "materials": 1,
+    "embedded_images": 0
+  },
+  {
+    "asset": "yard_lamp",
+    "path": "init/assets/models/industrial_sites/yard_lamp.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 92,
+    "materials": 4,
+    "embedded_images": 1
+  },
+  {
+    "asset": "raised_barrier",
+    "path": "init/assets/models/industrial_sites/raised_barrier.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 84,
+    "materials": 3,
+    "embedded_images": 0
+  },
+  {
+    "asset": "pallet_stack",
+    "path": "init/assets/models/industrial_sites/pallet_stack.glb",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 288,
+    "materials": 1,
+    "embedded_images": 0
+  },
+  {
+    "asset": "atp_parts_store",
+    "path": "init/assets/models/industrial_sites/atp_parts_store.glb",
+    "source": "art/models/industrial_sites/atp/yard.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 2490,
+    "materials": 7,
+    "embedded_images": 9
+  },
+  {
+    "asset": "atp_tire_shop",
+    "path": "init/assets/models/industrial_sites/atp_tire_shop.glb",
+    "source": "art/models/industrial_sites/atp/yard.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 1486,
+    "materials": 7,
+    "embedded_images": 9
+  },
+  {
+    "asset": "atp_gatehouse",
+    "path": "init/assets/models/industrial_sites/atp_gatehouse.glb",
+    "source": "art/models/industrial_sites/atp/yard.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 964,
+    "materials": 8,
+    "embedded_images": 10
+  },
+  {
+    "asset": "atp_wall_4m",
+    "path": "init/assets/models/industrial_sites/atp_wall_4m.glb",
+    "source": "art/models/industrial_sites/atp/yard.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 156,
+    "materials": 1,
+    "embedded_images": 3
+  },
+  {
+    "asset": "atp_solid_gate",
+    "path": "init/assets/models/industrial_sites/atp_solid_gate.glb",
+    "source": "art/models/industrial_sites/atp/yard.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 132,
+    "materials": 1,
+    "embedded_images": 0
+  },
+  {
+    "asset": "atp_tire_rack",
+    "path": "init/assets/models/industrial_sites/atp_tire_rack.glb",
+    "source": "art/models/industrial_sites/atp/yard.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 3168,
+    "materials": 2,
+    "embedded_images": 0
+  },
+  {
+    "asset": "atp_compressor",
+    "path": "init/assets/models/industrial_sites/atp_compressor.glb",
+    "source": "art/models/industrial_sites/atp/yard.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 200,
+    "materials": 2,
+    "embedded_images": 3
+  }
+]

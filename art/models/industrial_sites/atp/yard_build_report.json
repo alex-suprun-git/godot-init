@@ -1,0 +1,30 @@
+[
+  {
+    "asset": "atp_parts_store",
+    "triangles": 2490
+  },
+  {
+    "asset": "atp_tire_shop",
+    "triangles": 1486
+  },
+  {
+    "asset": "atp_gatehouse",
+    "triangles": 964
+  },
+  {
+    "asset": "atp_wall_4m",
+    "triangles": 156
+  },
+  {
+    "asset": "atp_solid_gate",
+    "triangles": 132
+  },
+  {
+    "asset": "atp_tire_rack",
+    "triangles": 3168
+  },
+  {
+    "asset": "atp_compressor",
+    "triangles": 200
+  }
+]
