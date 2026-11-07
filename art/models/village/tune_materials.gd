@@ -28,6 +28,21 @@ const FLAT := {
 	"Plain household laundry":[Color(.62,.62,.55),.98,.0],
 }
 
+# Identical maps are stored once (same VRAM import settings): per-stem files exist only when unique.
+const SHARED_ALBEDO := {"masonry_plinth":"buff_brick"}
+const METAL_STEMS := ["grey_roof_metal","green_fence_steel"]
+
+func _map(stem: String, kind: String) -> Texture2D:
+	var own := LIBRARY+stem+"_"+kind+".png"
+	if ResourceLoader.exists(own):
+		return load(own)
+	if kind == "albedo":
+		return load(LIBRARY+SHARED_ALBEDO[stem]+"_albedo.png")
+	var metal := stem in METAL_STEMS
+	if kind == "normal":
+		return load(LIBRARY+("normal_metal.png" if metal else "normal_fine.png"))
+	return load(LIBRARY+("response_metal.png" if metal else "response_matte.png"))
+
 func _initialize() -> void:
 	for label in TEXTURED:
 		var spec: Array = TEXTURED[label]
@@ -35,9 +50,9 @@ func _initialize() -> void:
 		var material := ShaderMaterial.new()
 		material.resource_name = label
 		material.shader = SHADER
-		material.set_shader_parameter("albedo_texture",load(LIBRARY+stem+"_albedo.png"))
-		material.set_shader_parameter("normal_texture",load(LIBRARY+stem+"_normal.png"))
-		material.set_shader_parameter("response_texture",load(LIBRARY+stem+"_roughness.png"))
+		material.set_shader_parameter("albedo_texture",_map(stem,"albedo"))
+		material.set_shader_parameter("normal_texture",_map(stem,"normal"))
+		material.set_shader_parameter("response_texture",_map(stem,"roughness"))
 		if label == "Ordinary brown wood":
 			material.set_shader_parameter("albedo_texture",load("res://assets/models/church_ensemble/wood.png"))
 			material.set_shader_parameter("normal_texture",load("res://assets/models/church_ensemble/wood_normal.png"))

@@ -2,8 +2,8 @@
 
 [ext_resource type="Shader" path="res://assets/shaders/village_surface.gdshader" id="1_8pvfh"]
 [ext_resource type="Texture2D" path="res://assets/materials/village/pale_house_plaster_albedo.png" id="2_8epi4"]
-[ext_resource type="Texture2D" path="res://assets/materials/village/pale_house_plaster_normal.png" id="3_cx7gr"]
-[ext_resource type="Texture2D" path="res://assets/materials/village/pale_house_plaster_roughness.png" id="4_pvjqg"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/normal_fine.png" id="3_cx7gr"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/response_matte.png" id="4_pvjqg"]
 
 [resource]
 resource_name = "Pale house plaster"

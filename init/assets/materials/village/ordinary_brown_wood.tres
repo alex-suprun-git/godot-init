@@ -3,7 +3,7 @@
 [ext_resource type="Shader" path="res://assets/shaders/village_surface.gdshader" id="1_a0fqm"]
 [ext_resource type="Texture2D" path="res://assets/models/church_ensemble/wood.png" id="2_ikgpp"]
 [ext_resource type="Texture2D" path="res://assets/models/church_ensemble/wood_normal.png" id="3_waxfs"]
-[ext_resource type="Texture2D" path="res://assets/materials/village/ordinary_brown_wood_roughness.png" id="4_pya6j"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/response_matte.png" id="4_pya6j"]
 
 [resource]
 resource_name = "Ordinary brown wood"

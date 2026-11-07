@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://u66c2nxsy8eq"
-path.s3tc="res://.godot/imported/garden_soil_roughness.png-40ab72a23204b7c28032a0469b395976.s3tc.ctex"
+uid="uid://ya404338algc"
+path.s3tc="res://.godot/imported/response_matte.png-fdd10edc7bbec56b38589bd77fd84cef.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://assets/materials/village/garden_soil_roughness.png"
-dest_files=["res://.godot/imported/garden_soil_roughness.png-40ab72a23204b7c28032a0469b395976.s3tc.ctex"]
+source_file="res://assets/materials/village/response_matte.png"
+dest_files=["res://.godot/imported/response_matte.png-fdd10edc7bbec56b38589bd77fd84cef.s3tc.ctex"]
 
 [params]
 

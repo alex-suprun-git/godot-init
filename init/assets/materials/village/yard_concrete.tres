@@ -2,8 +2,8 @@
 
 [ext_resource type="Shader" path="res://assets/shaders/village_surface.gdshader" id="1_pvmps"]
 [ext_resource type="Texture2D" path="res://assets/materials/village/yard_concrete_albedo.png" id="2_liu6l"]
-[ext_resource type="Texture2D" path="res://assets/materials/village/yard_concrete_normal.png" id="3_cocrq"]
-[ext_resource type="Texture2D" path="res://assets/materials/village/yard_concrete_roughness.png" id="4_nkqc1"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/normal_fine.png" id="3_cocrq"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/response_matte.png" id="4_nkqc1"]
 
 [resource]
 resource_name = "Yard concrete"

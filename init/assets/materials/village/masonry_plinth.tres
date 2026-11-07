@@ -1,9 +1,9 @@
 [gd_resource type="ShaderMaterial" format=3]
 
 [ext_resource type="Shader" path="res://assets/shaders/village_surface.gdshader" id="1_t6l3u"]
-[ext_resource type="Texture2D" path="res://assets/materials/village/masonry_plinth_albedo.png" id="2_oqdth"]
-[ext_resource type="Texture2D" path="res://assets/materials/village/masonry_plinth_normal.png" id="3_7w1hj"]
-[ext_resource type="Texture2D" path="res://assets/materials/village/masonry_plinth_roughness.png" id="4_qxq8g"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/buff_brick_albedo.png" id="2_oqdth"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/normal_fine.png" id="3_7w1hj"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/response_matte.png" id="4_qxq8g"]
 
 [resource]
 resource_name = "Masonry plinth"

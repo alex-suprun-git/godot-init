@@ -2,8 +2,8 @@
 
 [ext_resource type="Shader" path="res://assets/shaders/village_surface.gdshader" id="1_e8s5l"]
 [ext_resource type="Texture2D" path="res://assets/materials/village/blue_grey_timber_albedo.png" id="2_ow364"]
-[ext_resource type="Texture2D" path="res://assets/materials/village/blue_grey_timber_normal.png" id="3_vqynp"]
-[ext_resource type="Texture2D" path="res://assets/materials/village/blue_grey_timber_roughness.png" id="4_t6xta"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/normal_fine.png" id="3_vqynp"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/response_matte.png" id="4_t6xta"]
 
 [resource]
 resource_name = "Blue grey timber"

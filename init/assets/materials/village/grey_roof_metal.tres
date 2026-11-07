@@ -2,8 +2,8 @@
 
 [ext_resource type="Shader" path="res://assets/shaders/village_surface.gdshader" id="1_q8n04"]
 [ext_resource type="Texture2D" path="res://assets/materials/village/grey_roof_metal_albedo.png" id="2_o5u04"]
-[ext_resource type="Texture2D" path="res://assets/materials/village/grey_roof_metal_normal.png" id="3_64god"]
-[ext_resource type="Texture2D" path="res://assets/materials/village/grey_roof_metal_roughness.png" id="4_y8p5k"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/normal_metal.png" id="3_64god"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/response_metal.png" id="4_y8p5k"]
 
 [resource]
 resource_name = "Grey roof metal"

@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://be5k4di0dfto8"
-path.s3tc="res://.godot/imported/buff_brick_normal.png-03799b3454c704d7a89765e667b386d0.s3tc.ctex"
+uid="uid://cgfrinsadn0th"
+path.s3tc="res://.godot/imported/response_metal.png-4ebe57160abcede4ec32997f97a3fab2.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://assets/materials/village/buff_brick_normal.png"
-dest_files=["res://.godot/imported/buff_brick_normal.png-03799b3454c704d7a89765e667b386d0.s3tc.ctex"]
+source_file="res://assets/materials/village/response_metal.png"
+dest_files=["res://.godot/imported/response_metal.png-4ebe57160abcede4ec32997f97a3fab2.s3tc.ctex"]
 
 [params]
 
@@ -22,7 +22,7 @@ compress/lossy_quality=0.7
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
-compress/normal_map=1
+compress/normal_map=0
 compress/channel_pack=0
 mipmaps/generate=true
 mipmaps/limit=-1

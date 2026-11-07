@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cvcb4hjramlji"
-path.s3tc="res://.godot/imported/yard_concrete_roughness.png-44a62adcee49b4fdaef53dbd6356700f.s3tc.ctex"
+uid="uid://okfv6fc4kdsl"
+path.s3tc="res://.godot/imported/normal_metal.png-e8b68bb6e05c94fb097d2a6637450b73.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://assets/materials/village/yard_concrete_roughness.png"
-dest_files=["res://.godot/imported/yard_concrete_roughness.png-44a62adcee49b4fdaef53dbd6356700f.s3tc.ctex"]
+source_file="res://assets/materials/village/normal_metal.png"
+dest_files=["res://.godot/imported/normal_metal.png-e8b68bb6e05c94fb097d2a6637450b73.s3tc.ctex"]
 
 [params]
 
@@ -22,7 +22,7 @@ compress/lossy_quality=0.7
 compress/uastc_level=0
 compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
-compress/normal_map=0
+compress/normal_map=1
 compress/channel_pack=0
 mipmaps/generate=true
 mipmaps/limit=-1
