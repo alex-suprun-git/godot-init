@@ -17,6 +17,8 @@ const SCENARIOS := {
 	"ui": "_run_ui_review", # newspaper, modal scroll, assigned markers, contacts drawer
 	"office": "_run_office", # briefing, week tasks, newspaper, contact, request card, planning
 	"map": "_run_map_tour", # overview, lot labels and the district map tour
+	"housing-infill": "_run_housing_infill", # western/southern infill courts in the default camera
+	"housing-roads": "_run_housing_roads", # widened residential streets and real moving traffic
 	"week": "_run_week", # plays the whole week live, then the summary and week two
 	"routine": "_run_routine", # dormitory dawn, office arrival, overtime, rent and monthly salary
 	"tokens": "_run_token_review", # portrait feet at home and after a fast personal trip
@@ -360,6 +362,48 @@ func _run_office() -> void:
 	await _shot("2_card_promised")
 	main.hud._close_card()
 	await _shot("3_planning")
+
+
+func _run_housing_roads() -> void:
+	_dismiss_briefing()
+	main.map._debug_hour = 12.0
+	var previous := {}
+	var moved := {}
+	for i in 100:
+		for agent in main.map._ambient.agents:
+			if not agent["is_car"] or agent["state"] != "graph":
+				continue
+			var road_index: int = agent["graph"].edges[agent["edge"]]["road"]
+			if road_index < 0:
+				continue
+			var road_id: String = main.map.DistrictLayout.ROADS[road_index]["id"]
+			if road_id not in ["housing_spine", "housing_cross_path"]:
+				continue
+			var key := "%s:%s" % [agent["slot"], road_id]
+			var at: Vector2 = agent["pos"]
+			if not previous.has(key):
+				previous[key] = at
+			moved[road_id] = maxf(float(moved.get(road_id, 0.0)), at.distance_to(previous[key]))
+		await _wait(0.2)
+	print("housing roads observed movement (metres): ", moved)
+	# Catch a real car at the open junction so traffic is visible in the frame.
+	for i in 150:
+		var approaching := false
+		for agent in main.map._ambient.agents:
+			if agent["is_car"] and agent["visible"] and agent["pos"].distance_to(Vector2(-200.4, 87.2)) < 24.0:
+				approaching = true
+				break
+		if approaching:
+			break
+		await _wait(0.2)
+	await _map_shot("housing_street_junction", Vector2(-200.4, 87.2), 330.0)
+	await _map_shot("housing_street_south", Vector2(-200.4, 240), 330.0)
+
+
+func _run_housing_infill() -> void:
+	_dismiss_briefing()
+	await _map_shot("infill_west", Vector2(-385, 105), 570.0)
+	await _map_shot("infill_south", Vector2(-245, 265), 460.0)
 
 
 func _run_map_tour() -> void:
@@ -807,13 +851,14 @@ func _run_traffic_review() -> void:
 			await _map_shot("traffic_highway_shared", ambient._graph.points[ambient._highway_node], 125.0)
 			break
 		await _wait(0.2)
-	# Keep the camera on a real courtyard car, without adding review-only vehicles.
+	# Keep the camera on a real residential car, without adding review-only vehicles.
 	for agent in main.map._ambient.agents:
-		if agent.get("stream", "") != "courtyard":
+		if agent.get("stream", "") != "residential":
 			continue
 		for i in 600:
-			if agent["graph"].edges[agent["edge"]]["kind"] == "yard":
-				await _map_shot("traffic_courtyard", agent["pos"], 100.0)
+			var road_index: int = agent["graph"].edges[agent["edge"]]["road"]
+			if road_index >= 0 and main.map.DistrictLayout.ROADS[road_index]["id"] in ["housing_spine", "housing_cross_path"]:
+				await _map_shot("traffic_residential", agent["pos"], 100.0)
 				return
 			await _wait(0.1)
 

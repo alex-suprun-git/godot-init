@@ -158,6 +158,10 @@ func _centerlines() -> Array[Dictionary]:
 	var segments: Array[Dictionary] = []
 	for i in DistrictLayout.ROADS.size():
 		var road: Dictionary = DistrictLayout.ROADS[i]
+		# New infill is scenery with ambient footpaths, without quest destinations.
+		# Preserve the existing campaign routes and their travel-time balance.
+		if road.get("ambient_only", false):
+			continue
 		var rect: Rect2 = road["rect"]
 		var horizontal := rect.size.x > rect.size.y
 		var center := rect.get_center()

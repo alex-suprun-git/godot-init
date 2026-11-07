@@ -30,9 +30,10 @@ func build(district_builder) -> void:
 	_surface(Vector2(64, 73.5), Vector2(4.5, 41), "asphalt")
 	for x in [-27.0, 0.0, 27.0]:
 		_surface(Vector2(x / SPACING, -59.375), Vector2(1.8, 20.75), "paving")
-		_surface(Vector2(x / SPACING, 61.09), Vector2(1.8, 16.18), "paving")
+		# The south slab moves 3 m inward to clear the widened cross street.
+		_surface(Vector2(x / SPACING, 61.09 - 1.5 / SPACING), Vector2(1.8, 16.18 - 3.0 / SPACING), "paving")
 	for z in [-26.0, 0.0, 26.0]:
-		_surface(Vector2(-71.875, z / SPACING), Vector2(15.75, 1.8), "paving")
+		_surface(Vector2(-71.875 + 1.5 / SPACING, z / SPACING), Vector2(15.75 - 3.0 / SPACING, 1.8), "paving")
 		_surface(Vector2(71.875, z / SPACING), Vector2(15.75, 1.8), "paving")
 	# Small worn play patch and a separate quiet meeting area.
 	_surface(Vector2(-20, -12), Vector2(29, 22), "courtyard")
