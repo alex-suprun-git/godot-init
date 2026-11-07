@@ -42,7 +42,7 @@ Each card: voice, wants, hides. The full sheet for each character (voice with sa
 
 | Character | Voice | Wants | Hides |
 |---|---|---|---|
-| **Pyotr Petrovich** (boss) | Heavy, unhurried, sardonic; never raises his voice; "ты" | Quiet, a clean report, to hold on until retirement | Kickback on the fuel oil; dealings with the criminals through Sedov |
+| **Boris Savvich** (boss) | Heavy, unhurried, sardonic; never raises his voice; "ты" | Quiet, a clean report, to hold on until retirement | Kickback on the fuel oil; dealings with the criminals through Sedov |
 | **Tolik** (driver) | Cheerful, talkative, warm, self-mocking; knows more than he says | To be liked, to keep the Volga running | Stops talking at the restaurant; he knows who eats there |
 | **Baba Nina** | Sharp, suspicious, short punchy lines, a notebook; tests newcomers | Hot water and someone who comes to the yard and tells people the truth | Nothing; she writes it all down |
 | **Mikhalych** (fitter) | Quiet, ashamed, dry self-deprecating humor | Not to be asked about last autumn | He signed the false completion act; two polite men visited |

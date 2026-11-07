@@ -5,7 +5,7 @@ One sheet per character: role and scenes, a pointer to the look, voice with samp
 | Sheet | Portrait |
 |---|---|
 | `protagonist.md` | approved (`init/assets/portraits/protagonist.png`) |
-| `boss.md` (Pyotr Petrovich) | approved |
+| `boss.md` (Boris Savvich) | approved |
 | `nina.md` (Baba Nina) | approved |
 | `mikhalych.md` | approved |
 | `tolik.md` | approved |

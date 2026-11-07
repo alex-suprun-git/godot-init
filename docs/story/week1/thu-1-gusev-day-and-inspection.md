@@ -36,7 +36,7 @@ Thursday 28 August 1997. Two decisions that Gusev touches on the same day (the w
 
 > Portrait briefing, as on Monday. Voice: heavy, unhurried, sardonic.
 
-**ПЁТР ПЕТРОВИЧ ВЫЗЫВАЕТ**
+**БОРИС САВВИЧ ВЫЗЫВАЕТ**
 
 **Завтра в двенадцать**
 
@@ -46,7 +46,7 @@ Thursday 28 August 1997. Two decisions that Gusev touches on the same day (the w
 
 Отчёт ко мне вечером. Если всё нормально, поедем ужинать. Если нет, поговорим здесь.
 
-**[Понял, Пётр Петрович]**
+**[Понял, Борис Саввич]**
 
 > The inspection chain opens in the weekly folder as a single item with five parts. The `boss_report` card is shortened (a short task with few required hours) and moves to Friday evening.
 
@@ -73,7 +73,7 @@ Friday 12:00 is the deadline. The minimum is part 1. The rest are realistic but 
 **Что с ним делать?**
 
 - **Убрать лист из архива.** Hint: «Проверка пройдёт спокойнее. Но тот, кто убирал, останется». *(a trace; a witness: Mikhalych and whoever helped; flag `act_hidden`)*
-- **Предупредить Михалыча и пойти к инженеру открыто.** Hint: «Честно. Михалычу тяжело, Петру Петровичу тоже, зато правда сказана вами». *(bond Mikhalych +2; the boss will be unhappy; flag `act_declared`)*
+- **Предупредить Михалыча и пойти к инженеру открыто.** Hint: «Честно. Михалычу тяжело, Борису Саввичу тоже, зато правда сказана вами». *(bond Mikhalych +2; the boss will be unhappy; flag `act_declared`)*
 - **Ничего не делать.** Hint: «Если инженер спросит, ответ будет не вашим». *(flag `act_left`)*
 
 ## Evening

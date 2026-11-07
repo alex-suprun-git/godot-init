@@ -1,6 +1,10 @@
-# Pyotr Petrovich (district head)
+# Boris Savvich Shumilov (district head)
 
 Status: Draft v0 (voice and secrets written by the narrative partner; the look comes from the approved portrait where one exists). The look is defined once, in `art/PROMPTS.md`; this sheet only points to it.
+
+## Name
+
+**Шумилов Борис Саввич.** Everyone says «Борис Саввич» to his face; behind his back the staff say «Савич». The previous placeholder name was Pyotr Petrovich; the data file `init/scripts/data/week1.gd` (the `BOSS` name and about ten strings) still uses it and should be updated by the integrator.
 
 ## Role and scenes
 

@@ -10,7 +10,7 @@ Monday 25 August 1997, 10:04 to the afternoon. Two scenes: the boss's briefing (
 >
 > Voice: heavy, unhurried, sardonic. He never raises his voice. He says "ты" to the player.
 
-**ПЁТР ПЕТРОВИЧ ВЫЗЫВАЕТ**
+**БОРИС САВВИЧ ВЫЗЫВАЕТ**
 
 **Закрой дверь. Разговор есть**
 
@@ -28,7 +28,7 @@ Monday 25 August 1997, 10:04 to the afternoon. Two scenes: the boss's briefing (
 
 И начни с дома пять. Там вода. Звонили три раза, я трубку не брал. Теперь твоя очередь.
 
-**[Понял, Пётр Петрович]**
+**[Понял, Борис Саввич]**
 
 > Interface: the work folder button appears with the weekly task board. The map controls (zoom, to-self, district) appear when the player leaves the building and the speed controls when the player first has free time on the map. The contacts drawer appears after the Nina scene, the wallet at the first moment money matters.
 >
