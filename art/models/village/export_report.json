@@ -1,0 +1,292 @@
+[
+  {
+    "id": "d_01",
+    "family": "rebuilt_cottage",
+    "frontage_m": 22.7684,
+    "depth_m": 26.5631,
+    "triangles": 10388,
+    "meshes": 2,
+    "materials": 20,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_02",
+    "family": "new_gable",
+    "frontage_m": 22.7684,
+    "depth_m": 26.5631,
+    "triangles": 9126,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_03",
+    "family": "rebuilt_veranda",
+    "frontage_m": 22.7684,
+    "depth_m": 26.5631,
+    "triangles": 10336,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_04",
+    "family": "rebuilt_cottage",
+    "frontage_m": 22.7684,
+    "depth_m": 26.5631,
+    "triangles": 10388,
+    "meshes": 2,
+    "materials": 20,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_05",
+    "family": "new_brick",
+    "frontage_m": 22.7684,
+    "depth_m": 26.5631,
+    "triangles": 10376,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_06",
+    "family": "rebuilt_veranda",
+    "frontage_m": 22.7684,
+    "depth_m": 26.5631,
+    "triangles": 10336,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_07",
+    "family": "rebuilt_cottage",
+    "frontage_m": 22.7684,
+    "depth_m": 26.5631,
+    "triangles": 10388,
+    "meshes": 2,
+    "materials": 20,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_08",
+    "family": "vacant_timber",
+    "frontage_m": 20.871,
+    "depth_m": 24.6658,
+    "triangles": 6332,
+    "meshes": 1,
+    "materials": 12,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_09",
+    "family": "new_gable",
+    "frontage_m": 22.7684,
+    "depth_m": 26.5631,
+    "triangles": 9126,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_10",
+    "family": "rebuilt_veranda",
+    "frontage_m": 22.7684,
+    "depth_m": 26.5631,
+    "triangles": 10336,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_11",
+    "family": "new_brick",
+    "frontage_m": 22.7684,
+    "depth_m": 26.5631,
+    "triangles": 10376,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_12",
+    "family": "new_gable",
+    "frontage_m": 22.7684,
+    "depth_m": 26.5631,
+    "triangles": 9126,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_13",
+    "family": "rebuilt_veranda",
+    "frontage_m": 22.7684,
+    "depth_m": 26.5631,
+    "triangles": 10336,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_14",
+    "family": "vacant_masonry",
+    "frontage_m": 22.7684,
+    "depth_m": 26.5631,
+    "triangles": 7328,
+    "meshes": 1,
+    "materials": 13,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_15",
+    "family": "rebuilt_cottage",
+    "frontage_m": 22.7684,
+    "depth_m": 26.5631,
+    "triangles": 10388,
+    "meshes": 2,
+    "materials": 20,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_16",
+    "family": "old_timber",
+    "frontage_m": 20.871,
+    "depth_m": 24.6658,
+    "triangles": 8742,
+    "meshes": 2,
+    "materials": 18,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_17",
+    "family": "new_brick",
+    "frontage_m": 22.7684,
+    "depth_m": 26.5631,
+    "triangles": 10376,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_18",
+    "family": "rebuilt_veranda",
+    "frontage_m": 23.7171,
+    "depth_m": 21.8197,
+    "triangles": 9592,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_19",
+    "family": "new_brick",
+    "frontage_m": 23.7171,
+    "depth_m": 21.8197,
+    "triangles": 9728,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_20",
+    "family": "rebuilt_cottage",
+    "frontage_m": 23.7171,
+    "depth_m": 21.8197,
+    "triangles": 9740,
+    "meshes": 2,
+    "materials": 20,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_21",
+    "family": "new_gable",
+    "frontage_m": 23.7171,
+    "depth_m": 21.8197,
+    "triangles": 8574,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_22",
+    "family": "rebuilt_veranda",
+    "frontage_m": 20.871,
+    "depth_m": 25.6144,
+    "triangles": 10228,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_23",
+    "family": "new_brick",
+    "frontage_m": 20.871,
+    "depth_m": 20.871,
+    "triangles": 9344,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_24",
+    "family": "rebuilt_cottage",
+    "frontage_m": 20.871,
+    "depth_m": 20.871,
+    "triangles": 9356,
+    "meshes": 2,
+    "materials": 20,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_25",
+    "family": "new_gable",
+    "frontage_m": 20.871,
+    "depth_m": 20.871,
+    "triangles": 8238,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_26",
+    "family": "rebuilt_veranda",
+    "frontage_m": 18.9737,
+    "depth_m": 20.871,
+    "triangles": 8884,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_27",
+    "family": "new_brick",
+    "frontage_m": 18.9737,
+    "depth_m": 28.4605,
+    "triangles": 10304,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_28",
+    "family": "rebuilt_veranda",
+    "frontage_m": 18.9737,
+    "depth_m": 28.4605,
+    "triangles": 10252,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  },
+  {
+    "id": "d_29",
+    "family": "new_gable",
+    "frontage_m": 18.9737,
+    "depth_m": 28.4605,
+    "triangles": 9054,
+    "meshes": 2,
+    "materials": 19,
+    "embedded_images": 0
+  }
+]

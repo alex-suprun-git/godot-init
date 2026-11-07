@@ -244,6 +244,8 @@ func _add_entrances(segments: Array[Dictionary], lot_ids: Array) -> Array[Dictio
 
 
 func _facing_point(lot_id: String) -> Vector2:
+	if DistrictLayout.LOTS[lot_id]["type"] == "D":
+		return preload("res://scripts/data/village_sites.gd").point(lot_id,"entrance")
 	if DistrictLayout.LOTS[lot_id].has("entrance"):
 		return DistrictLayout.LOTS[lot_id]["entrance"]
 	var lot: Dictionary = DistrictLayout.LOTS[lot_id]

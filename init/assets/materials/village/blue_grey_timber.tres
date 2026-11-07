@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://assets/shaders/village_surface.gdshader" id="1_e8s5l"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/blue_grey_timber_albedo.png" id="2_ow364"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/normal_fine.png" id="3_vqynp"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/response_matte.png" id="4_t6xta"]
+
+[resource]
+resource_name = "Blue grey timber"
+render_priority = 0
+shader = ExtResource("1_e8s5l")
+shader_parameter/albedo_texture = ExtResource("2_ow364")
+shader_parameter/normal_texture = ExtResource("3_vqynp")
+shader_parameter/response_texture = ExtResource("4_t6xta")
+shader_parameter/colour_tint = Color(0.72, 0.77, 0.79, 1)
+shader_parameter/texture_contrast = null
+shader_parameter/roughness_floor = 0.94
+shader_parameter/metal_amount = 0.0
+shader_parameter/normal_strength = 0.25
+shader_parameter/snow_amount = null

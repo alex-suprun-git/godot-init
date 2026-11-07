@@ -1,0 +1,18 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/materials/church_ensemble/limestone.png" id="1_kmm4i"]
+[ext_resource type="Texture2D" path="res://assets/materials/church_ensemble/limestone_roughness.png" id="2_7b7lr"]
+[ext_resource type="Texture2D" path="res://assets/materials/church_ensemble/limestone_normal.png" id="3_3nm42"]
+
+[resource]
+resource_name = "Limestone plinth"
+cull_mode = 2
+albedo_texture = ExtResource("1_kmm4i")
+metallic_texture = ExtResource("2_7b7lr")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_7b7lr")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_scale = 0.45
+normal_texture = ExtResource("3_3nm42")
+metadata/_gltf_primary_texture_coord = 0

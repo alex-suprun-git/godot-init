@@ -18,7 +18,7 @@ const LOTS := {
 	"south_2": {"type": "W", "rect": Rect2(-298, 270, 90, 24), "content": "panel_5", "condition": "kept", "facing": "n"},
 	"south_3": {"type": "W", "rect": Rect2(-150, 270, 90, 24), "content": "panel_5", "condition": "kept", "facing": "n"},
 	"forest_clearing": {"type": "N", "rect": Rect2(-567, 108, 28, 24), "content": "forest_clearing", "condition": "kept", "facing": "e"},
-	"pond_bank": {"type": "N", "rect": Rect2(265, -20, 24, 10), "content": "pond_bank", "condition": "kept", "facing": "s"},
+	"pond_bank": {"type": "N", "rect": Rect2(259.0986, -22.8224, 22.7684, 9.4868), "content": "pond_bank", "condition": "kept", "facing": "s"},
 	"atp": {"type": "X", "rect": Rect2(-420, -282, 120, 82), "content": "atp", "condition": "worked", "facing": "s"},
 	"truck_stop": {"type": "X", "rect": Rect2(-280, -282, 100, 82), "content": "truck_stop", "condition": "worked", "facing": "s"},
 	"checkpoint": {"type": "X", "rect": Rect2(-170, -320, 330, 120), "content": "checkpoint", "condition": "kept", "facing": "s"},
@@ -61,29 +61,43 @@ const LOTS := {
 	"tower_e4": {"type": "W", "rect": Rect2(93.5, 140, 34, 38), "content": "elite_tower_placeholder", "condition": "kept", "facing": "w"},
 	"slab_1": {"type": "W", "rect": Rect2(22, 190, 110, 14), "content": "admin_slab", "condition": "kept", "facing": "s"},
 	"slab_2": {"type": "W", "rect": Rect2(22, 232, 110, 14), "content": "admin_slab", "condition": "kept", "facing": "n"},
-	"church": {"type": "X", "rect": Rect2(245, 80, 60, 50), "content": "church", "condition": "fading", "facing": "w"},
+	"church": {"type": "X", "rect": Rect2(240.1249, 72.0459, 56.921, 47.4342), "content": "church", "condition": "fading", "facing": "w", "entrance": Vector2(257.2012, 75.1766)},
 	"g_south": {"type": "G", "rect": Rect2(-430, 315, 140, 70), "content": "empty_lot", "condition": "worked", "facing": "n"},
 	"former_market": {"type": "N", "rect": Rect2(15, 315, 215, 78), "content": "former_market", "condition": "kept", "facing": "n"},
 	# The event ID remains market; the assembled 3D hub includes the station and square.
 	"market": {"type": "X", "rect": Rect2(-153, 317, 126, 67), "content": "market", "condition": "kept", "facing": "n", "entrance": Vector2(-108, 351)},
-	"cemetery": {"type": "N", "rect": Rect2(209, 84.5, 35, 46), "content": "cemetery", "condition": "fading", "facing": "n"},
-	"d_01": {"type": "D", "rect": Rect2(156.5, -40, 42, 38), "content": "house_poor", "condition": "fading", "facing": "n"},
-	"d_02": {"type": "D", "rect": Rect2(334.5, -40, 50, 38), "content": "house_kept", "condition": "kept", "facing": "n"},
-	"d_03": {"type": "D", "rect": Rect2(164.5, -0.5, 38, 38), "content": "house_kept", "condition": "kept", "facing": "e"},
-	"d_04": {"type": "D", "rect": Rect2(164.5, 37.5, 38, 46), "content": "house_poor", "condition": "fading", "facing": "e"},
-	"d_05": {"type": "D", "rect": Rect2(164.5, 83.5, 38, 38), "content": "house_kept", "condition": "kept", "facing": "e"},
-	"d_06": {"type": "D", "rect": Rect2(164.5, 121.5, 38, 46), "content": "house_kept", "condition": "kept", "facing": "e"},
-	"d_07": {"type": "D", "rect": Rect2(164.5, 167.5, 38, 38), "content": "house_poor", "condition": "fading", "facing": "e"},
-	"d_08": {"type": "D", "rect": Rect2(164.5, 205.5, 38, 42), "content": "house_abandoned", "condition": "abandoned", "facing": "e"},
-	"d_09": {"type": "D", "rect": Rect2(207.5, 133.5, 38, 50), "content": "house_kept", "condition": "kept", "facing": "w"},
-	"d_10": {"type": "D", "rect": Rect2(207.5, 231.5, 38, 50), "content": "house_kept", "condition": "kept", "facing": "n"},
-	"d_11": {"type": "D", "rect": Rect2(284.5, 134, 38, 42), "content": "house_poor", "condition": "fading", "facing": "e"},
-	"d_12": {"type": "D", "rect": Rect2(284.5, 176, 38, 46), "content": "house_kept", "condition": "kept", "facing": "e"},
-	"d_13": {"type": "D", "rect": Rect2(247.5, 134, 35, 91), "content": "house_kept", "condition": "kept", "facing": "s"},
-	"d_14": {"type": "D", "rect": Rect2(327.5, 80, 38, 38), "content": "house_abandoned", "condition": "abandoned", "facing": "w"},
-	"d_15": {"type": "D", "rect": Rect2(327.5, 118, 38, 38), "content": "house_poor", "condition": "fading", "facing": "w"},
-	"d_16": {"type": "D", "rect": Rect2(327.5, 156, 38, 38), "content": "house_poor", "condition": "fading", "facing": "w"},
-	"d_17": {"type": "D", "rect": Rect2(327.5, 220, 38, 50), "content": "house_kept", "condition": "kept", "facing": "n"},
+	"cemetery": {"type": "N", "rect": Rect2(205.9723, 76.315, 33.2039, 43.6394), "content": "cemetery", "condition": "fading", "facing": "n", "entrance": Vector2(257.2012, 75.1766)},
+	"d_01": {"type": "D", "rect": Rect2(176.4092, -41.7961, 22.7684, 26.5631), "content": "house_poor", "condition": "fading", "facing": "n"},
+	"d_02": {"type": "D", "rect": Rect2(324.16, -41.7961, 22.7684, 26.5631), "content": "house_kept", "condition": "kept", "facing": "n"},
+	"d_03": {"type": "D", "rect": Rect2(173.2427, 2.3177, 26.5631, 22.7684), "content": "house_kept", "condition": "kept", "facing": "e"},
+	"d_04": {"type": "D", "rect": Rect2(173.2427, 26.5861, 26.5631, 22.7684), "content": "house_poor", "condition": "fading", "facing": "e"},
+	"d_05": {"type": "D", "rect": Rect2(173.2427, 82.0071, 26.5631, 22.7684), "content": "house_kept", "condition": "kept", "facing": "e"},
+	"d_06": {"type": "D", "rect": Rect2(173.2427, 106.2755, 26.5631, 22.7684), "content": "house_kept", "condition": "kept", "facing": "e"},
+	"d_07": {"type": "D", "rect": Rect2(173.2427, 130.5439, 26.5631, 22.7684), "content": "house_poor", "condition": "fading", "facing": "e"},
+	"d_08": {"type": "D", "rect": Rect2(175.1401, 154.8123, 24.6658, 20.871), "content": "house_abandoned", "condition": "abandoned", "facing": "e"},
+	"d_09": {"type": "D", "rect": Rect2(204.5493, 122.5, 26.5631, 22.7684), "content": "house_kept", "condition": "kept", "facing": "w"},
+	"d_10": {"type": "D", "rect": Rect2(211.1901, 215.7714, 22.7684, 26.5631), "content": "house_kept", "condition": "kept", "facing": "n"},
+	"d_11": {"type": "D", "rect": Rect2(287.0847, 122.5, 26.5631, 22.7684), "content": "house_poor", "condition": "fading", "facing": "e"},
+	"d_12": {"type": "D", "rect": Rect2(287.0847, 146.7684, 26.5631, 22.7684), "content": "house_kept", "condition": "kept", "facing": "e"},
+	"d_13": {"type": "D", "rect": Rect2(233, 183.0419, 22.7684, 26.5631), "content": "house_kept", "condition": "kept", "facing": "s"},
+	"d_14": {"type": "D", "rect": Rect2(318.3913, 78.6867, 26.5631, 22.7684), "content": "house_abandoned", "condition": "abandoned", "facing": "w"},
+	"d_15": {"type": "D", "rect": Rect2(318.3913, 102.9551, 26.5631, 22.7684), "content": "house_poor", "condition": "fading", "facing": "w"},
+	"d_16": {"type": "D", "rect": Rect2(318.3913, 127.2235, 24.6658, 20.871), "content": "house_poor", "condition": "fading", "facing": "w"},
+	"d_17": {"type": "D", "rect": Rect2(325.0321, 204.8616, 22.7684, 26.5631), "content": "house_kept", "condition": "kept", "facing": "n"},
+	# Additional homes use previously empty frontage; the village is compacted10% in area.
+	"d_18": {"type": "D", "rect": Rect2(206.921, -41.7961, 23.7171, 21.8197), "content": "house_kept", "condition": "kept", "facing": "n"},
+	"d_19": {"type": "D", "rect": Rect2(230.6381, -41.7961, 23.7171, 21.8197), "content": "house_kept", "condition": "kept", "facing": "n"},
+	"d_20": {"type": "D", "rect": Rect2(254.3552, -41.7961, 23.7171, 21.8197), "content": "house_kept", "condition": "kept", "facing": "n"},
+	"d_21": {"type": "D", "rect": Rect2(278.0722, -41.7961, 23.7171, 21.8197), "content": "house_kept", "condition": "kept", "facing": "n"},
+	"d_22": {"type": "D", "rect": Rect2(301.7893, -41.7961, 20.871, 25.6144), "content": "house_kept", "condition": "kept", "facing": "n"},
+	"d_23": {"type": "D", "rect": Rect2(205.498, -19.0277, 20.871, 20.871), "content": "house_kept", "condition": "kept", "facing": "w"},
+	"d_24": {"type": "D", "rect": Rect2(205.498, 3.7407, 20.871, 20.871), "content": "house_kept", "condition": "kept", "facing": "w"},
+	"d_25": {"type": "D", "rect": Rect2(205.498, 26.5091, 20.871, 20.871), "content": "house_kept", "condition": "kept", "facing": "w"},
+	"d_26": {"type": "D", "rect": Rect2(205.498, 49.2775, 20.871, 18.9737), "content": "house_kept", "condition": "kept", "facing": "w"},
+	"d_27": {"type": "D", "rect": Rect2(342.1084, -1.9514, 28.4605, 18.9737), "content": "house_kept", "condition": "kept", "facing": "e"},
+	"d_28": {"type": "D", "rect": Rect2(342.1084, 22.7144, 28.4605, 18.9737), "content": "house_kept", "condition": "kept", "facing": "e"},
+	"d_29": {"type": "D", "rect": Rect2(342.1084, 47.3801, 28.4605, 18.9737), "content": "house_kept", "condition": "kept", "facing": "e"},
+	"village_shop": {"type":"G", "rect":Rect2(298.4689, 61.1361, 6.6408, 8.0638), "content":"village_kiosk", "condition":"kept", "facing":"s"},
 }
 
 # Asphalt roads get a pavement on both sides (SIDEWALK_WIDTH); a road may override it
@@ -92,6 +106,8 @@ const SIDEWALK_WIDTH := 2.5
 const CROSSWALK_DEPTH := 3.5
 
 const ROADS := [
+	# Extra village exit to the two-lane south street parallel to the passenger railway.
+	{"id":"village_south_exit", "rect":Rect2(275.5,211.9767,5,93.0233), "kind":"dirt"},
 	# "speed" scales car speed (default 1.0); courtyard traffic is opt-in and passenger-only.
 	{"id": "west_street", "rect": Rect2(-485, -85, 10, 390), "kind": "asphalt"},
 	{"id": "highway", "rect": Rect2(-450, -197.5, 890, 20), "kind": "asphalt", "walk": 0.0, "look": "highway", "speed": 2.0, "lanes_per_direction": 2},
@@ -170,15 +186,15 @@ const ROADS := [
 	{"id": "station_link", "rect": Rect2(-130, 344, 84, 8), "kind": "asphalt", "walk": 0.0, "hub_surface": true, "speed": 0.4},
 	# Village dirt roads form closed loops: H1 north, V1 west, H2 around the church,
 	# V2 east, H4 south, plus an east lane joining the ends of H1 and H3.
-	{"id": "village_north", "rect": Rect2(150, -45, 237.5, 5), "kind": "dirt"},
-	{"id": "village_west", "rect": Rect2(202.5, -42.5, 5, 275), "kind": "dirt"},
+	{"id": "village_north", "rect": Rect2(150.0, -46.6678, 225.3123, 5.0), "kind": "dirt"},
+	{"id": "village_west", "rect": Rect2(199.6776, -44.1678, 5.0, 260.8879), "kind": "dirt"},
 	# West lane: the village's only link to the village street besides the north end.
-	{"id": "village_west_link", "rect": Rect2(150, 77.5, 55, 5), "kind": "dirt"},
-	{"id": "village_church", "rect": Rect2(205, 77.5, 122.5, 5), "kind": "dirt"},
-	{"id": "village_east", "rect": Rect2(322.5, 80, 5, 150), "kind": "dirt"},
-	{"id": "village_east_link", "rect": Rect2(325, 215, 70, 5), "kind": "dirt"},
-	{"id": "village_south", "rect": Rect2(205, 225, 122.5, 5), "kind": "dirt"},
-	{"id": "village_outer_lane", "rect": Rect2(382.5, -42.5, 5, 262.5), "kind": "dirt"},
+	{"id": "village_west_link", "rect": Rect2(150.0, 69.5459, 52.1776, 5.0), "kind": "dirt"},
+	{"id": "village_church", "rect": Rect2(202.1775, 69.5459, 116.2137, 5.0), "kind": "dirt"},
+	{"id": "village_east", "rect": Rect2(313.5196, 72.046, 5.0, 142.3025), "kind": "dirt"},
+	{"id": "village_east_link", "rect": Rect2(316.0196, 199.9899, 66.4078, 5.0), "kind": "dirt"},
+	{"id": "village_south", "rect": Rect2(202.1775, 209.4767, 116.2137, 5.0), "kind": "dirt"},
+	{"id": "village_outer_lane", "rect": Rect2(370.4406, -44.1678, 5.0, 249.0294), "kind": "dirt"},
 ]
 
 # The passenger tracks turn north into the eastern freight corridor.
@@ -232,7 +248,7 @@ const BRIDGES := [
 	{"id": EMBANKMENT_CROSSINGS[2]["id"], "rect": Rect2(404.5, EMBANKMENT_CROSSINGS[2]["z"] - EMBANKMENT_CROSSINGS[2]["gap"] / 2.0, 21, EMBANKMENT_CROSSINGS[2]["gap"]), "height": 6.0, "ramp": 0.0, "kind": "rail", "parking": false, "embankment_span": true},
 ]
 const AREAS := {
-	"village": {"rect": Rect2(155, -75, 240, 370), "ground": "grass_dry", "condition": "fading"},
+	"village": {"rect": Rect2(154.7434, -75.0, 227.684, 351.0128), "ground": "grass_dry", "condition": "fading"},
 }
 
 
@@ -326,12 +342,12 @@ const DISTRICTS := {
 	},
 	"village": {
 		"name": "Old village",
-		"rects": [Rect2(150, -80, 245, 375)],
+		"rects": [Rect2(150.0, -79.7434, 232.4274, 355.7562)],
 		"residents": 300, "foot": 0.5, "cars": 0.2,
 		"fleet": {"car": 0.55, "tractor": 0.4, "truck": 0.05}, "hours": "farm",
 		"subzones": {
-			"church_cemetery": {"rect": Rect2(209, 80, 96, 50), "residents": 5, "foot": 0.6, "hours": "leisure"},
-			"pond": {"rect": Rect2(255, -30, 45, 30), "residents": 0, "foot": 0.3, "cars": 0.0, "hours": "leisure"},
+			"church_cemetery": {"rect": Rect2(205.9723, 72.0459, 91.0736, 47.4342), "residents": 5, "foot": 0.6, "hours": "leisure"},
+			"pond": {"rect": Rect2(227.792, -19.0277, 113.842, 87.2789), "residents": 0, "foot": 0.3, "cars": 0.0, "hours": "leisure"},
 		},
 	},
 	"south_hub": {

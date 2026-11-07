@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://assets/shaders/village_surface.gdshader" id="1_siher"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/green_fence_steel_albedo.png" id="2_n0bg3"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/normal_metal.png" id="3_mpep7"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/response_metal.png" id="4_gax0t"]
+
+[resource]
+resource_name = "Green fence steel"
+render_priority = 0
+shader = ExtResource("1_siher")
+shader_parameter/albedo_texture = ExtResource("2_n0bg3")
+shader_parameter/normal_texture = ExtResource("3_mpep7")
+shader_parameter/response_texture = ExtResource("4_gax0t")
+shader_parameter/colour_tint = Color(0.77, 0.79, 0.72, 1)
+shader_parameter/texture_contrast = null
+shader_parameter/roughness_floor = 0.88
+shader_parameter/metal_amount = 0.08
+shader_parameter/normal_strength = 0.12
+shader_parameter/snow_amount = null

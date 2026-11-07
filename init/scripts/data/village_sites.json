@@ -1,0 +1,5667 @@
+{
+  "d_01": {
+    "family": "rebuilt_cottage",
+    "frontage": 22.7684,
+    "depth": 26.5631,
+    "wicket_local": [
+      -3.0,
+      -12.68155
+    ],
+    "doorstep_local": [
+      -3.0,
+      -11.481549999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -8.8842,
+          0.04,
+          -2.2185
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          -3.0185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.0842,
+          0.04,
+          -2.9185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -5.8842,
+          0.04,
+          -10.9816
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.5842,
+          0.04,
+          -11.7816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.0842,
+          0.04,
+          -11.6816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          8.8842,
+          0.04,
+          -2.0185
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.1842,
+          0.04,
+          -2.8184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          -2.7185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          10.4816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          10.1816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 604.79928604,
+    "space_budget_m2": {
+      "buildings": 113,
+      "circulation": 51.7,
+      "garden_and_service": 102.6,
+      "need_with_30pct": 347.5
+    },
+    "center": [
+      187.7934,
+      -28.514550000000003
+    ],
+    "yaw": 3.141592653589793,
+    "entrance": [
+      190.7934,
+      -41.1961
+    ],
+    "doorstep": [
+      190.7934,
+      -39.9961
+    ],
+    "rect": [
+      176.4092,
+      -41.7961,
+      22.7684,
+      26.5631
+    ]
+  },
+  "d_02": {
+    "family": "new_gable",
+    "frontage": 22.7684,
+    "depth": 26.5631,
+    "wicket_local": [
+      -3.0,
+      -12.68155
+    ],
+    "doorstep_local": [
+      -3.0,
+      -11.481549999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -8.8842,
+          0.04,
+          -2.7185
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          -3.5185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.0842,
+          0.04,
+          -3.4185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -5.8842,
+          0.04,
+          -10.9816
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.5842,
+          0.04,
+          -11.7816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.0842,
+          0.04,
+          -11.6816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          8.8842,
+          0.04,
+          -2.5185
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.1842,
+          0.04,
+          -3.3184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          -3.2185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          10.4816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          10.1816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 604.79928604,
+    "space_budget_m2": {
+      "buildings": 123,
+      "circulation": 51.7,
+      "garden_and_service": 74.4,
+      "need_with_30pct": 323.8
+    },
+    "center": [
+      335.54420000000005,
+      -28.514550000000003
+    ],
+    "yaw": 3.141592653589793,
+    "entrance": [
+      338.5442,
+      -41.1961
+    ],
+    "doorstep": [
+      338.5442,
+      -39.9961
+    ],
+    "rect": [
+      324.16,
+      -41.7961,
+      22.7684,
+      26.5631
+    ]
+  },
+  "d_03": {
+    "family": "rebuilt_veranda",
+    "frontage": 22.7684,
+    "depth": 26.5631,
+    "wicket_local": [
+      -3.0,
+      -12.68155
+    ],
+    "doorstep_local": [
+      -3.0,
+      -11.481549999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -8.8842,
+          0.04,
+          -2.7185
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          -3.5185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.0842,
+          0.04,
+          -3.4185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -5.8842,
+          0.04,
+          -10.9816
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.5842,
+          0.04,
+          -11.7816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.0842,
+          0.04,
+          -11.6816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          8.8842,
+          0.04,
+          -2.5185
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.1842,
+          0.04,
+          -3.3184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          -3.2185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          10.4816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          10.1816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 604.79928604,
+    "space_budget_m2": {
+      "buildings": 129,
+      "circulation": 50.3,
+      "garden_and_service": 100.8,
+      "need_with_30pct": 364.2
+    },
+    "center": [
+      186.52425000000002,
+      13.7019
+    ],
+    "yaw": 1.5707963267948966,
+    "entrance": [
+      199.2058,
+      16.7019
+    ],
+    "doorstep": [
+      198.0058,
+      16.7019
+    ],
+    "rect": [
+      173.2427,
+      2.3177,
+      26.5631,
+      22.7684
+    ]
+  },
+  "d_04": {
+    "family": "rebuilt_cottage",
+    "frontage": 22.7684,
+    "depth": 26.5631,
+    "wicket_local": [
+      -3.0,
+      -12.68155
+    ],
+    "doorstep_local": [
+      -3.0,
+      -11.481549999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -8.8842,
+          0.04,
+          -2.2185
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          -3.0185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.0842,
+          0.04,
+          -2.9185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -5.8842,
+          0.04,
+          -10.9816
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.5842,
+          0.04,
+          -11.7816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.0842,
+          0.04,
+          -11.6816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          8.8842,
+          0.04,
+          -2.0185
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.1842,
+          0.04,
+          -2.8184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          -2.7185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          10.4816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          10.1816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 604.79928604,
+    "space_budget_m2": {
+      "buildings": 113,
+      "circulation": 51.7,
+      "garden_and_service": 102.6,
+      "need_with_30pct": 347.5
+    },
+    "center": [
+      186.52425000000002,
+      37.970299999999995
+    ],
+    "yaw": 1.5707963267948966,
+    "entrance": [
+      199.2058,
+      40.9703
+    ],
+    "doorstep": [
+      198.0058,
+      40.9703
+    ],
+    "rect": [
+      173.2427,
+      26.5861,
+      26.5631,
+      22.7684
+    ]
+  },
+  "d_05": {
+    "family": "new_brick",
+    "frontage": 22.7684,
+    "depth": 26.5631,
+    "wicket_local": [
+      -3.0,
+      -12.68155
+    ],
+    "doorstep_local": [
+      -3.0,
+      -11.481549999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -8.8842,
+          0.04,
+          -3.2185
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          -4.0184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.0842,
+          0.04,
+          -3.9185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -5.8842,
+          0.04,
+          -10.9816
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.5842,
+          0.04,
+          -11.7816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.0842,
+          0.04,
+          -11.6816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          8.8842,
+          0.04,
+          -3.0185
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.1842,
+          0.04,
+          -3.8184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          -3.7185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          10.4816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          10.1816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 604.79928604,
+    "space_budget_m2": {
+      "buildings": 143,
+      "circulation": 51.7,
+      "garden_and_service": 102.6,
+      "need_with_30pct": 386.5
+    },
+    "center": [
+      186.52425000000002,
+      93.3913
+    ],
+    "yaw": 1.5707963267948966,
+    "entrance": [
+      199.2058,
+      96.3913
+    ],
+    "doorstep": [
+      198.0058,
+      96.3913
+    ],
+    "rect": [
+      173.2427,
+      82.0071,
+      26.5631,
+      22.7684
+    ]
+  },
+  "d_06": {
+    "family": "rebuilt_veranda",
+    "frontage": 22.7684,
+    "depth": 26.5631,
+    "wicket_local": [
+      -3.0,
+      -12.68155
+    ],
+    "doorstep_local": [
+      -3.0,
+      -11.481549999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -8.8842,
+          0.04,
+          -2.7185
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          -3.5185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.0842,
+          0.04,
+          -3.4185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -5.8842,
+          0.04,
+          -10.9816
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.5842,
+          0.04,
+          -11.7816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.0842,
+          0.04,
+          -11.6816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          8.8842,
+          0.04,
+          -2.5185
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.1842,
+          0.04,
+          -3.3184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          -3.2185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          10.4816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          10.1816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 604.79928604,
+    "space_budget_m2": {
+      "buildings": 129,
+      "circulation": 50.3,
+      "garden_and_service": 100.8,
+      "need_with_30pct": 364.2
+    },
+    "center": [
+      186.52425000000002,
+      117.65969999999999
+    ],
+    "yaw": 1.5707963267948966,
+    "entrance": [
+      199.2058,
+      120.6597
+    ],
+    "doorstep": [
+      198.0058,
+      120.6597
+    ],
+    "rect": [
+      173.2427,
+      106.2755,
+      26.5631,
+      22.7684
+    ]
+  },
+  "d_07": {
+    "family": "rebuilt_cottage",
+    "frontage": 22.7684,
+    "depth": 26.5631,
+    "wicket_local": [
+      -3.0,
+      -12.68155
+    ],
+    "doorstep_local": [
+      -3.0,
+      -11.481549999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -8.8842,
+          0.04,
+          -2.2185
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          -3.0185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.0842,
+          0.04,
+          -2.9185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -5.8842,
+          0.04,
+          -10.9816
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.5842,
+          0.04,
+          -11.7816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.0842,
+          0.04,
+          -11.6816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          8.8842,
+          0.04,
+          -2.0185
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.1842,
+          0.04,
+          -2.8184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          -2.7185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          10.4816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          10.1816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 604.79928604,
+    "space_budget_m2": {
+      "buildings": 113,
+      "circulation": 51.7,
+      "garden_and_service": 102.6,
+      "need_with_30pct": 347.5
+    },
+    "center": [
+      186.52425000000002,
+      141.9281
+    ],
+    "yaw": 1.5707963267948966,
+    "entrance": [
+      199.2058,
+      144.9281
+    ],
+    "doorstep": [
+      198.0058,
+      144.9281
+    ],
+    "rect": [
+      173.2427,
+      130.5439,
+      26.5631,
+      22.7684
+    ]
+  },
+  "d_08": {
+    "family": "vacant_timber",
+    "frontage": 20.871,
+    "depth": 24.6658,
+    "wicket_local": [
+      -3.0,
+      -11.7329
+    ],
+    "doorstep_local": [
+      -3.0,
+      -10.5329
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -7.9355,
+          0.04,
+          -2.1671
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.6355,
+          0.04,
+          -2.9671
+        ],
+        "height": 4.0,
+        "scale": 0.32,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.1355,
+          0.04,
+          -2.8671
+        ],
+        "height": 4.0,
+        "scale": 0.32,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -4.9355,
+          0.04,
+          -10.0329
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.6355,
+          0.04,
+          -10.8329
+        ],
+        "height": 4.0,
+        "scale": 0.32,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -4.1355,
+          0.04,
+          -10.7329
+        ],
+        "height": 4.0,
+        "scale": 0.32,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          7.9355,
+          0.04,
+          -1.9671
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          7.2355,
+          0.04,
+          -2.7671
+        ],
+        "height": 4.0,
+        "scale": 0.32,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.7355,
+          0.04,
+          -2.6671
+        ],
+        "height": 4.0,
+        "scale": 0.32,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.6355,
+          0.04,
+          9.5329
+        ],
+        "height": 4.0,
+        "scale": 0.38,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.7355,
+          0.04,
+          9.2329
+        ],
+        "height": 4.0,
+        "scale": 0.38,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 514.7999118,
+    "space_budget_m2": {
+      "buildings": 75,
+      "circulation": 50.1,
+      "garden_and_service": 48.0,
+      "need_with_30pct": 225.0
+    },
+    "center": [
+      187.47299999999998,
+      165.24779999999998
+    ],
+    "yaw": 1.5707963267948966,
+    "entrance": [
+      199.2059,
+      168.2478
+    ],
+    "doorstep": [
+      198.0059,
+      168.2478
+    ],
+    "rect": [
+      175.1401,
+      154.8123,
+      24.6658,
+      20.871
+    ]
+  },
+  "d_09": {
+    "family": "new_gable",
+    "frontage": 22.7684,
+    "depth": 26.5631,
+    "wicket_local": [
+      -3.0,
+      -12.68155
+    ],
+    "doorstep_local": [
+      -3.0,
+      -11.481549999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -8.8842,
+          0.04,
+          -2.7185
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          -3.5185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.0842,
+          0.04,
+          -3.4185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -5.8842,
+          0.04,
+          -10.9816
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.5842,
+          0.04,
+          -11.7816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.0842,
+          0.04,
+          -11.6816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          8.8842,
+          0.04,
+          -2.5185
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.1842,
+          0.04,
+          -3.3184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          -3.2185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          10.4816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          10.1816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 604.79928604,
+    "space_budget_m2": {
+      "buildings": 123,
+      "circulation": 51.7,
+      "garden_and_service": 74.4,
+      "need_with_30pct": 323.8
+    },
+    "center": [
+      217.83085,
+      133.8842
+    ],
+    "yaw": -1.5707963267948966,
+    "entrance": [
+      205.1493,
+      130.8842
+    ],
+    "doorstep": [
+      206.3493,
+      130.8842
+    ],
+    "rect": [
+      204.5493,
+      122.5,
+      26.5631,
+      22.7684
+    ]
+  },
+  "d_10": {
+    "family": "rebuilt_veranda",
+    "frontage": 22.7684,
+    "depth": 26.5631,
+    "wicket_local": [
+      -3.0,
+      -12.68155
+    ],
+    "doorstep_local": [
+      -3.0,
+      -11.481549999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -8.8842,
+          0.04,
+          -2.7185
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          -3.5185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.0842,
+          0.04,
+          -3.4185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -5.8842,
+          0.04,
+          -10.9816
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.5842,
+          0.04,
+          -11.7816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.0842,
+          0.04,
+          -11.6816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          8.8842,
+          0.04,
+          -2.5185
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.1842,
+          0.04,
+          -3.3184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          -3.2185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          10.4816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          10.1816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 604.79928604,
+    "space_budget_m2": {
+      "buildings": 129,
+      "circulation": 50.3,
+      "garden_and_service": 100.8,
+      "need_with_30pct": 364.2
+    },
+    "center": [
+      222.5743,
+      229.05295
+    ],
+    "yaw": 3.141592653589793,
+    "entrance": [
+      225.5743,
+      216.3714
+    ],
+    "doorstep": [
+      225.5743,
+      217.5714
+    ],
+    "rect": [
+      211.1901,
+      215.7714,
+      22.7684,
+      26.5631
+    ]
+  },
+  "d_11": {
+    "family": "new_brick",
+    "frontage": 22.7684,
+    "depth": 26.5631,
+    "wicket_local": [
+      -3.0,
+      -12.68155
+    ],
+    "doorstep_local": [
+      -3.0,
+      -11.481549999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -8.8842,
+          0.04,
+          -3.2185
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          -4.0184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.0842,
+          0.04,
+          -3.9185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -5.8842,
+          0.04,
+          -10.9816
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.5842,
+          0.04,
+          -11.7816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.0842,
+          0.04,
+          -11.6816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          8.8842,
+          0.04,
+          -3.0185
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.1842,
+          0.04,
+          -3.8184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          -3.7185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          10.4816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          10.1816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 604.79928604,
+    "space_budget_m2": {
+      "buildings": 143,
+      "circulation": 51.7,
+      "garden_and_service": 102.6,
+      "need_with_30pct": 386.5
+    },
+    "center": [
+      300.36625,
+      133.8842
+    ],
+    "yaw": 1.5707963267948966,
+    "entrance": [
+      313.0478,
+      136.8842
+    ],
+    "doorstep": [
+      311.8478,
+      136.8842
+    ],
+    "rect": [
+      287.0847,
+      122.5,
+      26.5631,
+      22.7684
+    ]
+  },
+  "d_12": {
+    "family": "new_gable",
+    "frontage": 22.7684,
+    "depth": 26.5631,
+    "wicket_local": [
+      -3.0,
+      -12.68155
+    ],
+    "doorstep_local": [
+      -3.0,
+      -11.481549999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -8.8842,
+          0.04,
+          -2.7185
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          -3.5185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.0842,
+          0.04,
+          -3.4185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -5.8842,
+          0.04,
+          -10.9816
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.5842,
+          0.04,
+          -11.7816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.0842,
+          0.04,
+          -11.6816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          8.8842,
+          0.04,
+          -2.5185
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.1842,
+          0.04,
+          -3.3184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          -3.2185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          10.4816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          10.1816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 604.79928604,
+    "space_budget_m2": {
+      "buildings": 123,
+      "circulation": 51.7,
+      "garden_and_service": 74.4,
+      "need_with_30pct": 323.8
+    },
+    "center": [
+      300.36625,
+      158.1526
+    ],
+    "yaw": 1.5707963267948966,
+    "entrance": [
+      313.0478,
+      161.1526
+    ],
+    "doorstep": [
+      311.8478,
+      161.1526
+    ],
+    "rect": [
+      287.0847,
+      146.7684,
+      26.5631,
+      22.7684
+    ]
+  },
+  "d_13": {
+    "family": "rebuilt_veranda",
+    "frontage": 22.7684,
+    "depth": 26.5631,
+    "wicket_local": [
+      -3.0,
+      -12.68155
+    ],
+    "doorstep_local": [
+      -3.0,
+      -11.481549999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -8.8842,
+          0.04,
+          -2.7185
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          -3.5185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.0842,
+          0.04,
+          -3.4185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -5.8842,
+          0.04,
+          -10.9816
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.5842,
+          0.04,
+          -11.7816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.0842,
+          0.04,
+          -11.6816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          8.8842,
+          0.04,
+          -2.5185
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.1842,
+          0.04,
+          -3.3184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          -3.2185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          10.4816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          10.1816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 604.79928604,
+    "space_budget_m2": {
+      "buildings": 129,
+      "circulation": 50.3,
+      "garden_and_service": 100.8,
+      "need_with_30pct": 364.2
+    },
+    "center": [
+      244.3842,
+      196.32345
+    ],
+    "yaw": 0,
+    "entrance": [
+      241.3842,
+      209.005
+    ],
+    "doorstep": [
+      241.3842,
+      207.805
+    ],
+    "rect": [
+      233.0,
+      183.0419,
+      22.7684,
+      26.5631
+    ]
+  },
+  "d_14": {
+    "family": "vacant_masonry",
+    "frontage": 22.7684,
+    "depth": 26.5631,
+    "wicket_local": [
+      -3.0,
+      -12.68155
+    ],
+    "doorstep_local": [
+      -3.0,
+      -11.481549999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -8.8842,
+          0.04,
+          -2.2185
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          -3.0185
+        ],
+        "height": 4.0,
+        "scale": 0.32,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.0842,
+          0.04,
+          -2.9185
+        ],
+        "height": 4.0,
+        "scale": 0.32,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -5.8842,
+          0.04,
+          -10.9816
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.5842,
+          0.04,
+          -11.7816
+        ],
+        "height": 4.0,
+        "scale": 0.32,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.0842,
+          0.04,
+          -11.6816
+        ],
+        "height": 4.0,
+        "scale": 0.32,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          8.8842,
+          0.04,
+          -2.0185
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.1842,
+          0.04,
+          -2.8184
+        ],
+        "height": 4.0,
+        "scale": 0.32,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          -2.7185
+        ],
+        "height": 4.0,
+        "scale": 0.32,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          10.4816
+        ],
+        "height": 4.0,
+        "scale": 0.38,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          10.1816
+        ],
+        "height": 4.0,
+        "scale": 0.38,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 604.79928604,
+    "space_budget_m2": {
+      "buildings": 92,
+      "circulation": 51.7,
+      "garden_and_service": 48.0,
+      "need_with_30pct": 249.2
+    },
+    "center": [
+      331.67285,
+      90.0709
+    ],
+    "yaw": -1.5707963267948966,
+    "entrance": [
+      318.9913,
+      87.0709
+    ],
+    "doorstep": [
+      320.1913,
+      87.0709
+    ],
+    "rect": [
+      318.3913,
+      78.6867,
+      26.5631,
+      22.7684
+    ]
+  },
+  "d_15": {
+    "family": "rebuilt_cottage",
+    "frontage": 22.7684,
+    "depth": 26.5631,
+    "wicket_local": [
+      -3.0,
+      -12.68155
+    ],
+    "doorstep_local": [
+      -3.0,
+      -11.481549999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -8.8842,
+          0.04,
+          -2.2185
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          -3.0185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.0842,
+          0.04,
+          -2.9185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -5.8842,
+          0.04,
+          -10.9816
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.5842,
+          0.04,
+          -11.7816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.0842,
+          0.04,
+          -11.6816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          8.8842,
+          0.04,
+          -2.0185
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.1842,
+          0.04,
+          -2.8184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          -2.7185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          10.4816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          10.1816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 604.79928604,
+    "space_budget_m2": {
+      "buildings": 113,
+      "circulation": 51.7,
+      "garden_and_service": 102.6,
+      "need_with_30pct": 347.5
+    },
+    "center": [
+      331.67285,
+      114.33930000000001
+    ],
+    "yaw": -1.5707963267948966,
+    "entrance": [
+      318.9913,
+      111.3393
+    ],
+    "doorstep": [
+      320.1913,
+      111.3393
+    ],
+    "rect": [
+      318.3913,
+      102.9551,
+      26.5631,
+      22.7684
+    ]
+  },
+  "d_16": {
+    "family": "old_timber",
+    "frontage": 20.871,
+    "depth": 24.6658,
+    "wicket_local": [
+      -3.0,
+      -11.7329
+    ],
+    "doorstep_local": [
+      -3.0,
+      -10.5329
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -7.9355,
+          0.04,
+          -2.1671
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.6355,
+          0.04,
+          -2.9671
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.1355,
+          0.04,
+          -2.8671
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -4.9355,
+          0.04,
+          -10.0329
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.6355,
+          0.04,
+          -10.8329
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -4.1355,
+          0.04,
+          -10.7329
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          7.9355,
+          0.04,
+          -1.9671
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          7.2355,
+          0.04,
+          -2.7671
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.7355,
+          0.04,
+          -2.6671
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.6355,
+          0.04,
+          9.5329
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.7355,
+          0.04,
+          9.2329
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          9.7329
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          9.7329
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 514.7999118,
+    "space_budget_m2": {
+      "buildings": 75,
+      "circulation": 50.1,
+      "garden_and_service": 100.8,
+      "need_with_30pct": 293.6
+    },
+    "center": [
+      330.7242,
+      137.659
+    ],
+    "yaw": -1.5707963267948966,
+    "entrance": [
+      318.9913,
+      134.659
+    ],
+    "doorstep": [
+      320.1913,
+      134.659
+    ],
+    "rect": [
+      318.3913,
+      127.2235,
+      24.6658,
+      20.871
+    ]
+  },
+  "d_17": {
+    "family": "new_brick",
+    "frontage": 22.7684,
+    "depth": 26.5631,
+    "wicket_local": [
+      -3.0,
+      -12.68155
+    ],
+    "doorstep_local": [
+      -3.0,
+      -11.481549999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -8.8842,
+          0.04,
+          -3.2185
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          -4.0184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.0842,
+          0.04,
+          -3.9185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -5.8842,
+          0.04,
+          -10.9816
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.5842,
+          0.04,
+          -11.7816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.0842,
+          0.04,
+          -11.6816
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          8.8842,
+          0.04,
+          -3.0185
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.1842,
+          0.04,
+          -3.8184
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          -3.7185
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -9.5842,
+          0.04,
+          10.4816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          9.6842,
+          0.04,
+          10.1816
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          10.6816
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 604.79928604,
+    "space_budget_m2": {
+      "buildings": 143,
+      "circulation": 51.7,
+      "garden_and_service": 102.6,
+      "need_with_30pct": 386.5
+    },
+    "center": [
+      336.41630000000004,
+      218.14315000000002
+    ],
+    "yaw": 3.141592653589793,
+    "entrance": [
+      339.4163,
+      205.4616
+    ],
+    "doorstep": [
+      339.4163,
+      206.6616
+    ],
+    "rect": [
+      325.0321,
+      204.8616,
+      22.7684,
+      26.5631
+    ]
+  },
+  "d_18": {
+    "family": "rebuilt_veranda",
+    "frontage": 23.7171,
+    "depth": 21.8197,
+    "wicket_local": [
+      -3.0,
+      -10.30985
+    ],
+    "doorstep_local": [
+      -3.0,
+      -9.10985
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -9.3586,
+          0.04,
+          -5.0901
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -10.0585,
+          0.04,
+          -5.8902
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.5585,
+          0.04,
+          -5.7902
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -6.3586,
+          0.04,
+          -8.6098
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.0585,
+          0.04,
+          -9.4099
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.5585,
+          0.04,
+          -9.3098
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          9.3586,
+          0.04,
+          -4.8902
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.6586,
+          0.04,
+          -5.6901
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          10.1586,
+          0.04,
+          -5.5901
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -10.0585,
+          0.04,
+          8.1098
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          10.1586,
+          0.04,
+          7.8099
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          8.3098
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          8.3098
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 517.50000687,
+    "space_budget_m2": {
+      "buildings": 129,
+      "circulation": 46.3,
+      "garden_and_service": 84.7,
+      "need_with_30pct": 338.0
+    },
+    "center": [
+      218.77955,
+      -30.886250000000004
+    ],
+    "yaw": 3.141592653589793,
+    "entrance": [
+      221.7796,
+      -41.1961
+    ],
+    "doorstep": [
+      221.7796,
+      -39.9961
+    ],
+    "rect": [
+      206.921,
+      -41.7961,
+      23.7171,
+      21.8197
+    ]
+  },
+  "d_19": {
+    "family": "new_brick",
+    "frontage": 23.7171,
+    "depth": 21.8197,
+    "wicket_local": [
+      -3.0,
+      -10.30985
+    ],
+    "doorstep_local": [
+      -3.0,
+      -9.10985
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -9.3586,
+          0.04,
+          -5.5901
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -10.0585,
+          0.04,
+          -6.3902
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.5585,
+          0.04,
+          -6.2902
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -6.3586,
+          0.04,
+          -8.6098
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.0585,
+          0.04,
+          -9.4099
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.5585,
+          0.04,
+          -9.3098
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          9.3586,
+          0.04,
+          -5.3902
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.6586,
+          0.04,
+          -6.1901
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          10.1586,
+          0.04,
+          -6.0901
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -10.0585,
+          0.04,
+          8.1098
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          10.1586,
+          0.04,
+          7.8099
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          8.3098
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          8.3098
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 517.50000687,
+    "space_budget_m2": {
+      "buildings": 143,
+      "circulation": 47.7,
+      "garden_and_service": 90.5,
+      "need_with_30pct": 365.5
+    },
+    "center": [
+      242.49665000000002,
+      -30.886250000000004
+    ],
+    "yaw": 3.141592653589793,
+    "entrance": [
+      245.4967,
+      -41.1961
+    ],
+    "doorstep": [
+      245.4967,
+      -39.9961
+    ],
+    "rect": [
+      230.6381,
+      -41.7961,
+      23.7171,
+      21.8197
+    ]
+  },
+  "d_20": {
+    "family": "rebuilt_cottage",
+    "frontage": 23.7171,
+    "depth": 21.8197,
+    "wicket_local": [
+      -3.0,
+      -10.30985
+    ],
+    "doorstep_local": [
+      -3.0,
+      -9.10985
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -9.3586,
+          0.04,
+          -4.5901
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -10.0585,
+          0.04,
+          -5.3902
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.5585,
+          0.04,
+          -5.2902
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -6.3586,
+          0.04,
+          -8.6098
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.0585,
+          0.04,
+          -9.4099
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.5585,
+          0.04,
+          -9.3098
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          9.3586,
+          0.04,
+          -4.3902
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.6586,
+          0.04,
+          -5.1901
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          10.1586,
+          0.04,
+          -5.0901
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -10.0585,
+          0.04,
+          8.1098
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          10.1586,
+          0.04,
+          7.8099
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          8.3098
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          8.3098
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 517.50000687,
+    "space_budget_m2": {
+      "buildings": 113,
+      "circulation": 47.7,
+      "garden_and_service": 90.5,
+      "need_with_30pct": 326.5
+    },
+    "center": [
+      266.21375,
+      -30.886250000000004
+    ],
+    "yaw": 3.141592653589793,
+    "entrance": [
+      269.2138,
+      -41.1961
+    ],
+    "doorstep": [
+      269.2138,
+      -39.9961
+    ],
+    "rect": [
+      254.3552,
+      -41.7961,
+      23.7171,
+      21.8197
+    ]
+  },
+  "d_21": {
+    "family": "new_gable",
+    "frontage": 23.7171,
+    "depth": 21.8197,
+    "wicket_local": [
+      -3.0,
+      -10.30985
+    ],
+    "doorstep_local": [
+      -3.0,
+      -9.10985
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -9.3586,
+          0.04,
+          -5.0901
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -10.0585,
+          0.04,
+          -5.8902
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.5585,
+          0.04,
+          -5.7902
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -6.3586,
+          0.04,
+          -8.6098
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.0585,
+          0.04,
+          -9.4099
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.5585,
+          0.04,
+          -9.3098
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          9.3586,
+          0.04,
+          -4.8902
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.6586,
+          0.04,
+          -5.6901
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          10.1586,
+          0.04,
+          -5.5901
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -10.0585,
+          0.04,
+          8.1098
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          10.1586,
+          0.04,
+          7.8099
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          8.3098
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          8.3098
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 517.50000687,
+    "space_budget_m2": {
+      "buildings": 123,
+      "circulation": 47.7,
+      "garden_and_service": 66.3,
+      "need_with_30pct": 308.1
+    },
+    "center": [
+      289.93075,
+      -30.886250000000004
+    ],
+    "yaw": 3.141592653589793,
+    "entrance": [
+      292.9307,
+      -41.1961
+    ],
+    "doorstep": [
+      292.9307,
+      -39.9961
+    ],
+    "rect": [
+      278.0722,
+      -41.7961,
+      23.7171,
+      21.8197
+    ]
+  },
+  "d_22": {
+    "family": "rebuilt_veranda",
+    "frontage": 20.871,
+    "depth": 25.6144,
+    "wicket_local": [
+      -3.0,
+      -12.2072
+    ],
+    "doorstep_local": [
+      -3.0,
+      -11.0072
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -7.9355,
+          0.04,
+          -3.1928
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.6355,
+          0.04,
+          -3.9928
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.1355,
+          0.04,
+          -3.8928
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -4.9355,
+          0.04,
+          -10.5072
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.6355,
+          0.04,
+          -11.3072
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -4.1355,
+          0.04,
+          -11.2072
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          7.9355,
+          0.04,
+          -2.9928
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          7.2355,
+          0.04,
+          -3.7928
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.7355,
+          0.04,
+          -3.6928
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.6355,
+          0.04,
+          10.0072
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.7355,
+          0.04,
+          9.7072
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          10.2072
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          10.2072
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 534.5981423999999,
+    "space_budget_m2": {
+      "buildings": 129,
+      "circulation": 49.5,
+      "garden_and_service": 100.8,
+      "need_with_30pct": 363.1
+    },
+    "center": [
+      312.2248,
+      -28.9889
+    ],
+    "yaw": 3.141592653589793,
+    "entrance": [
+      315.2248,
+      -41.1961
+    ],
+    "doorstep": [
+      315.2248,
+      -39.9961
+    ],
+    "rect": [
+      301.7893,
+      -41.7961,
+      20.871,
+      25.6144
+    ]
+  },
+  "d_23": {
+    "family": "new_brick",
+    "frontage": 20.871,
+    "depth": 20.871,
+    "wicket_local": [
+      -3.0,
+      -9.8355
+    ],
+    "doorstep_local": [
+      -3.0,
+      -8.635499999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -7.9355,
+          0.04,
+          -6.0645
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.6355,
+          0.04,
+          -6.8645
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.1355,
+          0.04,
+          -6.7645
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -4.9355,
+          0.04,
+          -8.1355
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.6355,
+          0.04,
+          -8.9355
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -4.1355,
+          0.04,
+          -8.8355
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          7.9355,
+          0.04,
+          -5.8645
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          7.2355,
+          0.04,
+          -6.6645
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.7355,
+          0.04,
+          -6.5645
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.6355,
+          0.04,
+          7.6355
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.7355,
+          0.04,
+          7.3355
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          7.8355
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          7.8355
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 435.59864099999993,
+    "space_budget_m2": {
+      "buildings": 143,
+      "circulation": 46.8,
+      "garden_and_service": 83.7,
+      "need_with_30pct": 355.6
+    },
+    "center": [
+      215.93349999999998,
+      -8.5922
+    ],
+    "yaw": -1.5707963267948966,
+    "entrance": [
+      206.098,
+      -11.5922
+    ],
+    "doorstep": [
+      207.298,
+      -11.5922
+    ],
+    "rect": [
+      205.498,
+      -19.0277,
+      20.871,
+      20.871
+    ]
+  },
+  "d_24": {
+    "family": "rebuilt_cottage",
+    "frontage": 20.871,
+    "depth": 20.871,
+    "wicket_local": [
+      -3.0,
+      -9.8355
+    ],
+    "doorstep_local": [
+      -3.0,
+      -8.635499999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -7.9355,
+          0.04,
+          -5.0645
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.6355,
+          0.04,
+          -5.8645
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.1355,
+          0.04,
+          -5.7645
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -4.9355,
+          0.04,
+          -8.1355
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.6355,
+          0.04,
+          -8.9355
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -4.1355,
+          0.04,
+          -8.8355
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          7.9355,
+          0.04,
+          -4.8645
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          7.2355,
+          0.04,
+          -5.6645
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.7355,
+          0.04,
+          -5.5645
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.6355,
+          0.04,
+          7.6355
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.7355,
+          0.04,
+          7.3355
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          7.8355
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          7.8355
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 435.59864099999993,
+    "space_budget_m2": {
+      "buildings": 113,
+      "circulation": 46.8,
+      "garden_and_service": 83.7,
+      "need_with_30pct": 316.6
+    },
+    "center": [
+      215.93349999999998,
+      14.1762
+    ],
+    "yaw": -1.5707963267948966,
+    "entrance": [
+      206.098,
+      11.1762
+    ],
+    "doorstep": [
+      207.298,
+      11.1762
+    ],
+    "rect": [
+      205.498,
+      3.7407,
+      20.871,
+      20.871
+    ]
+  },
+  "d_25": {
+    "family": "new_gable",
+    "frontage": 20.871,
+    "depth": 20.871,
+    "wicket_local": [
+      -3.0,
+      -9.8355
+    ],
+    "doorstep_local": [
+      -3.0,
+      -8.635499999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -7.9355,
+          0.04,
+          -5.5645
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.6355,
+          0.04,
+          -6.3645
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.1355,
+          0.04,
+          -6.2645
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -4.9355,
+          0.04,
+          -8.1355
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -5.6355,
+          0.04,
+          -8.9355
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -4.1355,
+          0.04,
+          -8.8355
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          7.9355,
+          0.04,
+          -5.3645
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          7.2355,
+          0.04,
+          -6.1645
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.7355,
+          0.04,
+          -6.0645
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -8.6355,
+          0.04,
+          7.6355
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          8.7355,
+          0.04,
+          7.3355
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          7.8355
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          7.8355
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 435.59864099999993,
+    "space_budget_m2": {
+      "buildings": 123,
+      "circulation": 46.8,
+      "garden_and_service": 61.8,
+      "need_with_30pct": 301.1
+    },
+    "center": [
+      215.93349999999998,
+      36.9446
+    ],
+    "yaw": -1.5707963267948966,
+    "entrance": [
+      206.098,
+      33.9446
+    ],
+    "doorstep": [
+      207.298,
+      33.9446
+    ],
+    "rect": [
+      205.498,
+      26.5091,
+      20.871,
+      20.871
+    ]
+  },
+  "d_26": {
+    "family": "rebuilt_veranda",
+    "frontage": 18.9737,
+    "depth": 20.871,
+    "wicket_local": [
+      -3.0,
+      -9.8355
+    ],
+    "doorstep_local": [
+      -3.0,
+      -8.635499999999999
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -6.9868,
+          0.04,
+          -5.5645
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.6869,
+          0.04,
+          -6.3645
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.1869,
+          0.04,
+          -6.2645
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -3.9869,
+          0.04,
+          -8.1355
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -4.6869,
+          0.04,
+          -8.9355
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -3.1869,
+          0.04,
+          -8.8355
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          6.9868,
+          0.04,
+          -5.3645
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          6.2868,
+          0.04,
+          -6.1645
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          7.7868,
+          0.04,
+          -6.0645
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.6869,
+          0.04,
+          7.6355
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          7.7868,
+          0.04,
+          7.3355
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          7.8355
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          7.8355
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 396.0000927,
+    "space_budget_m2": {
+      "buildings": 129,
+      "circulation": 45.5,
+      "garden_and_service": 75.6,
+      "need_with_30pct": 325.1
+    },
+    "center": [
+      215.93349999999998,
+      58.76435000000001
+    ],
+    "yaw": -1.5707963267948966,
+    "entrance": [
+      206.098,
+      55.7644
+    ],
+    "doorstep": [
+      207.298,
+      55.7644
+    ],
+    "rect": [
+      205.498,
+      49.2775,
+      20.871,
+      18.9737
+    ]
+  },
+  "d_27": {
+    "family": "new_brick",
+    "frontage": 18.9737,
+    "depth": 28.4605,
+    "wicket_local": [
+      -3.0,
+      -13.63025
+    ],
+    "doorstep_local": [
+      -3.0,
+      -12.43025
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -6.9868,
+          0.04,
+          -2.2698
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.6869,
+          0.04,
+          -3.0698
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.1869,
+          0.04,
+          -2.9697
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -3.9869,
+          0.04,
+          -11.9303
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -4.6869,
+          0.04,
+          -12.7303
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -3.1869,
+          0.04,
+          -12.6302
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          6.9868,
+          0.04,
+          -2.0698
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          6.2868,
+          0.04,
+          -2.8698
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          7.7868,
+          0.04,
+          -2.7698
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.6869,
+          0.04,
+          11.4303
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          7.7868,
+          0.04,
+          11.1302
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          11.6302
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          11.6302
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 540.00098885,
+    "space_budget_m2": {
+      "buildings": 143,
+      "circulation": 53.3,
+      "garden_and_service": 102.6,
+      "need_with_30pct": 388.6
+    },
+    "center": [
+      356.33865000000003,
+      7.535450000000001
+    ],
+    "yaw": 1.5707963267948966,
+    "entrance": [
+      369.9689,
+      10.5355
+    ],
+    "doorstep": [
+      368.7689,
+      10.5355
+    ],
+    "rect": [
+      342.1084,
+      -1.9514,
+      28.4605,
+      18.9737
+    ]
+  },
+  "d_28": {
+    "family": "rebuilt_veranda",
+    "frontage": 18.9737,
+    "depth": 28.4605,
+    "wicket_local": [
+      -3.0,
+      -13.63025
+    ],
+    "doorstep_local": [
+      -3.0,
+      -12.43025
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -6.9868,
+          0.04,
+          -1.7697
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.6869,
+          0.04,
+          -2.5698
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.1869,
+          0.04,
+          -2.4697
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -3.9869,
+          0.04,
+          -11.9303
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -4.6869,
+          0.04,
+          -12.7303
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -3.1869,
+          0.04,
+          -12.6302
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          6.9868,
+          0.04,
+          -1.5697
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          6.2868,
+          0.04,
+          -2.3698
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          7.7868,
+          0.04,
+          -2.2698
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.6869,
+          0.04,
+          11.4303
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          7.7868,
+          0.04,
+          11.1302
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          11.6302
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          11.6302
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 540.00098885,
+    "space_budget_m2": {
+      "buildings": 129,
+      "circulation": 52.0,
+      "garden_and_service": 100.8,
+      "need_with_30pct": 366.3
+    },
+    "center": [
+      356.33865000000003,
+      32.20125
+    ],
+    "yaw": 1.5707963267948966,
+    "entrance": [
+      369.9689,
+      35.2013
+    ],
+    "doorstep": [
+      368.7689,
+      35.2013
+    ],
+    "rect": [
+      342.1084,
+      22.7144,
+      28.4605,
+      18.9737
+    ]
+  },
+  "d_29": {
+    "family": "new_gable",
+    "frontage": 18.9737,
+    "depth": 28.4605,
+    "wicket_local": [
+      -3.0,
+      -13.63025
+    ],
+    "doorstep_local": [
+      -3.0,
+      -12.43025
+    ],
+    "planting": [
+      {
+        "kind": "FruitTree",
+        "at": [
+          -6.9868,
+          0.04,
+          -1.7697
+        ],
+        "height": 3.7,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.6869,
+          0.04,
+          -2.5698
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -6.1869,
+          0.04,
+          -2.4697
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          -3.9869,
+          0.04,
+          -11.9303
+        ],
+        "height": 4.05,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -4.6869,
+          0.04,
+          -12.7303
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -3.1869,
+          0.04,
+          -12.6302
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "FruitTree",
+        "at": [
+          6.9868,
+          0.04,
+          -1.5697
+        ],
+        "height": 4.4,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          6.2868,
+          0.04,
+          -2.3698
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          7.7868,
+          0.04,
+          -2.2698
+        ],
+        "height": 4.0,
+        "scale": 0.19,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          -7.6869,
+          0.04,
+          11.4303
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Shrub",
+        "at": [
+          7.7868,
+          0.04,
+          11.1302
+        ],
+        "height": 4.0,
+        "scale": 0.25,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -5.4,
+          0.1,
+          11.6302
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      },
+      {
+        "kind": "Flowerbed",
+        "at": [
+          -0.6,
+          0.1,
+          11.6302
+        ],
+        "height": 4.0,
+        "scale": 0.28,
+        "width": 2.0,
+        "depth": 0.7
+      }
+    ],
+    "area_m2": 540.00098885,
+    "space_budget_m2": {
+      "buildings": 123,
+      "circulation": 53.3,
+      "garden_and_service": 74.4,
+      "need_with_30pct": 325.9
+    },
+    "center": [
+      356.33865000000003,
+      56.86695
+    ],
+    "yaw": 1.5707963267948966,
+    "entrance": [
+      369.9689,
+      59.867
+    ],
+    "doorstep": [
+      368.7689,
+      59.867
+    ],
+    "rect": [
+      342.1084,
+      47.3801,
+      28.4605,
+      18.9737
+    ]
+  }
+}

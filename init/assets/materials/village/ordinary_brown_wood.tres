@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://assets/shaders/village_surface.gdshader" id="1_a0fqm"]
+[ext_resource type="Texture2D" path="res://assets/materials/church_ensemble/wood.png" id="2_ikgpp"]
+[ext_resource type="Texture2D" path="res://assets/materials/church_ensemble/wood_normal.png" id="3_waxfs"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/response_matte.png" id="4_pya6j"]
+
+[resource]
+resource_name = "Ordinary brown wood"
+render_priority = 0
+shader = ExtResource("1_a0fqm")
+shader_parameter/albedo_texture = ExtResource("2_ikgpp")
+shader_parameter/normal_texture = ExtResource("3_waxfs")
+shader_parameter/response_texture = ExtResource("4_pya6j")
+shader_parameter/colour_tint = Color(0.72, 0.66, 0.56, 1)
+shader_parameter/texture_contrast = null
+shader_parameter/roughness_floor = 0.94
+shader_parameter/metal_amount = 0.0
+shader_parameter/normal_strength = 0.25
+shader_parameter/snow_amount = null

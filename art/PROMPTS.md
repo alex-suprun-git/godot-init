@@ -1,5 +1,13 @@
 # Image Prompts: First Week
 
+## Mixed private-sector homesteads (2026-11-07)
+
+Built-in ImageGen produced `art/source_images/district_visual_pack/homesteads-mixed-context-v1.png` from actual Godot captures and existing sheets, followed by the nine-surface atlas in `art/source_images/village/materials-v1.png`. Exact prompts and source roles remain beside the originals. Twenty-seven separately optimizer-prepared surface maps support complete 3D parcels and shared calibrated materials; current integration, user revisions and review evidence: `art/models/village/README.md`.
+
+## Church and cemetery ensemble (2026-11-07)
+
+Built-in ImageGen produced `art/source_images/district_visual_pack/church-cemetery-ensemble-v1.png` from the actual Godot village frame and existing sheets. The user accepted one shared enclosure, mixed-age graves, parish house, shed, benches and flowers, subject to correct dimensions/proportions. Exact contextual prompt and map limitations are beside the image. Built-in ImageGen then produced `art/source_images/church_ensemble/materials-v1.png`, a four-tile plaster/green-metal/limestone/timber albedo atlas within that accepted direction; its exact prompt is adjacent. Twelve separately optimizer-prepared albedo/technical maps support the first integrated, graphically inspected 3D pass. Sources, preparation/rebuild stages and pending user appearance review: `art/models/church_ensemble/README.md`.
+
 ## ATP building materials (2026-11-06)
 
 Built-in ImageGen produced a four-surface atlas for the user-authorized ATP refinement: brick, precast concrete, oxide-painted roof metal and grey-blue door paint. Untouched original, extracted source tiles and exact prompt: `art/source_images/atp/`. Four surface copies were separately prepared through `tools/optimize_asset.py` before Blender integration. Body/yard sources, portable material response and actual Godot captures are recorded in `art/models/industrial_sites/README.md`. The user approved the compact ATP ensemble (`compact-v1`) on 2026-11-06; this is the current appearance reference for that location.

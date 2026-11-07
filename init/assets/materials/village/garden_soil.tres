@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://assets/shaders/village_surface.gdshader" id="1_y54jm"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/garden_soil_albedo.png" id="2_se6ki"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/normal_fine.png" id="3_pcpll"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/response_matte.png" id="4_pd25k"]
+
+[resource]
+resource_name = "Garden soil"
+render_priority = 0
+shader = ExtResource("1_y54jm")
+shader_parameter/albedo_texture = ExtResource("2_se6ki")
+shader_parameter/normal_texture = ExtResource("3_pcpll")
+shader_parameter/response_texture = ExtResource("4_pd25k")
+shader_parameter/colour_tint = Color(0.72, 0.67, 0.61, 1)
+shader_parameter/texture_contrast = null
+shader_parameter/roughness_floor = 0.98
+shader_parameter/metal_amount = 0.0
+shader_parameter/normal_strength = 0.18
+shader_parameter/snow_amount = null

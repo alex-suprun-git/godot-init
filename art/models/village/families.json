@@ -1,0 +1,22 @@
+{
+  "units": "metres; Blender X along frontage, Y towards rear, Z up; front is -Y",
+  "families": {
+    "new_brick": {"house": [11,10], "eaves": 3.2, "ridge": 6.5, "roof": "hip", "wall": "brick", "garage": "separate", "garden": 3, "trees": 4, "greenhouse": true},
+    "new_gable": {"house": [10,9], "eaves": 3.2, "ridge": 6.6, "roof": "gable", "wall": "brick", "garage": "separate", "garden": 2, "trees": 5, "greenhouse": false},
+    "rebuilt_veranda": {"house": [11,9], "eaves": 3.2, "ridge": 5.8, "roof": "hip", "wall": "plaster", "garage": "attached", "veranda": true, "garden": 4, "trees": 4, "greenhouse": false},
+    "rebuilt_cottage": {"house": [10,8], "eaves": 2.9, "ridge": 4.9, "roof": "hip", "wall": "plaster", "garage": "separate", "side_porch": true, "garden": 3, "trees": 5, "greenhouse": true},
+    "old_timber": {"house": [9,7], "eaves": 2.7, "ridge": 5.1, "roof": "gable", "wall": "timber", "garage": "parking", "veranda": true, "garden": 4, "trees": 5, "greenhouse": false},
+    "vacant_timber": {"house": [9,7], "eaves": 2.7, "ridge": 5.1, "roof": "gable", "wall": "timber", "garage": "parking", "vacant": true, "garden": 0, "trees": 4, "greenhouse": false},
+    "vacant_masonry": {"house": [10,8], "eaves": 2.9, "ridge": 4.9, "roof": "hip", "wall": "plaster", "garage": "parking", "vacant": true, "garden": 0, "trees": 3, "greenhouse": false}
+  },
+  "parcels": {
+    "d_01":"rebuilt_cottage", "d_02":"new_gable", "d_03":"rebuilt_veranda", "d_04":"rebuilt_cottage",
+    "d_05":"new_brick", "d_06":"rebuilt_veranda", "d_07":"rebuilt_cottage", "d_08":"vacant_timber",
+    "d_09":"new_gable", "d_10":"rebuilt_veranda", "d_11":"new_brick", "d_12":"new_gable",
+    "d_13":"rebuilt_veranda", "d_14":"vacant_masonry", "d_15":"rebuilt_cottage", "d_16":"old_timber", "d_17":"new_brick",
+    "d_18":"rebuilt_veranda", "d_19":"new_brick", "d_20":"rebuilt_cottage", "d_21":"new_gable", "d_22":"rebuilt_veranda",
+    "d_23":"new_brick", "d_24":"rebuilt_cottage", "d_25":"new_gable", "d_26":"rebuilt_veranda",
+    "d_27":"new_brick", "d_28":"rebuilt_veranda", "d_29":"new_gable"
+  },
+  "budgets": {"complete_site_triangles_max": 45000, "surface_max_edge": 1024, "vegetation": "shared seasonal Godot resources, specified by markers"}
+}
