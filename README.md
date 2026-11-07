@@ -236,6 +236,7 @@ The first chapter is played in one outskirts district of the city, not in its ce
 
 - The district lives on transport, the border and trade: a border crossing with customs, the river port, the railway junction, a bus and truck depot, a truck stop, and a spontaneous market beside the station.
 - History in layers: an old village by the river with a church came first, then the port and railway, then late-1980s panel housing for their workers. In the 1990s parking lots, trading and warehouses grew around the flows of people and goods.
+- The village overhaul is approved in game: 29 complete 3D household parcels, a shared church/cemetery ensemble and public pond paths. Ground layout is 10% smaller in area while building dimensions remain unchanged; detailed records live in `docs/MAP_AND_DISTRICT.md` and the asset READMEs.
 - North to south: the neighbouring country, the border river with a road and a railway bridge, a transport band along the embankment, a highway, a reserve band (boiler house, garages), four residential superblocks, the civic axis from the checkpoint to the station, and the old village to the east.
 - The district executive committee is a late-Soviet modernist building, one block inland from the river. The protagonist lives in a dormitory on the western edge.
 - The map is built from fixed lots; unique buildings are added by changing what stands on a lot, not by moving the layout.

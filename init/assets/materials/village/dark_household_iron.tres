@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "Dark household iron"
+cull_mode = 2
+albedo_color = Color(0.15, 0.18, 0.16, 1)
+metallic = 0.08
+metallic_specular = 0.12
+roughness = 0.92

@@ -9,16 +9,8 @@ const CONDITIONS := {
 	"abandoned": {"tint": Color(0.82, 0.80, 0.73), "dry_ground": true, "garbage": true},
 }
 
-# What fills a village plot around its house, by lot condition. `fence` is the share of
-# fence pieces still standing, `beds` the vegetable beds, `orchard` the fruit trees and
-# `shed` an outbuilding at the back. `fence_color` is the weathered paling colour.
-const VILLAGE_FILL := {
-	"kept": {"fence": 1.0, "beds": 3, "orchard": 5, "shed": true, "fence_color": Color("a08f68")},
-	"fading": {"fence": 0.85, "beds": 1, "orchard": 3, "shed": false, "fence_color": Color("7c6c50")},
-	"abandoned": {"fence": 0.5, "beds": 0, "orchard": 0, "shed": false, "fence_color": Color("5f5547")},
-}
-
 const CONTENTS := {
+	"village_kiosk": {"kind":"open", "footprint":Vector2(3,2.5), "ground":"grass", "label":"Магазинчик у пруда", "dressing":[]},
 	"culture_house": {"kind": "civic_venue", "height": 12.6, "ground": "grass", "label": "Дом культуры", "dressing": []},
 	"private_restaurant": {"kind": "civic_venue", "height": 9.0, "ground": "grass", "label": "Ресторан-клуб", "dressing": []},
 	"housing_reserve": {"kind": "open", "ground": "grass", "label": "Резерв жилой застройки", "dressing": []},
@@ -109,7 +101,7 @@ const CONTENTS := {
 		],
 	},
 	"garages": {"kind": "garages", "footprint": Vector2.ZERO, "ground": "asphalt", "label": "Гаражный кооператив", "dressing": []},
-	"church": {"kind": "sprite", "sprite": "church", "width": 32.0, "footprint": Vector2(24, 30), "doorstep": 3.0, "ground": "grass_dry", "label": "Церковь", "dressing": []},
+	"church": {"kind": "church_ensemble", "footprint": Vector2(18, 12), "height": 18.5, "ground": "grass", "label": "Церковь", "dressing": []},
 	"fuel_depot": {"kind": "group", "footprint": Vector2.ZERO, "ground": "asphalt", "label": "Склад топлива", "parts": [
 		{"at": Vector2(-10, -20), "footprint": Vector2(28, 12), "height": 6.0, "pitched": 2.0, "roof": "res://assets/textures/roof_rusty_metal.png", "doorstep": 3.0, "facade": "res://assets/textures/facade_warehouse.png", "placeholder_color": Color("a29079")},
 	], "dressing": [
@@ -179,11 +171,8 @@ const CONTENTS := {
 	"station": {"kind": "station", "footprint": Vector2(40, 12), "ground": "paving", "label": "Вокзал · автостанция", "sprite": "station_v3", "width": 40.0, "axes": Vector2(0.50, -0.41), "dressing": [
 		{"sprite": "bus_local_1997", "at": Vector2(-65, 7), "width": 8.8, "footprint": Vector2(10, 3), "axis": "x"},
 	]},
-	"house_kept": {"kind": "sprite", "sprite": "village_house_kept", "width": 10.0, "footprint": Vector2(9, 7), "ground": "grass", "label": "Жилой дом с садом", "dressing": [
-		{"sprite": "village_well", "at": Vector2(9, 9), "width": 2.0, "footprint": Vector2(2, 2)},
-	]},
-	"house_poor": {"kind": "sprite", "sprite": "village_house_poor", "width": 9.0, "footprint": Vector2(9, 7), "ground": "grass_dry", "label": "Старый деревенский дом", "dressing": [
-		{"sprite": "village_shed", "at": Vector2(10, 10), "width": 5.0, "footprint": Vector2(5, 4)},
-	]},
-	"house_abandoned": {"kind": "sprite", "sprite": "village_house_abandoned", "width": 9.0, "footprint": Vector2(8, 6), "ground": "grass_dry", "label": "Заброшенный дом", "dressing": []},
+	# Exact per-family building footprints and complete parcels live in village_sites.json.
+	"house_kept": {"kind": "village_site", "footprint": Vector2(11,9), "ground": "grass", "label": "Жилой дом с садом", "dressing": []},
+	"house_poor": {"kind": "village_site", "footprint": Vector2(10,8), "ground": "grass_dry", "label": "Старый деревенский дом", "dressing": []},
+	"house_abandoned": {"kind": "village_site", "footprint": Vector2(9,7), "ground": "grass_dry", "label": "Заброшенный дом", "dressing": []},
 }

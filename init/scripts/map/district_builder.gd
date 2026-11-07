@@ -11,15 +11,11 @@ const PitchedRoof = preload("res://scripts/map/pitched_roof.gd")
 const CivicFacades = preload("res://scripts/map/civic_facades.gd")
 const CivicRoofs = preload("res://scripts/map/civic_roofs.gd")
 const IndustrialSites = preload("res://scripts/map/industrial_sites.gd")
+const VillageSurfaces = preload("res://scripts/map/village_surfaces.gd")
 
 const YARD_ROAD_TINT := Color(1.18, 1.12, 1.02)
 const WATER_LEVEL := -3.5 # River bed depth: deep enough for a barge to pass under the bridges.
 const WEST_QUAY_START := -450.0
-const VILLAGE_SETBACK := 4.0
-const FENCE_INSET := 0.6
-const FENCE_STEP := 3.0
-const FENCE_HEIGHT := 1.3
-const FENCE_GATE := 3.6
 
 var map
 var labels: Node3D
@@ -37,7 +33,6 @@ func build(city_map) -> void:
 		_build_lot(id, Layout.LOTS[id])
 	preload("res://scripts/map/civic_precinct.gd").new().build(map)
 	preload("res://scripts/map/station_platform.gd").new().build(map)
-	_build_village_plots()
 	_build_border_fence()
 	_build_rail_poles()
 	preload("res://scripts/map/residential_court.gd").new().build(self)
@@ -82,8 +77,12 @@ func _build_ground() -> void:
 	# The quay serves the city; beyond the western industrial edge it becomes wild bank.
 	_patch(Rect2(WEST_QUAY_START, south_edge, Boundaries.east_far_x() - WEST_QUAY_START, 6), "paving", 0.05)
 	_build_wild_west_bank()
-	for area in Layout.AREAS.values():
-		_patch(area["rect"], area["ground"], 0.018)
+	for area_id in Layout.AREAS:
+		var area: Dictionary = Layout.AREAS[area_id]
+		if area_id == "village":
+			VillageSurfaces.ground(map,area["rect"],.019,8.0)
+		else:
+			_patch(area["rect"], area["ground"], 0.018)
 	# Lot surfaces come before roads. Asphalt and tracks retain their own height.
 	for id in Layout.LOTS:
 		var lot: Dictionary = Layout.LOTS[id]
@@ -94,7 +93,10 @@ func _build_ground() -> void:
 		var ground: String = "grass" if id in ["b1_k", "checkpoint", "garages"] else entry.get("ground", "grass")
 		if ground == "grass" and condition["dry_ground"]:
 			ground = "grass_dry"
-		_patch(lot["rect"], ground, 0.025, condition["tint"])
+		if lot["type"] == "D" or id in ["church","cemetery"]:
+			VillageSurfaces.ground(map,lot["rect"],.026)
+		else:
+			_patch(lot["rect"], ground, 0.025, condition["tint"])
 		if lot["type"] == "K":
 			map.wear.add_inner_edge(lot["rect"], 14.0, 0.7)
 	for road in Layout.ROADS:
@@ -119,7 +121,10 @@ func _build_ground() -> void:
 				if rect.end.y > deck.end.y:
 					patches.append(Rect2(rect.position.x, deck.end.y, rect.size.x, rect.end.y - deck.end.y))
 		for patch in patches:
-			_patch(patch, ground, 0.135 if yard else (0.139 if highway else 0.14), tint, highway)
+			if road["kind"] == "dirt":
+				VillageSurfaces.road(map,patch)
+			else:
+				_patch(patch, ground, 0.135 if yard else (0.139 if highway else 0.14), tint, highway)
 		if yard:
 			map.wear.add_ring(rect, 4.0, 0.8)
 		map._occupy(rect.get_center(), rect.size)
@@ -247,6 +252,9 @@ func _rail_segment(from: Vector2, to: Vector2) -> void:
 
 
 func _build_lot(id: String, lot: Dictionary) -> void:
+	if lot["type"] == "D":
+		preload("res://scripts/map/village_sites.gd").new().build(self,id,lot)
+		return
 	var entry: Dictionary = Catalog.CONTENTS[lot["content"]]
 	if id in ["tower_e2", "tower_e3", "tower_e4"]:
 		entry = entry.duplicate()
@@ -256,10 +264,10 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 		entry["floors"] = 12
 		entry["roof"] = "res://assets/textures/facade_tower_roof_e1.png"
 	var center: Vector2 = Layout.lot_center(id)
-	if lot["type"] == "D":
-		center += _front_shift(lot, entry)
 	var kind: String = "industrial_site" if IndustrialSites.supports(id) else entry["kind"]
 	match kind:
+		"church_ensemble":
+			preload("res://scripts/map/church_ensemble.gd").new().build(self)
 		"industrial_site":
 			IndustrialSites.new().build(self, id, lot)
 		"dormitory":
@@ -322,178 +330,6 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 	labels.add_child(label)
 
 
-# Fences and vegetable beds of every village plot are drawn as boxes in one MultiMesh,
-# so 17 plots cost a single draw call instead of about a thousand.
-func _build_village_plots() -> void:
-	var boxes := {"transforms": [] as Array[Transform3D], "colors": [] as Array[Color]}
-	for id in Layout.LOTS:
-		if Layout.LOTS[id]["type"] == "D":
-			_fill_plot(id, Layout.LOTS[id], boxes)
-		elif Layout.LOTS[id]["content"] == "cemetery":
-			_fill_cemetery(id, Layout.LOTS[id], boxes)
-	if boxes["transforms"].is_empty():
-		return
-	var multi := MultiMesh.new()
-	multi.transform_format = MultiMesh.TRANSFORM_3D
-	multi.use_colors = true
-	multi.mesh = BoxMesh.new()
-	multi.instance_count = boxes["transforms"].size()
-	for i in boxes["transforms"].size():
-		multi.set_instance_transform(i, boxes["transforms"][i])
-		multi.set_instance_color(i, boxes["colors"][i])
-	var material := StandardMaterial3D.new()
-	material.vertex_color_use_as_albedo = true
-	material.roughness = 0.95
-	var node := MultiMeshInstance3D.new()
-	node.name = "VillagePlots"
-	node.multimesh = multi
-	node.material_override = material
-	map.add_child(node)
-
-
-# Lot-local frame: `v` runs from the plot centre toward the street, `u` along the street.
-func _fill_plot(id: String, lot: Dictionary, boxes: Dictionary) -> void:
-	var fill: Dictionary = Catalog.VILLAGE_FILL[lot["condition"]]
-	var rng := RandomNumberGenerator.new()
-	rng.seed = hash(id)
-	var rect: Rect2 = lot["rect"]
-	var out: Vector2 = {"s": Vector2.DOWN, "n": Vector2.UP, "e": Vector2.RIGHT, "w": Vector2.LEFT}[lot["facing"]]
-	var side := Vector2(-out.y, out.x)
-	var along_x: bool = lot["facing"] in ["e", "w"]
-	var depth := rect.size.x if along_x else rect.size.y
-	var width := rect.size.y if along_x else rect.size.x
-	var at := func(u: float, v: float) -> Vector2: return rect.get_center() + side * u + out * v
-
-	_fence_around(id, lot, boxes, rng, fill["fence"], fill["fence_color"])
-
-	var beds: Array[Vector2] = []
-	for i in fill["beds"]:
-		var u := rng.randf_range(-width / 2.0 + 9.0, width / 2.0 - 9.0)
-		var v := rng.randf_range(-depth / 2.0 + 8.0, -2.0)
-		var spot: Vector2 = at.call(u, v)
-		if beds.any(func(other: Vector2) -> bool: return other.distance_to(spot) < 8.0) or not _clear(Rect2(spot - Vector2(4, 4), Vector2(8, 8))):
-			continue
-		beds.append(spot)
-		_add_box(boxes, spot, Vector3(7.0, 0.12, 3.0), side, Color("5b4632"))
-		if map._season["bushes"]:
-			for row in 3:
-				_add_box(boxes, spot + out * (row - 1) * 0.9, Vector3(6.4, 0.3, 0.45), side, Color("62803c").darkened(rng.randf_range(0.0, 0.2)))
-		map._occupy(spot, Vector2(8, 4) if absf(side.x) > 0.5 else Vector2(4, 8))
-
-	for i in fill["orchard"]:
-		var spot: Vector2 = at.call(lerpf(-width / 2.0 + 7.0, width / 2.0 - 7.0, (i + 0.5) / fill["orchard"]), -depth / 2.0 + rng.randf_range(5.0, 12.0))
-		if map._is_occupied(spot, 2.0) or not _clear(Rect2(spot - Vector2(2, 2), Vector2(4, 4))):
-			continue
-		var tree: Node3D = map._tree(map._ground(spot))
-		tree.scale *= 0.5
-		map._occupy(spot, Vector2(3, 3))
-
-	if fill["shed"]:
-		var back: Vector2 = at.call(signf(rng.randf() - 0.5) * (width / 2.0 - 8.0), -depth / 2.0 + 8.0)
-		_prop(lot, {"sprite": "village_shed", "width": 5.0, "footprint": Vector2(5, 4)}, back)
-
-
-# Fence around a plot (lot-local frame, see `_fill_plot`): `standing` is the share of
-# pieces still up, the street side keeps a gate gap, and an edge shared with a lower-id
-# neighbour is left to that neighbour.
-func _fence_around(id: String, lot: Dictionary, boxes: Dictionary, rng: RandomNumberGenerator, standing: float, base_color: Color) -> void:
-	var rect: Rect2 = lot["rect"]
-	var out: Vector2 = {"s": Vector2.DOWN, "n": Vector2.UP, "e": Vector2.RIGHT, "w": Vector2.LEFT}[lot["facing"]]
-	var side := Vector2(-out.y, out.x)
-	var along_x: bool = lot["facing"] in ["e", "w"]
-	var depth := rect.size.x if along_x else rect.size.y
-	var width := rect.size.y if along_x else rect.size.x
-	var at := func(u: float, v: float) -> Vector2: return rect.get_center() + side * u + out * v
-	var half_u := width / 2.0 - FENCE_INSET
-	var half_v := depth / 2.0 - FENCE_INSET
-	# Each edge: start, end (lot-local), the direction it runs and the way it faces outward.
-	var edges := [
-		{"a": Vector2(-half_u, half_v), "b": Vector2(half_u, half_v), "dir": side, "outward": out, "front": true},
-		{"a": Vector2(-half_u, -half_v), "b": Vector2(half_u, -half_v), "dir": side, "outward": -out, "front": false},
-		{"a": Vector2(-half_u, -half_v), "b": Vector2(-half_u, half_v), "dir": out, "outward": -side, "front": false},
-		{"a": Vector2(half_u, -half_v), "b": Vector2(half_u, half_v), "dir": out, "outward": side, "front": false},
-	]
-	for edge in edges:
-		var length: float = (edge["b"] - edge["a"]).length()
-		var pieces := maxi(1, int(length / FENCE_STEP))
-		var step := length / pieces
-		for i in pieces:
-			var t: Vector2 = edge["a"] + (edge["b"] - edge["a"]).normalized() * (step * (i + 0.5))
-			var world: Vector2 = at.call(t.x, t.y)
-			if edge["front"] and absf(t.x) < FENCE_GATE / 2.0:
-				continue
-			# A fence shared with a neighbouring plot is built once, by the lower id.
-			if not edge["front"] and _neighbour_plot(id, world + edge["outward"] * 1.2):
-				continue
-			if rng.randf() > standing:
-				continue
-			var color: Color = base_color.darkened(rng.randf_range(0.0, 0.14))
-			var tilt := 1.0 if lot["condition"] != "abandoned" else rng.randf_range(0.55, 1.0)
-			_add_box(boxes, world, Vector3(step, FENCE_HEIGHT * tilt, 0.08), edge["dir"], color)
-			var start: Vector2 = t - (edge["b"] - edge["a"]).normalized() * step / 2.0
-			_add_box(boxes, at.call(start.x, start.y),Vector3(0.16, FENCE_HEIGHT * tilt + 0.2, 0.16), edge["dir"], color.darkened(0.2))
-
-
-# Old village cemetery: a fenced field of grave mounds in rows, mostly wooden crosses
-# (some leaning), a few stone stelae, a path from the gate and a few old trees.
-func _fill_cemetery(id: String, lot: Dictionary, boxes: Dictionary) -> void:
-	var rng := RandomNumberGenerator.new()
-	rng.seed = hash(id)
-	var rect: Rect2 = lot["rect"]
-	_fence_around(id, lot, boxes, rng, 0.9, Color("6f6150"))
-	map._occupy(rect.get_center(), rect.size)
-	var out: Vector2 = {"s": Vector2.DOWN, "n": Vector2.UP, "e": Vector2.RIGHT, "w": Vector2.LEFT}[lot["facing"]]
-	var side := Vector2(-out.y, out.x)
-	var along_x: bool = lot["facing"] in ["e", "w"]
-	var depth := rect.size.x if along_x else rect.size.y
-	var width := rect.size.y if along_x else rect.size.x
-	var at := func(u: float, v: float) -> Vector2: return rect.get_center() + side * u + out * v
-	_add_box(boxes, at.call(0.0, 0.0), Vector3(1.6, 0.08, depth - 2.0), out, Color("6e5e46"))
-	var winter: bool = not map._season["bushes"]
-	for row in int((depth - 10.0) / 4.2):
-		for column in int((width - 6.0) / 3.2):
-			var u := -width / 2.0 + 3.5 + column * 3.2 + rng.randf_range(-0.3, 0.3)
-			var v := depth / 2.0 - 7.0 - row * 4.2 + rng.randf_range(-0.3, 0.3)
-			if absf(u) < 1.8 or rng.randf() < 0.22:
-				continue
-			var spot: Vector2 = at.call(u, v)
-			var lean := rng.randf_range(-0.18, 0.18)
-			var along := side.rotated(lean)
-			_add_box(boxes, spot, Vector3(1.0, 0.22, 2.0), side, Color("5a4a38") if not winter else Color("d6dadb"))
-			if rng.randf() < 0.2:
-				_add_box(boxes, spot - out * 1.1, Vector3(0.55, 1.2, 0.12), side, Color("8d8b84"))
-			else:
-				var post_at: Vector2 = spot - out * 1.0
-				_add_box(boxes, post_at, Vector3(0.1, 1.5, 0.1), along, Color("5c4a35"))
-				_add_box(boxes, post_at, Vector3(0.7, 0.1, 0.1), along, Color("5c4a35"), 1.1)
-	for corner in [Vector2(-1, -1), Vector2(1, -1), Vector2(-1, 0.1)]:
-		var spot: Vector2 = at.call(corner.x * (width / 2.0 - 3.0), corner.y * (depth / 2.0 - 4.0))
-		map._tree(map._ground(spot))
-
-
-func _neighbour_plot(id: String, point: Vector2) -> bool:
-	for other in Layout.LOTS:
-		if other < id and Layout.LOTS[other]["type"] == "D" and Layout.LOTS[other]["rect"].has_point(point):
-			return true
-	return false
-
-
-# `dir` is the horizontal direction the box's long side runs along.
-func _add_box(boxes: Dictionary, at: Vector2, size: Vector3, dir: Vector2, color: Color, lift: float = 0.0) -> void:
-	var basis := Basis(Vector3.UP, atan2(-dir.y, dir.x)) * Basis.from_scale(size)
-	boxes["transforms"].append(Transform3D(basis, map._ground(at) + Vector3.UP * (size.y / 2.0 + lift)))
-	boxes["colors"].append(color)
-
-
-# Village plots are deep: the house stands near the street edge, the garden lies behind it.
-func _front_shift(lot: Dictionary, entry: Dictionary) -> Vector2:
-	var rect: Rect2 = lot["rect"]
-	var size: Vector2 = entry["footprint"]
-	var along_x: bool = lot["facing"] in ["e", "w"]
-	var out: Vector2 = {"s": Vector2.DOWN, "n": Vector2.UP, "e": Vector2.RIGHT, "w": Vector2.LEFT}[lot["facing"]]
-	var lot_depth := rect.size.x if along_x else rect.size.y
-	var house_depth := size.x if along_x else size.y
-	return out * maxf(0.0, lot_depth / 2.0 - VILLAGE_SETBACK - house_depth / 2.0)
 
 
 func _building(lot: Dictionary, entry: Dictionary, desired: Vector2, lot_id: String = "") -> void:

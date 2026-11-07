@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "Vegetable leaf tips"
+cull_mode = 2
+albedo_color = Color(0.32, 0.42, 0.21, 1)
+metallic_specular = 0.12
+roughness = 0.98

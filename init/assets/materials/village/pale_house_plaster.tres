@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+[ext_resource type="Shader" path="res://assets/shaders/village_surface.gdshader" id="1_8pvfh"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/pale_house_plaster_albedo.png" id="2_8epi4"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/pale_house_plaster_normal.png" id="3_cx7gr"]
+[ext_resource type="Texture2D" path="res://assets/materials/village/pale_house_plaster_roughness.png" id="4_pvjqg"]
+
+[resource]
+resource_name = "Pale house plaster"
+render_priority = 0
+shader = ExtResource("1_8pvfh")
+shader_parameter/albedo_texture = ExtResource("2_8epi4")
+shader_parameter/normal_texture = ExtResource("3_cx7gr")
+shader_parameter/response_texture = ExtResource("4_pvjqg")
+shader_parameter/colour_tint = Color(0.76, 0.77, 0.72, 1)
+shader_parameter/texture_contrast = null
+shader_parameter/roughness_floor = 0.95
+shader_parameter/metal_amount = 0.0
+shader_parameter/normal_strength = 0.18
+shader_parameter/snow_amount = null
