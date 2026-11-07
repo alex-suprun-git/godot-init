@@ -38,7 +38,7 @@ Read before writing: root `README.md` sections "Setting and Tone", "Factions", "
 
 ## Characters (voice cards)
 
-Each card: voice, wants, hides, how the relationship grows. Add a card when a character is introduced.
+Each card: voice, wants, hides. The full sheet for each character (voice with sample lines, how the bond grows, pointer to the look) is in `docs/story/characters/`; add a sheet and a portrait entry in `art/PROMPTS.md` when a character is introduced. This table is the quick view.
 
 | Character | Voice | Wants | Hides |
 |---|---|---|---|

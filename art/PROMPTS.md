@@ -150,6 +150,7 @@ Canonical appearance from the chosen portraits. Later variants of these characte
 - Tolik (`tolik.png`): lean, gaunt man in his forties, messy dark hair, light stubble, sly sideways glance, cigarette behind his ear, worn brown leather jacket over a checked shirt and knitted sweater, car keys in hand.
 - Baba Nina (`baba_nina.png`): woman in her seventies, floral headscarf, glasses on a cord, brown knitted cardigan, floral dress, green notebook held to her chest.
 - The boss (`boss.png`): heavy man in his early sixties, grey swept-back hair, heavy tired eyes, oversized grey suit, loosened burgundy striped tie.
+- Gusev (`gusev.png`): man in his late thirties, dark wavy hair, light stubble, smug sideways grin, burgundy double-breasted jacket over an open white shirt, loosened floral silk tie and pocket square, gold chain and bracelet, a brick-sized mobile phone held to his ear.
 
 - Gusev (`gusev.png`): man in his late thirties, swept-back wavy dark hair, confident asymmetric grin, burgundy double-breasted jacket, cream shirt, patterned tie and gold chain.
 - Father Georgiy: about fifty, narrow long face, receding brown hair, grey-streaked brown beard, black cassock and a plain wooden cross.
@@ -298,6 +299,24 @@ Home look:
 Work look:
 
 > [Window style block] Bust portrait, three-quarter view, matching the framing, background, and manner of the portraits in `init/assets/portraits/`. The same woman of 25 as in the home look: dark graphite second-hand blazer, ironed white blouse, hair pulled back in a neat ponytail, a burgundy lanyard with a press card, a steno notebook held to her chest, a small dictaphone in the pocket, one eyebrow slightly raised, alert and composed. Cool morning daylight, the steps of a district administration building blurred behind. Portrait 3:4.
+
+### W10. Portrait: Gureev, fixer
+
+Status: proposal, not generated. Character sheet: `docs/story/characters/gureev.md`. Path: `init/assets/portraits/gureev.png`.
+
+> [Window style block] Bust portrait, three-quarter view, matching the framing, background, and manner of the portraits in `init/assets/portraits/`. A lean man of about forty-five, clean-shaven, neat thinning hair, a faint half smile and attentive watchful eyes; a grey-blue single-breasted suit that looks expensive and cheap at once, a white shirt with no tie, a plain wedding ring, a pen in the breast pocket. He looks like an accountant, not a gangster: the opposite of Gusev's flash. Portrait 3:4.
+
+### W11. Portrait: Father Georgy, priest
+
+Status: proposal, not generated. Character sheet: `docs/story/characters/georgy.md`. Path: `init/assets/portraits/georgy.png`.
+
+> [Window style block] Bust portrait, three-quarter view, matching the framing, background, and manner of the portraits in `init/assets/portraits/`. A thin man of about sixty, neat grey beard, crinkled kind eyes, a black cassock with the sleeves rolled up, a rag in one hand, a glass of tea in a metal holder in the other, a small wooden cross, a window with a cemetery behind. Portrait 3:4.
+
+### W12. Portrait: Korotkov, the commission's engineer
+
+Status: proposal, not generated. Character sheet: `docs/story/characters/korotkov.md`. Path: `init/assets/portraits/korotkov.png`.
+
+> [Window style block] Bust portrait, three-quarter view, matching the framing, background, and manner of the portraits in `init/assets/portraits/`. A narrow tired man of about fifty-five, short grey hair, thin-rimmed glasses, a grey raincoat buttoned to the collar, an old leather briefcase held in front of him, a pencil in his breast pocket, a polite and unreadable expression. Cool daylight, a block-of-flats courtyard blurred behind. Portrait 3:4.
 
 ## K: Map kit (after the test batch passes)
 
