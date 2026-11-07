@@ -1,6 +1,8 @@
-# Monday, part 1: arrival (draft v0)
+# Monday, part 1: arrival (draft v1)
 
-Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught. Tone: dry, observant, one small dark joke per stop. The protagonist's name and biography are not fixed, so no line may depend on them.
+Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught. Tone: dry and observant, one small joke per stop. The protagonist's name and biography are not fixed, so no line may depend on them.
+
+**Tolik's voice (v1):** cheerful, talkative, warm, a gossip who loves his car and his district. Long, flowing sentences and jokes, often at his own expense. The tone break at the restaurant is the point of the whole sequence: he stops mid-word, the radio goes off, and for the rest of the drive his cheer is slightly too loud.
 
 ## Scene 0.1. The train
 
@@ -20,15 +22,15 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 [Вокзальная площадь, 06:00]
 
-> Hand-off: Tolik's car (the administration Volga) is already at the kerb. The camera starts on the player's arrival and then follows the car for the whole drive. Skippable on replay.
+> Hand-off: Tolik's car (the administration Volga) is already at the kerb. The camera starts on the player's arrival and then follows the car for the whole drive. If a car-radio loop is available, it plays quietly from here and cuts out at the restaurant; otherwise ambience is enough.
 
-ТОЛИК: Вы, что ли, новенький? Помощником к Петру Петровичу?
+ТОЛИК: О, живой! А я думал, опять не приедет никто. Вы новенький, помощник? Толик я, водитель, и вообще человек, которому всё известно и никто не верит.
 
-ТОЛИК: Толик. Велено встретить. Вещи в багажник, сумку не держите на коленях, у меня тормоза хорошие, но не такие.
+ТОЛИК: Сумку в багажник, багажник у нас широкий, и не такое возил. Садитесь, садитесь, Волга чистая, сам утром мыл. Ну, насколько вода позволила.
 
-ТОЛИК: Петр Петрович раньше десяти не будет. Так что я вас по кругу. Один раз увидеть лучше, чем потом искать.
+ТОЛИК: Петр Петрович раньше десяти не появится, так что у нас с вами два часа и полбака. Покатаю вас по району, чтобы потом не спрашивали «а где это», а сразу знали, куда не ходить.
 
-*Волга пахнет бензином и чужими сигаретами. Толик ведёт одной рукой.*
+*Волга пахнет бензином и чужими сигаретами. Толик ведёт одной рукой, а второй показывает во все стороны сразу.*
 
 ## Stops
 
@@ -50,31 +52,33 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 [Вокзал и рынок]
 
-ТОЛИК: Вокзал. Рядом рынок. Тут всё начинается и всё заканчивается. Товар, деньги, ссоры.
+ТОЛИК: Вокзал! Рядом рынок, весь район тут кормится. Продают всё: одежду, магнитофоны, обещания. Обещания, правда, дороже.
+
+ТОЛИК: Кошелёк держите поближе. Он тут быстро находит нового хозяина.
 
 ### Stop 2. The dormitory
 
 [Общежитие]
 
-ТОЛИК: Вам тут комнату дали. На троих. Соседи нормальные, один храпит.
+ТОЛИК: А вот ваше общежитие! Видите, угол буквой «Г»? Это не замысел, это строили по остаткам плана. Комната на троих, соседи душевные. Один храпит, зато трубы не слышно: он их перекрикивает.
 
-*Четыре этажа, угол буквой «Г», бельё на верёвках. Выглядит не так плохо, как звучит.*
+*Четыре этажа, бельё на верёвках. Из окна кто-то машет Толику. Толик машет в ответ, не глядя на дорогу.*
 
 ### Stop 3. Highway and the industrial zone
 
 [Шоссе вдоль реки]
 
-ТОЛИК: Вот АТП. Вот порт. Вон склад с мазутом. Сколько из него вытекает, а сколько записано, вам потом объяснят. Или не объяснят.
+ТОЛИК: Шоссе! Вон АТП, вон порт, вон склад с мазутом. Сколько из него утекает и сколько записано, это две разные цифры, и обе уверенные.
 
-ТОЛИК: А труба вон та, третья, это котельная. К зиме её чинят уже третий год.
+ТОЛИК: А вон труба, третья от края, это котельная. К зиме её чинят уже третий год. Она у нас как старый друг: ремонту не поддаётся, а без неё холодно.
 
-ТОЛИК: Если что с отоплением, спросите Михалыча. Слесарь. Золотые руки. Когда на месте.
+ТОЛИК: Если что с отоплением, спрашивайте Михалыча. Слесарь, золотые руки! Когда на месте. А когда не на месте, вы не расстраивайтесь, он найдётся.
 
 ### Stop 4. The border
 
 [Граница]
 
-ТОЛИК: Граница. Нам туда не надо. Им сюда надо. Очередь на двое суток, а сборы, говорят, поднимут.
+ТОЛИК: А это граница! Нам дальше нельзя, дальше только с паспортом и душой наизнанку. Очередь двое суток, дальнобойщики друг друга в лицо знают. Скоро женятся, я так думаю.
 
 ТОЛИК: Будку у шлагбаума в июле меняли. Старая, говорят, не выдержала.
 
@@ -84,19 +88,29 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 [Ресторан за исполкомом]
 
-> Tolik slows down and stops talking. No caption names the place. The player should notice it without being told.
+> The tone break. No caption names the place. Tolik is mid-story, so the line must cut off. The radio, if any, stops. Hold the shot a beat longer than the others, with almost no sound. The player should notice the change without being told what it means.
 
-*Высокий кирпичный забор. Охранник у ворот. Толик сбавил скорость и замолчал.*
+ТОЛИК: ...и вот я ему говорю: батя, ты же в этом ничего не пон...
+
+*Высокий кирпичный забор. Охрана у ворот. Толик замолчал на полуслове и выключил радио, не глядя.*
+
+*Волга поехала медленнее.*
 
 ТОЛИК: Тут обедают.
 
-*Он не добавил, кто.*
+*Он не сказал, кто. Целую минуту никто ничего не говорил.*
 
 ### Stop 6. The old village
 
 [Старая деревня]
 
-ТОЛИК: Деревня. Раньше колхоз, потом огороды, теперь кладбище, церковь и несколько упрямых стариков. Батюшка у нас Георгий. К нему лучше с чаем.
+> Tolik recovers, but too loudly. The player should hear that he is making an effort.
+
+ТОЛИК: Ну-с! Деревня!
+
+*Он сам услышал, что вышло слишком бодро, и добавил тише:*
+
+ТОЛИК: Раньше колхоз, потом огороды, теперь кладбище, церковь и несколько упрямых стариков. Батюшка у нас Георгий, к нему лучше с чаем. Чай у него настоящий, не то что в исполкоме.
 
 *Круг по деревне: грунтовка, заборы, куры. Толик объезжает лужи с уважением.*
 
@@ -104,15 +118,13 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 [Проспект, исполком]
 
-ТОЛИК: Исполком. Строили вместе с районом, крепкая коробка. Лифт, правда, давно не работает.
+ТОЛИК: Исполком! Строили вместе с районом, крепкая коробка, переживёт и нас, и всех, кто потом будет. Лифт, правда, давно не работает, зато на лестнице вас никто не догонит.
 
-ТОЛИК: Второй этаж, дверь с табличкой. Дальше сами.
+ТОЛИК: Второй этаж, дверь с табличкой. Дальше сами. Стучите громче, он плохо слышит, когда не хочет.
 
-ТОЛИК: Стучите громче. Он плохо слышит, когда не хочет.
+ТОЛИК: Ровно восемь. Вы вовремя. Редкость. Запомнят, и хорошее, и плохое. Ну, ни пуха!
 
-ТОЛИК: Ровно восемь. Вы вовремя. Редкость.
-
-*Толик уехал, не оглядываясь. Волга свернула за угол.*
+*Толик уехал, на ходу включив радио. Громко.*
 
 ## Scene 0.3. At the door
 
@@ -149,5 +161,5 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 ## Open
 
-- Whether the wait at the door needs the cleaner and the phone, or a plain time skip.
 - Whether the drive may be skipped on the first play (default: no).
+- Whether the wait at the door needs the cleaner and the phone, or a plain time skip.
