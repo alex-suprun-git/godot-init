@@ -5,7 +5,7 @@ For Codex. This is an implementation brief. The design is decided; do not redesi
 ## Read first
 
 1. `AGENTS.md`: workflow, Godot path, autoplay, no tests unless asked, no commits.
-2. `README.md`, sections "City Map" and "Starting District Layout".
+2. `docs/MAP_AND_DISTRICT.md`, sections "City Map" and "Starting District Layout".
 3. `docs/adr/0001-data-driven-district-layout.md`: why the layout moves into data.
 4. `art/concepts/district_layout_v3.svg`: the target layout. Its coordinates are map meters, and its lot ids are the data keys below.
 5. `init/scripts/map/city_map.gd`, `init/scripts/data/week1.gd`, `init/scripts/sim/week_sim.gd`, `init/scripts/ui/hud.gd`.

@@ -10,7 +10,7 @@ branch: task/d4-rebuild
 
 ## Goal
 
-Replace the old stack of police, polyclinic and executive committee on the east side of the civic axis with the layout agreed in `art/concepts/district_areas_v2.svg` and the README paragraph "Planned rework of the civic area". When this is done the map shows the new centre with placeholder buildings, every route still works, and the district data (`DISTRICTS`) matches the lots.
+Replace the old stack of police, polyclinic and executive committee on the east side of the civic axis with the layout agreed in `art/concepts/district_areas_v2.svg` and the paragraph "Planned rework of the civic area" in `docs/MAP_AND_DISTRICT.md`. When this is done the map shows the new centre with placeholder buildings, every route still works, and the district data (`DISTRICTS`) matches the lots.
 
 ## Exception to the usual file ownership
 
@@ -18,7 +18,7 @@ Workers normally never edit `init/scripts/`. For this brief the user explicitly 
 
 ## Inputs
 
-1. `README.md`: "Starting District Layout" (the civic-area bullets and the data-model bullet).
+1. `docs/MAP_AND_DISTRICT.md`: "Starting District Layout" (the civic-area bullets and the data-model bullet).
 2. `art/concepts/district_areas_v2.svg`: the target plan, with roads drawn from the data.
 3. `init/scripts/data/district_layout.gd`: `LOTS`, `ROADS`, `DISTRICTS`, `HOURS`, `validate_districts()`. `init/scripts/data/building_catalog.gd`: building and dressing definitions.
 4. `docs/adr/0001-data-driven-district-layout.md` and `docs/MAP_LAYOUT_REQUEST.md` for the lot rules.

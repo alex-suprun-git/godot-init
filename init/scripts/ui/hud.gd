@@ -2045,7 +2045,7 @@ func _build_incoming_tray() -> void:
 	_boss_notice_button = order
 	order.theme = _paper_theme
 	_document_button(order, "memo")
-	_document_caption(order, "ПЁТР ПЕТРОВИЧ", "Поручение на неделю", "pen")
+	_document_caption(order, "БОРИС САВВИЧ", "Поручение на неделю", "pen")
 	order.pressed.connect(_show_important_notice.bind(Week1.START_BRIEFING))
 	_incoming_tray.add_child(order)
 	var newspaper := Button.new()

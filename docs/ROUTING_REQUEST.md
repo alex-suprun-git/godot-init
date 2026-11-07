@@ -6,7 +6,7 @@ This is an implementation brief. The design is decided; do not redesign. If some
 
 ## Read first
 
-1. `AGENTS.md`, then `README.md` sections "Core Loop" and "Starting District Layout".
+1. `AGENTS.md`, then `README.md` section "Core Loop" and `docs/MAP_AND_DISTRICT.md` section "Starting District Layout".
 2. `docs/adr/0001-data-driven-district-layout.md`.
 3. `init/scripts/data/district_layout.gd`, `init/scripts/sim/week_sim.gd`, `init/scripts/map/city_map.gd`, `init/scripts/ui/hud.gd`.
 

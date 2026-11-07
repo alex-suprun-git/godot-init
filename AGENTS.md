@@ -10,6 +10,8 @@
 
 ## Current Campaign Concept
 
+- Where documents live, so design notes do not drift back into the README: `README.md` is the design canon (what the game is, factions, loop, story arc, Week 1); map and district design decisions go to `docs/MAP_AND_DISTRICT.md`; implementation, prototype and profiling notes go to `docs/IMPLEMENTATION_NOTES.md`; story scripts and the writing rules go to `docs/story/` (`GUIDE.md` says what the narrative partner may decide alone).
+
 - The current campaign concept lives in `README.md`, which is the single source of truth. Read it before working on game design or gameplay, and record new design decisions there rather than here.
 
 ## Goals and Roles

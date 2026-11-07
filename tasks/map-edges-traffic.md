@@ -27,7 +27,7 @@ This is queued **lead/integrator work**, recorded using the task template. It ch
 
 ## Inputs
 
-1. `AGENTS.md`, `tasks/README.md`, `README.md`: City Map, Far-Bank City and Visual Comparison, Starting District Layout.
+1. `AGENTS.md`, `tasks/README.md`, `docs/MAP_AND_DISTRICT.md`: City Map, Far-Bank City and Visual Comparison, Starting District Layout.
 2. `init/scripts/map/ambient_life.gd`: agent pool, `step()`, `_next_edge()`, `_place()`, `_vehicle_class()`, `_update_visibility()`.
 3. `init/scripts/map/road_graph.gd`: graph derived from road rectangles; asphalt edges and the `bridge_road` entrance.
 4. `init/scripts/data/district_layout.gd`: `ROADS`, `BRIDGES`, `WATER`, `FOREIGN_BANK`, `profile_at()`, `crowd_at()`, `HOURS`, `DISTRICT_DEFAULTS`.
