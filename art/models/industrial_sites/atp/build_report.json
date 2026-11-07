@@ -1,0 +1,21 @@
+{
+  "asset": "atp_hall",
+  "main_hall_metres": [
+    64,
+    24,
+    8
+  ],
+  "dispatcher_metres": [
+    12,
+    12,
+    6
+  ],
+  "source_surfaces": "art/source_images/atp/material-atlas-v1.png",
+  "triangles": 17158,
+  "overall_blender_dimensions": [
+    76.92,
+    27.612,
+    12.745
+  ],
+  "status": "Implemented for in-game review; not final visual approval"
+}

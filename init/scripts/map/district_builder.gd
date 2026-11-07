@@ -10,6 +10,7 @@ const OfficeTheme = preload("res://scripts/ui/office_theme.gd")
 const PitchedRoof = preload("res://scripts/map/pitched_roof.gd")
 const CivicFacades = preload("res://scripts/map/civic_facades.gd")
 const CivicRoofs = preload("res://scripts/map/civic_roofs.gd")
+const IndustrialSites = preload("res://scripts/map/industrial_sites.gd")
 
 const YARD_ROAD_TINT := Color(1.18, 1.12, 1.02)
 const WATER_LEVEL := -3.5 # River bed depth: deep enough for a barge to pass under the bridges.
@@ -216,8 +217,10 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 	var center: Vector2 = Layout.lot_center(id)
 	if lot["type"] == "D":
 		center += _front_shift(lot, entry)
-	var kind: String = entry["kind"]
+	var kind: String = "industrial_site" if IndustrialSites.supports(id) else entry["kind"]
 	match kind:
+		"industrial_site":
+			IndustrialSites.new().build(self, id, lot)
 		"department_store_1997":
 			preload("res://scripts/map/department_store.gd").new().build(self, lot, entry, id)
 		"civic_venue":
@@ -253,11 +256,11 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 			_painted_lot(lot, entry, center)
 		"station_hub":
 			preload("res://scripts/map/station_hub.gd").new().build(map)
-	for prop in ([] if id == "b1_k" else entry.get("dressing", [])):
+	for prop in ([] if id == "b1_k" or kind == "industrial_site" else entry.get("dressing", [])):
 		if prop.get("sprite", "") == "garbage_pile" and not Catalog.CONDITIONS[lot["condition"]]["garbage"]:
 			continue
 		_prop(lot, prop, center + prop.get("at", Vector2.ZERO))
-	if lot["content"] == "checkpoint":
+	if lot["content"] == "checkpoint" and kind != "industrial_site":
 		_checkpoint_gates(center)
 	if lot["content"] == "boiler_house":
 		map._build_boiler_states(center, entry)

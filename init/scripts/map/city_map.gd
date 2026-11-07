@@ -149,6 +149,7 @@ var _ui_input_blocked := false
 var _tokens := {} # actor id -> Node3D
 var _overlays := {} # "lot:name" -> Node3D
 var _lot_states := {} # lot -> {state -> Node3D}
+var _location_states := {} # location -> scheduled state controller, with event override.
 var wear: WearMask # Worn-ground sources register here while the district is built.
 var _occupied: Array[Rect2] = [] # Ground taken by buildings and roads; trees avoid it.
 var _crosswalk_material: ShaderMaterial
@@ -480,10 +481,14 @@ func play_night(seconds: float) -> void:
 
 
 # The light follows the clock on screen: sun height, warmth, sky and ambient.
-func _update_daylight() -> void:
+func visual_clock_hour() -> float:
 	var hour: float = _debug_hour if _debug_hour >= 0.0 else sim.clock_hour()
 	if _night_hour >= 0.0:
-		hour = fmod(_night_hour, 24.0)
+		hour = _night_hour
+	return fposmod(hour,24.0)
+
+func _update_daylight() -> void:
+	var hour := visual_clock_hour()
 	var look := Daylight.sample(Settings.season, _season, hour)
 	_sun.rotation_degrees = look["sun_rotation"]
 	_sun.light_color = look["sun_color"]
@@ -556,8 +561,6 @@ func _build_weather() -> void:
 
 # Boiler visual states are lot-local and follow the same recipe as its dressing.
 func _build_boiler_states(center: Vector2, entry: Dictionary) -> void:
-	var base := _ground(center)
-	var footprint: Vector2 = entry["footprint"]
 	var chimney := center
 	for prop in entry["dressing"]:
 		if prop["sprite"] == "boiler_chimney":
@@ -565,10 +568,7 @@ func _build_boiler_states(center: Vector2, entry: Dictionary) -> void:
 	var repairing := Node3D.new()
 	repairing.name = "BoilerRepairing"
 	add_child(repairing)
-	for i in 3:
-		_sprite(SCAFFOLDING, base + Vector3(-10 + i * 10, 0, footprint.y / 2 + 1.5), 9.0, repairing)
-	_box(Vector3(footprint.x + 8, 2, 0.2), base + Vector3(0, 1, footprint.y / 2 + 6), Color(0.85, 0.5, 0.2), repairing)
-	_prop(CRANE_TRUCK, base + Vector3(footprint.x / 2 + 7, 0, footprint.y / 2 + 5), 9.0, "x", repairing)
+	preload("res://scripts/map/industrial_sites.gd").build_boiler_repairing(self, repairing, center)
 	repairing.visible = false
 	var working := Node3D.new()
 	working.name = "BoilerWorking"
@@ -737,8 +737,12 @@ func _sidewalk_material(texture: Texture2D, repeat_metres: float, region: Vector
 
 
 # The strip minus every other road it runs into, as a list of rects.
-func _strip_pieces(strip: Rect2, along_x: bool, own: Dictionary, margin: float = 0.0) -> Array[Rect2]:
+func _strip_pieces(strip: Rect2, along_x: bool, own: Dictionary, margin: float = 0.0, median_only := false) -> Array[Rect2]:
 	var cuts: Array[Vector2] = []
+	# The checkpoint owns a paved control island in place of the planted median.
+	if median_only and own.get("id", "") == "axis":
+		var checkpoint: Rect2 = DistrictLayout.LOTS["checkpoint"]["rect"]
+		cuts.append(Vector2(checkpoint.position.y, checkpoint.end.y))
 	# The overpass owns its elevated sidewalks and structural median.
 	for bridge in DistrictLayout.BRIDGES:
 		if bridge.get("rail_overpass", false) and strip.intersects(bridge["rect"]):
@@ -983,10 +987,30 @@ func _on_overlay_changed(lot: String, overlay: String, shown: bool) -> void:
 
 
 func _on_lot_state_changed(lot: String, state: String) -> void:
+	if _location_states.has(lot):
+		_location_states[lot].set_override(StringName(state))
+		return
 	if not _lot_states.has(lot):
 		return
 	for state_name in _lot_states[lot]:
 		_lot_states[lot][state_name].visible = state_name == state
+
+
+func register_location_state(id: String, controller: Node) -> void:
+	_location_states[id] = controller
+	if sim.lot_states.has(id):
+		controller.set_override(StringName(sim.lot_states[id]),false)
+
+func location_state(id: String) -> StringName:
+	return _location_states[id].state if _location_states.has(id) else &""
+
+func set_location_state_override(id: String, state: StringName, animated := true) -> void:
+	if _location_states.has(id):
+		_location_states[id].set_override(state,animated)
+
+func clear_location_state_override(id: String, animated := true) -> void:
+	if _location_states.has(id):
+		_location_states[id].clear_override(animated)
 
 
 # --- Ground and street details -----------------------------------------------
@@ -1167,7 +1191,7 @@ func _boulevard_median(road: Dictionary) -> void:
 	var width: float = road["median"]
 	var civic_start := _civic_avenue_start()
 	var strip := Rect2(rect.get_center().x - width / 2.0, rect.position.y, width, rect.size.y)
-	for piece in _strip_pieces(strip, false, road, 7.0):
+	for piece in _strip_pieces(strip, false, road, 7.0, true):
 		if piece.size.y < 6.0:
 			continue
 		_box(Vector3(piece.size.x + 0.5, 0.25, piece.size.y), _ground(piece.get_center()) + Vector3.UP * 0.2, Color("b3afa0"))

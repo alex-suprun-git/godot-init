@@ -1,5 +1,9 @@
 # Image Prompts: First Week
 
+## ATP building materials (2026-11-06)
+
+Built-in ImageGen produced a four-surface atlas for the user-authorized ATP refinement: brick, precast concrete, oxide-painted roof metal and grey-blue door paint. Untouched original, extracted source tiles and exact prompt: `art/source_images/atp/`. Four surface copies were separately prepared through `tools/optimize_asset.py` before Blender integration. Body/yard sources, portable material response and actual Godot captures are recorded in `art/models/industrial_sites/README.md`. The user approved the compact ATP ensemble (`compact-v1`) on 2026-11-06; this is the current appearance reference for that location.
+
 ## Luxury and rural vehicle projections (2026-11-04)
 
 Post-checkpoint sedan sheet: `art/source_images/vehicle_trio/luxury-sedan-v2.png`. Built-in ImageGen with the actual RAF sheet as layout/style reference and a real W140 photograph as shape reference. Six views, neutral grey grid, dark burgundy; full prompt and input roles adjacent. Proposal awaiting review, no 3D or game changes.
@@ -32,7 +36,7 @@ The user selected A architecture, requested high fences/security/substantial gro
 
 ## District modeling reference pack (2026-11-03)
 
-Built-in ImageGen sheets for the church/cemetery, three private-house types, the protagonist's proposed dormitory, separate school and kindergarten, two kiosks, two playgrounds and all existing industrial/service sites. Actual current Godot overview/village/bridge frames supply map-camera context; existing catalog dimensions guide industrial massing. The revised border-crossing proposal replaces the generic customs layout with a north–south bridge-aligned scheme and separate control/inspection flows. Exact prompts, selected versions, known projection/layout discrepancies and review status: `art/source_images/district_visual_pack/README.md`. These are proposals for user review, not approved textures or integrated models. The existing approved police UAZ reference/model is reused. User refinement reserves timber cottages for outer edges and gives every private parcel a proper fence, vehicle gate and wicket.
+Built-in ImageGen sheets for the church/cemetery, three private-house types, the protagonist's proposed dormitory, separate school and kindergarten, two kiosks, two playgrounds and all existing industrial/service sites. Actual current Godot overview/village/bridge frames supply map-camera context; existing catalog dimensions guide industrial massing. The revised border-crossing proposal replaces the generic customs layout with a north–south bridge-aligned scheme and separate control/inspection flows. Exact prompts, selected versions, known projection/layout discrepancies and review status: `art/source_images/district_visual_pack/README.md`. These are modeling references, not approved game textures. The user subsequently authorized 3D implementation of all seven industrial sites; the first assembly and its unresolved layout details are recorded in `art/models/industrial_sites/README.md`, pending live visual approval. The existing approved police UAZ reference/model is reused. User refinement reserves timber cottages for outer edges and gives every private parcel a proper fence, vehicle gate and wicket.
 
 ## Station-area 3D reference proposals (2026-11-03)
 

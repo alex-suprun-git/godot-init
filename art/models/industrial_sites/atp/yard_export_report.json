@@ -1,0 +1,72 @@
+[
+  {
+    "asset": "atp_parts_store",
+    "path": "init/assets/models/industrial_sites/atp_parts_store.glb",
+    "source": "art/models/industrial_sites/atp/yard.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 2490,
+    "materials": 7,
+    "embedded_images": 9
+  },
+  {
+    "asset": "atp_tire_shop",
+    "path": "init/assets/models/industrial_sites/atp_tire_shop.glb",
+    "source": "art/models/industrial_sites/atp/yard.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 1486,
+    "materials": 7,
+    "embedded_images": 9
+  },
+  {
+    "asset": "atp_gatehouse",
+    "path": "init/assets/models/industrial_sites/atp_gatehouse.glb",
+    "source": "art/models/industrial_sites/atp/yard.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 964,
+    "materials": 8,
+    "embedded_images": 10
+  },
+  {
+    "asset": "atp_wall_4m",
+    "path": "init/assets/models/industrial_sites/atp_wall_4m.glb",
+    "source": "art/models/industrial_sites/atp/yard.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 156,
+    "materials": 1,
+    "embedded_images": 3
+  },
+  {
+    "asset": "atp_solid_gate",
+    "path": "init/assets/models/industrial_sites/atp_solid_gate.glb",
+    "source": "art/models/industrial_sites/atp/yard.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 132,
+    "materials": 1,
+    "embedded_images": 0
+  },
+  {
+    "asset": "atp_tire_rack",
+    "path": "init/assets/models/industrial_sites/atp_tire_rack.glb",
+    "source": "art/models/industrial_sites/atp/yard.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 3168,
+    "materials": 2,
+    "embedded_images": 0
+  },
+  {
+    "asset": "atp_compressor",
+    "path": "init/assets/models/industrial_sites/atp_compressor.glb",
+    "source": "art/models/industrial_sites/atp/yard.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 200,
+    "materials": 2,
+    "embedded_images": 3
+  }
+]

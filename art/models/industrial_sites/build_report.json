@@ -1,0 +1,209 @@
+[
+  {
+    "asset": "atp_hall",
+    "triangles": 9134,
+    "dimensions_blender": [
+      67.0,
+      24.96,
+      12.48
+    ]
+  },
+  {
+    "asset": "truck_cafe",
+    "triangles": 2356,
+    "dimensions_blender": [
+      32.46,
+      15.895,
+      5.65
+    ]
+  },
+  {
+    "asset": "customs_office",
+    "triangles": 5496,
+    "dimensions_blender": [
+      30.92,
+      21.21,
+      7.51
+    ]
+  },
+  {
+    "asset": "inspection_hall",
+    "triangles": 4066,
+    "dimensions_blender": [
+      41.0,
+      24.96,
+      10.68
+    ]
+  },
+  {
+    "asset": "control_canopy",
+    "triangles": 228,
+    "dimensions_blender": [
+      12.0,
+      12.82,
+      6.32
+    ]
+  },
+  {
+    "asset": "control_booth",
+    "triangles": 780,
+    "dimensions_blender": [
+      2.46,
+      3.86,
+      3.29
+    ]
+  },
+  {
+    "asset": "pedestrian_control",
+    "triangles": 2476,
+    "dimensions_blender": [
+      8.94,
+      10.81,
+      4.15
+    ]
+  },
+  {
+    "asset": "port_warehouse_main",
+    "triangles": 8194,
+    "dimensions_blender": [
+      66.0,
+      22.96,
+      12.48
+    ]
+  },
+  {
+    "asset": "port_warehouse_small",
+    "triangles": 5554,
+    "dimensions_blender": [
+      41.0,
+      12.96,
+      9.48
+    ]
+  },
+  {
+    "asset": "fuel_warehouse",
+    "triangles": 3850,
+    "dimensions_blender": [
+      29.0,
+      12.96,
+      9.28
+    ]
+  },
+  {
+    "asset": "fuel_tank",
+    "triangles": 1952,
+    "dimensions_blender": [
+      9.3,
+      8.6,
+      9.378
+    ]
+  },
+  {
+    "asset": "water_tower",
+    "triangles": 720,
+    "dimensions_blender": [
+      7.0,
+      7.0,
+      19.0
+    ]
+  },
+  {
+    "asset": "boiler_house",
+    "triangles": 3932,
+    "dimensions_blender": [
+      28.9,
+      20.9,
+      10.34
+    ]
+  },
+  {
+    "asset": "boiler_chimney",
+    "triangles": 2088,
+    "dimensions_blender": [
+      6.4,
+      6.4,
+      34.02
+    ]
+  },
+  {
+    "asset": "garage_row_0",
+    "triangles": 3818,
+    "dimensions_blender": [
+      22.0,
+      6.96,
+      3.42
+    ]
+  },
+  {
+    "asset": "garage_row_1",
+    "triangles": 3438,
+    "dimensions_blender": [
+      22.0,
+      6.96,
+      3.42
+    ]
+  },
+  {
+    "asset": "port_crane",
+    "triangles": 836,
+    "dimensions_blender": [
+      9.85,
+      30.175,
+      21.729
+    ]
+  },
+  {
+    "asset": "river_barge",
+    "triangles": 916,
+    "dimensions_blender": [
+      43.0,
+      8.024,
+      4.2
+    ]
+  },
+  {
+    "asset": "fence_4m",
+    "triangles": 312,
+    "dimensions_blender": [
+      4.4,
+      0.42,
+      2.4
+    ]
+  },
+  {
+    "asset": "gate_6m",
+    "triangles": 300,
+    "dimensions_blender": [
+      6.18,
+      0.18,
+      2.6
+    ]
+  },
+  {
+    "asset": "yard_lamp",
+    "triangles": 92,
+    "dimensions_blender": [
+      2.2,
+      0.8,
+      8.05
+    ]
+  },
+  {
+    "asset": "raised_barrier",
+    "triangles": 84,
+    "dimensions_blender": [
+      0.94,
+      0.55,
+      6.008
+    ]
+  },
+  {
+    "asset": "pallet_stack",
+    "triangles": 288,
+    "dimensions_blender": [
+      1.2,
+      1.06,
+      0.77
+    ]
+  }
+]
