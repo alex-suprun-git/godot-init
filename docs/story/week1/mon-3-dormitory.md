@@ -6,11 +6,11 @@ Monday 25 August 1997, from 18:00. Two scenes: the "going home" quest (the playe
 
 [Исполком, 18:00]
 
-> Official duty ends at 18:00. For the first evening there is no automatic walk home: a card "Вернуться в общежитие" appears, with a small note under it. This teaches the map and the transport choice without a tutorial. The wallet appears here because a taxi price is shown for the first time.
+> Official duty ends at 18:00. For the first evening there is no automatic walk home: a card "Вернуться в общежитие" appears, with a small note under it. This teaches the map and the transport choice without a tutorial, and it quietly tests whether the player remembered the dormitory from Tolik's drive (he pointed it out and said the room is already assigned). The wallet appears here because a taxi price is shown for the first time.
 
 **Вернуться в общежитие** (the card, type plea, no asker)
 
-*День кончился, а вы так и не знаете, где вам сегодня спать. Адрес в записке: общежитие, угол буквой «Г», по дороге на запад.*
+*День кончился. Общежитие вы утром видели из окна «Волги»: угол буквой «Г», на западе, за бельём на верёвках. Дорогу вам, правда, никто не записал.*
 
 > Hint under the card (tunable): «Нажмите на общежитие на карте».
 
