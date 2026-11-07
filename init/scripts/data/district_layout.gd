@@ -13,15 +13,15 @@ const LOTS := {
 	"forest_clearing": {"type": "N", "rect": Rect2(-567, 108, 28, 24), "content": "forest_clearing", "condition": "kept", "facing": "e"},
 	"pond_bank": {"type": "N", "rect": Rect2(265, -20, 24, 10), "content": "pond_bank", "condition": "kept", "facing": "s"},
 	"atp": {"type": "X", "rect": Rect2(-420, -282, 120, 82), "content": "atp", "condition": "worked", "facing": "s"},
-	"truck_stop": {"type": "X", "rect": Rect2(-280, -320, 140, 120), "content": "truck_stop", "condition": "worked", "facing": "s"},
-	"checkpoint": {"type": "X", "rect": Rect2(-130, -320, 250, 120), "content": "checkpoint", "condition": "kept", "facing": "s"},
-	"port": {"type": "X", "rect": Rect2(130, -320, 160, 120), "content": "port", "condition": "worked", "facing": "n"},
-	"fuel_depot": {"type": "X", "rect": Rect2(300, -320, 95, 120), "content": "fuel_depot", "condition": "worked", "facing": "s"},
-	"boiler": {"type": "X", "rect": Rect2(-430, -170, 100, 75), "content": "boiler_house", "condition": "worked", "facing": "s"},
+	"truck_stop": {"type": "X", "rect": Rect2(-280, -282, 100, 82), "content": "truck_stop", "condition": "worked", "facing": "s"},
+	"checkpoint": {"type": "X", "rect": Rect2(-170, -320, 330, 120), "content": "checkpoint", "condition": "kept", "facing": "s"},
+	"port": {"type": "X", "rect": Rect2(170, -320, 120, 120), "content": "port", "condition": "worked", "facing": "n"},
+	"fuel_depot": {"type": "X", "rect": Rect2(300, -282, 95, 82), "content": "fuel_depot", "condition": "worked", "facing": "s"},
+	"boiler": {"type": "X", "rect": Rect2(-420, -157, 80, 62), "content": "boiler_house", "condition": "worked", "facing": "s"},
 	# Wheat meets both road edges, with no verge/headland rim. Keep the 80 m
 	# boiler gap and carry the western end beyond the opaque edge haze.
 	"boiler_field": {"type": "N", "rect": Rect2(-795, -177.5, 285, 87.5), "content": "wheat_field", "condition": "kept", "facing": "s", "haze_overlap": 145.0, "verge": 0.0, "headland": 0.0},
-	"garages": {"type": "G", "rect": Rect2(-320, -170, 290, 75), "content": "garages", "condition": "worked", "facing": "s"},
+	"garages": {"type": "G", "rect": Rect2(-309, -137, 126, 42), "content": "garages", "condition": "worked", "facing": "s"},
 	"reserve": {"type": "R", "rect": Rect2(15, -174.5, 420, 79), "content": "wheat_field", "condition": "kept", "facing": "s"},
 	"a1_n": {"type": "W", "rect": Rect2(-337.8, -75.28, 90, 24), "content": "panel_5", "condition": "kept", "facing": "s"},
 	"a1_s": {"type": "W", "rect": Rect2(-337.8, 58.48, 90, 24), "content": "panel_5", "condition": "kept", "facing": "n"},
@@ -137,7 +137,8 @@ const RAILS := [
 	[Vector2(-450, 395), Vector2(410, 395), Vector2(410, -495)],
 	[Vector2(-450, 405), Vector2(420, 405), Vector2(420, -495)],
 	# The port siding leaves the elevated main line at deck height and climbs down on its own ramp.
-	[Vector2(410, -250), Vector2(402, -245), Vector2(150, -245)],
+	# Keep the terminal inside the compact port, beyond the expanded checkpoint.
+	[Vector2(410, -250), Vector2(402, -245), Vector2(190, -245)],
 ]
 # A wide river: barges pass under both bridges, whose decks rise to a hump over the water.
 # The eastern freight line runs on an embankment past the village: it climbs over
@@ -241,11 +242,11 @@ const DISTRICTS := {
 		"residents": 100, "foot": 0.3, "cars": 1.6,
 		"fleet": {"truck": 0.7, "car": 0.25, "bus": 0.05}, "hours": "round_clock",
 		"subzones": {
-			"border_crossing": {"rect": Rect2(-130, -320, 250, 120), "foot": 0.7, "cars": 2.2, "fleet": {"truck": 0.8, "car": 0.2}},
-			"truck_stop": {"rect": Rect2(-280, -320, 140, 120), "foot": 0.5, "fleet": {"truck": 0.85, "car": 0.15}},
+			"border_crossing": {"rect": Rect2(-170, -320, 330, 120), "foot": 0.7, "cars": 2.2, "fleet": {"truck": 0.8, "car": 0.2}},
+			"truck_stop": {"rect": Rect2(-280, -282, 100, 82), "foot": 0.5, "fleet": {"truck": 0.85, "car": 0.15}},
 			"atp_depot": {"rect": Rect2(-420, -282, 120, 82), "foot": 0.4, "fleet": {"truck": 0.5, "bus": 0.4, "car": 0.1}, "hours": "office"},
-			"river_port": {"rect": Rect2(130, -320, 160, 120), "foot": 0.4, "fleet": {"truck": 0.9, "car": 0.1}},
-			"fuel_depot": {"rect": Rect2(300, -320, 95, 120), "foot": 0.1, "cars": 0.6, "fleet": {"truck": 1.0}},
+			"river_port": {"rect": Rect2(170, -320, 120, 120), "foot": 0.4, "fleet": {"truck": 0.9, "car": 0.1}},
+			"fuel_depot": {"rect": Rect2(300, -282, 95, 82), "foot": 0.1, "cars": 0.6, "fleet": {"truck": 1.0}},
 		},
 	},
 	"service": {
@@ -254,8 +255,8 @@ const DISTRICTS := {
 		"residents": 20, "foot": 0.2, "cars": 0.5,
 		"fleet": {"car": 0.5, "truck": 0.3, "tractor": 0.2}, "hours": "office",
 		"subzones": {
-			"boiler_house": {"rect": Rect2(-430, -170, 100, 75), "foot": 0.3, "fleet": {"truck": 0.6, "car": 0.4}},
-			"garage_coop": {"rect": Rect2(-320, -170, 290, 75), "foot": 0.5, "cars": 0.8, "fleet": {"car": 1.0}, "hours": "commute"},
+			"boiler_house": {"rect": Rect2(-420, -157, 80, 62), "foot": 0.3, "fleet": {"truck": 0.6, "car": 0.4}},
+			"garage_coop": {"rect": Rect2(-309, -137, 126, 42), "foot": 0.5, "cars": 0.8, "fleet": {"car": 1.0}, "hours": "commute"},
 			"wheat_field": {"rect": LOTS["reserve"]["rect"], "foot": 0.05, "cars": 0.1, "fleet": {"tractor": 0.7, "car": 0.3}},
 		},
 	},

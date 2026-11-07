@@ -1,0 +1,302 @@
+[
+  {
+    "asset": "frontier_customs_office",
+    "path": "init/assets/models/industrial_sites/frontier_customs_office.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 5892,
+    "materials": 7,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_inspection_hall",
+    "path": "init/assets/models/industrial_sites/frontier_inspection_hall.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 4818,
+    "materials": 7,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_customs_bonded_store",
+    "path": "init/assets/models/industrial_sites/frontier_customs_bonded_store.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 4326,
+    "materials": 8,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_customs_staff_wing",
+    "path": "init/assets/models/industrial_sites/frontier_customs_staff_wing.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 3076,
+    "materials": 7,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_customs_documents",
+    "path": "init/assets/models/industrial_sites/frontier_customs_documents.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 3072,
+    "materials": 9,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_customs_passport_canopy",
+    "path": "init/assets/models/industrial_sites/frontier_customs_passport_canopy.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 2720,
+    "materials": 4,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_customs_control_canopy",
+    "path": "init/assets/models/industrial_sites/frontier_customs_control_canopy.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 2852,
+    "materials": 4,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_control_canopy",
+    "path": "init/assets/models/industrial_sites/frontier_control_canopy.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 228,
+    "materials": 4,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_control_booth",
+    "path": "init/assets/models/industrial_sites/frontier_control_booth.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 804,
+    "materials": 6,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_pedestrian_control",
+    "path": "init/assets/models/industrial_sites/frontier_pedestrian_control.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 2644,
+    "materials": 7,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_fuel_warehouse",
+    "path": "init/assets/models/industrial_sites/frontier_fuel_warehouse.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 4758,
+    "materials": 8,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_fuel_tank",
+    "path": "init/assets/models/industrial_sites/frontier_fuel_tank.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 2888,
+    "materials": 5,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_water_tower",
+    "path": "init/assets/models/industrial_sites/frontier_water_tower.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 720,
+    "materials": 4,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_fuel_pump_house",
+    "path": "init/assets/models/industrial_sites/frontier_fuel_pump_house.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 1444,
+    "materials": 7,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_fuel_loading_gantry",
+    "path": "init/assets/models/industrial_sites/frontier_fuel_loading_gantry.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 372,
+    "materials": 4,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_port_warehouse_main",
+    "path": "init/assets/models/industrial_sites/frontier_port_warehouse_main.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 8622,
+    "materials": 7,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_port_warehouse_small",
+    "path": "init/assets/models/industrial_sites/frontier_port_warehouse_small.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 5986,
+    "materials": 7,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_truck_cafe",
+    "path": "init/assets/models/industrial_sites/frontier_truck_cafe.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 2596,
+    "materials": 8,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_rest_shelter",
+    "path": "init/assets/models/industrial_sites/frontier_rest_shelter.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 402,
+    "materials": 4,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_boiler_house",
+    "path": "init/assets/models/industrial_sites/frontier_boiler_house.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 4160,
+    "materials": 7,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_boiler_chimney",
+    "path": "init/assets/models/industrial_sites/frontier_boiler_chimney.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 2088,
+    "materials": 4,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_garage_row_0",
+    "path": "init/assets/models/industrial_sites/frontier_garage_row_0.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 4498,
+    "materials": 14,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_garage_row_1",
+    "path": "init/assets/models/industrial_sites/frontier_garage_row_1.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 4030,
+    "materials": 14,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_garage_row_2",
+    "path": "init/assets/models/industrial_sites/frontier_garage_row_2.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 3674,
+    "materials": 14,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_garage_row_3",
+    "path": "init/assets/models/industrial_sites/frontier_garage_row_3.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 4010,
+    "materials": 14,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_garage_row_4",
+    "path": "init/assets/models/industrial_sites/frontier_garage_row_4.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 4330,
+    "materials": 14,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_garage_row_5",
+    "path": "init/assets/models/industrial_sites/frontier_garage_row_5.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 4338,
+    "materials": 14,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_garage_short_0",
+    "path": "init/assets/models/industrial_sites/frontier_garage_short_0.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 2280,
+    "materials": 10,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_garage_short_3",
+    "path": "init/assets/models/industrial_sites/frontier_garage_short_3.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 1976,
+    "materials": 11,
+    "embedded_images": 0
+  },
+  {
+    "asset": "frontier_garage_lean_to",
+    "path": "init/assets/models/industrial_sites/frontier_garage_lean_to.glb",
+    "source": "art/models/industrial_sites/frontier/frontier.blend",
+    "scenes": 1,
+    "meshes": 1,
+    "triangles": 230,
+    "materials": 7,
+    "embedded_images": 0
+  }
+]

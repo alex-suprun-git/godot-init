@@ -10,13 +10,27 @@ HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[2]
 OUT=ROOT/'init/assets/models/industrial_sites'
 OUT.mkdir(parents=True,exist_ok=True)
+SHARED_MATERIALS=ROOT/'init/assets/materials/frontier'
+
+def strip_shared_textures(path):
+    """Frontier models share their textured materials (init/assets/materials/frontier).
+    Remove the per-model embedded textures; shared_material_import.gd restores them by name."""
+    import importlib.util
+    spec=importlib.util.spec_from_file_location('strip_glb_textures',ROOT/'tools/strip_glb_textures.py')
+    module=importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    document,binary=module.read_glb(path)
+    document,binary,_=module.strip(document,binary,SHARED_MATERIALS)
+    module.write_glb(path,document,binary)
+
 parser=argparse.ArgumentParser()
 parser.add_argument('--source',type=Path)
 parser.add_argument('--asset')
 args=parser.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
 refined=HERE/'atp/atp.blend'
 yard=HERE/'atp/yard.blend'
-sources=[args.source.resolve()] if args.source else [HERE/'industrial_sites.blend']+([refined] if refined.exists() else [])+([yard] if yard.exists() else [])
+frontier=HERE/'frontier/frontier.blend'
+sources=[args.source.resolve()] if args.source else [HERE/'industrial_sites.blend']+([refined] if refined.exists() else [])+([yard] if yard.exists() else [])+([frontier] if frontier.exists() else [])
 reports=[]
 for source in sources:
     bpy.ops.wm.open_mainfile(filepath=str(source))
@@ -37,6 +51,8 @@ for source in sources:
         bpy.ops.export_scene.gltf(filepath=str(path),export_format='GLB',
             use_selection=True,use_active_scene=True,export_yup=True,export_apply=True,
             export_materials='EXPORT')
+        if name.startswith('frontier_'):
+            strip_shared_textures(path)
         data=path.read_bytes()
         size,kind=struct.unpack_from('<II',data,12)
         document=json.loads(data[20:20+size])

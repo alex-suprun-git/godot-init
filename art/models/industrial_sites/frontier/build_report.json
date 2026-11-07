@@ -1,0 +1,272 @@
+[
+  {
+    "asset": "frontier_customs_office",
+    "triangles": 5892,
+    "dimensions_blender": [
+      30.92,
+      21.21,
+      7.51
+    ]
+  },
+  {
+    "asset": "frontier_inspection_hall",
+    "triangles": 4818,
+    "dimensions_blender": [
+      40.9,
+      25.145,
+      10.38
+    ]
+  },
+  {
+    "asset": "frontier_customs_bonded_store",
+    "triangles": 4326,
+    "dimensions_blender": [
+      20.9,
+      11.145,
+      6.88
+    ]
+  },
+  {
+    "asset": "frontier_customs_staff_wing",
+    "triangles": 3076,
+    "dimensions_blender": [
+      18.46,
+      10.36,
+      4.05
+    ]
+  },
+  {
+    "asset": "frontier_customs_documents",
+    "triangles": 3072,
+    "dimensions_blender": [
+      24.8,
+      8.892,
+      3.75
+    ]
+  },
+  {
+    "asset": "frontier_customs_passport_canopy",
+    "triangles": 2720,
+    "dimensions_blender": [
+      17.0,
+      18.769,
+      6.74
+    ]
+  },
+  {
+    "asset": "frontier_customs_control_canopy",
+    "triangles": 2852,
+    "dimensions_blender": [
+      17.0,
+      18.769,
+      6.74
+    ]
+  },
+  {
+    "asset": "frontier_control_canopy",
+    "triangles": 228,
+    "dimensions_blender": [
+      12.0,
+      12.82,
+      6.32
+    ]
+  },
+  {
+    "asset": "frontier_control_booth",
+    "triangles": 804,
+    "dimensions_blender": [
+      2.46,
+      3.86,
+      3.29
+    ]
+  },
+  {
+    "asset": "frontier_pedestrian_control",
+    "triangles": 2644,
+    "dimensions_blender": [
+      8.94,
+      11.07,
+      4.15
+    ]
+  },
+  {
+    "asset": "frontier_fuel_warehouse",
+    "triangles": 4758,
+    "dimensions_blender": [
+      28.9,
+      13.145,
+      8.98
+    ]
+  },
+  {
+    "asset": "frontier_fuel_tank",
+    "triangles": 2888,
+    "dimensions_blender": [
+      9.3,
+      8.6,
+      9.378
+    ]
+  },
+  {
+    "asset": "frontier_water_tower",
+    "triangles": 720,
+    "dimensions_blender": [
+      7.0,
+      7.0,
+      19.0
+    ]
+  },
+  {
+    "asset": "frontier_fuel_pump_house",
+    "triangles": 1444,
+    "dimensions_blender": [
+      7.68,
+      5.957,
+      3.95
+    ]
+  },
+  {
+    "asset": "frontier_fuel_loading_gantry",
+    "triangles": 372,
+    "dimensions_blender": [
+      9.0,
+      4.85,
+      4.29
+    ]
+  },
+  {
+    "asset": "frontier_port_warehouse_main",
+    "triangles": 8622,
+    "dimensions_blender": [
+      65.9,
+      23.145,
+      12.18
+    ]
+  },
+  {
+    "asset": "frontier_port_warehouse_small",
+    "triangles": 5986,
+    "dimensions_blender": [
+      40.9,
+      13.145,
+      9.18
+    ]
+  },
+  {
+    "asset": "frontier_truck_cafe",
+    "triangles": 2596,
+    "dimensions_blender": [
+      32.46,
+      15.895,
+      5.65
+    ]
+  },
+  {
+    "asset": "frontier_rest_shelter",
+    "triangles": 402,
+    "dimensions_blender": [
+      8.9,
+      5.96,
+      3.87
+    ]
+  },
+  {
+    "asset": "frontier_boiler_house",
+    "triangles": 4160,
+    "dimensions_blender": [
+      28.9,
+      21.115,
+      10.34
+    ]
+  },
+  {
+    "asset": "frontier_boiler_chimney",
+    "triangles": 2088,
+    "dimensions_blender": [
+      6.4,
+      6.4,
+      34.02
+    ]
+  },
+  {
+    "asset": "frontier_garage_row_0",
+    "triangles": 4498,
+    "dimensions_blender": [
+      21.3,
+      6.93,
+      3.55
+    ]
+  },
+  {
+    "asset": "frontier_garage_row_1",
+    "triangles": 4030,
+    "dimensions_blender": [
+      21.3,
+      6.93,
+      3.55
+    ]
+  },
+  {
+    "asset": "frontier_garage_row_2",
+    "triangles": 3674,
+    "dimensions_blender": [
+      21.3,
+      6.93,
+      3.55
+    ]
+  },
+  {
+    "asset": "frontier_garage_row_3",
+    "triangles": 4010,
+    "dimensions_blender": [
+      21.3,
+      6.93,
+      3.55
+    ]
+  },
+  {
+    "asset": "frontier_garage_row_4",
+    "triangles": 4330,
+    "dimensions_blender": [
+      21.3,
+      6.93,
+      3.55
+    ]
+  },
+  {
+    "asset": "frontier_garage_row_5",
+    "triangles": 4338,
+    "dimensions_blender": [
+      21.3,
+      6.93,
+      3.55
+    ]
+  },
+  {
+    "asset": "frontier_garage_short_0",
+    "triangles": 2280,
+    "dimensions_blender": [
+      10.8,
+      6.93,
+      3.55
+    ]
+  },
+  {
+    "asset": "frontier_garage_short_3",
+    "triangles": 1976,
+    "dimensions_blender": [
+      10.8,
+      6.93,
+      3.55
+    ]
+  },
+  {
+    "asset": "frontier_garage_lean_to",
+    "triangles": 230,
+    "dimensions_blender": [
+      3.6,
+      2.365,
+      2.18
+    ]
+  }
+]
