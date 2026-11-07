@@ -89,7 +89,9 @@ func _build_ground() -> void:
 		var lot: Dictionary = Layout.LOTS[id]
 		var entry: Dictionary = Catalog.CONTENTS[lot["content"]]
 		var condition: Dictionary = Catalog.CONDITIONS[lot["condition"]]
-		var ground: String = "grass" if id == "b1_k" else entry.get("ground", "grass")
+		# Customs and garages own their route/yard surfaces. A generic asphalt
+		# rectangle would otherwise remain beneath their planted or earth areas.
+		var ground: String = "grass" if id in ["b1_k", "checkpoint", "garages"] else entry.get("ground", "grass")
 		if ground == "grass" and condition["dry_ground"]:
 			ground = "grass_dry"
 		_patch(lot["rect"], ground, 0.025, condition["tint"])
@@ -1274,7 +1276,9 @@ func _build_train_stock() -> void:
 	var stock := _texture("res://assets/sprites/train_wagons_v2.png") # train_commuter.png
 	# The station tracks stay clear; freight stock remains on the port siding.
 	var siding: Array = Layout.RAILS[2]
-	var transfer: Vector2 = siding[-2].lerp(siding[-1], 0.5)
+	# Stored wagons belong to the level loading reach, before the ramp begins.
+	var ramp_foot := Vector2(float(Layout.SIDING_RAMP["x_from"]),float(Layout.SIDING_RAMP["z"]))
+	var transfer: Vector2 = siding[-1].lerp(ramp_foot, 0.5)
 	map._prop(stock, Vector3(transfer.x, 0.2, transfer.y), 40.0, "x")
 
 

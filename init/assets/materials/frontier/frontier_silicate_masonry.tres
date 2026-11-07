@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/materials/frontier/frontier_silicate_masonry_albedo.png" id="1_51617"]
+
+[resource]
+resource_name = "Frontier silicate masonry"
+cull_mode = 2
+albedo_texture = ExtResource("1_51617")
+roughness = 0.91
+metadata/_gltf_primary_texture_coord = 0

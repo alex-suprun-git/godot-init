@@ -4,6 +4,8 @@
 
 Built-in ImageGen produced a four-surface atlas for the user-authorized ATP refinement: brick, precast concrete, oxide-painted roof metal and grey-blue door paint. Untouched original, extracted source tiles and exact prompt: `art/source_images/atp/`. Four surface copies were separately prepared through `tools/optimize_asset.py` before Blender integration. Body/yard sources, portable material response and actual Godot captures are recorded in `art/models/industrial_sites/README.md`. The user approved the compact ATP ensemble (`compact-v1`) on 2026-11-06; this is the current appearance reference for that location.
 
+The 2026-11-07 frontier-site refinement reuses these prepared Blender materials, the prepared dormitory silicate masonry and civic roof felt. No new ImageGen images or prompts were produced; architecture references remain the selected district sheets and customs circulation SVG. Sources and review state: `art/models/industrial_sites/README.md`.
+
 ## Dormitory model (2026-11-06)
 
 The user authorized the existing `district_visual_pack/dormitory-v1.png` direction for a four-storey L-shaped Blender model. The game now uses the original mesh and an analytically generated, separately optimizer-prepared silicate-brick albedo; no new ImageGen artwork. Sources, build stages, actual Godot inspection and pending visual approval: `art/models/dormitory/README.md`.

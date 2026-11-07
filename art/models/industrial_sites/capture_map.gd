@@ -6,9 +6,12 @@ func _initialize() -> void:
 
 func _run() -> void:
 	var prefix := "after"
+	var selected := ""
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--capture-prefix="):
 			prefix = arg.trim_prefix("--capture-prefix=")
+		if arg.begins_with("--only="):
+			selected = arg.trim_prefix("--only=")
 	var output := ProjectSettings.globalize_path("res://../.local/industrial-review")
 	DirAccess.make_dir_recursive_absolute(output)
 	var main = load("res://main.tscn").instantiate()
@@ -25,7 +28,10 @@ func _run() -> void:
 		["west", Vector2(-280, -225), 450.0],
 		["border", Vector2(-5, -265), 350.0],
 		["east", Vector2(260, -265), 400.0],
+		["garages", Vector2(-205, -135), 350.0],
 	]:
+		if selected != "" and shot[0] not in selected.split(","):
+			continue
 		main.map._camera_goal = Vector3(shot[1].x, 0, shot[1].y)
 		main.map._camera_target = main.map._camera_goal
 		main.map._zoom = shot[2]
