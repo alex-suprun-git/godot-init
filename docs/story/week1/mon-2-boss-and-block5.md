@@ -30,6 +30,8 @@ Monday 25 August 1997, 10:04 to the afternoon. Two scenes: the boss's briefing (
 
 **[Понял, Пётр Петрович]**
 
+> Interface: the work folder button appears with the weekly task board. The map controls (zoom, to-self, district) appear when the player leaves the building and the speed controls when the player first has free time on the map. The contacts drawer appears after the Nina scene, the wallet at the first moment money matters.
+>
 > After the button: the weekly task board opens (paperwork, contractor, report). The `hot_water` card appears on the map at Block 5. The player is on foot; the walk from the executive committee to Block 5 is about 15 game minutes.
 
 ## Scene 2. Block 5: Baba Nina

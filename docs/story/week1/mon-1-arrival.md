@@ -4,6 +4,10 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 **Tolik's voice (v1):** cheerful, talkative, warm, a gossip who loves his car and his district. Long, flowing sentences and jokes, often at his own expense. The tone break at the restaurant is the point of the whole sequence: he stops mid-word, the radio goes off, and for the rest of the drive his cheer is slightly too loud.
 
+## Interface during this part
+
+> Progressive interface (see the root README): on the train there is no interface at all, only the newspaper. During Tolik's drive the screen shows a read-only clock and date strip and the captions, and nothing else: no buttons, no wallet, no contacts, no folder, no map controls, no restart. The first control to appear is the work folder, after the boss's briefing (see `mon-2-boss-and-block5.md`).
+
 ## Scene 0.1. The train
 
 > The player reads the opening edition of the paper on the train; it is the same headline-led sheet as the in-game newspaper, shown full screen before the map appears. Edition data is in `init/scripts/data/newspaper_issues.gd`, issue 1. Proposed text changes are listed at the end of this file.

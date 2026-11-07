@@ -47,7 +47,7 @@ Each card: voice, wants, hides, how the relationship grows. Add a card when a ch
 | **Baba Nina** | Sharp, suspicious, short punchy lines, a notebook; tests newcomers | Hot water and someone who comes to the yard and tells people the truth | Nothing; she writes it all down |
 | **Mikhalych** (fitter) | Quiet, ashamed, dry self-deprecating humor | Not to be asked about last autumn | He signed the false completion act; two polite men visited |
 | **Gusev** (businessman, contractor) | Friendly, expansive, generous with promises | Contracts, the wasteland, a friend in the administration | His backing; the envelope is removed for now |
-| **The journalist** (neighbour) | Curious, quick, lightly ironic; does not know who the protagonist is until Tuesday | A story that is true | Her interest and the romance pull against each other (name open) |
+| **Vera Lisitsyna** (journalist, neighbour) | Curious, quick, lightly ironic; does not know who the protagonist is until Tuesday; full sheet in `docs/story/characters/journalist.md` | A story that is true | That she is a journalist (Monday); an old story about the boiler repairs nobody would print |
 | **Gureev** (fixer) | Smooth, reasonable, speaks the language of both sides; mirror of the protagonist | To stay useful to both sides | He works with the criminals, not for them, and is called in when force is needed |
 | **Father Georgy** | Gentle, humorous, a good listener; strong tea | Heat for the church, a shelter | What he hears in confession |
 | **The commission engineer** | Dry, procedural, tired; appears only on Friday of week 1 | A signed report | What he does with a forged act |
