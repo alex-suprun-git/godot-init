@@ -58,7 +58,7 @@ Built-in ImageGen produced separate modeling sheets for market stalls, a lived-i
 
 ## Whole-map 3D trees (2026-11-03)
 
-Standalone tree sprites are replaced by the original civic-centre deciduous and poplar meshes, using shared seasonal materials. No new art was generated. The old combined city-park game painting was removed at the user request; its original concept is preserved for reference. See README Natural Landmarks and `art/models/civic_center/README.md`.
+Standalone tree sprites are replaced by the original civic-centre deciduous and poplar meshes, using shared seasonal materials. No new art was generated. The old combined city-park game painting was removed at the user request; its original concept is preserved for reference. See `docs/MAP_AND_DISTRICT.md` (Natural Landmarks) and `art/models/civic_center/README.md`.
 
 ## Northern wheat field (2026-11-01)
 
@@ -100,7 +100,7 @@ Prompts for the art needed by the first playable week (the heating-season openin
 - Full prompt: `art/concepts/far-bank-city-v1.prompt.md`.
 - Generator: built-in ImageGen; edit target/style/geography reference: `art/concepts/border-direction-v1.png`.
 - Purpose: explore a distinct inhabited town across the river in the brotherly republic, with an older pitched-roof urban fabric, market square and residential waterfront. This replaces the sparse far bank of the earlier concept while retaining the near-bank district, river and two crossings.
-- Status: exploratory, awaiting user feedback. Source concept only; no optimization, game integration or visual approval is implied. Gameplay intent and open questions are in README's Far-Bank City section.
+- Status: exploratory, awaiting user feedback. Source concept only; no optimization, game integration or visual approval is implied. Gameplay intent and open questions are in `docs/MAP_AND_DISTRICT.md` (Far-Bank City section).
 
 ## City park concept (2026-11-01)
 
@@ -150,6 +150,7 @@ Canonical appearance from the chosen portraits. Later variants of these characte
 - Tolik (`tolik.png`): lean, gaunt man in his forties, messy dark hair, light stubble, sly sideways glance, cigarette behind his ear, worn brown leather jacket over a checked shirt and knitted sweater, car keys in hand.
 - Baba Nina (`baba_nina.png`): woman in her seventies, floral headscarf, glasses on a cord, brown knitted cardigan, floral dress, green notebook held to her chest.
 - The boss (`boss.png`): heavy man in his early sixties, grey swept-back hair, heavy tired eyes, oversized grey suit, loosened burgundy striped tie.
+- Gusev (`gusev.png`): man in his late thirties, dark wavy hair, light stubble, smug sideways grin, burgundy double-breasted jacket over an open white shirt, loosened floral silk tie and pocket square, gold chain and bracelet, a brick-sized mobile phone held to his ear.
 
 - Gusev (`gusev.png`): man in his late thirties, swept-back wavy dark hair, confident asymmetric grin, burgundy double-breasted jacket, cream shirt, patterned tie and gold chain.
 - Father Georgiy: about fifty, narrow long face, receding brown hair, grey-streaked brown beard, black cassock and a plain wooden cross.
@@ -286,6 +287,36 @@ Done, saved as `init/assets/portraits/protagonist.png` (chosen variant).
 Path: `init/assets/portraits/protagonist.png`
 
 > [Window style block] Bust portrait, three-quarter view, matching the framing, background, and manner of the portraits in `init/assets/portraits/`. A man of 26, newly hired aide to a district head in late August 1997: clean-shaven, short practical haircut, attentive intelligent eyes, a cheap grey suit slightly too big at the shoulders, a white shirt, a narrow dark tie that is clearly his only one, a cardboard folder of papers under his arm. Expression neutral and watchful, neither naive nor cynical yet: the player decides who he becomes. Ordinary, believable face, not a model or a hero. Portrait 3:4.
+
+### W9. Portraits: Vera Lisitsyna, journalist (two looks)
+
+Status: proposal, not generated. Character sheet: `docs/story/characters/journalist.md`. Two portraits of the same woman, same face, same age. Paths: `init/assets/portraits/vera_home.png` (the dormitory kitchen, Monday evening) and `init/assets/portraits/vera_work.png` (press, Tuesday morning and the Friday inspection). Map tokens are cropped from them in Godot.
+
+Home look:
+
+> [Window style block] Bust portrait, three-quarter view, matching the framing, background, and manner of the portraits in `init/assets/portraits/`. A woman of 25, local, ordinary and memorable by expression: an oversized brown knitted cardigan with a small hole at the elbow over a plain T-shirt, hair in a loose bun held with a pencil, a chipped mug in one hand, tired and unguarded, open curious half smile. Warm kitchen lamp light, a calendar from a sawmill on the wall behind. Portrait 3:4.
+
+Work look:
+
+> [Window style block] Bust portrait, three-quarter view, matching the framing, background, and manner of the portraits in `init/assets/portraits/`. The same woman of 25 as in the home look: dark graphite second-hand blazer, ironed white blouse, hair pulled back in a neat ponytail, a burgundy lanyard with a press card, a steno notebook held to her chest, a small dictaphone in the pocket, one eyebrow slightly raised, alert and composed. Cool morning daylight, the steps of a district administration building blurred behind. Portrait 3:4.
+
+### W10. Portrait: Sedov, fixer
+
+Status: proposal, not generated. Character sheet: `docs/story/characters/sedov.md`. Path: `init/assets/portraits/sedov.png`.
+
+> [Window style block] Bust portrait, three-quarter view, matching the framing, background, and manner of the portraits in `init/assets/portraits/`. A lean man of about forty-five, clean-shaven, neat thinning hair, a faint half smile and attentive watchful eyes; a grey-blue single-breasted suit that looks expensive and cheap at once, a white shirt with no tie, a plain wedding ring, a pen in the breast pocket. He looks like an accountant, not a gangster: the opposite of Gusev's flash. Portrait 3:4.
+
+### W11. Portrait: Father Georgy, priest
+
+Status: proposal, not generated. Character sheet: `docs/story/characters/georgy.md`. Path: `init/assets/portraits/georgy.png`.
+
+> [Window style block] Bust portrait, three-quarter view, matching the framing, background, and manner of the portraits in `init/assets/portraits/`. A thin man of about sixty, neat grey beard, crinkled kind eyes, a black cassock with the sleeves rolled up, a rag in one hand, a glass of tea in a metal holder in the other, a small wooden cross, a window with a cemetery behind. Portrait 3:4.
+
+### W12. Portrait: Korotkov, the commission's engineer
+
+Status: proposal, not generated. Character sheet: `docs/story/characters/korotkov.md`. Path: `init/assets/portraits/korotkov.png`.
+
+> [Window style block] Bust portrait, three-quarter view, matching the framing, background, and manner of the portraits in `init/assets/portraits/`. A narrow tired man of about fifty-five, short grey hair, thin-rimmed glasses, a grey raincoat buttoned to the collar, an old leather briefcase held in front of him, a pencil in his breast pocket, a polite and unreadable expression. Cool daylight, a block-of-flats courtyard blurred behind. Portrait 3:4.
 
 ## K: Map kit (after the test batch passes)
 
@@ -666,7 +697,7 @@ Original generation: `art/source_images/situation_banners/boss_report_v1.png`.
 
 > Painterly oil illustration with visible brushwork and a warm textured background, 1990s post-Soviet provincial city in a fictional Slavic border republic, in the season stated by the prompt. Muted realistic palette with warm accents, soft natural light. Grounded, slightly melancholic, with quiet dark humor in small details. No fantasy, no modern 2020s cars or phones; cars are Ladas, Volgas, UAZ vans, ZIL and GAZ trucks.
 > Wide single painted scene, canvas approximately 2.4:1. Composition must survive a center crop to 3.5:1: place ALL faces, hands, key storytelling objects within y=25%-75% of image height. Zoom out to fit this. Upper and lower fifth are expendable setting only. Late August 25-29, 1997, green trees with only first yellow leaves, warm weather and summer clothes with occasional light jacket. No readable text, lettering, logos, signatures or watermarks anywhere. Not a collage, no borders.
-> Boss's office seen from padded doorway over shoulder of protagonist, only his grey suit sleeve and shoulder at edge. Pyotr Petrovich sits beyond at a vast desk with cardboard folders spread in fan. Match boss reference: heavy man early sixties, grey swept-back hair, heavy tired eyes and broad lined face, oversized grey suit and loosened burgundy striped tie. He looks up with exhausted patience of man who has done this many times. Plain muted flag in corner without any symbols or letters, window onto provincial town hall square with green late-August trees. Head, shoulders, hands and desk folders all within middle horizontal crop strip, medium distant view. Reference portraits for character identities and oil painting manner only; no floating portraits in scene.
+> Boss's office seen from padded doorway over shoulder of protagonist, only his grey suit sleeve and shoulder at edge. Boris Savvich sits beyond at a vast desk with cardboard folders spread in fan. Match boss reference: heavy man early sixties, grey swept-back hair, heavy tired eyes and broad lined face, oversized grey suit and loosened burgundy striped tie. He looks up with exhausted patience of man who has done this many times. Plain muted flag in corner without any symbols or letters, window onto provincial town hall square with green late-August trees. Head, shoulders, hands and desk folders all within middle horizontal crop strip, medium distant view. Reference portraits for character identities and oil painting manner only; no floating portraits in scene.
 
 ### Envelope review history
 

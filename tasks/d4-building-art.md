@@ -17,7 +17,7 @@ The rebuilt administrative centre (`tasks/archive/d4-rebuild.md`) needs its own 
 1. `art/DISTRICT_ART_REQUEST.md`: "Facade assembly" and the 2:1 canvas rule. Existing examples to match: `init/assets/textures/facade_police_front.png`, `facade_police_side.png`, `facade_polyclinic_entrance.png`, `facade_polyclinic.png`, `facade_ispolkom_front.png`.
 2. `art/PROMPTS.md`: "Rules" and the texture rules; add the new prompts to it.
 3. `art/ASSET_PIPELINE.md`: originals outside `init/`, approval, optimization.
-4. `README.md`, "Planned rework of the civic area", for the story and mood of the buildings.
+4. `docs/MAP_AND_DISTRICT.md`, "Planned rework of the civic area", for the story and mood of the buildings.
 
 ## Constraints
 

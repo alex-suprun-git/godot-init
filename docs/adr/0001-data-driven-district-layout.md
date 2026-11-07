@@ -8,7 +8,7 @@ The map is a 3D scene built in code. Building positions were hand-placed `Rect2`
 
 Moving one building meant editing it in two places and then re-checking hand-placed trees, cars, and props around it. Markers drifted away from their buildings.
 
-The starting district is being redesigned as an outskirts district (see README, "Starting District Layout"). Unique buildings such as a school, kindergarten, or police station will be added gradually over many iterations.
+The starting district is being redesigned as an outskirts district (see `docs/MAP_AND_DISTRICT.md`, "Starting District Layout"). Unique buildings such as a school, kindergarten, or police station will be added gradually over many iterations.
 
 ## Decision
 
