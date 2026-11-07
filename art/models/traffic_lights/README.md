@@ -24,10 +24,7 @@ The native Blender MCP was unavailable during this task. The installed Blender 5
 
 ## Godot integration
 
-- `traffic_intersections.gd` explicitly registers `axis_highway`, `axis_north` and `axis_station`. Positions come from named road geometry. Their incoming approaches have 4, 4 and 3 fixtures respectively; the station is a T-junction.
-- Each fixture binds a stable intersection ID, incoming road/approach, nearest zebra ID, travel direction and future signal group. Other intersections and courtyard entrances remain unsignalized.
-- `traffic_light.gd` instantiates the GLB and exposes `set_signal("off" | "red" | "red_amber" | "amber" | "green")`. Shared cached materials provide independent emission without per-fixture point lights. A future controller can use this API; it is not a traffic simulation.
-- Normal play starts every signal off. Only the dev review demonstrates green and red/amber, restoring off afterwards. Cars and pedestrians currently ignore signals.
+- Vehicle fixtures use the existing GLB and shared emissive lens materials. Lower two-aspect pedestrian heads face the crossings. Both read the active phase from the same junction controller. See the project README for locations and timings.
 - Roadside tree placement leaves 8 m around fixture bases clear of new trees so nearby crowns do not cover the heads. Mast positions stay toward the outside of the pavements, away from the pedestrian centre lines.
 
 ## Visual verification

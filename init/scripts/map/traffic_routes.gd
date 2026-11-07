@@ -22,13 +22,13 @@ func _init(graph, gateways: Array[Dictionary]) -> void:
 		slots += config["slots"]
 		trips[stream] = []
 		for spec in config.get("trips", []):
-			var points: Array = [_gates[spec["entry"]]["point"]]
-			var roads: Array = spec["roads"]
-			for i in roads.size() - 1:
-				points.append(_junction(roads[i], roads[i + 1]))
-			points.append(_gates[spec["exit"]]["point"])
-			trips[stream].append({"path": _path(roads, points), "loop": false,
-				"entry": _gates[spec["entry"]]["index"], "exit": _gates[spec["exit"]]["index"]})
+			var trip := _open_trip(spec, spec["roads"])
+			if spec.has("semi_roads"):
+				var bypass := _open_trip(spec, spec["semi_roads"])
+				bypass["semi_bypass"] = true
+				_validate_trip(stream, bypass)
+				trip["semi_trip"] = bypass
+			trips[stream].append(trip)
 		for roads in config.get("loops", []):
 			var points: Array = [_junction(roads[-1], roads[0])]
 			for i in roads.size():
@@ -42,6 +42,19 @@ func _init(graph, gateways: Array[Dictionary]) -> void:
 		for trip in trips[stream]:
 			_validate_trip(stream, trip)
 	assert(slots == Flows.CAR_COUNT, "Traffic stream slots must match the car pool")
+
+func _open_trip(spec: Dictionary, roads: Array) -> Dictionary:
+	var points: Array = [_gates[spec["entry"]]["point"]]
+	for i in roads.size() - 1:
+		points.append(_junction(roads[i], roads[i + 1]))
+	points.append(_gates[spec["exit"]]["point"])
+	return {"path": _path(roads, points), "loop": false,
+		"entry": _gates[spec["entry"]]["index"], "exit": _gates[spec["exit"]]["index"]}
+
+
+func for_model(trip: Dictionary, model: String) -> Dictionary:
+	return trip.get("semi_trip", trip) if model == "kamaz_semi" else trip
+
 
 func _validate_trip(stream: String, trip: Dictionary) -> void:
 	var path: Array = trip["path"]

@@ -134,7 +134,9 @@ static func validate() -> PackedStringArray:
 	var problems := PackedStringArray()
 	for id in Layout.LOTS:
 		var rect: Rect2 = Layout.LOTS[id]["rect"]
-		if not INNER.encloses(rect):
+		# Decorative lots can explicitly allow a bounded overlap into haze.
+		var allowed := INNER.grow(float(Layout.LOTS[id].get("haze_overlap", 0.0)))
+		if not allowed.encloses(rect) or not INNER.intersects(rect):
 			problems.append("lot %s is not inside the clear map area" % id)
 	for road in Layout.ROADS:
 		var rect: Rect2 = road["rect"]

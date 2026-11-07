@@ -6,9 +6,9 @@ extends RefCounted
 const HOUSING_SPACING := 0.88
 
 const LOTS := {
-	"housing_reserve_w": {"type": "R", "rect": Rect2(-472.5, -70, 76.5, 75), "content": "housing_reserve", "condition": "kept", "facing": "e"},
-	"dormitory": {"type": "W", "rect": Rect2(-472.5, 5, 76.5, 45), "content": "dormitory_placeholder", "condition": "kept", "facing": "s"},
-	"housing_reserve_w_s": {"type": "R", "rect": Rect2(-472.5, 50, 76.5, 245), "content": "housing_reserve", "condition": "kept", "facing": "e"},
+	"housing_reserve_w": {"type": "R", "rect": Rect2(-472.5, -70, 76.5, 100), "content": "housing_reserve", "condition": "kept", "facing": "e"},
+	"dormitory": {"type": "W", "rect": Rect2(-472.5, 30, 38, 45), "content": "dormitory", "condition": "kept", "facing": "s", "entrance": Vector2(-450.8, 75)},
+	"housing_reserve_w_s": {"type": "R", "rect": Rect2(-472.5, 75, 76.5, 220), "content": "housing_reserve", "condition": "kept", "facing": "e"},
 	"housing_reserve_s": {"type": "R", "rect": Rect2(-390, 261, 365, 34), "content": "housing_reserve", "condition": "kept", "facing": "n"},
 	"forest_clearing": {"type": "N", "rect": Rect2(-567, 108, 28, 24), "content": "forest_clearing", "condition": "kept", "facing": "e"},
 	"pond_bank": {"type": "N", "rect": Rect2(265, -20, 24, 10), "content": "pond_bank", "condition": "kept", "facing": "s"},
@@ -18,6 +18,9 @@ const LOTS := {
 	"port": {"type": "X", "rect": Rect2(130, -320, 160, 120), "content": "port", "condition": "worked", "facing": "n"},
 	"fuel_depot": {"type": "X", "rect": Rect2(300, -320, 95, 120), "content": "fuel_depot", "condition": "worked", "facing": "s"},
 	"boiler": {"type": "X", "rect": Rect2(-430, -170, 100, 75), "content": "boiler_house", "condition": "worked", "facing": "s"},
+	# Wheat meets both road edges, with no verge/headland rim. Keep the 80 m
+	# boiler gap and carry the western end beyond the opaque edge haze.
+	"boiler_field": {"type": "N", "rect": Rect2(-795, -177.5, 285, 87.5), "content": "wheat_field", "condition": "kept", "facing": "s", "haze_overlap": 145.0, "verge": 0.0, "headland": 0.0},
 	"garages": {"type": "G", "rect": Rect2(-320, -170, 290, 75), "content": "garages", "condition": "worked", "facing": "s"},
 	"reserve": {"type": "R", "rect": Rect2(15, -174.5, 420, 79), "content": "wheat_field", "condition": "kept", "facing": "s"},
 	"a1_n": {"type": "W", "rect": Rect2(-337.8, -75.28, 90, 24), "content": "panel_5", "condition": "kept", "facing": "s"},
@@ -79,6 +82,7 @@ const LOTS := {
 # Asphalt roads get a pavement on both sides (SIDEWALK_WIDTH); a road may override it
 # with "walk": 0.0. The highway along the river has no pedestrian zone.
 const SIDEWALK_WIDTH := 2.5
+const CROSSWALK_DEPTH := 3.5
 
 const ROADS := [
 	# "speed" scales car speed (default 1.0); courtyard traffic is opt-in and passenger-only.

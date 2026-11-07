@@ -24,7 +24,7 @@ The garage is a real dimensioned mesh. Cars, the church, and other painted props
 
 - Import new art, regenerate `sprite_anchors.gd` using the existing dev script.
 - Run the graphical week autoplay and inspect map close-ups of the square, station/market, garage row and bus stop.
-- Open `init/scenes/dev/scale_reference.tscn` with F6 to compare the actual assets on a metre grid. Green pole: 1.8 m. Door reference: 2.2 m.
+- The former mixed sprite calibration scene has been retired. Inspect current assets in their actual map context.
 - The garage material is sampled by face UV landmarks from `garage_single_v3.png`; its source perspective does not set the mesh dimensions.
 - Ordinary apartment geometry remains the 3 m floor reference. This pass does not establish a complete physical specification for industrial props, mixed playground illustrations or the picket group.
 

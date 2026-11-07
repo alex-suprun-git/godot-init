@@ -4,6 +4,10 @@
 
 Built-in ImageGen produced a four-surface atlas for the user-authorized ATP refinement: brick, precast concrete, oxide-painted roof metal and grey-blue door paint. Untouched original, extracted source tiles and exact prompt: `art/source_images/atp/`. Four surface copies were separately prepared through `tools/optimize_asset.py` before Blender integration. Body/yard sources, portable material response and actual Godot captures are recorded in `art/models/industrial_sites/README.md`. The user approved the compact ATP ensemble (`compact-v1`) on 2026-11-06; this is the current appearance reference for that location.
 
+## Dormitory model (2026-11-06)
+
+The user authorized the existing `district_visual_pack/dormitory-v1.png` direction for a four-storey L-shaped Blender model. The game now uses the original mesh and an analytically generated, separately optimizer-prepared silicate-brick albedo; no new ImageGen artwork. Sources, build stages, actual Godot inspection and pending visual approval: `art/models/dormitory/README.md`.
+
 ## Luxury and rural vehicle projections (2026-11-04)
 
 Post-checkpoint sedan sheet: `art/source_images/vehicle_trio/luxury-sedan-v2.png`. Built-in ImageGen with the actual RAF sheet as layout/style reference and a real W140 photograph as shape reference. Six views, neutral grey grid, dark burgundy; full prompt and input roles adjacent. Proposal awaiting review, no 3D or game changes.
@@ -445,7 +449,7 @@ Full generation prompts, with `art/concepts/iso_projection_reference.png` as pro
 
 > One isolated transparent sprite of a clean black GAZ-24 Volga sedan, for a detailed hand-painted 1997 post-Soviet city map. Engineering proportions: length4.7m width1.8m height1.5m, wheel diameter0.65m. Strict orthographic true isometric matching attached reference, both ground axes exactly30degrees, verticals vertical, parallel edges remain parallel, equal-size front/rear wheels. Long axis rises right, broad side faces lower right, short front end faces lower left. Long low dignified sedan; no photographic lens perspective, no exaggerated tall cabin or huge wheels. Muted realistic painted finish, subdued chrome, flat even lighting, late August. Whole car uncropped, transparent background, no ground, no cast shadow, no people, labels, readable plates, text or watermark.
 
-Manual calibration scene: `init/scenes/dev/scale_reference.tscn` (F6). It places the actual game assets on a 1 m grid with a 1.8 m pole and a 2.2 m door reference. People, station, market stalls, bus shelter, bus and tram were recalibrated in this pass. The executive committee and historic centre were enlarged following the creative direction recorded in README.md; the church was enlarged by one third.
+Historical calibration used a 1 m grid with a 1.8 m pole and a 2.2 m door reference. That mixed sprite calibration scene was retired after the vehicle migration to 3D. People, station, market stalls, bus shelter, bus and tram were recalibrated in this pass. The executive committee and historic centre were enlarged following the creative direction recorded in README.md; the church was enlarged by one third.
 
 Road paint follow-up: the map no longer consumes `decal_center_line.png` or `decal_crosswalk.png` as stretched image patches. Individual dashes and zebra bars use world dimensions and `init/assets/shaders/road_paint.gdshader` for sparse wear; widths and placement are owned by `city_map.gd`. Existing generated decal images are retained as prior art.
 

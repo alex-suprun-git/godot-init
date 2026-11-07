@@ -58,6 +58,7 @@ const TRUCK_CAB_PAINTS := [
 	Color(0.31, 0.42, 0.29), Color(0.20, 0.33, 0.52), Color(0.70, 0.69, 0.59),
 	Color(0.63, 0.55, 0.33), Color(0.55, 0.57, 0.58), Color(0.38, 0.24, 0.16),
 ]
+const TRUCK_CONTAINER_SHADER := preload("res://assets/shaders/truck_container.gdshader")
 const CONTAINER_PAINTS := [
 	Color(0.60, 0.24, 0.17), Color(0.16, 0.28, 0.45), Color(0.20, 0.38, 0.27),
 	Color(0.72, 0.50, 0.17), Color(0.45, 0.47, 0.47), Color(0.52, 0.19, 0.20),
@@ -158,9 +159,26 @@ static func create(model_id: String, at: Vector3, length: float, axis: String, p
 		_repaint(vehicle, PAINT_BLACK)
 	elif paint >= 0:
 		_repaint(vehicle, _weighted_paint(paint, PAINT_WEIGHTS, "lada-paint") if model_id in ["lada", "lada_wagon"] else paint)
+		if model_id == "kamaz_semi":
+			_paint_truck_container(vehicle, paint)
 	vehicle.add_to_group("vehicle_models")
 	vehicle.add_to_group("vehicle_%s" % model_id)
 	return vehicle
+
+
+static func _paint_truck_container(vehicle: Node3D, seed_value: int) -> void:
+	var index := posmod(hash("kamaz-container:%d" % seed_value), CONTAINER_PAINTS.size())
+	var key := "kamaz-container|%d" % index
+	if not _paint_materials.has(key):
+		var material := ShaderMaterial.new()
+		material.shader = TRUCK_CONTAINER_SHADER
+		material.set_shader_parameter("paint", CONTAINER_PAINTS[index])
+		_paint_materials[key] = material
+	for mesh: MeshInstance3D in vehicle.find_children("*", "MeshInstance3D", true, false):
+		for surface in mesh.mesh.get_surface_count():
+			var base := mesh.mesh.surface_get_material(surface)
+			if base != null and base.resource_name == "Truck cargo":
+				mesh.set_surface_override_material(surface, _paint_materials[key])
 
 
 # Independent deterministic draw: changing model frequency does not select its colour.

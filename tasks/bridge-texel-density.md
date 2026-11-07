@@ -18,7 +18,7 @@ Target look: a mid-range PS2 game. Flat textures are fine; light, dirt and edges
 
 - Bridge materials: `init/scripts/map/district_builder.gd`, `_bridge_material()` (triplanar repeat: concrete 4 m, ballast 3 m, steel 2 m) and the bridge/embankment recipes that call it.
 - Current textures: `init/assets/textures/bridge_{concrete,ballast,steel}.png` (1024 px); originals and prompts in `art/source_images/bridges/`.
-- Scale helper: `init/scripts/dev/scale_reference.gd`.
+- The former scale-reference helper was retired. Use an actual game frame for current scale comparisons.
 - Screenshots: dev autoplay `--only=map --turbo` (see `AGENTS.md`, Workflow).
 - Asset procedure for any new raster: `art/ASSET_PIPELINE.md`.
 
