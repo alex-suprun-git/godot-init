@@ -130,7 +130,7 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 [Приёмная исполкома, 08:00]
 
-> The wait from 08:00 to 10:04 is a short time skip with captions (proposal). No secretary character is introduced. The boss's entrance leads straight into the monologue in `mon-2-boss-and-block5.md`.
+> The wait from 08:00 to 10:04 is a plain time skip (decided). No secretary character is introduced. The boss's entrance leads straight into the monologue in `mon-2-boss-and-block5.md`.
 
 *Ровно восемь. Вы пришли вовремя. В здании это, кажется, заметили только часы.*
 
@@ -139,8 +139,6 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 *Сидеть некуда, кроме стула у стены. Вы садитесь.*
 
 [Время идёт]
-
-*В девять пришла уборщица. В половине десятого позвонил телефон, и никто не взял.*
 
 [10:04]
 
@@ -162,4 +160,3 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 ## Open
 
 - Whether the drive may be skipped on the first play (default: no).
-- Whether the wait at the door needs the cleaner and the phone, or a plain time skip.
