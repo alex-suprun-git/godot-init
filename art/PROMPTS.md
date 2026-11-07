@@ -287,6 +287,18 @@ Path: `init/assets/portraits/protagonist.png`
 
 > [Window style block] Bust portrait, three-quarter view, matching the framing, background, and manner of the portraits in `init/assets/portraits/`. A man of 26, newly hired aide to a district head in late August 1997: clean-shaven, short practical haircut, attentive intelligent eyes, a cheap grey suit slightly too big at the shoulders, a white shirt, a narrow dark tie that is clearly his only one, a cardboard folder of papers under his arm. Expression neutral and watchful, neither naive nor cynical yet: the player decides who he becomes. Ordinary, believable face, not a model or a hero. Portrait 3:4.
 
+### W9. Portraits: Vera Lisitsyna, journalist (two looks)
+
+Status: proposal, not generated. Character sheet: `docs/story/characters/journalist.md`. Two portraits of the same woman, same face, same age. Paths: `init/assets/portraits/vera_home.png` (the dormitory kitchen, Monday evening) and `init/assets/portraits/vera_work.png` (press, Tuesday morning and the Friday inspection). Map tokens are cropped from them in Godot.
+
+Home look:
+
+> [Window style block] Bust portrait, three-quarter view, matching the framing, background, and manner of the portraits in `init/assets/portraits/`. A woman of 25, local, ordinary and memorable by expression: an oversized brown knitted cardigan with a small hole at the elbow over a plain T-shirt, hair in a loose bun held with a pencil, a chipped mug in one hand, tired and unguarded, open curious half smile. Warm kitchen lamp light, a calendar from a sawmill on the wall behind. Portrait 3:4.
+
+Work look:
+
+> [Window style block] Bust portrait, three-quarter view, matching the framing, background, and manner of the portraits in `init/assets/portraits/`. The same woman of 25 as in the home look: dark graphite second-hand blazer, ironed white blouse, hair pulled back in a neat ponytail, a burgundy lanyard with a press card, a steno notebook held to her chest, a small dictaphone in the pocket, one eyebrow slightly raised, alert and composed. Cool morning daylight, the steps of a district administration building blurred behind. Portrait 3:4.
+
 ## K: Map kit (after the test batch passes)
 
 Same rules as the test batch. Facades are tileable horizontally unless noted.

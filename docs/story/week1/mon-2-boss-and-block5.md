@@ -38,7 +38,7 @@ Monday 25 August 1997, 10:04 to the afternoon. Two scenes: the boss's briefing (
 
 [Двор дома 5, 10:35]
 
-> First conversation of the game. Backdrop: the courtyard of Block 5 with the bench by the entrance. Character: Baba Nina, about seventy, small, glasses on a cord, a notebook in an oilcloth cover. She is sharp, tireless and suspicious of anyone from the executive committee; she is the district's "voice of the people". She tests newcomers before she helps.
+> First conversation of the game. Backdrop: the courtyard of Block 5 with the bench by the entrance. Character: Baba Nina, in her seventies, glasses on a cord, a green notebook in an oilcloth cover (see `init/assets/portraits/baba_nina.png`). She is sharp, tireless and suspicious of anyone from the executive committee; she is the district's "voice of the people". She tests newcomers before she helps.
 >
 > Time cost: about 1 to 1.5 game hours in total (tuning value). The timeskip happens behind the scene at the end. Mikhalych cannot be sent anywhere yet: he is unknown to the player and absent. Nothing is locked in week 1.
 

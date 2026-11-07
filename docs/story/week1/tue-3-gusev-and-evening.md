@@ -6,9 +6,9 @@ Tuesday 26 August 1997, afternoon and evening. Gusev introduces himself in recep
 
 [Приёмная исполкома, 14:30]
 
-> Conversation, about 45 minutes. Backdrop: reception, a bench, a poster about the heating season. Character: **Gusev**, about fifty, a builder who became a businessman: a leather jacket over a good shirt, a firm handshake, a smile that arrives before he does. Voice: friendly, expansive, generous with promises. No envelope; that offer is removed for now.
+> Conversation, about 45 minutes. Backdrop: reception, a bench, a poster about the heating season. Character: **Gusev**, late thirties, a new 1990s businessman, as in his portrait (`init/assets/portraits/gusev.png`): a burgundy double-breasted jacket, a gold chain, a brick-sized mobile phone, a confident grin, a cheap expensive look; a firm handshake and a smile that arrives before he does. Voice: friendly, expansive, generous with promises. No envelope; that offer is removed for now.
 
-*В приёмной на скамейке сидит человек в кожаной куртке и читает «Речные вести», держа газету так, как держат документ.*
+*В приёмной на скамейке сидит человек в малиновом пиджаке, с телефоном размером с кирпич, и читает «Речные вести», держа газету так, как держат документ.*
 
 ГУСЕВ: Вы новенький? Гусев, строительная фирма «Стройремонт». Не за деньгами и не за просьбой, поверьте. Просто познакомиться. В нашем районе знакомство дороже денег, а стоит дешевле.
 

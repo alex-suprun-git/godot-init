@@ -32,10 +32,10 @@ The same person must read as the same person in both, with a clear change of reg
 
 ## Visual reference direction
 
-- Late-1990s provincial Eastern European regional press: documentary street photography, 35 mm film grain, muted colour, no glamour. Not a fashion editorial and not a retro filter.
+- Rendering: the project's painterly oil window-art manner, exactly like the existing portraits in `init/assets/portraits/` (see the window style block in `art/PROMPTS.md`). Late-1990s provincial regional-press people serve only as a reference for clothes, posture and props, not as a photographic look.
 - Colours should sit with the project's interface language ("Living Chancellery": cream paper, warm graphite, burgundy ink). The burgundy lanyard is the one deliberate accent that links her to it.
 - No real person's likeness; the face is an original design. Age 25, ordinary, memorable by expression rather than beauty.
-- Follow `art/ASSET_PIPELINE.md` for generated raster art (original preserved outside `init/`, visual approval, optimization as a separate step). Existing portraits for style and framing: `init/assets/portraits/`.
+- Generation prompts: `art/PROMPTS.md`, entry W9 (proposal, not generated yet). Follow `art/ASSET_PIPELINE.md` for generated raster art (original preserved outside `init/`, visual approval, optimization as a separate step). Existing portraits for style and framing: `init/assets/portraits/`.
 
 ## Assumptions
 

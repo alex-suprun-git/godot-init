@@ -12,7 +12,7 @@ Tuesday 26 August 1997, about 09:00 to the afternoon. The player has a missing f
 
 [Пивная за рынком, 10:30]
 
-> Conversation, about 1 hour. Backdrop: a low room, six tables, a bar, a TV that shows a boxing match without sound. Characters: **Mikhalych** (late fifties, scarred hands, shy, dry self-deprecating humor) and the owner **Semyonych** (a minor character; he has no other scene). Nina's advice, «приведите, не приказывайте», shapes the choices.
+> Conversation, about 1 hour. Backdrop: a low room, six tables, a bar, a TV that shows a boxing match without sound. Characters: **Mikhalych** (around sixty, heavy-set, grey walrus moustache, flat cap, padded work jacket, scarred hands, as in `init/assets/portraits/mikhalych.png`; shy, dry self-deprecating humor) and the owner **Semyonych** (a minor character; he has no other scene). Nina's advice, «приведите, не приказывайте», shapes the choices.
 
 *Хозяин пивной, плотный, без шеи, вытирает стойку так, будто хочет стереть и её тоже.*
 
