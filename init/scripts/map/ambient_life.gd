@@ -36,7 +36,7 @@ var agents: Array[Dictionary] = []
 var hour := 12.0 # Clock hour, set by the view; decides who is out and about.
 
 var stats := {"exits": {}, "arrivals": {}, "max_step": 0.0, "max_excess": 0.0, "motion_warnings": 0, "passes_started": 0, "passes_finished": 0, "road_speeds": {},
-	"loops": {"city": 0, "courtyard": 0}}
+	"loops": {"city": 0, "residential": 0}}
 var _hour_override := -1.0
 var _traffic_debug := OS.get_cmdline_user_args().has("--traffic-debug")
 

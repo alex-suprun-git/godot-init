@@ -41,6 +41,7 @@ func build(city_map) -> void:
 	_build_border_fence()
 	_build_rail_poles()
 	preload("res://scripts/map/residential_court.gd").new().build(self)
+	preload("res://scripts/map/residential_infill.gd").new().build(self)
 	preload("res://scripts/map/nature_places.gd").new().build(self)
 	preload("res://scripts/map/heating_details.gd").new().build(map)
 	_build_train_stock()
@@ -103,7 +104,7 @@ func _build_ground() -> void:
 			map._occupy(rect.get_center(), rect.size)
 			continue
 		# Housing-estate roads are asphalt too, just a lighter, warmer tone than the main roads.
-		var ground: String = {"asphalt": "asphalt", "yard": "asphalt", "dirt": "dirt"}[road["kind"]]
+		var ground: String = road.get("surface", {"asphalt": "asphalt", "yard": "asphalt", "dirt": "dirt"}[road["kind"]])
 		var yard: bool = road["kind"] == "yard"
 		var highway: bool = road.get("look", "") == "highway"
 		# The highway sits a hair lower so every town street crossing it wins the overlap.
@@ -1165,7 +1166,9 @@ func _register_doorstep(lot_id: String, lot: Dictionary, entry: Dictionary, cent
 # Keep all footprints out of roads/railways, including village roads through plots.
 func _clear(rect: Rect2) -> bool:
 	for road in Layout.ROADS:
-		if rect.intersects(road["rect"].grow(0.5)):
+		# Entrance paving may meet the facade; vehicle lanes retain a setback.
+		var clearance := 0.0 if road.get("surface", "") == "paving" else 0.5
+		if rect.intersects(road["rect"].grow(clearance)):
 			return false
 	for track in range(Layout.RAILS.size()):
 		var line: Array = RailwayRoute.through_line(track) if track < 2 else Layout.RAILS[track]
