@@ -2,7 +2,7 @@
 # stable during a trip; district boundaries never hide a moving vehicle.
 extends RefCounted
 
-const CAR_COUNT := 86
+const CAR_COUNT := 90
 const STREAMS := {
 	"through": {"slots": 30, "fleet": {"truck": 0.51, "car": 0.44, "bus": 0.05}, "trips": [
 		{"entry": "highway_w", "exit": "highway_e", "roads": ["highway"]},
@@ -21,7 +21,7 @@ const STREAMS := {
 		["north_street", "axis", "south_street", "west_street"],
 		["north_street", "village_street", "south_street", "axis"],
 	]},
-	"courtyard": {"slots": 4, "fleet": {"car": 1.0}, "loops": [
+	"residential": {"slots": 8, "fleet": {"car": 0.9, "bus": 0.1}, "loops": [
 		["north_street", "housing_spine", "housing_cross_path", "west_street"],
 		["housing_cross_path", "housing_spine", "south_street", "west_street"],
 		["north_street", "axis", "housing_cross_path", "housing_spine"],
