@@ -2,6 +2,16 @@
 
 Apply this guidance to every new or reworked map location: building ensembles, industrial and service sites, churches, kiosks, private houses and courtyards. The user approved the compact ATP's actual-game appearance on 2026-11-06 after rejecting a large, sparsely used paved parcel. The worked example, measured layout, sources and inspected frames are recorded in [the ATP asset record](../../../../art/models/industrial_sites/README.md). Keep those asset-specific facts there rather than copying its layout to every location.
 
+## Arrange existing components
+
+Use this workflow for infill, moving buildings and revising surrounding streets. Read the current district/location decisions in `README.md`, the relevant location record and `district_layout.gd`; use a current game frame as context. Reuse suitable components at their existing dimensions.
+
+1. **Choose circulation before building positions.** Identify each changed connection as a street with traffic, a courtyard drive or a pedestrian path, including its endpoints and permitted users. Preserve existing roles unless the task changes them. Take widths and behavior from suitable current project examples; clarify an unresolved choice before placement when it materially changes the composition or gameplay.
+2. **Reserve the full corridor.** Include carriageway, sidewalks, frontage clearance and required turning/parking space before placing buildings. When an authorized street change needs more room, move adjacent buildings and their entrance paths, gardens and parking together. Retain the school/core reserves and other location commitments.
+3. **Check the whole layout numerically before a graphical run.** Use actual scaled and rotated building footprints, with visible overhangs where relevant. Check buildings against each other, roads, sidewalks and railway corridors; check that entrance approaches meet the correct facades and remain connected. Resolve predictable intersections by calculation rather than successive game launches. These checks support, but do not replace, visual inspection.
+4. **Connect the intended behavior.** A street requested with traffic needs the appropriate road graph and vehicle itineraries; pedestrian links need the walking graph. Check the existing graph consumers rather than treating a painted surface or a road type alone as proof of working access. Report deliberately scenic access as such.
+5. **Review one coherent layout.** Update positions and dependent records together, then use the narrowest relevant autoplay capture to inspect the result and actual movement. Repeat captures for specific findings or requested changes. Keep the required CI checks from `AGENTS.md`; this workflow adds no new automated test requirement.
+
 ## Locations are set dressing: size them by need, not by lot
 
 Most map locations are scenery for the city, not simulated facilities. The city feels alive when many different small places fit into it, not when one function is spread over a large parcel (twenty containers in three rows 50 m apart). The lot rectangles in `init/scripts/data/district_layout.gd` come from an early zoning sketch and are often far larger than the location needs. Treat a lot as an upper bound, never as the target size. Oversized parcels were rejected before (the first ATP).
