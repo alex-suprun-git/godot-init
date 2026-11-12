@@ -55,9 +55,20 @@ func _house_inlet() -> void:
 func _boiler_pipes() -> void:
 	var center := Layout.lot_center("boiler")
 	var group := _group("BoilerExternalHeatMain", center)
+	var worn := _group("BoilerWornInsulation", center)
+	var restored := _group("BoilerRestoredInsulation", center)
 	# A short paired main turns beside the boiler and descends underground.
 	for z in [4.0, 6.0]:
-		_pipe(Vector3(14, 2.5, z), Vector3(34, 2.5, z), 0.48, INSULATION, group)
+		var gap_start := 21.0 if z == 4.0 else 24.0
+		var gap_end := 28.0 if z == 4.0 else 30.0
+		var a := Vector3(gap_start, 2.5, z)
+		var b := Vector3(gap_end, 2.5, z)
+		_pipe(Vector3(14, 2.5, z), a, 0.48, INSULATION, group)
+		_pipe(b, Vector3(34, 2.5, z), 0.48, INSULATION, group)
+		_pipe(a, b, 0.29, RUST, worn)
+		_pipe(a, b, 0.48, INSULATION, restored)
+		for cut in [a, b - Vector3.RIGHT * .16]:
+			_pipe(cut, cut + Vector3.RIGHT * .16, .52, STEEL, worn)
 		_pipe(Vector3(34, 2.5, z), Vector3(34, 2.5, z + 12), 0.48, INSULATION, group)
 		_pipe(Vector3(34, 2.5, z + 12), Vector3(34, 0.4, z + 12), 0.48, RUST, group)
 		for x in [18.0, 23.0, 28.0, 32.0]:
@@ -69,6 +80,7 @@ func _boiler_pipes() -> void:
 	_hatch(Vector3(36, 0.19, 21), group)
 	map._occupy(center + Vector2(25, 5), Vector2(24, 5))
 	map._occupy(center + Vector2(34, 13), Vector2(3, 19))
+	map.get_node("Industrial_boiler/BoilerStoryStates").attach_heat_main(worn, restored)
 
 
 func _pipe(a: Vector3, b: Vector3, radius: float, color: Color, parent: Node3D) -> void:

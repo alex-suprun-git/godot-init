@@ -28,7 +28,7 @@ Moved verbatim from the root `README.md` on 2026-11-07. These are implementation
 ## Heating Infrastructure Detail Pilot
 
 - House 5 has a small paired basement heating inlet, valve wheels, basement grilles and inspection covers. A short paired main on supports leaves the boiler house and descends underground. Most residential distribution remains buried.
-- These are static geometry props, slightly emphasized for map readability. They do not imply a new leak or active heating; steam, repair/damage variants and thawed winter routes are not implemented. Named groups allow later authored event states.
+- Boiler No. 3 starts with worn roofing and masonry, boarded glazing and stripped pipe insulation. A booked contractor puts materials on the apron, then scaffolding and a service truck appear on the next Monday. The coal truck appears only during the current theft request, and a successful theft leaves a depleted bay through subsequent weeks. Construction and coal stock are independent. Coal uses metre-scale aggregate textures on irregular heaps and leftover fragments. The vehicle gate follows the displayed clock (06:00–20:00) and remains open during the theft event. Its two-second swing is visual and leaves the road graph unchanged. In autumn and winter the chimney emits smoke around the clock, including during repairs. In summer it emits only in the working state, which also removes the damage and restores the pipe insulation. The playable week has no commissioning event. The 3D layers reuse the existing lot, models and access routes.
 
 ## Learning Approach
 

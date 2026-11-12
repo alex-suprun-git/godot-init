@@ -2,6 +2,7 @@
 # Markings and stored vehicles are scenery, not simulated border processing.
 extends RefCounted
 
+const AccessGate = preload("res://scripts/map/access_gate.gd")
 const Vegetation = preload("res://scripts/map/vegetation_models.gd")
 const Settings = preload("res://scripts/data/settings.gd")
 const GROUND = preload("res://assets/shaders/atp_ground.gdshader")
@@ -113,14 +114,22 @@ func parking(at: Vector2, count: int, pitch := 3.0, depth := 6.0) -> void:
 func lamp(at: Vector2) -> void:
 	site.asset("yard_lamp",Vector3(at.x,.04,at.y))
 
-func gate(x: float, half_width: float, z: float) -> void:
-	# Two actual leaves folded inside the fence, rather than a spare gate
-	# floating across the neighbouring fence section. Static open state.
-	for sign_value in [-1.0,1.0]:
-		site.asset("gate_6m",Vector3(x+sign_value*half_width,.04,z-half_width/2),PI/2.0,Vector3(half_width/6,1,1))
-		site.box(Vector3(x+sign_value*half_width,1.4,z),Vector3(.22,2.8,.22),"58665d")
+func gate(x: float, half_width: float, z: float, moving := false) -> void:
+	var leaves: Node3D
+	if moving:
+		leaves = AccessGate.new()
+		leaves.name = "VehicleGate"
+		site.root.add_child(leaves)
+	for side in [-1.0, 1.0]:
+		var hinge := Vector3(x+side*half_width,.04,z)
+		if moving:
+			# Leaves swing into the yard and meet with a small gap.
+			leaves.add_hinged_leaf(site.MODELS["gate_6m"],hinge,half_width-.10,-side,deg_to_rad(87.0),6.0)
+		else:
+			site.asset("gate_6m",hinge-Vector3(0,0,half_width/2),PI/2.0,Vector3(half_width/6,1,1))
+		site.box(Vector3(hinge.x,1.4,z),Vector3(.22,2.8,.22),"58665d")
 
-func enclosure(size: Vector2, openings: Array, pedestrian := 0.0, solid := false, rail_z := 100000.0) -> void:
+func enclosure(size: Vector2, openings: Array, pedestrian := 0.0, solid := false, rail_z := 100000.0, moving_gate := false) -> void:
 	var w := size.x/2-.8
 	var d := size.y/2-.8
 	boundary(Vector2(-w,-d),Vector2(w,-d),solid)
@@ -137,7 +146,7 @@ func enclosure(size: Vector2, openings: Array, pedestrian := 0.0, solid := false
 	slots.sort_custom(func(a,b): return a.x < b.x)
 	for opening in slots:
 		boundary(Vector2(previous,d),Vector2(opening.x-opening.y/2,d),solid)
-		gate(opening.x,opening.y/2,d)
+		gate(opening.x,opening.y/2,d,moving_gate and opening.x != pedestrian)
 		previous=opening.x+opening.y/2
 	boundary(Vector2(previous,d),Vector2(w,d),solid)
 
@@ -311,24 +320,20 @@ func truck_stop() -> void:
 			plant(Vector2(-45+col*17+sin(float(col+row)*2)*2,-69+row*18+cos(float(col))*2),false,.48+float(col%2)*.07,float(col))
 
 func boiler() -> void:
-	# 80 x 62 m; existing building, chimney, pipes and repair state stay aligned.
+	# 80 x 62 m; boiler_house.gd owns the coal bay and story dressing.
 	ground(Rect2(-39,-30,78,60))
 	site.asset("boiler_house",Vector3(0,.04,0))
 	site.asset("boiler_chimney",Vector3(23,.04,-15))
 	ground(Rect2(-21,10.5,42,16),true,.046)
 	ground(Rect2(17,-20,13,14),true,.045)
 	site.asset("fuel_pump_house",Vector3(-28,.04,-21))
-	enclosure(Vector2(80,62),[Vector2(0,14)],12,true)
+	enclosure(Vector2(80,62),[Vector2(0,14)],12,true,100000.0,true)
 	access(0,29,6,14)
 	ground(Rect2(11,23,2,12),true,.046)
 	ground(Rect2(-20,-17,2,43),true,.046)
 	ground(Rect2(-31,-17,13,2),true,.046)
 	parking(Vector2(26,24),2)
 	site.vehicle("lada",Vector2(27.5,24),"z",2)
-	site.box(Vector3(-29,.4,19),Vector3(18,.8,11),"858c80")
-	site.box(Vector3(-29,1.0,15),Vector3(16,1.2,.25),"7d857b")
-	for i in 6:
-		site.box(Vector3(-35+i*2.2,1.3+sin(i*1.7)*.25,19),Vector3(3.5,1.3,6.5),"373b35",i*.31)
 	for z in [-10.0,-7.0,-4.0]:
 		site.asset("pallet_stack",Vector3(-23,.045,z))
 	green(Rect2(-37,-29,74,4))

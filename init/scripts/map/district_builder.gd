@@ -314,8 +314,6 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 		_prop(lot, prop, center + prop.get("at", Vector2.ZERO))
 	if lot["content"] == "checkpoint" and kind != "industrial_site":
 		_checkpoint_gates(center)
-	if lot["content"] == "boiler_house":
-		map._build_boiler_states(center, entry)
 	var label := Label3D.new()
 	label.text = "%s\n%s" % [entry.get("label", id), id]
 	label.font = OfficeTheme.BODY_FONT

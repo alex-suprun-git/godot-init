@@ -147,7 +147,6 @@ var _dragging := false
 var _ui_input_blocked := false
 var _tokens := {} # actor id -> Node3D
 var _overlays := {} # "lot:name" -> Node3D
-var _lot_states := {} # lot -> {state -> Node3D}
 var _location_states := {} # location -> scheduled state controller, with event override.
 var wear: WearMask # Worn-ground sources register here while the district is built.
 var _occupied: Array[Rect2] = [] # Ground taken by buildings and roads; trees avoid it.
@@ -562,41 +561,6 @@ func _build_weather() -> void:
 	add_child(_weather)
 
 
-# Boiler visual states are lot-local and follow the same recipe as its dressing.
-func _build_boiler_states(center: Vector2, entry: Dictionary) -> void:
-	var chimney := center
-	for prop in entry["dressing"]:
-		if prop["sprite"] == "boiler_chimney":
-			chimney += prop["at"]
-	var repairing := Node3D.new()
-	repairing.name = "BoilerRepairing"
-	add_child(repairing)
-	preload("res://scripts/map/industrial_sites.gd").build_boiler_repairing(self, repairing, center)
-	repairing.visible = false
-	var working := Node3D.new()
-	working.name = "BoilerWorking"
-	add_child(working)
-	var smoke := CPUParticles3D.new()
-	smoke.position = Vector3(chimney.x, 34.5, chimney.y)
-	smoke.amount = 40
-	smoke.lifetime = 6.0
-	smoke.direction = Vector3(0.3, 1, 0)
-	smoke.spread = 12.0
-	smoke.initial_velocity_min = 2.0
-	smoke.initial_velocity_max = 3.0
-	smoke.gravity = Vector3(0.6, 0.4, 0)
-	smoke.scale_amount_min = 2.0
-	smoke.scale_amount_max = 4.0
-	var puff := SphereMesh.new()
-	puff.radius = 0.6
-	puff.height = 1.2
-	puff.material = _material(Color(0.85, 0.85, 0.85, 0.5))
-	smoke.mesh = puff
-	working.add_child(smoke)
-	working.visible = false
-	_lot_states["boiler"] = {"repairing": repairing, "working": working}
-
-
 # Parked cars follow road geometry; site-specific vehicles are catalog dressing.
 # Parked cars keep clear of junctions by this many metres beyond the crossing road's edge.
 const PARKING_CLEARANCE := 25.0
@@ -861,17 +825,6 @@ func _build_overlays() -> void:
 	_sprite(PICKET_GROUP, _ground(block5 - front * 12), 12.0, picket)
 	picket.visible = false
 	_overlays["block5:picket"] = picket
-	var truck := Node3D.new()
-	add_child(truck)
-	var boiler := Week1.location_position("boiler")
-	var recipe: Dictionary = BuildingCatalog.CONTENTS[DistrictLayout.LOTS[Week1.LOTS["boiler"]["layout"]]["content"]]
-	for prop in recipe["dressing"]:
-		if prop["sprite"] == "coal_heap":
-			_vehicle("zil_flatbed", _ground(boiler + prop["at"] + Vector2(13, 3)) + Vector3.UP * 0.025, VehicleModels.map_length("zil_flatbed"), "z", truck, 0)
-	truck.visible = false
-	_overlays["boiler:truck"] = truck
-
-
 func _build_trees() -> void:
 	# Reserved cores get younger, sparse trees; village gardens keep older growth.
 	for id in DistrictLayout.LOTS:
@@ -992,11 +945,6 @@ func _on_overlay_changed(lot: String, overlay: String, shown: bool) -> void:
 func _on_lot_state_changed(lot: String, state: String) -> void:
 	if _location_states.has(lot):
 		_location_states[lot].set_override(StringName(state))
-		return
-	if not _lot_states.has(lot):
-		return
-	for state_name in _lot_states[lot]:
-		_lot_states[lot][state_name].visible = state_name == state
 
 
 func register_location_state(id: String, controller: Node) -> void:

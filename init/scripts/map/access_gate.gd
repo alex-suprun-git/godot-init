@@ -13,9 +13,9 @@ var openness: float:
 		_openness = clampf(value,0.0,1.0)
 		_apply_pose()
 
-func add_hinged_leaf(scene: PackedScene, hinge: Vector3, width: float, side: float, angle: float) -> void:
+func add_hinged_leaf(scene: PackedScene, hinge: Vector3, width: float, side: float, angle: float, source_width := 4.5) -> void:
 	var leaf: Node3D = scene.instantiate()
-	leaf.scale.x = width/4.5
+	leaf.scale.x = width/source_width
 	add_child(leaf)
 	_parts.append({"kind": &"hinged", "node": leaf, "hinge": hinge,
 		"offset": Vector3(side*width/2.0,0,0), "angle": side*angle})
