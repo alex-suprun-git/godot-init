@@ -67,35 +67,6 @@ var _boxes: Dictionary = {}
 static func supports(id: String) -> bool:
 	return id in LOT_IDS
 
-static func build_boiler_repairing(city_map, parent: Node3D, at: Vector2) -> void:
-	# Keep the existing repair-state trigger, replacing its painted equipment.
-	var base := Vector3(at.x, .05, at.y)
-	var steel := Color("737e73")
-	for x in [-13.0,-6.5,0.0,6.5,13.0]:
-		for z in [11.3,13.3]:
-			city_map._box(Vector3(.10,9.6,.10),base+Vector3(x,4.8,z),steel,parent)
-	for y in [3.0,6.0,9.0]:
-		city_map._box(Vector3(26.5,.12,2.3),base+Vector3(0,y,12.3),Color("8d8066"),parent)
-		city_map._box(Vector3(26.5,.08,.08),base+Vector3(0,y+1.0,13.3),steel,parent)
-		for x in [-9.75,-3.25,3.25,9.75]:
-			_repair_beam(city_map,parent,base+Vector3(x-3.25,y-2.9,13.3),base+Vector3(x+3.25,y,13.3),.07,steel)
-	var truck := Vehicles.create("zil_flatbed",base+Vector3(25,0,19),Vehicles.map_length("zil_flatbed"),"x",2)
-	parent.add_child(truck)
-	city_map._box(Vector3(2,.8,1.6),base+Vector3(24,2,19),Color("ab8c40"),parent)
-	for z in [16.5,21.5]:
-		city_map._box(Vector3(3,.12,.22),base+Vector3(24,.7,z),steel,parent)
-		city_map._box(Vector3(.35,.7,.35),base+Vector3(24,.35,z),steel,parent)
-	_repair_beam(city_map,parent,base+Vector3(24,2.4,19),base+Vector3(18,11,9),.34,Color("ab8c40"))
-	_repair_beam(city_map,parent,base+Vector3(18,11,9),base+Vector3(4,12,7),.18,Color("8d7e48"))
-	_repair_beam(city_map,parent,base+Vector3(4,12,7),base+Vector3(4,10,7),.035,steel)
-	city_map._box(Vector3(32,.14,.12),base+Vector3(0,1.1,17),Color("c3a354"),parent)
-	for x in [-16.0,0.0,16.0]:
-		city_map._box(Vector3(.15,1.2,.15),base+Vector3(x,.6,17),Color("b4a17b"),parent)
-
-static func _repair_beam(city_map, parent: Node3D, a: Vector3, b: Vector3, width: float, color: Color) -> void:
-	var node: MeshInstance3D = city_map._box(Vector3(width,a.distance_to(b),width),(a+b)/2.0,color,parent)
-	node.quaternion = Quaternion(Vector3.UP,(b-a).normalized())
-
 func build(district_builder, id: String, lot: Dictionary) -> void:
 	map = district_builder.map
 	center = lot["rect"].get_center()
@@ -264,6 +235,7 @@ func _fuel() -> void:
 
 func _boiler() -> void:
 	preload("res://scripts/map/frontier_sites.gd").new().build(self, "boiler")
+	preload("res://scripts/map/boiler_house.gd").new().build(map, root)
 
 func _garages() -> void:
 	preload("res://scripts/map/frontier_sites.gd").new().build(self, "garages")
