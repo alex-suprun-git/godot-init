@@ -1,4 +1,6 @@
 shader_type spatial;
+#include "winter_surfaces.gdshaderinc"
+
 uniform sampler2D surface_texture : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform vec4 surface_tint : source_color = vec4(1.0);
 uniform bool winter = false;
@@ -13,14 +15,17 @@ void fragment() {
 	vec3 detail = texture(surface_texture, world_xz / scale).rgb;
 	vec3 mean_colour = textureLod(surface_texture, vec2(0.5), 12.0).rgb;
 	vec3 colour;
-	if (paved) {
+	if (winter) {
+		float grain = dot(detail - mean_colour, vec3(0.299, 0.587, 0.114));
+		float compaction = paved ? 0.70 : (yard ? 0.66 : 0.76);
+		colour = winter_snow_colour(world_xz, compaction) + clamp(grain, -0.25, 0.25) * 0.16;
+	} else if (paved) {
 		// Preserve slab joints while suppressing the large painted stains.
 		colour = mean_colour + (detail - mean_colour) * 0.60;
 	} else {
 		float grain = dot(detail - mean_colour, vec3(0.299, 0.587, 0.114));
 		vec3 earth = yard ? vec3(0.165, 0.145, 0.105) : vec3(0.19, 0.145, 0.095);
-		vec3 packed_snow = yard ? vec3(0.35, 0.36, 0.37) : vec3(0.32, 0.33, 0.34);
-		colour = (winter ? packed_snow : earth) + grain * (winter ? 0.20 : 0.32);
+		colour = earth + grain * 0.32;
 	}
 	ALBEDO = clamp(colour * surface_tint.rgb, vec3(0.02), vec3(0.85));
 	ROUGHNESS = 1.0;

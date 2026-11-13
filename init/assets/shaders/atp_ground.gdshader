@@ -1,4 +1,5 @@
 shader_type spatial;
+#include "winter_surfaces.gdshaderinc"
 
 uniform sampler2D grain_texture : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform bool concrete = false;
@@ -46,8 +47,9 @@ void fragment() {
 		float patch=step(.94,hash2(patch_cell))*smoothstep(.04,.12,min(min(local.x,1.0-local.x),min(local.y,1.0-local.y)));
 		color*=1.0-patch*.10;
 	}
-	if(winter){
-		color=mix(color,vec3(.64,.68,.70),smoothstep(.45,.80,broad)*.65);
+	if (winter) {
+		float cover = concrete ? 0.36 : 0.08;
+		color = mix(color, winter_snow_colour(p, 0.80), cover + (broad - 0.5) * 0.08);
 	}
 	ALBEDO=color;
 	ROUGHNESS=.97;

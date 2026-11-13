@@ -1,9 +1,10 @@
 // Metre-scale compacted aggregate, with shared world detail across junctions.
 shader_type spatial;
 render_mode specular_disabled;
+#include "winter_surfaces.gdshaderinc"
+
 uniform sampler2D gravel_texture : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform sampler2D grass_texture : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
-uniform sampler2D snow_texture : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform bool winter = false;
 uniform bool along_x = false;
 uniform bool traffic_tracks = true;
@@ -47,8 +48,8 @@ void fragment() {
     vec3 grass=texture(grass_texture,world_xz/4.0).rgb*grass_tint.rgb;
     vec3 colour=mix(gravel,grass,broken_edge*.48);
     if (winter) {
-        vec3 snow=texture(snow_texture,world_xz/6.0).rgb;
-        colour=mix(gravel,snow,.91-.14*track);
+        float compaction = mix(0.74 + 0.14 * track, 0.28, broken_edge);
+        colour = winter_snow_colour(world_xz, compaction) + grain * 0.10;
     }
     ALBEDO=max(colour,vec3(.015));
     ROUGHNESS=.98;

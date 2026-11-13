@@ -1,5 +1,6 @@
 shader_type spatial;
 render_mode specular_disabled;
+#include "winter_surfaces.gdshaderinc"
 
 uniform sampler2D soil_texture : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform float snow_cover = 0.0;
@@ -38,8 +39,8 @@ void fragment() {
 	vec3 autumn = soil * vec3(0.66, 0.58, 0.46) * rows;
 	autumn = mix(autumn, vec3(0.43, 0.31, 0.15), straw * 0.58 * (1.0 - track));
 	autumn *= 1.0 - track * 0.24;
-	// Winter samples the project's snow ground, retaining only scattered straw.
-	vec3 winter = soil * (1.0 - track * 0.055);
+	// The snow cover is continuous with the headland, with shallow wheel ruts.
+	vec3 winter = winter_snow_colour(at, 0.04 + track * 0.09);
 	winter = mix(winter, vec3(0.26, 0.20, 0.12), straw * step(0.88, seed) * 0.28);
 	ALBEDO = mix(autumn, winter, snow_cover);
 	ROUGHNESS = 1.0;

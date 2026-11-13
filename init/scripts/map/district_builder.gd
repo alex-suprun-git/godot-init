@@ -3,6 +3,7 @@
 extends RefCounted
 
 const Layout = preload("res://scripts/data/district_layout.gd")
+const Settings = preload("res://scripts/data/settings.gd")
 const Catalog = preload("res://scripts/data/building_catalog.gd")
 const Boundaries = preload("res://scripts/data/map_boundaries.gd")
 const RailwayRoute = preload("res://scripts/map/railway_route.gd")
@@ -189,7 +190,8 @@ func _patch(rect: Rect2, ground: String, height: float, condition_tint: Color = 
 	if ground == "asphalt":
 		map._asphalt_quad(rect, height, condition_tint, highway)
 		return
-	if ground in ["dirt", "courtyard", "paving"] and minf(rect.size.x, rect.size.y) <= 12.0:
+	var narrow_path := minf(rect.size.x, rect.size.y) <= 12.0
+	if (narrow_path and ground in ["dirt", "courtyard", "paving"]) or (ground == "paving" and Settings.season == "winter"):
 		map._path_quad(rect, height, ground, condition_tint)
 		return
 	var tint: Color = map._season["grass_tint"] if ground in ["grass", "grass_dry"] else Color.WHITE
@@ -568,7 +570,12 @@ func _road_bridge(rect: Rect2, height: float, ramp: float) -> void:
 	var flat_center := flat.get_center()
 	_bridge_concrete_box(Vector3(width, 0.8, flat.size.y), Vector3(cx, height - 0.4, flat_center.y), CONCRETE)
 	_bridge_concrete_box(Vector3(width + 0.4, 0.35, flat.size.y), Vector3(cx, height - 0.95, flat_center.y), CONCRETE_DARK)
-	map._ground_quad(flat_center, Vector2(width - 0.8, flat.size.y), height + 0.01, map._season["asphalt"], 14.0)
+	var surface_size := Vector2(width - 0.8, flat.size.y)
+	var winter := Settings.season == "winter"
+	if winter:
+		map._asphalt_quad(Rect2(flat_center - surface_size / 2.0, surface_size), height + 0.01, Color.WHITE, true)
+	else:
+		map._ground_quad(flat_center, surface_size, height + 0.01, map._season["asphalt"], 14.0)
 	for side in [-1.0, 1.0]:
 		_bridge_concrete_box(Vector3(0.4, 1.0, flat.size.y), Vector3(cx + side * (width / 2.0 - 0.2), height + 0.5, flat_center.y), CONCRETE)
 		_bridge_concrete_box(Vector3(0.6, 0.15, flat.size.y), Vector3(cx + side * (width / 2.0 - 0.2), height + 1.07, flat_center.y), Color("b3afa0"))
@@ -606,7 +613,7 @@ func _road_bridge(rect: Rect2, height: float, ramp: float) -> void:
 		material.uv1_scale = Vector3((width - 0.8) / 14.0, length / 14.0, 1.0)
 		material.roughness = 0.95
 		surface.mesh = quad
-		surface.material_override = material
+		surface.material_override = map._asphalt_material(Color.WHITE, true) if winter else material
 		surface.rotation.x = -PI / 2.0
 		surface.position = Vector3(0, 0.02, dir * length / 2.0)
 		ramp_root.add_child(surface)

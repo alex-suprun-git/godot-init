@@ -18,9 +18,10 @@ func build(map, lot: Dictionary) -> void:
 	var soil := site.grow(-float(lot.get("verge", VERGE)))
 	var crop := soil.grow(-float(lot.get("headland", HEADLAND)))
 	map._occupy(crop.get_center(), crop.size)
-	map._ground_quad(soil.get_center(), soil.size, 0.035, map._season["dirt"], 8.0)
+	var winter := Settings.season == "winter"
+	map._ground_quad(soil.get_center(), soil.size, 0.035, map._season["dirt"], 8.0, false, Color.WHITE, winter)
 	if Settings.season != "summer":
-		_harvested_field(map, crop, Settings.season == "winter")
+		_harvested_field(map, crop, winter)
 		return
 	var material := ShaderMaterial.new()
 	material.shader = CROP_SHADER

@@ -2,6 +2,7 @@
 extends RefCounted
 
 const VegetationModels = preload("res://scripts/map/vegetation_models.gd")
+const Settings = preload("res://scripts/data/settings.gd")
 const ASSET_DIR := "res://assets/models/civic_center/"
 const PLANTING_RECT := Rect2(9.5, 22, 130.5, 108)
 const BUILDING_AT := Vector2(53, 72)
@@ -88,6 +89,9 @@ func build(district_builder) -> void:
 
 
 func paving(rect: Rect2) -> void:
+	if Settings.season == "winter":
+		map._path_quad(rect, 0.15, "paving", Color.WHITE)
+		return
 	map._ground_quad(rect.get_center(), rect.size, 0.15, map._season["paving"], 6.0)
 
 
