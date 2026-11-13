@@ -58,7 +58,7 @@ const CONTENTS := {
 		"rear_extent": 11.25, "rear_gap": 7.5, "front_extent": 9.2, "width_extent": 29.2, "node_name": "PoliceStation1997",
 		"height": 7.2, "doorstep": 2.0, "ground": "paving", "label": "Райотдел милиции",
 		"fence": "concrete", "yard": "police", "gates": [{"dz": 0.0, "w": 2.4}, {"dz": 11.0, "w": 4.4}], "dressing": [
-			{"model": "uaz_police", "at": Vector2(15.5, 11.0), "length": 3.774, "footprint": Vector2(2.4, 4.2), "axis": "z"},
+			{"model": "uaz_police", "at": Vector2(13.75, 7.4), "length": 3.774, "footprint": Vector2(4.2, 2.4), "axis": "x"},
 		],
 	},
 	"polyclinic": {

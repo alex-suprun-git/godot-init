@@ -47,7 +47,7 @@ func build(city_map, builder, rect: Rect2, building_origin: Vector2) -> void:
 		_bush(_p(dx, -25.0), 0.03, 2.2)
 		_bush(_p(dx, 25.0), 0.03, 2.2)
 	# Lawn trees in the front yard; poplars close to the street fence.
-	for at in [Vector2(14.5, -8.5), Vector2(15.0, 22.5)]:
+	for at in [Vector2(19.5, -7.6), Vector2(15.0, 22.5)]:
 		_tree(_p(at.x, at.y), "deciduous")
 	for dz in [-8.0, 24.0]:
 		_tree(_p(east - 1.2, dz), "poplar")

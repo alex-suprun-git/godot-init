@@ -24,9 +24,10 @@ func build(city_map, rect: Rect2, building_origin: Vector2) -> void:
 	var lines := Color("e4e2d8")
 	# Vehicle yard at the gate: asphalt, bay lines for the van, the chief's black car north of the walk.
 	_surface(_rect(10.0, 6.8, east - 10.0, 9.4), "asphalt", 12.0)
-	for dz in [8.8, 13.2]:
-		map._box(Vector3(4.6, 0.012, 0.09), _y(_p(east - 2.2, dz), SURFACE + 0.012), lines, root)
-	map._vehicle("volga", _y(_p(east - 2.2, -9.5), 0.05), map.VehicleModels.map_length("volga"), "z", root, map.VehicleModels.PAINT_BLACK)
+	# The van parks beside the gate lane (dz 8.8..13.2), never across it.
+	for dz in [6.2, 8.6]:
+		map._box(Vector3(4.6, 0.012, 0.09), _y(_p(east - 3.2, dz), SURFACE + 0.012), lines, root)
+	map._vehicle("volga", _y(_p(east - 2.2, -8.0), 0.05), map.VehicleModels.map_length("volga"), "z", root, map.VehicleModels.PAINT_BLACK)
 	# Entrance walk, lanterns and an information stand with wanted notices.
 	map._box(Vector3(east - 8.2, 0.02, 2.4), _y(_p((east + 8.2) / 2.0, 0.0), SURFACE + 0.012), Color(0.72, 0.71, 0.68), root)
 	for dz in [-2.4, 2.4]:
