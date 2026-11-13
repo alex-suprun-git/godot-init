@@ -18,6 +18,16 @@ const MODELS := {
 	"d_27":preload(PATH+"d_27.glb"), "d_28":preload(PATH+"d_28.glb"), "d_29":preload(PATH+"d_29.glb"),
 }
 static var _winter_materials := {}
+static var _roof_materials := {}
+# Roof finishes (a tint on the shared grey-metal artwork), muted like weathered 1990s village roofs:
+# dark slate iron, light asbestos-cement, galvanised iron, dull green paint, rust-brown. Weights add up to 100.
+const ROOFS := [
+	{"weight": 30, "tint": Color(1.0, 1.0, 1.0), "metal": 0.0},
+	{"weight": 24, "tint": Color(1.1, 1.1, 1.06), "metal": 0.0},
+	{"weight": 16, "tint": Color(0.78, 0.8, 0.82), "metal": 0.0},
+	{"weight": 14, "tint": Color(0.72, 0.84, 0.74), "metal": 0.0},
+	{"weight": 16, "tint": Color(0.78, 0.64, 0.56), "metal": 0.0},
+]
 
 func build(builder, id: String, lot: Dictionary) -> void:
 	var map = builder.map
@@ -40,6 +50,8 @@ func build(builder, id: String, lot: Dictionary) -> void:
 			mesh.hide()
 		if Settings.season == "winter":
 			_winter_surfaces(mesh,map)
+		else:
+			_vary_roof(mesh,id)
 	var flowers: Array[Transform3D] = []
 	var colors: Array[Color] = []
 	var rng := RandomNumberGenerator.new()
@@ -93,6 +105,27 @@ func build(builder, id: String, lot: Dictionary) -> void:
 	label.no_depth_test = true
 	label.position = site.position+Vector3(0,12,0)
 	builder.labels.add_child(label)
+
+# Every homestead gets one roof finish for its house and sheds, picked by its id so it never changes.
+func _vary_roof(mesh: MeshInstance3D, id: String) -> void:
+	var ticket := posmod(hash(id+":roof"),100)
+	var index := 0
+	for i in ROOFS.size():
+		ticket -= int(ROOFS[i]["weight"])
+		if ticket < 0:
+			index = i
+			break
+	for i in mesh.mesh.get_surface_count():
+		var original = mesh.mesh.surface_get_material(i)
+		if not original is ShaderMaterial or original.resource_name != "Grey roof metal" or index == 0:
+			continue
+		if not _roof_materials.has(index):
+			var material: ShaderMaterial = original.duplicate()
+			material.set_shader_parameter("colour_tint",ROOFS[index]["tint"])
+			material.set_shader_parameter("metal_amount",ROOFS[index]["metal"])
+			_roof_materials[index] = material
+		mesh.set_surface_override_material(i,_roof_materials[index])
+
 
 func _winter_surfaces(mesh: MeshInstance3D, map) -> void:
 	for i in mesh.mesh.get_surface_count():
