@@ -43,7 +43,15 @@ func build(city_map) -> void:
 	preload("res://scripts/map/residential_cores.gd").new().build(self)
 	preload("res://scripts/map/courtyard_life.gd").new().build(self)
 	preload("res://scripts/map/heating_details.gd").new().build(map)
+	var street_crowd := preload("res://scripts/map/street_crowd.gd").new()
+	map.add_child(street_crowd)
+	street_crowd.build(map)
+	preload("res://scripts/map/bus_stops.gd").new().build(map)
+	var courtyard_crowd := preload("res://scripts/map/courtyard_crowd.gd").new()
+	map.add_child(courtyard_crowd)
+	courtyard_crowd.build(map)
 	_build_train_stock()
+	_build_rare_traffic()
 
 
 func _texture(path: String) -> Texture2D:
@@ -390,9 +398,9 @@ func _building(lot: Dictionary, entry: Dictionary, desired: Vector2, lot_id: Str
 		if facade != null:
 			var repeats := height / (float(entry.get("facade_floors", entry.get("floors", 5))) * 3.0)
 			if lot["content"] == "panel_9":
-				map._facades(Vector3.ZERO, Vector3(size.x, height, size.y), facade, repeats, tint, group, 9, preload("res://scripts/map/facade_floors.gd").PANEL_9_BANDS)
+				map._facades(Vector3.ZERO, Vector3(size.x, height, size.y), facade, repeats, tint, group, 9, preload("res://scripts/map/facade_floors.gd").PANEL_9_BANDS, true)
 			else:
-				map._facades(Vector3.ZERO, Vector3(size.x, height, size.y), facade, repeats, tint, group)
+				map._facades(Vector3.ZERO, Vector3(size.x, height, size.y), facade, repeats, tint, group, 0, [], entry.get("kind", "") == "panel")
 	if entry.get("kind", "") == "panel":
 		map._panel_overlays(entry, size, height, group)
 		HousingDetails.build(map, group, size, height, detail)
@@ -480,7 +488,7 @@ func _build_bridge(bridge: Dictionary) -> void:
 	if bridge.get("rail_overpass", false):
 		_avenue_overpass(bridge)
 	elif bridge["kind"] == "road":
-		_road_bridge(rect, float(bridge["height"]), float(bridge["ramp"]))
+		_avenue_overpass(bridge, true)
 	else:
 		_rail_bridge(rect, float(bridge["height"]), float(bridge["ramp"]), bridge.get("flat_end", false))
 	# Legacy builders add directly to map. Keep each complete structure, including
@@ -493,7 +501,7 @@ func _build_bridge(bridge: Dictionary) -> void:
 
 # Four-lane avenue over live railway tracks. Segment boundaries include the
 # ramp crests, so road, pavements and barriers share exactly the same profile.
-func _avenue_overpass(bridge: Dictionary) -> void:
+func _avenue_overpass(bridge: Dictionary, over_water := false) -> void:
 	var rect: Rect2 = bridge["rect"]
 	var height: float = bridge["height"]
 	var ramp: float = bridge["ramp"]
@@ -505,7 +513,7 @@ func _avenue_overpass(bridge: Dictionary) -> void:
 	asphalt.set_shader_parameter("grain_texture", map.GROUND_ASPHALT)
 	asphalt.set_shader_parameter("winter", map.Settings.season == "winter")
 	var root := Node3D.new()
-	root.name = "AvenueRailOverpass"
+	root.name = "AvenueRiverBridge" if over_water else "AvenueRailOverpass"
 	map.add_child(root)
 	for span in [Vector2(z0, z0 + ramp), Vector2(z0 + ramp, z1 - ramp), Vector2(z1 - ramp, z1)]:
 		var z: float = span.x
@@ -528,8 +536,10 @@ func _avenue_overpass(bridge: Dictionary) -> void:
 				if int(round((z - z0) / 5.0)) % 2 == 0:
 					_overpass_strip(a, b, side * 7.0, 0.12, 0.012, 0.045, Color("ddd9c9"), root)
 			z = end
+	if over_water:
+		_river_piers(rect, height, ramp)
 	# Portal supports stay outside the ballast of both E-W tracks (z=395/405).
-	for z in [z0 + ramp - 5.0, z1 - ramp + 5.0]:
+	for z in ([] if over_water else [z0 + ramp - 5.0, z1 - ramp + 5.0]):
 		var underside := 0.14 + _deck_at(rect, height, ramp, z) - 1.1
 		_bridge_concrete_box(Vector3(rect.size.x - 1.0, 0.5, 1.8), Vector3(cx, underside + 0.05, z), CONCRETE_DARK, root)
 		for side in [-1.0, 1.0]:
@@ -567,66 +577,18 @@ func _ramp_root(rect: Rect2, cx: float, height: float, ramp: float, north: bool)
 	return root
 
 
-# Concrete road bridge: a humpback deck whose ramps rise over the water, solid
-# parapets, lamps, and piers standing in the river bed.
-func _road_bridge(rect: Rect2, height: float, ramp: float) -> void:
+# Concrete piers standing in the river bed, each up to the underside of the deck.
+func _river_piers(rect: Rect2, height: float, ramp: float) -> void:
 	var width := rect.size.x
 	var cx := rect.get_center().x
-	var z0 := rect.position.y
-	var z1 := rect.end.y
-	var flat := Rect2(cx - width / 2.0, z0 + ramp, width, z1 - z0 - 2.0 * ramp)
-	var flat_center := flat.get_center()
-	_bridge_concrete_box(Vector3(width, 0.8, flat.size.y), Vector3(cx, height - 0.4, flat_center.y), CONCRETE)
-	_bridge_concrete_box(Vector3(width + 0.4, 0.35, flat.size.y), Vector3(cx, height - 0.95, flat_center.y), CONCRETE_DARK)
-	var surface_size := Vector2(width - 0.8, flat.size.y)
-	var winter := Settings.season == "winter"
-	if winter:
-		map._asphalt_quad(Rect2(flat_center - surface_size / 2.0, surface_size), height + 0.01, Color.WHITE, true)
-	else:
-		map._ground_quad(flat_center, surface_size, height + 0.01, map._season["asphalt"], 14.0)
-	for side in [-1.0, 1.0]:
-		_bridge_concrete_box(Vector3(0.4, 1.0, flat.size.y), Vector3(cx + side * (width / 2.0 - 0.2), height + 0.5, flat_center.y), CONCRETE)
-		_bridge_concrete_box(Vector3(0.6, 0.15, flat.size.y), Vector3(cx + side * (width / 2.0 - 0.2), height + 1.07, flat_center.y), Color("b3afa0"))
-	# Piers every 16 m through the water, each up to the underside of the deck.
 	var water: Rect2 = Layout.WATER
-	var z := z0 + 14.0
-	while z < z1 - 8.0:
+	var z := rect.position.y + 14.0
+	while z < rect.end.y - 8.0:
 		var top := _deck_at(rect, height, ramp, z) - 1.15
 		if z > water.position.y + 2.0 and z < water.end.y - 2.0 and top > WATER_LEVEL + 1.0:
 			var bottom := WATER_LEVEL - 0.6
 			_bridge_concrete_box(Vector3(width - 4.0, top - bottom, 2.4), Vector3(cx, (top + bottom) / 2.0, z), CONCRETE_DARK)
 		z += 16.0
-	# Lamps along the whole deck, lit at night like the street lamps.
-	var lamp := _texture("res://assets/sprites/lamp_post.png")
-	z = z0 + 10.0
-	while z < z1 - 6.0:
-		for side in [-1.0, 1.0]:
-			var base := Vector3(cx + side * (width / 2.0 - 0.6), _deck_at(rect, height, ramp, z) + 0.1, z)
-			if lamp != null:
-				map._sprite(lamp, base, 6.0)
-			map._lamp_light(base)
-		z += 24.0
-	# Ramps: tilted slabs from the ground up to the deck.
-	var length := sqrt(ramp * ramp + height * height)
-	for north in [true, false]:
-		var ramp_root := _ramp_root(rect, cx, height, ramp, north)
-		var dir := 1.0 if north else -1.0
-		_bridge_concrete_box(Vector3(width, 0.8, length), Vector3(0, -0.4, dir * length / 2.0), CONCRETE, ramp_root)
-		_bridge_concrete_box(Vector3(width + 0.4, 0.35, length), Vector3(0, -0.95, dir * length / 2.0), CONCRETE_DARK, ramp_root)
-		var surface := MeshInstance3D.new()
-		var quad := QuadMesh.new()
-		quad.size = Vector2(width - 0.8, length)
-		var material := StandardMaterial3D.new()
-		material.albedo_texture = map._season["asphalt"]
-		material.uv1_scale = Vector3((width - 0.8) / 14.0, length / 14.0, 1.0)
-		material.roughness = 0.95
-		surface.mesh = quad
-		surface.material_override = map._asphalt_material(Color.WHITE, true) if winter else material
-		surface.rotation.x = -PI / 2.0
-		surface.position = Vector3(0, 0.02, dir * length / 2.0)
-		ramp_root.add_child(surface)
-		for side in [-1.0, 1.0]:
-			_bridge_concrete_box(Vector3(0.4, 1.0, length), Vector3(side * (width / 2.0 - 0.2), 0.5, dir * length / 2.0), CONCRETE, ramp_root)
 
 
 # Railway on an embankment that climbs on land, then a steel through-truss over the
@@ -1121,17 +1083,61 @@ func _market(lot: Dictionary) -> void:
 		map._sprite(_texture("res://assets/sprites/kiosk.png"), map._ground(center + offset), 3.5)
 
 
+# Sparse moving cars on the farm lane and the village roads, plus a few cars left at the village verges.
+func _build_rare_traffic() -> void:
+	var traffic := preload("res://scripts/map/rare_traffic.gd").new()
+	traffic.name = "RareTraffic"
+	map.add_child(traffic)
+	var Vehicles := preload("res://scripts/map/vehicle_models.gd")
+	# Verge parking beside the dirt roads: wheels on the grass, the lane stays open.
+	for parked in [
+		["lada", Vector2(260, 68.0), "x", 2], ["rural_4x4", Vector2(305, 75.9), "x", 1],
+		["lada", Vector2(376.8, 112), "z", 4],
+	]:
+		var model: String = parked[0]
+		var car := Vehicles.create(model, map._ground(parked[1]), Vehicles.map_length(model), parked[2], parked[3])
+		car.rotation.y += PI if int(parked[1].x) % 2 == 0 else 0.0
+		car.add_to_group("parked_vehicles")
+		car.set_meta("parking_footprint", Vector2(3, 6))
+		map.add_child(car)
+		map._occupy(parked[1], Vector2(3, 6) if parked[2] == "z" else Vector2(6, 3))
+
+
 func _build_train_stock() -> void:
 	var traffic := preload("res://scripts/map/railway_traffic.gd").new()
 	traffic.name = "RailwayTraffic"
 	map.add_child(traffic)
-	var stock := _texture("res://assets/sprites/train_wagons_v2.png") # train_commuter.png
-	# The station tracks stay clear; freight stock remains on the port siding.
-	var siding: Array = Layout.RAILS[2]
-	# Stored wagons belong to the level loading reach, before the ramp begins.
-	var ramp_foot := Vector2(float(Layout.SIDING_RAMP["x_from"]),float(Layout.SIDING_RAMP["z"]))
-	var transfer: Vector2 = siding[-1].lerp(ramp_foot, 0.5)
-	map._prop(stock, Vector3(transfer.x, 0.2, transfer.y), 40.0, "x")
+	_build_rail_yard_stock()
+
+
+# Parked freight stock on the port siding and its storage track: real 3D wagons, no billboards.
+func _build_rail_yard_stock() -> void:
+	var Freight := preload("res://scripts/map/freight_train.gd")
+	var yard := Node3D.new()
+	yard.name = "PortRailStock"
+	map.add_child(yard)
+	var paints := {}
+	var factor: float = Freight.MAP_FACTOR
+	var length: float = Freight.WAGON_LENGTH * factor
+	# [track z, first wagon centre x, wagon count, first cargo colour]
+	for track in [[-245.0, 192.5, 4, 0], [-237.5, 199.5, 3, 1]]:
+		for i in int(track[2]):
+			var wagon := Freight.WAGON.instantiate() as Node3D
+			wagon.name = "StoredWagon"
+			wagon.scale = Vector3.ONE * factor
+			wagon.rotation.y = PI / 2.0
+			wagon.position = Vector3(float(track[1]) + length * (i + 0.5), 0.2, float(track[0]))
+			Freight._paint_cargo(wagon, (int(track[3]) + i * 2) % Freight.PALETTE.size(), paints)
+			yard.add_child(wagon)
+	# One shunter waits behind the storage track's wagons.
+	var shunter := Freight.LOCOMOTIVE.instantiate() as Node3D
+	shunter.name = "StoredLocomotive"
+	shunter.scale = Vector3.ONE * factor
+	shunter.rotation.y = PI / 2.0
+	shunter.position = Vector3(199.5 + length * 3.0 + Freight.LOCO_LENGTH * factor / 2.0 + 0.5, 0.2, -237.5)
+	yard.add_child(shunter)
+	# Buffer stop at the end of the storage track.
+	map._box(Vector3(0.35, 1.15, 3.0), Vector3(195.5, 0.8, -237.5), Color("5a6258"))
 
 
 func _checkpoint_gates(center: Vector2) -> void:

@@ -360,7 +360,8 @@ func garages() -> void:
 	# paint, kerbed islands or formal parking. Individual bays stay full size.
 	site.root.set_meta("visual_revision","garages-selfbuilt-v6")
 	site.root.set_meta("garage_bays",78)
-	garage_earth(Rect2(-62,-20,124,41),"dirt",Color(.94,.91,.85),.13,1.6)
+	# Greyer and darker than the shared dirt, which read as salmon pink beside the grass.
+	garage_earth(Rect2(-62,-20,124,41),"dirt",Color(.62,.60,.55),.13,2.4)
 	var modules: Array = []
 	var setbacks := [-15.1,-15.4,-14.9,-15.3,-14.7]
 	for col in 5:

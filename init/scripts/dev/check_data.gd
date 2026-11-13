@@ -6,6 +6,7 @@ extends SceneTree
 const DistrictLayout = preload("res://scripts/data/district_layout.gd")
 const RoadGraph = preload("res://scripts/map/road_graph.gd")
 const Week1 = preload("res://scripts/data/week1.gd")
+const BusStops = preload("res://scripts/data/bus_stops.gd")
 
 
 func _init() -> void:
@@ -21,6 +22,13 @@ func _init() -> void:
 	for layout in layout_ids:
 		if DistrictLayout.LOTS.has(layout) and not graph.has_entrance(layout):
 			problems.append("layout lot '%s' has no road entrance" % layout)
+	problems.append_array(BusStops.validate())
+	var crosswalks := DistrictLayout.crosswalks()
+	for stop in BusStops.STOPS:
+		for crossing in crosswalks:
+			var gap: float = stop["at"].distance_to(crossing["at"])
+			if gap < BusStops.MIN_CROSSWALK_GAP:
+				problems.append("bus stop '%s' is %.1f m from crosswalk '%s' (minimum %.0f m)" % [stop["id"], gap, crossing["id"], BusStops.MIN_CROSSWALK_GAP])
 	if problems.is_empty():
 		print("check_data: ok (%d lots, %d districts)" % [DistrictLayout.LOTS.size(), DistrictLayout.DISTRICTS.size()])
 		quit(0)

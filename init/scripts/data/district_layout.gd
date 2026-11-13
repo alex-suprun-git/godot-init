@@ -49,6 +49,8 @@ const LOTS := {
 	"b2_s": {"type": "W", "rect": Rect2(-153, 225.68, 90, 24), "content": "panel_5", "condition": "kept", "facing": "n"},
 	"b2_w": {"type": "W", "rect": Rect2(-192.68, 125.8, 24, 90), "content": "panel_9", "condition": "kept", "facing": "e"},
 	"b2_k": {"type": "K", "rect": Rect2(-152, 135.6, 88, 70.4), "content": "yard", "condition": "kept", "facing": "s"},
+	"b2_e": {"type": "W", "rect": Rect2(-44.32, 190, 24, 66), "content": "panel_5_short", "condition": "kept", "facing": "w"},
+	"pub": {"type": "G", "rect": Rect2(-188, 271, 34, 25), "content": "pub_site", "condition": "kept", "facing": "s"},
 	"police": {"type": "G", "rect": Rect2(-56, -77, 36, 34), "content": "police", "condition": "kept", "facing": "e"},
 	"polyclinic": {"type": "G", "rect": Rect2(-53, 130, 33, 52), "content": "polyclinic", "condition": "kept", "facing": "e"},
 	"ispolkom": {"type": "G", "rect": Rect2(25, 22, 115, 108), "content": "ispolkom", "condition": "kept", "facing": "w", "entrance": Vector2(25, 72)},
@@ -107,6 +109,9 @@ const CROSSWALK_DEPTH := 3.5
 
 const ROADS := [
 	# Extra village exit to the two-lane south street parallel to the passenger railway.
+	# One-way farm lane along the east end of the western wheat field, from the north street up to the
+	# highway. Scenery only: no zebra, no sidewalks, rare scripted traffic (rare_traffic.gd).
+	{"id": "field_lane", "rect": Rect2(-505, -177.5, 5, 87.5), "kind": "dirt", "ambient_only": true, "one_way": "north"},
 	{"id":"village_south_exit", "rect":Rect2(275.5,211.9767,5,93.0233), "kind":"dirt"},
 	# "speed" scales car speed (default 1.0); courtyard traffic is opt-in and passenger-only.
 	{"id": "west_street", "rect": Rect2(-485, -85, 10, 390), "kind": "asphalt"},
@@ -204,6 +209,8 @@ const RAILS := [
 	# The port siding leaves the elevated main line at deck height and climbs down on its own ramp.
 	# Keep the terminal inside the compact port, beyond the expanded checkpoint.
 	[Vector2(410, -250), Vector2(402, -245), Vector2(190, -245)],
+	# Storage track: a points switch inside the port fence splits it from the siding; stock stands on both.
+	[Vector2(286, -245), Vector2(264, -237.5), Vector2(197, -237.5)],
 ]
 # A wide river: barges pass under both bridges, whose decks rise to a hump over the water.
 # The eastern freight line runs on an embankment past the village: it climbs over
@@ -473,6 +480,17 @@ static func lot_center(id: String) -> Vector2:
 
 # Shared by road paint and the ambient pedestrian graph. Each crossing spans one
 # asphalt road; side roads get markings on every arm that actually continues.
+# Junction zebras dropped on purpose: the avenue and the village street had one at every yard walk,
+# which read as a zebra every 30 m. Real street junctions and the key doors (store, culture house,
+# square, cross path mouth) keep theirs.
+const SKIPPED_CROSSWALKS := [
+	"axis__civic_north_walk__center", "axis__civic_south_walk__center", "axis__store_south_walk__center",
+	"axis__south_infill_access__center", "axis__housing_cross_path__before",
+	"village_street__civic_garden_crosswalk__center", "village_street__civic_north_walk__center",
+	"village_street__civic_south_walk__center", "village_street__square_link__center",
+]
+
+
 static func crosswalks() -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	for road in ROADS:
@@ -503,6 +521,8 @@ static func crosswalks() -> Array[Dictionary]:
 					continue
 				var across := Vector2(0, half + sidewalk_width(road) / 2.0) if horizontal else Vector2(half + sidewalk_width(road) / 2.0, 0)
 				var side := "before" if offset < 0.0 else ("after" if offset > 0.0 else "center")
+				if "%s__%s__%s" % [road["id"], other["id"], side] in SKIPPED_CROSSWALKS:
+					continue
 				result.append({"id": "%s__%s__%s" % [road["id"], other["id"], side],
 					"road_id": road["id"], "joining_road_id": other["id"],
 					"at": at, "width": half * 2.0, "along_z": not horizontal, "a": at - across, "b": at + across})

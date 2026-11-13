@@ -20,6 +20,8 @@ const MODELS := {
 const BATCHED := ["fence_panel", "grave_cross", "grave_stone", "grave_recent", "grave_rails", "bench"]
 var map
 var root: Node3D
+const WEATHERING := Color(0.74, 0.75, 0.72)
+var _weathered := {}
 var _batches := {}
 var _details := {}
 var _flowers: Array[Transform3D] = []
@@ -131,7 +133,23 @@ func _asset(id: String, at: Vector3, yaw := .0, scale_factor := Vector3.ONE) -> 
 	var node: Node3D = MODELS[id].instantiate()
 	node.name = id
 	node.position = at
+	if id in ["church", "parish_house"]:
+		_weather(node)
 	root.add_child(node)
+
+
+# The painted walls and green roofs were far brighter than the weathered village around them.
+func _weather(node: Node) -> void:
+	for mesh: MeshInstance3D in node.find_children("*", "MeshInstance3D", true, false):
+		for surface in mesh.mesh.get_surface_count():
+			var base := mesh.mesh.surface_get_material(surface)
+			if not base is BaseMaterial3D:
+				continue
+			if not _weathered.has(base):
+				var worn: BaseMaterial3D = base.duplicate()
+				worn.albedo_color = base.albedo_color * WEATHERING
+				_weathered[base] = worn
+			mesh.set_surface_override_material(surface, _weathered[base])
 
 
 func _detail(at: Vector3, size: Vector3, color: Color) -> void:
