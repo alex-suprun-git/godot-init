@@ -1306,3 +1306,11 @@ execution-stamp-ink-v1.png; exact prompt is alongside it. Prepared separately:
 Atlas region (33, 106, 957, 130) excludes transparent padding; alpha was checked.
 Godot controls position/size/angle through EXECUTION_STAMP_* constants in hud.gd.
 The stamp is a non-interactive paper overlay and scales with the folder.
+
+### School and kindergarten in the district (2026-11-13)
+
+Built-in ImageGen paintover of the current Godot housing capture. Source and exact prompt: [district visual reference pack](source_images/district_visual_pack/README.md).
+
+The same frame was extended with a House 5 ZhEK workshop and two states of the kiosk event's wasteland. [Exact prompts](source_images/district_visual_pack/residential-cores-v1.prompt.md).
+
+The school court was revised to a mini-football pitch within the same school parcel. [Exact prompt](source_images/district_visual_pack/residential-cores-football-v1.prompt.md).
