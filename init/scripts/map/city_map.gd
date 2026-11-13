@@ -10,6 +10,21 @@ const Daylight = preload("res://scripts/map/daylight.gd")
 const MapEdges = preload("res://scripts/map/map_edges.gd")
 const MapBoundaries = preload("res://scripts/data/map_boundaries.gd")
 const LIT_FACADE := preload("res://assets/shaders/lit_facade.gdshader")
+const BLANK_WALL := preload("res://assets/textures/facade_panel_stair.png") # Concrete source of the windowless gable ends.
+# Window cell edges in UV (per picture tile), measured on the facade art; see lit_facade.gdshader.
+# Pixel edges / picture size. The 9-storey picture is drawn floor by floor, so it keeps world rows.
+const WINDOW_CELLS := {
+	"facade_panel_stair": {"rects": [[640.0 / 1774, 258.0 / 887, 1130.0 / 1774, 450.0 / 887, 0.0]]},
+	"facade_panel_entrance": {"rects": [[1285.0 / 1774, 140.0 / 887, 1585.0 / 1774, 455.0 / 887, 0.0], [655.0 / 1774, 240.0 / 887, 722.0 / 1774, 302.0 / 887, 1.0]]},
+	"facade_panel_late_5storey_lived": {
+		"cols": [0.0, 174.0 / 1767, 370.0 / 1767, 543.0 / 1767, 721.0 / 1767, 884.0 / 1767, 1048.0 / 1767, 1228.0 / 1767, 1400.0 / 1767, 1596.0 / 1767, 1.0],
+		"wide": [2, 7], "row_origin": 55.0 / 890, "row_pitch": 167.5 / 890,
+	},
+	"facade_panel_late_9storey_lived": {
+		"cols": [0.0, 150.0 / 1774, 308.0 / 1774, 445.0 / 1774, 582.0 / 1774, 737.0 / 1774, 888.0 / 1774, 1037.0 / 1774, 1193.0 / 1774, 1330.0 / 1774, 1470.0 / 1774, 1625.0 / 1774, 1.0],
+		"wide": [1, 4, 7, 10], "row_origin": 40.0 / 887, "row_pitch": 111.7 / 887,
+	},
+}
 const Week1 = preload("res://scripts/data/week1.gd")
 const Settings = preload("res://scripts/data/settings.gd")
 const SpriteAnchors = preload("res://scripts/data/sprite_anchors.gd")
@@ -1621,7 +1636,8 @@ func _roof(size: Vector2, at: Vector3, tile: float, texture: Texture2D = ROOF_TA
 
 
 # Painted facades on the four sides of a box-shaped building.
-func _facades(base: Vector3, size: Vector3, texture: Texture2D, tiles_per_height: float, tint: Color = Color.WHITE, parent: Node = null, floor_count: int = 0, floor_bands: Array = []) -> void:
+# `blank_ends`: the two gable walls (the narrow faces) get no windows, like real panel blocks.
+func _facades(base: Vector3, size: Vector3, texture: Texture2D, tiles_per_height: float, tint: Color = Color.WHITE, parent: Node = null, floor_count: int = 0, floor_bands: Array = [], blank_ends := false) -> void:
 	var tile_width := size.y * 2.0 / tiles_per_height
 	var center_y := size.y / 2.0
 	for face in [
@@ -1630,11 +1646,12 @@ func _facades(base: Vector3, size: Vector3, texture: Texture2D, tiles_per_height
 		[Vector2(size.z, size.y), Vector3(size.x / 2.0 + 0.01, center_y, 0), PI / 2.0],
 		[Vector2(size.z, size.y), Vector3(-size.x / 2.0 - 0.01, center_y, 0), -PI / 2.0],
 	]:
-		_facade(face[0], base + face[1], face[2], texture, Vector2(face[0].x / tile_width, tiles_per_height), tint, parent, Vector2.ZERO, false, Vector2.ZERO, floor_count, floor_bands)
+		var gable: bool = blank_ends and face[0].x == size.z and face[0].x != size.x
+		_facade(face[0], base + face[1], face[2], BLANK_WALL if gable else texture, Vector2(face[0].x / tile_width, tiles_per_height), tint, parent, Vector2.ZERO, false, Vector2.ZERO, 0 if gable else floor_count, floor_bands, gable)
 
 
 # One textured wall: a quad facing +Z, turned by yaw around the vertical axis.
-func _facade(size: Vector2, at: Vector3, yaw: float, texture: Texture2D, tiles: Vector2, tint: Color = Color.WHITE, parent: Node = null, uv_offset := Vector2.ZERO, surface_detail := false, seam_blend := Vector2.ZERO, floor_count: int = 0, floor_bands: Array = []) -> void:
+func _facade(size: Vector2, at: Vector3, yaw: float, texture: Texture2D, tiles: Vector2, tint: Color = Color.WHITE, parent: Node = null, uv_offset := Vector2.ZERO, surface_detail := false, seam_blend := Vector2.ZERO, floor_count: int = 0, floor_bands: Array = [], blank_wall := false) -> void:
 	var quad := QuadMesh.new()
 	quad.size = size
 	var material := ShaderMaterial.new()
@@ -1648,6 +1665,32 @@ func _facade(size: Vector2, at: Vector3, yaw: float, texture: Texture2D, tiles: 
 	material.set_shader_parameter("surface_detail", (surface_detail or texture.resource_path.ends_with("_lived.png")) and not OS.get_cmdline_user_args().has("--facade-baseline"))
 	material.set_shader_parameter("seam_blend", Vector2.ZERO if OS.get_cmdline_user_args().has("--facade-baseline") else seam_blend)
 	material.set_shader_parameter("night", maxf(_night, 0.0))
+	material.set_shader_parameter("blank_wall", blank_wall)
+	material.set_shader_parameter("wall_size", size)
+	var cells: Dictionary = {} if blank_wall else WINDOW_CELLS.get(texture.resource_path.get_file().get_basename(), {})
+	if cells.has("rects"):
+		var rects := PackedVector4Array()
+		var always := PackedFloat32Array()
+		for entry in cells["rects"]:
+			rects.append(Vector4(entry[0], entry[1], entry[2], entry[3]))
+			always.append(entry[4])
+		rects.resize(4)
+		always.resize(4)
+		material.set_shader_parameter("rect_data", rects)
+		material.set_shader_parameter("rect_always", always)
+		material.set_shader_parameter("rect_count", cells["rects"].size())
+	elif not cells.is_empty():
+		var cols := PackedFloat32Array(cells["cols"])
+		var wide := PackedFloat32Array()
+		wide.resize(16)
+		for index in cells["wide"]:
+			wide[index] = 1.0
+		cols.resize(16)
+		material.set_shader_parameter("col_edges", cols)
+		material.set_shader_parameter("col_wide", wide)
+		material.set_shader_parameter("col_count", cells["cols"].size())
+		material.set_shader_parameter("row_origin", cells["row_origin"])
+		material.set_shader_parameter("row_pitch", cells["row_pitch"])
 	_window_materials.append(material)
 	var instance := MeshInstance3D.new()
 	instance.mesh = quad

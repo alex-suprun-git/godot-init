@@ -36,18 +36,19 @@ func build(city_map) -> void:
 		_walker(Vector2(-132, z), Vector2(-44, z), 1.29)
 	print("Station local crowd: ", _people.size(), " ambient people")
 
-func _person(at: Vector2, floor_height: float) -> Dictionary:
-	var look: Dictionary = map.PEOPLE[_rng.randi_range(0, map.PEOPLE.size() - 1)]
+# `kind` picks a look from map.PEOPLE (-1: random); `hours` limits when the person is out (x..y, clock hours).
+func _person(at: Vector2, floor_height: float, kind := -1, hours := Vector2.ZERO) -> Dictionary:
+	var look: Dictionary = map.PEOPLE[_rng.randi_range(0, map.PEOPLE.size() - 1) if kind < 0 else kind]
 	var sprite: Sprite3D = map._sprite(look["texture"], Vector3(at.x, floor_height, at.y),
 		look["width"], self, _rng.randf() < .5)
 	var person := {"sprite": sprite, "from": at, "to": at, "floor": floor_height,
 		"progress": 0.0, "speed": _rng.randf_range(.55, .95), "wait": _rng.randf_range(2, 12),
-		"threshold": _rng.randf(), "anchor": map._anchor_of(look["texture"])}
+		"threshold": _rng.randf(), "anchor": map._anchor_of(look["texture"]), "hours": hours}
 	_people.append(person)
 	return person
 
-func _walker(from: Vector2, to: Vector2, floor_height: float) -> void:
-	var person := _person(from, floor_height)
+func _walker(from: Vector2, to: Vector2, floor_height: float, kind := -1, hours := Vector2.ZERO) -> void:
+	var person := _person(from, floor_height, kind, hours)
 	person["to"] = to
 	person["progress"] = _rng.randf()
 	person["wait"] = _rng.randf_range(0, 3)
@@ -56,11 +57,13 @@ func _walker(from: Vector2, to: Vector2, floor_height: float) -> void:
 func _process(delta: float) -> void:
 	if map == null or map.sim == null:
 		return
-	var hour: float = map.sim.clock_hour()
+	var hour: float = map._debug_hour if map._debug_hour >= 0.0 else map.sim.clock_hour() # --hour pins it for checks
 	var density := .25 if hour < 6.0 or hour >= 22.0 else 1.0
 	for person in _people:
 		var sprite: Sprite3D = person["sprite"]
-		sprite.visible = float(person["threshold"]) < density
+		var hours: Vector2 = person.get("hours", Vector2.ZERO)
+		var in_hours := hours == Vector2.ZERO or (hour >= hours.x and hour < hours.y)
+		sprite.visible = in_hours and float(person["threshold"]) < density
 		if person["from"] == person["to"]:
 			continue
 		if float(person["wait"]) > 0:
