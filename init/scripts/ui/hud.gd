@@ -307,6 +307,7 @@ func open_card(request_id: String, focus: bool = false, auto: bool = false) -> v
 
 
 func _process(_delta: float) -> void:
+	_prefetch_upcoming_banners()
 	_sync_modal_input()
 	_update_tokens()
 	_update_markers(_map_area())
@@ -1499,6 +1500,10 @@ func _refresh_markers() -> void:
 	for id in visible_ids:
 		var data: Dictionary = sim.requests[id]["data"]
 		if not _markers.has(id):
+			# Decode the card banner on a worker thread while the marker waits to be clicked.
+			var banner_path := _banner_path(data)
+			if ResourceLoader.exists(banner_path):
+				ResourceLoader.load_threaded_request(banner_path)
 			var created := RequestMarker.new()
 			created.pressed.connect(_on_marker_pressed.bind(id))
 			created.kind = data["type"]
@@ -1596,12 +1601,42 @@ const BANNER_GRADE := preload("res://assets/shaders/event_banner_grade.gdshader"
 
 # The picture at the top of a situation: assets/events/<id>.png (or an explicit
 # "image" path) when it exists, otherwise a colored band that names the place.
+# Decoding a 1920x800 banner takes about 30 ms, which is a visible hitch if it happens
+# in the frame where the card opens. Start the decode on a worker thread a few game
+# hours before a situation appears; checked once per game hour.
+const BANNER_LOOKAHEAD_HOURS := 3.0
+var _banner_prefetch_hour := -1
+
+
+func _prefetch_upcoming_banners() -> void:
+	var hour := int(sim.t)
+	if hour == _banner_prefetch_hour:
+		return
+	_banner_prefetch_hour = hour
+	for id in sim.request_order:
+		var request: Dictionary = sim.requests[id]
+		if request["status"] != "pending":
+			continue
+		if sim.to_hours(request["data"]["appear"]) - sim.t > BANNER_LOOKAHEAD_HOURS:
+			continue
+		var path := _banner_path(request["data"])
+		if ResourceLoader.exists(path):
+			ResourceLoader.load_threaded_request(path)
+
+
+func _banner_path(data: Dictionary) -> String:
+	return data.get("image", "res://assets/events/%s.png" % data["id"])
+
+
 func _card_banner(data: Dictionary) -> Control:
 	var height := 190
-	var image_path: String = data.get("image", "res://assets/events/%s.png" % data["id"])
+	var image_path := _banner_path(data)
 	if ResourceLoader.exists(image_path):
 		var picture := TextureRect.new()
-		picture.texture = load(image_path)
+		# Returns the prefetched texture; blocks only if the worker has not finished yet.
+		picture.texture = ResourceLoader.load_threaded_get(image_path) \
+			if ResourceLoader.load_threaded_get_status(image_path) != ResourceLoader.THREAD_LOAD_INVALID_RESOURCE \
+			else load(image_path)
 		picture.custom_minimum_size = Vector2(0, height)
 		picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
