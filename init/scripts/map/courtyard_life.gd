@@ -48,6 +48,11 @@ func _plant(at: Vector2, kind: String, size: float, margin := 1.2) -> void:
 	root.add_child(plant)
 
 
+func _pave(rect: Rect2) -> void:
+	map._path_quad(rect, 0.078, "paving", Color.WHITE)
+	map._occupy(rect.get_center(), rect.size)
+
+
 func _box(at: Vector2, size: Vector3, height: float, color: Color) -> void:
 	map._box(size, Vector3(_w(at).x, height, _w(at).y), color, root)
 
@@ -136,6 +141,9 @@ func _washing_line(from: Vector2, to: Vector2) -> void:
 
 # "Пиво-Воды": a booth with an awning, two plastic tables under umbrellas and crates.
 func _beer_stall(at: Vector2) -> void:
+	# A paved apron and a link to the dirt path that leads to the service building.
+	_pave(Rect2(_w(at + Vector2(-5.5, -2.5)), Vector2(11.0, 12.5)))
+	_pave(Rect2(_w(Vector2(33.2, 7.5)), Vector2(1.6, 14.0)))
 	_box(at, Vector3(3.2, 2.4, 2.4), 1.2, Color("4a7a8c"))
 	_box(at + Vector2(0.0, 1.5), Vector3(3.2, 0.1, 1.0), 2.4, Color("c8553d"))
 	_box(at + Vector2(0.0, 1.2), Vector3(2.0, 0.9, 0.08), 1.5, Color("1b2b30"))

@@ -211,7 +211,7 @@ func _school(lot: Rect2) -> void:
 	_lawn(lot.grow(9.0))
 	_surface(Vector2(-14, 1), Vector2(27, 24), "paving")
 	_surface(Vector2(-14, 24), Vector2(4.0, 25), "paving")
-	_surface(Vector2(8.75, 20), Vector2(23.5, 2.8), "paving")
+	_surface(Vector2(3.25, 20), Vector2(34.5, 2.8), "paving")
 	for at in [Vector2(-36, -17), Vector2(-34, 6), Vector2(-32, 25), Vector2(-2, -24), Vector2(35, -23)]:
 		_plant(at, "park_deciduous_tree", 0.68)
 	_plant(Vector2(-39, -27), "park_poplar", 0.70)
@@ -284,7 +284,7 @@ func _kindergarten(lot: Rect2) -> void:
 func _maintenance() -> void:
 	_surface(Vector2(33, -14), Vector2(35, 12), "paving", Color("b7b1a3"))
 	_surface(Vector2(54, -13), Vector2(8, 3.8), "asphalt")
-	_surface(Vector2(21, -7), Vector2(2, 7), "paving")
+	_surface(Vector2(21, 0.5), Vector2(2, 17), "paving")
 	_fence(Vector2(48, -19), Vector2(48, -15))
 	_fence(Vector2(48, -11), Vector2(48, -8))
 	_box(Vector2(42, -17), Vector3(3.2, 0.12, 1.8), 0.16, KERB)
@@ -302,7 +302,7 @@ func _maintenance() -> void:
 
 func _trade(trade: Rect2) -> void:
 	_lawn(trade.grow(6.0))
-	_surface(Vector2(-16, 18), Vector2(19, 8), "paving", Color("b9ae9d"))
+	_surface(Vector2(-16, 19), Vector2(19, 10), "paving", Color("b9ae9d"))
 	_surface(Vector2(-2, 25), Vector2(42, 3.2), "paving")
 	_surface(Vector2(17, 11), Vector2(2.6, 29), "paving")
 	_surface(Vector2(31, -3), Vector2(30, 2.6), "paving")
