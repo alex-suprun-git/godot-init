@@ -285,8 +285,54 @@ func _maintenance() -> void:
 	_surface(Vector2(33, -14), Vector2(35, 12), "paving", Color("b7b1a3"))
 	_surface(Vector2(54, -13), Vector2(8, 3.8), "asphalt")
 	_surface(Vector2(21, 0.5), Vector2(2, 17), "paving")
-	_fence(Vector2(48, -19), Vector2(48, -15))
-	_fence(Vector2(48, -11), Vector2(48, -8))
+	# A working service yard: fenced on three sides, a pedestrian gate on the south
+	# walk, a vehicle gate on the east lane, pipe stores, a truck and a smoking bench.
+	_fence(Vector2(34.4, -20), Vector2(50.5, -20))
+	_fence(Vector2(50.5, -20), Vector2(50.5, -15.5))
+	_fence(Vector2(50.5, -10.5), Vector2(50.5, -6))
+	_fence(Vector2(15.5, -6), Vector2(19.8, -6))
+	_fence(Vector2(23.2, -6), Vector2(50.5, -6))
+	_fence(Vector2(15.5, -20), Vector2(15.5, -6))
+	_fence(Vector2(15.5, -20), Vector2(17.6, -20))
+	_gate(Vector2(50.5, -13), "z", 5.0)
+	_gate(Vector2(21.5, -6), "x", 3.4)
+	_sign(Vector2(25.5, -3.5), Color("4a6a8a"))
+	_lamp(Vector2(34.8, -9))
+	_lamp(Vector2(17, -9))
+	_surface(Vector2(43, -11), Vector2(10, 4.6), "asphalt")
+	var truck_at := _world_xz(Vector2(43, -11))
+	map._vehicle("zil_flatbed", map._ground(truck_at) + Vector3.UP * 0.09,
+		map.VehicleModels.map_length("zil_flatbed"), "x", yard_root)
+	map._occupy(truck_at, Vector2(8, 3))
+	# Pipe store: stacked steel and insulated lengths on timber sleepers.
+	for row in 3:
+		for column in 4 - row:
+			_box(Vector2(40.5 + row * 0.5 + column * 0.62, -17.2), Vector3(0.5, 0.5, 6.4), 0.42 + row * 0.44, Color("4b4e4c") if (row + column) % 2 == 0 else Color("cfc9b6"))
+	for z in [-19.0, -17.2, -15.4]:
+		_box(Vector2(42, z), Vector3(3.2, 0.14, 0.4), 0.07, WOOD_DARK)
+	# Cable drums, a sand heap, pallets and green refuse containers.
+	for at in [Vector2(36.8, -17.4), Vector2(38.0, -16.2)]:
+		_box(at, Vector3(0.12, 1.5, 1.5), 0.78, Color("8c7250"))
+		_box(at + Vector2(0.55, 0), Vector3(0.12, 1.5, 1.5), 0.78, Color("8c7250"))
+		_box(at + Vector2(0.27, 0), Vector3(0.45, 0.9, 0.9), 0.78, Color("2f2d2b"))
+	_box(Vector2(46.5, -8), Vector3(3.6, 0.5, 2.8), 0.28, Color("b3a273"))
+	_box(Vector2(46.5, -8), Vector3(2.4, 0.5, 1.8), 0.7, Color("b3a273"))
+	_box(Vector2(46.5, -8), Vector3(1.1, 0.4, 0.9), 1.05, Color("b3a273"))
+	for index in 3:
+		_box(Vector2(20.5, -17.5 + index * 0.18), Vector3(1.2, 0.14, 1.2), 0.1 + index * 0.16, Color("8c7250"))
+	for x in [47.0, 48.4]:
+		_box(Vector2(x, -18.4), Vector3(1.1, 1.2, 0.9), 0.65, Color("3f6a4a"))
+		_box(Vector2(x, -18.4), Vector3(1.2, 0.1, 1.0), 1.27, Color("2f2d2b"))
+	# Insulated heating pipes entering the building on concrete supports.
+	for z in [-23.0, -24.2]:
+		_box(Vector2(11.5, z), Vector3(12.0, 0.45, 0.45), 0.9, Color("d3cdb9"))
+	for x in [6.0, 10.0, 14.0]:
+		_box(Vector2(x, -23.6), Vector3(0.5, 0.7, 2.2), 0.35, Color("9d988b"))
+	# Bench with the shift and a worker by the truck.
+	_prop(Bench, Vector2(29.5, -17.8), 0.0)
+	_person("person_worker", Vector2(31.2, -16.4), 1.05)
+	_person("person_worker", Vector2(46.0, -12.8), 1.05)
+	_person("person_pensioner", Vector2(23.5, -4.4), 1.0)
 	_box(Vector2(42, -17), Vector3(3.2, 0.12, 1.8), 0.16, KERB)
 	for x in [41.0, 42.6]:
 		_box(Vector2(x, -17), Vector3(1.15, 1.1, 1.1), 0.76, STEEL)
@@ -373,6 +419,7 @@ func _box(at: Vector2, size: Vector3, height: float, color: Color) -> void:
 
 const KG_COLORS := [Color("c8553d"), Color("e0b23a"), Color("3f7fa8"), Color("5f9a55")]
 const CONCRETE := Color("b4afa2")
+const WOOD_DARK := Color("5f4b36")
 
 
 # Axis-aligned run: concrete plinth, square posts every 3 m, two rails and pickets.
@@ -409,6 +456,16 @@ func _gate(at: Vector2, along: String, width: float, style := "steel") -> void:
 		var leaf_size := Vector3(width * 0.5, 1.5, 0.08) if along == "z" else Vector3(0.08, 1.5, width * 0.5)
 		_box(leaf_centre, leaf_size, 0.95, KG_COLORS[2] if style == "kids" else STEEL)
 	_box(at, Vector3(0.8 if along == "z" else width, 0.05, width if along == "z" else 0.8), 0.07, Color("8a8576"))
+
+
+func _world_xz(at: Vector2) -> Vector2:
+	return origin + at
+
+
+func _person(sprite: String, at: Vector2, width: float) -> void:
+	var texture: Texture2D = load("res://assets/sprites/%s.png" % sprite)
+	var node: Node3D = map._sprite(texture, map._ground(origin + at), width)
+	node.reparent(yard_root)
 
 
 func _lamp(at: Vector2) -> void:
