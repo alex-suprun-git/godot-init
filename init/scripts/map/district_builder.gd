@@ -40,6 +40,8 @@ func build(city_map) -> void:
 	preload("res://scripts/map/residential_court.gd").new().build(self)
 	preload("res://scripts/map/residential_infill.gd").new().build(self)
 	preload("res://scripts/map/nature_places.gd").new().build(self)
+	preload("res://scripts/map/residential_cores.gd").new().build(self)
+	preload("res://scripts/map/courtyard_life.gd").new().build(self)
 	preload("res://scripts/map/heating_details.gd").new().build(map)
 	_build_train_stock()
 
