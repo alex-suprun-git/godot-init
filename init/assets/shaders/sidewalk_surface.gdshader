@@ -1,12 +1,16 @@
 shader_type spatial;
 render_mode specular_disabled;
 
+#include "winter_surfaces.gdshaderinc"
+
 uniform sampler2D surface_texture : source_color, filter_linear_mipmap_anisotropic, repeat_disable;
 // A joint-centre-to-joint-centre region avoids partial perimeter slabs in the source.
 uniform vec4 source_region = vec4(0.0, 0.0, 1.0, 1.0);
 uniform float repeat_metres = 2.0;
 uniform float surface_brightness = 1.0;
 uniform float mottle_strength = 0.0;
+uniform bool winter = false;
+uniform float snow_compaction = 0.0;
 varying vec2 world_uv;
 
 float grain_hash(vec2 cell) {
@@ -33,6 +37,11 @@ void fragment() {
 	// Millimetre aggregate alone disappears in map mips. Gentle metre-scale
 	// variation keeps pedestrian asphalt readable without painting large cracks.
 	float mottle = soft_mottle(world_uv * repeat_metres / 1.25);
-	ALBEDO = surface * surface_brightness * (1.0 + (mottle * 2.0 - 1.0) * mottle_strength);
+	vec3 colour = surface * surface_brightness * (1.0 + (mottle * 2.0 - 1.0) * mottle_strength);
+	if (winter) {
+		float detail = dot(surface, vec3(0.299, 0.587, 0.114));
+		colour = winter_snow_colour(world_uv * repeat_metres, snow_compaction) + (detail - 0.4) * 0.12;
+	}
+	ALBEDO = colour;
 	ROUGHNESS = 0.95;
 }

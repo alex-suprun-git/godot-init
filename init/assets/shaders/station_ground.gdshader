@@ -1,4 +1,5 @@
 shader_type spatial;
+#include "winter_surfaces.gdshaderinc"
 
 uniform sampler2D grain_texture : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform int surface_kind = 0; // 0 platform asphalt; 1 concrete paving; 2 market asphalt.
@@ -62,8 +63,8 @@ void fragment() {
 		}
 	}
 	if (winter) {
-		float snow = smoothstep(.37, .72, broad) * (surface_kind == 1 ? .72 : .45);
-		color = mix(color, vec3(.65, .69, .71), snow);
+		float cover = surface_kind == 1 ? 0.40 : 0.18;
+		color = mix(color, winter_snow_colour(p, 0.72), cover + (broad - 0.5) * 0.10);
 	}
 	ALBEDO = max(color, vec3(.025));
 	ROUGHNESS = .97;

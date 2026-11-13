@@ -1,7 +1,10 @@
 // Organic ground (grass, dry grass, dirt): one tile texture, world-space UVs, no visible repeat.
+#include "winter_surfaces.gdshaderinc"
+
 uniform sampler2D ground_texture : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform vec4 tint : source_color = vec4(1.0);
 uniform float tile_metres = 22.0;
+uniform bool winter = false;
 // Second sample: other scale and rotation, so the two repeat grids never line up.
 uniform float second_scale = 0.37;
 uniform float second_angle = 0.65;
@@ -39,6 +42,13 @@ float value_noise(vec2 p) {
 
 // Colour of organic ground at a world position (metres on the XZ plane).
 vec3 terrain_ground_colour(vec2 world_xz) {
+	if (winter) {
+		// Broad, faint variation in settled snow. The existing wear map only
+		// darkens compacted spots and paths, without exposing a tiled soil texture.
+		float wear = texture(wear_mask, (world_xz - wear_rect.xy) / wear_rect.zw).r;
+		float compacted = smoothstep(0.35, 0.8, wear);
+		return winter_snow_colour(world_xz, compacted * 0.28);
+	}
 
 	vec2 uv_a = world_xz / tile_metres;
 	float c = cos(second_angle);

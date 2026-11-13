@@ -4,7 +4,6 @@ uniform sampler2D rural_texture : source_color, filter_linear_mipmap_anisotropic
 uniform sampler2D shared_texture : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform sampler2D soil_texture : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform vec4 seasonal_tint : source_color = vec4(1.0);
-uniform bool winter = false;
 uniform float edge_metres = 0.0;
 uniform vec2 quad_size = vec2(1.0);
 uniform sampler2D wear_mask : hint_default_black, filter_linear, repeat_disable;
@@ -34,7 +33,6 @@ void fragment() {
 	float wear=texture(wear_mask,(world_xz-wear_rect.xy)/wear_rect.zw).r;
 	float bare=smoothstep(.35,.78,wear+(field(world_xz*1.7)-.5)*.18);
 	colour=mix(colour,earth*.67,bare*.78);
-	if (winter) { colour = shared * seasonal_tint.rgb; }
 	ALBEDO = colour;
 	ROUGHNESS = .97;
 	ALPHA = 1.0;

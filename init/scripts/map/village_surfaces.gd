@@ -7,12 +7,15 @@ const GRAVEL = preload("res://assets/models/village/compacted_gravel.png")
 const SOIL = preload("res://assets/models/village/garden_soil.png")
 
 static func ground(map, rect: Rect2, height: float, soft := .0) -> void:
+	if Settings.season == "winter":
+		map._ground_quad(rect.get_center(), rect.size, height, map._season["grass"], 22.0,
+			false, map._season["grass_tint"], true, soft)
+		return
 	var material := ShaderMaterial.new()
 	material.shader = preload("res://assets/shaders/village_ground.gdshader")
 	material.set_shader_parameter("rural_texture",GRASS)
 	material.set_shader_parameter("shared_texture",map._season["grass"])
 	material.set_shader_parameter("soil_texture",SOIL)
-	material.set_shader_parameter("winter",Settings.season == "winter")
 	material.set_shader_parameter("seasonal_tint",map._season["grass_tint"])
 	material.set_shader_parameter("quad_size",rect.size)
 	material.set_shader_parameter("edge_metres",soft)
@@ -28,7 +31,6 @@ static func path_material(map, rect := Rect2(), tracks := false, soil_blend := .
 	material.shader = preload("res://assets/shaders/village_gravel.gdshader")
 	material.set_shader_parameter("gravel_texture",GRAVEL)
 	material.set_shader_parameter("grass_texture",GRASS)
-	material.set_shader_parameter("snow_texture",map._season["dirt"])
 	material.set_shader_parameter("winter",Settings.season == "winter")
 	material.set_shader_parameter("grass_tint",map._season["grass_tint"])
 	material.set_shader_parameter("along_x",rect.size.x > rect.size.y)

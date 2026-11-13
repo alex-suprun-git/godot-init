@@ -613,13 +613,15 @@ func _build_sidewalks() -> void:
 	# Prepared 1024px source: three slabs between measured joint centres
 	# x=12..767, y=36..796. Three 50cm slabs repeat every 1.5m.
 	var slab_region := Vector4(12.0 / 1024.0, 36.0 / 1024.0, 755.0 / 1024.0, 760.0 / 1024.0)
-	var slabs := _sidewalk_material(GROUND_SNOW_PAVING if winter else GROUND_SIDEWALK_SLABS,
-		4.0 if winter else 1.5, Vector4(0, 0, 1, 1) if winter else slab_region)
-	var asphalt := _sidewalk_material(GROUND_SNOW_ASPHALT if winter else GROUND_SIDEWALK_ASPHALT, 4.0)
-	if not winter:
-		slabs.set_shader_parameter("surface_brightness", 0.85)
-		asphalt.set_shader_parameter("surface_brightness", 0.65)
-		asphalt.set_shader_parameter("mottle_strength", 0.22)
+	var slabs := _sidewalk_material(GROUND_SIDEWALK_SLABS, 1.5, slab_region)
+	var asphalt := _sidewalk_material(GROUND_SIDEWALK_ASPHALT, 4.0)
+	slabs.set_shader_parameter("surface_brightness", 0.85)
+	asphalt.set_shader_parameter("surface_brightness", 0.65)
+	asphalt.set_shader_parameter("mottle_strength", 0.22)
+	slabs.set_shader_parameter("winter", winter)
+	asphalt.set_shader_parameter("winter", winter)
+	slabs.set_shader_parameter("snow_compaction", 0.64)
+	asphalt.set_shader_parameter("snow_compaction", 0.82)
 	var covered: Array[Rect2] = []
 	var sidewalk_roads: Array[Dictionary] = []
 	# The civic paving owns shared corners. Subtract already rendered surfaces so
@@ -981,6 +983,7 @@ func _ground_quad(center: Vector2, size: Vector2, y: float, texture: Texture2D, 
 			shader_material.set_shader_parameter("quad_metres", size)
 			shader_material.set_shader_parameter("edge_metres", soft_edge)
 		shader_material.set_shader_parameter("ground_texture", texture)
+		shader_material.set_shader_parameter("winter", Settings.season == "winter")
 		shader_material.set_shader_parameter("tint", tint)
 		shader_material.set_shader_parameter("tile_metres", tile)
 		shader_material.set_shader_parameter("macro_texture", GROUND_MACRO)
@@ -1016,12 +1019,15 @@ func _ground_quad(center: Vector2, size: Vector2, y: float, texture: Texture2D, 
 
 # Local paths retain their earth, compacted yard or paving character.
 func _path_quad(rect: Rect2, height: float, ground: String, tint: Color) -> void:
+	var winter := Settings.season == "winter"
+	var paved := ground == "paving"
 	var material := ShaderMaterial.new()
 	material.shader = preload("res://assets/shaders/local_paths.gdshader")
-	material.set_shader_parameter("surface_texture", _season[ground])
+	var texture: Texture2D = (GROUND_PAVING if paved else GROUND_DIRT) if winter else _season[ground]
+	material.set_shader_parameter("surface_texture", texture)
 	material.set_shader_parameter("surface_tint", tint)
-	material.set_shader_parameter("winter", Settings.season == "winter")
-	material.set_shader_parameter("paved", ground == "paving")
+	material.set_shader_parameter("winter", winter)
+	material.set_shader_parameter("paved", paved)
 	material.set_shader_parameter("yard", ground == "courtyard")
 	var mesh := QuadMesh.new()
 	mesh.size = rect.size
@@ -1034,18 +1040,22 @@ func _path_quad(rect: Rect2, height: float, ground: String, tint: Color) -> void
 
 
 # Asphalt roads share world coordinates so adjacent pieces have no texture seams.
-func _asphalt_quad(rect: Rect2, height: float, tint: Color, highway: bool = false) -> void:
+func _asphalt_material(tint: Color, highway: bool) -> ShaderMaterial:
 	var material := ShaderMaterial.new()
 	material.shader = preload("res://assets/shaders/town_asphalt.gdshader")
 	material.set_shader_parameter("grain_texture", GROUND_ASPHALT)
 	material.set_shader_parameter("highway", highway)
 	material.set_shader_parameter("winter", Settings.season == "winter")
 	material.set_shader_parameter("surface_tint", tint)
+	return material
+
+
+func _asphalt_quad(rect: Rect2, height: float, tint: Color, highway: bool = false) -> void:
 	var mesh := QuadMesh.new()
 	mesh.size = rect.size
 	var instance := MeshInstance3D.new()
 	instance.mesh = mesh
-	instance.material_override = material
+	instance.material_override = _asphalt_material(tint, highway)
 	instance.rotation.x = -PI / 2.0
 	instance.position = Vector3(rect.get_center().x, height, rect.get_center().y)
 	add_child(instance)
