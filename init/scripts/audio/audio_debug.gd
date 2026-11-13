@@ -1,6 +1,4 @@
-# Dev panel (F3): which sound events fired this week and how often. Use it to
-# tune feedback before any sound exists: the most frequent event should be the
-# quietest, and a rare tier should not fire every few seconds.
+# Dev panel (F3): audition sound events and see how often they fired this week.
 extends CanvasLayer
 
 const AudioEvents = preload("res://scripts/data/audio_events.gd")
@@ -27,6 +25,8 @@ func setup(audio_manager) -> void:
 	layer = 50
 	_panel = PanelContainer.new()
 	_panel.position = Vector2(16, 76)
+	_panel.anchor_bottom = 1.0
+	_panel.offset_bottom = -16.0
 	var style := StyleBoxFlat.new()
 	style.bg_color = INK
 	style.set_content_margin_all(12)
@@ -74,11 +74,15 @@ func setup(audio_manager) -> void:
 	_quiet_button.pressed.connect(_cycle_quiet_mode)
 	column.add_child(_quiet_button)
 
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	column.add_child(scroll)
 	var grid := GridContainer.new()
 	grid.columns = 5
 	grid.add_theme_constant_override("h_separation", 16)
 	grid.add_theme_constant_override("v_separation", 2)
-	column.add_child(grid)
+	scroll.add_child(grid)
 	for title in ["Событие (клик = послушать)", "Ур.", "За неделю", "В минуту", "Последнее"]:
 		grid.add_child(_label(title, 12, MUTED))
 	for id in AudioEvents.EVENTS:
