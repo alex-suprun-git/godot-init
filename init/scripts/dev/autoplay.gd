@@ -39,6 +39,7 @@ const SCENARIOS := {
 	"lane-change": "_run_lane_change_review",
 	"gazelle": "_run_gazelle_review",
 	"trains": "_run_train_review",
+	"spots": "_run_spots", # --at=x,z,zoom[;x,z,zoom...] default-camera frames of arbitrary map spots
 }
 const FULL_RUN := ["office", "map", "week"]
 
@@ -282,6 +283,23 @@ func _run_request_lifecycle() -> void:
 	main.sim.choose("coal_theft", "go_myself")
 	main.sim.advance(2.0)
 	print("request late travel: stage=", main.sim.request_stage("coal_theft"), " / actor=", main.sim.actors["me"]["state"], " / coal_stolen=", main.sim.flags.get("coal_stolen", false))
+
+
+func _run_spots() -> void:
+	_dismiss_briefing()
+	main.map._debug_hour = 12.0
+	var spec := ""
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--at="):
+			spec = arg.trim_prefix("--at=")
+	var index := 0
+	for item in spec.split(";", false):
+		var parts := item.split(",")
+		if parts.size() != 3:
+			push_error("autoplay: --at expects x,z,zoom")
+			continue
+		await _map_shot("spot_%02d" % index, Vector2(float(parts[0]), float(parts[1])), float(parts[2]))
+		index += 1
 
 
 func _run_train_review() -> void:

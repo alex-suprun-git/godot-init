@@ -26,6 +26,18 @@ const CONTENTS := {
 		"ground_floor": "res://assets/textures/facade_panel_groundfloor_shop.png",
 		"placeholder_color": Color("ccc9bd"), "label": "Пятиэтажный дом", "dressing": [],
 	},
+	# Shorter slab for the gap east of the kindergarten block (b2_e), between the polyclinic and the south infill lane.
+	"panel_5_short": {
+		"kind": "panel", "footprint": Vector2(62, 11), "floors": 5,
+		"facade": "res://assets/textures/facade_panel_late_5storey_lived.png",
+		"roof": "res://assets/textures/roof_panel_flat.png",
+		"entrance_base": "res://assets/textures/facade_panel_entrance.png",
+		"stair": "res://assets/textures/facade_panel_stair.png",
+		"ground_floor": "res://assets/textures/facade_panel_groundfloor_shop.png",
+		"placeholder_color": Color("ccc9bd"), "label": "Пятиэтажный дом", "dressing": [],
+	},
+	# Reserved plot for the pub (the building itself is still to be designed).
+	"pub_site": {"kind": "open", "ground": "paving", "label": "Пивная · участок", "dressing": []},
 	"dormitory": {
 		"kind": "dormitory", "footprint": Vector2(30, 23), "floors": 4,
 		"height": 13.6, "ground": "grass", "label": "Общежитие", "dressing": [],
