@@ -753,14 +753,18 @@ func _build_street_furniture() -> void:
 		for i in range(1, int(length / 40.0)):
 			var offset := Vector2(i * 40, -2) if along_x else Vector2(-2, i * 40)
 			var at := rect.position + offset
-			if not _is_occupied(at, 0.5):
-				_sprite(LAMP_POST, _ground(at), 6.0)
-				_lamp_light(_ground(at))
+			# A lamp that would stand in a lot gate slides along the road to the next clear spot.
+			for shift in [0.0, 12.0, -12.0]:
+				var spot := at + (Vector2(shift, 0) if along_x else Vector2(0, shift))
+				if not _is_occupied(spot, 0.5):
+					_sprite(LAMP_POST, _ground(spot), 6.0)
+					_lamp_light(_ground(spot))
+					break
 
 
 # A lit lamp: a glow at the lamp head (about 8 m up, a little to the screen's
 # right where the arm ends) and a pool of light on the road under it.
-func _lamp_light(base: Vector3) -> void:
+func _lamp_light(base: Vector3, head_height: float = 8.2, glow_scale: float = 1.0) -> void:
 	if _lamp_glow.is_empty():
 		var gradient := Gradient.new()
 		gradient.set_color(0, Color.WHITE)
@@ -791,7 +795,8 @@ func _lamp_light(base: Vector3) -> void:
 	var head_glow := MeshInstance3D.new()
 	head_glow.mesh = _lamp_glow["head_mesh"]
 	head_glow.material_override = _lamp_glow["head"]
-	head_glow.position = base + Vector3.UP * 8.2 + _view_right() * 0.7
+	head_glow.position = base + Vector3.UP * head_height + _view_right() * 0.7 * glow_scale
+	head_glow.scale = Vector3.ONE * glow_scale
 	head_glow.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(head_glow)
 	var pool_glow := MeshInstance3D.new()
@@ -799,6 +804,7 @@ func _lamp_light(base: Vector3) -> void:
 	pool_glow.material_override = _lamp_glow["pool"]
 	pool_glow.rotation.x = -PI / 2.0
 	pool_glow.position = base + Vector3.UP * 0.2
+	pool_glow.scale = Vector3.ONE * glow_scale
 	pool_glow.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(pool_glow)
 
@@ -1190,6 +1196,7 @@ func _build_ambient() -> void:
 		agent["lift"] = sprite.position.y - _ground(agent["pos"]).y
 		base_walkers.append(agent)
 	var rare_car_slots := ["luxury_sedan", "luxury_suv", "rural_4x4"]
+	var service_slots := ["uaz_police", "raf_ambulance"]
 	for i in AMBIENT_CARS:
 		var speed := look.randf_range(7.0, 12.0)
 		var seed_value := look.randi()
@@ -1198,6 +1205,11 @@ func _build_ambient() -> void:
 			break
 		if agent["class"] == "car" and not rare_car_slots.is_empty():
 			agent["rare_car_model"] = rare_car_slots.pop_front()
+		# One police van and one ambulance circle the town for good: they take the
+		# first city-stream cars whose loop runs along the civic axis.
+		elif agent["class"] == "car" and agent["stream"] == "city" and not service_slots.is_empty() \
+				and _ambient.trip_uses_road(agent, "axis"):
+			agent["rare_car_model"] = service_slots.pop_front()
 		var car := TrafficVehicleModels.create(agent["class"], seed_value, _ground(agent["pos"]) + Vector3.UP * 0.14, agent.get("rare_car_model", ""))
 		add_child(car)
 		agent["half_extent"] = car.get_meta("traffic_half_extent")

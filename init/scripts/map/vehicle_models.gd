@@ -13,7 +13,12 @@ const MODELS := {
 	"container_20ft": preload("res://assets/models/vehicles/container_20ft.glb"),
 	"bus_liaz": preload("res://assets/models/vehicles/bus_liaz_5256.glb"),
 	"bus_paz": preload("res://assets/models/vehicles/bus_paz_3205.glb"),
+	"uaz_police": preload("res://assets/models/vehicles/uaz_police.glb"),
+	"raf_ambulance": preload("res://assets/models/vehicles/raf_ambulance.glb"),
 }
+# Service vans keep their livery; the approved 0.85 presentation scale is already
+# embedded in the GLBs, so map length equals source length (scale exactly 1.0).
+const SERVICE_LENGTHS := {"uaz_police": 3.774, "raf_ambulance": 4.3095}
 # Civilian variants share the GLB; the administration keeps black lacquer.
 const VOLGA_PATH := "res://assets/models/vehicles/volga_gaz24.glb"
 const VOLGA_SOURCE_LENGTH := 4.905458 # Measured from volga_gaz24.glb.
@@ -86,6 +91,8 @@ static func has_volga_model() -> bool:
 
 # Map length in metres. Bus scale was reviewed beside the truck and Volga.
 static func map_length(model_id: String) -> float:
+	if SERVICE_LENGTHS.has(model_id):
+		return float(SERVICE_LENGTHS[model_id])
 	if AUTHORED_CAR_LENGTHS.has(model_id):
 		var visual_scale := AUTHORED_CAR_VISUAL_SCALE
 		if model_id == "rural_4x4":
@@ -107,6 +114,8 @@ static func _scene(model_id: String) -> PackedScene:
 
 
 static func _source_length(model_id: String) -> float:
+	if SERVICE_LENGTHS.has(model_id):
+		return float(SERVICE_LENGTHS[model_id])
 	if AUTHORED_CAR_LENGTHS.has(model_id):
 		return float(AUTHORED_CAR_LENGTHS[model_id])
 	if BUS_LENGTHS.has(model_id):
@@ -151,8 +160,8 @@ static func create(model_id: String, at: Vector3, length: float, axis: String, p
 	if model_id == "volga" and has_volga_model():
 		if paint >= 0:
 			_repaint_volga(vehicle, _weighted_paint(paint, VOLGA_PAINT_WEIGHTS, "volga-paint"))
-	elif BUS_LENGTHS.has(model_id):
-		pass # Preserve the two-tone concept livery; car tints flatten both paint bands.
+	elif BUS_LENGTHS.has(model_id) or SERVICE_LENGTHS.has(model_id):
+		pass # Preserve the livery; car tints flatten the paint bands.
 	elif AUTHORED_CAR_LENGTHS.has(model_id):
 		pass # Preserve the authored colours of the three new cars.
 	elif paint == PAINT_BLACK:

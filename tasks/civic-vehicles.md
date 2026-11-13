@@ -61,6 +61,8 @@ Stop with `status: blocked` and explain in the report when:
 - **Review notes / limitations:** The preview Volga matches the actual game GLB by SHA-256 (7,775 triangles, three materials); its original black material is preserved. These are simplified period exteriors with opaque glazing, without interiors/collisions. New service-vehicle town placements and full-week gameplay were not verified.
 - **Next integration:** Register and place the models at police/clinic surfaces in a separate update. Preserve the embedded van scale: use the current measured exported lengths and do not apply an additional 0.85 factor. Review the actual town frame when integrating. Open the isolated demo with `Godot --editor --path art/models/uaz_service/preview_project`; the main worktree project is `init/`.
 
+- **Integration (2026-11-13, Claude, branch `claude/clinic-police-building-identity-e72c82`):** vans registered and placed as described in `docs/MAP_AND_DISTRICT.md`; autoplay `--only=vehicles` now saves `civic_police.png`, `civic_polyclinic.png` and wide shots of both, and prints the service-van count. Not verified: full-week play, night frame.
+
 ## Review notes
 
 _Filled in by the lead after each review round._

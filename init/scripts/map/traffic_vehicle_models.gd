@@ -16,7 +16,7 @@ static var _footprints := {}
 
 static func create(vehicle_class: String, seed_value: int, at: Vector3, rare_car_model: String = "") -> Node3D:
 	var model := VehicleModels.model_for_class(vehicle_class, seed_value)
-	if vehicle_class == "car" and VehicleModels.AUTHORED_CAR_LENGTHS.has(rare_car_model):
+	if vehicle_class == "car" and (VehicleModels.AUTHORED_CAR_LENGTHS.has(rare_car_model) or VehicleModels.SERVICE_LENGTHS.has(rare_car_model)):
 		model = rare_car_model
 	# Separate salted choices preserve existing class RNG and KamAZ selection.
 	if model in ["zil_flatbed", "zil_food"]:

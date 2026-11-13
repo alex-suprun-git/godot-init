@@ -106,6 +106,15 @@ func _init(graph: RoadGraph, seed_value: int, gateways: Array[Dictionary] = []) 
 
 # Agents start on edges picked by length times district density, so crowded districts
 # hold more of them. Cars use separately budgeted routes and fleets.
+# True when the agent's trip drives along the given road id (e.g. "axis").
+func trip_uses_road(agent: Dictionary, road_id: String) -> bool:
+	for leg: Dictionary in agent["trip"]["path"]:
+		var road: int = _graph.edges[leg["edge"]]["road"]
+		if road >= 0 and DistrictLayout.ROADS[road]["id"] == road_id:
+			return true
+	return false
+
+
 func add(is_car: bool, speed: float, appearance_seed: int = -1) -> Dictionary:
 	if is_car:
 		return _add_car(speed, appearance_seed)

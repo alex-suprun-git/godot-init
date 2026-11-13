@@ -581,6 +581,17 @@ func _run_vehicle_review() -> void:
 		volga_shots += 1
 		if volga_shots >= 3:
 			break
+	# Police station and polyclinic: forecourt identity plus the circling service vans.
+	var service_moving := []
+	for agent in main.map._ambient.agents:
+		if agent.get("rare_car_model", "") in main.map.VehicleModels.SERVICE_LENGTHS:
+			service_moving.append("%s on %s" % [agent["rare_car_model"], agent["stream"]])
+	print("Service vans: parked uaz ", get_tree().get_nodes_in_group("vehicle_uaz_police").size(), ", raf ", get_tree().get_nodes_in_group("vehicle_raf_ambulance").size(), " (incl. moving); moving: ", service_moving)
+	# Canopy sign close-up: the polyclinic entrance is on the lot centre row, 12 m in front of the building origin.
+	await _map_shot("civic_polyclinic_sign", main.map.DistrictLayout.lot_center("polyclinic") + Vector2(2.0, 0), 16.0)
+	for civic_id in ["police", "polyclinic"]:
+		await _map_shot("civic_wide_" + civic_id, main.map.DistrictLayout.lot_center(civic_id) + Vector2(25, 0), 130.0)
+		await _map_shot("civic_" + civic_id, main.map.DistrictLayout.lot_center(civic_id) + Vector2(4, 0), 45.0)
 	main.map.Settings.camera_mode = previous_view
 	if OS.get_cmdline_user_args().has("--keep-open"):
 		main.map._camera_goal = Vector3(courtyard.x, 0, courtyard.y)
