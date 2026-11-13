@@ -143,6 +143,23 @@ func _place_models() -> void:
 			dress_pitch(model)
 		_apply_surfaces(model)
 		yard_root.add_child(model)
+		if id != "football_pitch":
+			# The random yard-tree scatter runs later and skips occupied ground; without this a shrub
+			# could be planted inside the kindergarten or school and stand on its roof.
+			var footprint := _footprint_of(model)
+			map._occupy(footprint.get_center(), footprint.size)
+
+
+# Ground rectangle (map x/z) covered by a model's meshes.
+func _footprint_of(model: Node3D) -> Rect2:
+	var rect := Rect2()
+	var first := true
+	for instance: MeshInstance3D in model.find_children("*", "MeshInstance3D", true, false):
+		var box := model.transform * (instance.transform * instance.get_aabb())
+		var flat := Rect2(box.position.x, box.position.z, box.size.x, box.size.z)
+		rect = flat if first else rect.merge(flat)
+		first = false
+	return rect
 
 
 func _apply_surfaces(model: Node3D) -> void:

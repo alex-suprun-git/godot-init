@@ -47,6 +47,9 @@ func build(city_map) -> void:
 	map.add_child(street_crowd)
 	street_crowd.build(map)
 	preload("res://scripts/map/bus_stops.gd").new().build(map)
+	var courtyard_crowd := preload("res://scripts/map/courtyard_crowd.gd").new()
+	map.add_child(courtyard_crowd)
+	courtyard_crowd.build(map)
 	_build_train_stock()
 	_build_rare_traffic()
 
@@ -395,9 +398,9 @@ func _building(lot: Dictionary, entry: Dictionary, desired: Vector2, lot_id: Str
 		if facade != null:
 			var repeats := height / (float(entry.get("facade_floors", entry.get("floors", 5))) * 3.0)
 			if lot["content"] == "panel_9":
-				map._facades(Vector3.ZERO, Vector3(size.x, height, size.y), facade, repeats, tint, group, 9, preload("res://scripts/map/facade_floors.gd").PANEL_9_BANDS)
+				map._facades(Vector3.ZERO, Vector3(size.x, height, size.y), facade, repeats, tint, group, 9, preload("res://scripts/map/facade_floors.gd").PANEL_9_BANDS, true)
 			else:
-				map._facades(Vector3.ZERO, Vector3(size.x, height, size.y), facade, repeats, tint, group)
+				map._facades(Vector3.ZERO, Vector3(size.x, height, size.y), facade, repeats, tint, group, 0, [], entry.get("kind", "") == "panel")
 	if entry.get("kind", "") == "panel":
 		map._panel_overlays(entry, size, height, group)
 		HousingDetails.build(map, group, size, height, detail)
