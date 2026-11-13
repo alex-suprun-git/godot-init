@@ -61,6 +61,7 @@ func setup(manager, map_node) -> void:
 	var reset := Button.new()
 	reset.text = "Масштаб 100%"
 	reset.pressed.connect(func(): _scale_slider.value = 100)
+	reset.pressed.connect(audio.play.bind("ui_click"))
 	column.add_child(reset)
 	for channel in CHANNELS:
 		var row := HBoxContainer.new()
@@ -114,11 +115,13 @@ func _open() -> void:
 		# Refresh the numeric label even when the value has not changed.
 		slider.value_changed.emit(slider.value)
 	_root.show()
+	audio.play("ui_click")
 	get_tree().paused = true
 	_sliders["Master"].grab_focus()
 
 
 func _close() -> void:
+	audio.play("ui_click")
 	_root.hide()
 	get_tree().paused = _was_paused
 	if is_instance_valid(_previous_focus) and _previous_focus.is_visible_in_tree():
