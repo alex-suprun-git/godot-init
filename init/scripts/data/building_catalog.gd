@@ -54,21 +54,22 @@ const CONTENTS := {
 		"ground": "grass", "label": "Райисполком", "dressing": [],
 	},
 	"police": {
-		"kind": "building", "footprint": Vector2(18, 10), "height": 6.0, "doorstep": 2.0,
-		"civic_facade": true, "center_width": 12.0,
-		"facade_center": "res://assets/textures/facade_police_new_center.png",
-		"facade_wing": "res://assets/textures/facade_police_new_wing.png",
-		"roof": "res://assets/textures/roof_tar.png", "placeholder_color": Color("aab5b5"),
-		"ground": "paving", "label": "Райотдел милиции", "dressing": [
+		"kind": "civic_service", "model": "res://assets/models/civic_services/police_station_1997.glb",
+		"rear_extent": 11.25, "rear_gap": 7.5, "front_extent": 9.2, "width_extent": 29.2, "node_name": "PoliceStation1997",
+		"height": 7.2, "doorstep": 2.0, "ground": "paving", "label": "Райотдел милиции",
+		"fence": "concrete", "yard": "police", "gates": [{"dz": 0.0, "w": 2.4}, {"dz": 11.0, "w": 4.4}], "dressing": [
+			{"model": "uaz_police", "at": Vector2(15.5, 11.0), "length": 3.774, "footprint": Vector2(2.4, 4.2), "axis": "z"},
 		],
 	},
 	"polyclinic": {
-		"kind": "building", "footprint": Vector2(24, 14), "height": 9.0, "doorstep": 2.0,
-		"civic_facade": true, "center_width": 18.0,
-		"facade_center": "res://assets/textures/facade_polyclinic_new_center.png",
-		"facade_wing": "res://assets/textures/facade_polyclinic_new_wing.png",
-		"roof": "res://assets/textures/roof_tar.png", "placeholder_color": Color("cbd6d0"),
-		"ground": "paving", "label": "Поликлиника", "dressing": [
+		"kind": "civic_service", "model": "res://assets/models/civic_services/polyclinic_1997.glb",
+		"rear_extent": 6.0, "rear_gap": 4.0, "front_extent": 11.8, "width_extent": 40.2, "node_name": "Polyclinic1997",
+		"height": 10.8, "doorstep": 2.0, "ground": "grass", "label": "Поликлиника",
+		"fence": "metal", "yard": "clinic", "gates": [{"dz": -16.0, "w": 4.4}, {"dz": 0.0, "w": 3.2}, {"dz": 18.0, "w": 4.8}], "paths": [
+			{"dz": 0.0, "w": 2.6, "color": Color(0.66, 0.65, 0.61)},
+			{"dz": 18.0, "w": 4.2, "to_x": -32.5, "color": Color(0.22, 0.22, 0.23)},
+		], "dressing": [
+			{"model": "raf_ambulance", "at": Vector2(2.4, 18.0), "length": 4.3095, "footprint": Vector2(4.8, 2.4), "axis": "x"},
 		],
 	},
 	"elite_tower_placeholder": {

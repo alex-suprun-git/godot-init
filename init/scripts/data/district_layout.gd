@@ -49,8 +49,8 @@ const LOTS := {
 	"b2_s": {"type": "W", "rect": Rect2(-153, 225.68, 90, 24), "content": "panel_5", "condition": "kept", "facing": "n"},
 	"b2_w": {"type": "W", "rect": Rect2(-192.68, 125.8, 24, 90), "content": "panel_9", "condition": "kept", "facing": "e"},
 	"b2_k": {"type": "K", "rect": Rect2(-152, 135.6, 88, 70.4), "content": "yard", "condition": "kept", "facing": "s"},
-	"police": {"type": "G", "rect": Rect2(-44, -75, 24, 32), "content": "police", "condition": "kept", "facing": "e"},
-	"polyclinic": {"type": "G", "rect": Rect2(-45, 135, 28, 42), "content": "polyclinic", "condition": "kept", "facing": "e"},
+	"police": {"type": "G", "rect": Rect2(-56, -77, 36, 34), "content": "police", "condition": "kept", "facing": "e"},
+	"polyclinic": {"type": "G", "rect": Rect2(-53, 130, 33, 52), "content": "polyclinic", "condition": "kept", "facing": "e"},
 	"ispolkom": {"type": "G", "rect": Rect2(25, 22, 115, 108), "content": "ispolkom", "condition": "kept", "facing": "w", "entrance": Vector2(25, 72)},
 	"tower_e1": {"type": "G", "rect": Rect2(30, -60, 40, 38), "content": "culture_house", "condition": "kept", "facing": "w"},
 	"department_store": {"type": "G", "rect": Rect2(9.5, 0.5, 30, 30), "content": "department_store", "condition": "kept", "facing": "w"},
@@ -284,12 +284,12 @@ const DISTRICTS := {
 	"admin": {
 		"name": "Administrative centre",
 		# The relocated store reaches the avenue sidewalk, west of the main district rect.
-		"rects": [Rect2(19.5, -80, 125.5, 350), LOTS["department_store"]["rect"], Rect2(-44, -75, 24, 32), Rect2(-45, 135, 28, 42)],
+		"rects": [Rect2(19.5, -80, 125.5, 350), LOTS["department_store"]["rect"], Rect2(-56, -77, 36, 34), Rect2(-53, 130, 33, 52)],
 		"residents": 1200, "foot": 1.4, "cars": 0.8,
 		"fleet": {"car": 0.8, "bus": 0.2}, "hours": "office",
 		"subzones": {
-			"admin_police": {"rect": Rect2(-44, -75, 24, 32), "cars": 0.6},
-			"admin_polyclinic": {"rect": Rect2(-45, 135, 28, 42), "foot": 1.8, "hours": "commute"},
+			"admin_police": {"rect": Rect2(-56, -77, 36, 34), "cars": 0.6},
+			"admin_polyclinic": {"rect": Rect2(-53, 130, 33, 52), "foot": 1.8, "hours": "commute"},
 			"admin_square": {"rect": Rect2(25, 22, 115, 108), "foot": 2.0, "cars": 0.3},
 			"admin_restaurant": {"rect": LOTS["city_park"]["rect"], "residents": 0, "foot": 0.0, "cars": 0.0, "hours": "leisure"},
 			"admin_shops": {"rect": LOTS["department_store"]["rect"], "foot": 2.2, "hours": "market"},

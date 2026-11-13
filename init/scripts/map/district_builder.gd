@@ -284,6 +284,8 @@ func _build_lot(id: String, lot: Dictionary) -> void:
 			preload("res://scripts/map/civic_center.gd").new().build(self)
 		"panel", "building":
 			_building(lot, entry, center, id)
+		"civic_service":
+			preload("res://scripts/map/civic_services.gd").new().build(self, lot, entry, id)
 		"group":
 			for part in entry.get("parts", []):
 				var recipe: Dictionary = part.duplicate()
