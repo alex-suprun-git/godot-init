@@ -16,6 +16,10 @@ uv run python art/models/residential_cores/draw_projections.py
 
 The daylight capture is saved to `.local/residential-cores/yards.png`.
 
+## In the game
+
+The seven GLBs are copied to `init/assets/models/residential_cores/` and placed by `init/scripts/map/residential_cores.gd` (same offsets as the preview). Surfaces use existing district materials as triplanar copies keyed by GLB material name, since the models have no UVs. Yards, fences and one gate each for the school and kindergarten, and the walks from the surrounding blocks to those gates, live in the same script. `init/scripts/map/courtyard_life.gd` adds the House 5 courtyard: front hedges, apple trees, a playground, a domino table, washing lines and a beer stall. The preview scripts here remain a standalone capture tool. Proper UV-mapped facade textures are still open.
+
 ## Panel housing details
 
 On 2026-11-13 the user approved the daytime House 5 pilot as the direction for #49. The live map uses per-building facade tints and one to three instanced roof aerials across the 24 five- and nine-storey panel blocks. Balcony dishes are sparse and the painted river mural stays on one House 5 gable. The mural is native SVG with the panel joints drawn through the artwork.

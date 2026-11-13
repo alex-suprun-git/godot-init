@@ -1,7 +1,6 @@
 # Plays sound events from the table in scripts/data/audio_events.gd. Callers only
 # name an event ("option_choose"); weight, variants, volume, repeat limits and
-# the bus live in data. It also counts every event so the debug panel can show
-# what the week actually sounded like, even while all sounds are still empty.
+# the bus live in data. The debug panel shows how often each event fired.
 extends Node
 
 const AudioEvents = preload("res://scripts/data/audio_events.gd")
@@ -11,6 +10,10 @@ const CityAmbience = preload("res://scripts/audio/city_ambience.gd")
 signal event_fired(id: String)
 
 const POOL_SIZE := 8
+const MUSIC_PLAYLIST: Array[AudioStream] = [
+	preload("res://assets/audio/music/city_theme_01.mp3"),
+	preload("res://assets/audio/music/city_theme_02.mp3"),
+]
 
 # Events below this tier are counted but not played (quiet mode for tuning).
 var min_tier := 0
@@ -33,7 +36,14 @@ func _ready() -> void:
 	city_ambience = CityAmbience.new()
 	add_child(city_ambience)
 	layers["city"] = city_ambience
-	music = add_layer("music", preload("res://assets/audio/music/city_theme.mp3"), "Music", 1.0, 3.0)
+	music = AudioLayer.new()
+	music.name = "music"
+	music.playlist = MUSIC_PLAYLIST
+	music.bus = "Music"
+	music.level = 0.65
+	music.overlap_seconds = 3.0
+	layers["music"] = music
+	add_child(music)
 	for i in POOL_SIZE:
 		var player := AudioStreamPlayer.new()
 		add_child(player)
@@ -73,18 +83,21 @@ func play(id: String, counted: bool = true) -> void:
 	if now - _last_played_msec.get(id, -100000) < data["cooldown"] * 1000.0:
 		stats[id]["suppressed"] += 1
 		return
-	_last_played_msec[id] = now
-	var stream := _pick_stream(id, data["sounds"])
-	if stream == null:
-		return # Silent placeholder.
 	var player := _free_player(data["tier"])
 	if player == null:
 		return
+	var stream := _pick_stream(id, data["sounds"])
+	if stream == null:
+		return
+	_last_played_msec[id] = now
+	player.stop()
 	player.stream = stream
 	player.bus = data["bus"]
 	player.volume_db = data["volume_db"]
 	player.pitch_scale = 1.0 + _rng.randf_range(-data["pitch_jitter"], data["pitch_jitter"])
 	player.play()
+	_pool.erase(player)
+	_pool.append(player)
 
 
 # Several recordings per event, never the same one twice in a row.
@@ -97,9 +110,12 @@ func _pick_stream(id: String, paths: Array) -> AudioStream:
 			usable.append(_streams[path])
 	if usable.is_empty():
 		return null
-	var index := _rng.randi() % usable.size()
-	if usable.size() > 1 and index == _last_variant.get(id, -1):
-		index = (index + 1) % usable.size()
+	var last: int = _last_variant.get(id, -1)
+	var index := 0
+	if usable.size() > 1:
+		index = _rng.randi_range(0, usable.size() - 1 - int(last >= 0))
+		if last >= 0 and index >= last:
+			index += 1
 	_last_variant[id] = index
 	return usable[index]
 
@@ -111,9 +127,7 @@ func _free_player(tier: int) -> AudioStreamPlayer:
 		if not player.playing:
 			return player
 	if tier >= 3:
-		_pool[0].stop()
-		_pool.append(_pool.pop_front())
-		return _pool[-1]
+		return _pool[0]
 	return null
 
 

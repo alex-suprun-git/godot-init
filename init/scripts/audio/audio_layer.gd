@@ -1,7 +1,8 @@
-# Two voices overlap at loop seams; wall-clock envelopes ignore simulation speed.
+# Two voices overlap at loop seams and between tracks in an optional playlist.
 extends Node
 
 var stream: AudioStream
+var playlist: Array[AudioStream] = []
 var bus := "Ambience"
 var level := 0.5
 var context_gain := 1.0
@@ -10,7 +11,9 @@ var _last_tick := 0.0
 var overlap_seconds := 2.0
 var _voices: Array[AudioStreamPlayer] = []
 var _active := 0
+var _track := 0
 var _overlap_started := -1.0
+var _overlap_duration := 0.0
 var _gain := 0.0
 var _gain_from := 0.0
 var _gain_started := 0.0
@@ -19,17 +22,25 @@ var _gain_duration := 2.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	stream = stream.duplicate()
-	if stream is AudioStreamMP3 or stream is AudioStreamOggVorbis:
-		stream.loop = false
-	overlap_seconds = clampf(overlap_seconds, 0.05, stream.get_length() * 0.25)
+	var sources := playlist.duplicate()
+	if sources.is_empty():
+		sources.append(stream)
+	playlist = []
+	for source in sources:
+		var track := source.duplicate() as AudioStream
+		if track is AudioStreamMP3 or track is AudioStreamOggVorbis:
+			track.loop = false
+		elif track is AudioStreamWAV:
+			track.loop_mode = AudioStreamWAV.LOOP_DISABLED
+		playlist.append(track)
+	stream = playlist[0]
 	for i in 2:
 		var voice := AudioStreamPlayer.new()
-		voice.stream = stream
 		voice.bus = bus
 		voice.volume_linear = 0.0
 		add_child(voice)
 		_voices.append(voice)
+	_voices[0].stream = stream
 	_voices[0].play()
 	set_level(level, 2.0)
 
@@ -54,16 +65,25 @@ func _process(_delta: float) -> void:
 	var output_gain := _gain * _context_smoothed
 	var current := _voices[_active]
 	var incoming := _voices[1 - _active]
-	if _overlap_started < 0.0 and (not current.playing or current.get_playback_position() >= stream.get_length() - overlap_seconds):
-		incoming.play()
-		_overlap_started = now
+	var next_track := (_track + 1) % playlist.size()
+	if _overlap_started < 0.0:
+		var next_stream := playlist[next_track]
+		var remaining := stream.get_length() - current.get_playback_position()
+		var overlap := minf(overlap_seconds, minf(stream.get_length(), next_stream.get_length()) * 0.25)
+		if not current.playing or remaining <= overlap:
+			_overlap_duration = maxf(0.0, remaining) if current.playing else 0.0
+			_overlap_started = now
+			incoming.stream = next_stream
+			incoming.play()
 	if _overlap_started >= 0.0:
-		var blend := clampf((now - _overlap_started) / overlap_seconds, 0.0, 1.0)
+		var blend := clampf((now - _overlap_started) / maxf(0.001, _overlap_duration), 0.0, 1.0) if current.playing else 1.0
 		current.volume_linear = output_gain * cos(blend * PI * 0.5)
 		incoming.volume_linear = output_gain * sin(blend * PI * 0.5)
 		if blend >= 1.0:
 			current.stop()
 			_active = 1 - _active
+			_track = next_track
+			stream = incoming.stream
 			_overlap_started = -1.0
 	else:
 		current.volume_linear = output_gain

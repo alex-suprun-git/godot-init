@@ -11,6 +11,7 @@ signal request_changed(id: String)
 signal crisis_started(id: String)
 signal entry_added(entry: Dictionary)
 signal state_changed # money, standing, promises, objectives
+signal money_changed
 signal overlay_changed(lot: String, overlay: String, visible: bool)
 signal lot_state_changed(lot: String, state: String)
 signal promise_resolved(status: String) # "kept" or "broken"
@@ -618,7 +619,7 @@ func _finish_day() -> void:
 		if paperwork_left() > 0.00001:
 			_apply({"boss": -Week1.PAPERWORK_BOSS_PENALTY, "log": "Документы за неделю не закончены: %.1f из %.0f ч. Шеф недоволен." % [paperwork_hours, Week1.PAPERWORK_HOURS]}, {"lot": "office", "kind": "missed"})
 		var paid := mini(money, Week1.WEEKLY_RENT)
-		money -= paid
+		_change_money(-paid)
 		rent_debt += Week1.WEEKLY_RENT - paid
 		_add_entry("Аренда общежития: −%d руб.%s" % [paid, " Долг: %d руб." % rent_debt if rent_debt > 0 else ""])
 		state_changed.emit()
@@ -642,7 +643,7 @@ func _pay_salary_if_due() -> void:
 	# Weekend days are skipped: pay on the first playable day on/after payday.
 	if date.x >= Week1.PAYDAY and date.x <= Week1.PAYDAY + 2 and not _salary_months.has(month_key):
 		_salary_months[month_key] = true
-		money += Week1.MONTHLY_SALARY
+		_change_money(Week1.MONTHLY_SALARY)
 		_add_entry("Зарплата за месяц: +%d руб." % Week1.MONTHLY_SALARY)
 		state_changed.emit()
 
@@ -803,6 +804,13 @@ func _check_promises() -> void:
 				request_changed.emit(promise["request"])
 
 
+func _change_money(amount: int) -> void:
+	if amount == 0:
+		return
+	money += amount
+	money_changed.emit()
+
+
 # `context` places a logged result in the week summary: {lot, kind} where kind
 # is done, failed, missed, escalated or promise.
 func _apply(effects: Dictionary, context: Dictionary = {}) -> void:
@@ -810,7 +818,7 @@ func _apply(effects: Dictionary, context: Dictionary = {}) -> void:
 		if effects.has(id):
 			factions[id] += effects[id]
 	if effects.has("money"):
-		money += effects["money"]
+		_change_money(effects["money"])
 	traces += effects.get("trace", 0)
 	for key in effects.get("flags", {}):
 		flags[key] = effects["flags"][key]

@@ -74,6 +74,9 @@ func _ready() -> void:
 	# Sounds for things that happen in the world. The sim knows nothing about
 	# them; it only emits signals.
 	sim.request_opened.connect(_on_request_opened)
+	sim.option_chosen.connect(func(_request_id, _option_id, actor):
+		audio.play("promise_made" if actor == "promise" else "option_choose"))
+	sim.money_changed.connect(audio.play.bind("money_changed"))
 	sim.promise_resolved.connect(func(status): audio.play("promise_" + status))
 	sim.overlay_changed.connect(_on_overlay_changed)
 	sim.begin()

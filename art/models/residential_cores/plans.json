@@ -2,18 +2,18 @@
   "school": {
     "label": "School and gym",
     "volumes": [
-      {"name": "Classrooms", "bounds": [-24, 0, 0, 48, 15, 10.8], "material": "silicate"},
-      {"name": "Gym", "bounds": [12, -24, 0, 12, 24, 6.2], "material": "silicate"}
+      {"name": "Classrooms", "bounds": [-30, 0, 0, 60, 15, 10.8], "material": "silicate"},
+      {"name": "Gym", "bounds": [18, -24, 0, 12, 24, 6.2], "material": "silicate"}
     ],
     "facades": [
-      {"face": "front", "line": 0, "at": [-21, -16, -11, -6, 4, 9], "levels": [2, 5.3, 8.6], "size": [2.6, 1.75]},
+      {"face": "front", "line": 0, "at": [-26, -21, -16, -11, -6, 4, 9, 14, 19, 24], "levels": [2, 5.3, 8.6], "size": [2.6, 1.75]},
       {"face": "front", "line": 0, "at": [-1], "levels": [5.3, 8.6], "size": [2.6, 1.75]},
-      {"face": "rear", "line": 15, "at": [-21, -15, -9, -3, 3, 9, 15, 21], "levels": [2, 5.3, 8.6], "size": [2.6, 1.75]},
-      {"face": "left", "line": -24, "at": [4, 11], "levels": [2, 5.3, 8.6], "size": [2.6, 1.75]},
-      {"face": "right", "line": 24, "at": [4, 11], "levels": [2, 5.3, 8.6], "size": [2.6, 1.75]},
-      {"face": "left", "line": 12, "at": [-20, -14, -8, -2], "levels": [3.8], "size": [3.6, 2.3]},
-      {"face": "right", "line": 24, "at": [-20, -14, -8, -2], "levels": [3.8], "size": [3.6, 2.3]},
-      {"face": "front", "line": -24, "at": [18], "levels": [3.8], "size": [4.2, 2.3]}
+      {"face": "rear", "line": 15, "at": [-27, -21, -15, -9, -3, 3, 9, 15, 21, 27], "levels": [2, 5.3, 8.6], "size": [2.6, 1.75]},
+      {"face": "left", "line": -30, "at": [4, 11], "levels": [2, 5.3, 8.6], "size": [2.6, 1.75]},
+      {"face": "right", "line": 30, "at": [4, 11], "levels": [2, 5.3, 8.6], "size": [2.6, 1.75]},
+      {"face": "left", "line": 18, "at": [-20, -14, -8, -2], "levels": [3.8], "size": [3.6, 2.3]},
+      {"face": "right", "line": 30, "at": [-20, -14, -8, -2], "levels": [3.8], "size": [3.6, 2.3]},
+      {"face": "front", "line": -24, "at": [24], "levels": [3.8], "size": [4.2, 2.3]}
     ],
     "entries": [{"line": 0, "at": -1, "width": 3, "height": 2.6, "canopy": 2.8, "material": "concrete"}]
   },
@@ -68,6 +68,6 @@
   },
   "football_pitch": {
     "label": "Mini-football pitch",
-    "pitch": {"field": [30, 16], "goal": [3, 1.25, 2], "runoff": 1.5, "fence_height": 1.5, "gate_width": 1.2}
+    "pitch": {"field": [36, 18], "goal": [3, 1.25, 2], "runoff": 1.5, "fence_height": 1.5, "gate_width": 1.2}
   }
 }

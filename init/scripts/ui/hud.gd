@@ -159,7 +159,7 @@ func setup(week_sim, city_map, audio_manager = null, playtest_log = null) -> voi
 	_build_toasts()
 	_build_incoming_tray()
 	_build_map_controls()
-	show_newspaper()
+	show_newspaper(false)
 
 	sim.request_opened.connect(func(_id): _refresh_markers())
 	sim.request_changed.connect(_on_request_changed)
@@ -271,7 +271,7 @@ func continue_day() -> void:
 	var done := _day_card_done
 	_day_card = null
 	_day_card_done = Callable()
-	_sfx("card_open")
+	_sfx("ui_click")
 	var tween := sheet.create_tween()
 	tween.tween_property(sheet, "offset_top", -110.0, 0.35).set_ease(Tween.EASE_IN)
 	tween.parallel().tween_property(sheet, "offset_bottom", 230.0, 0.35).set_ease(Tween.EASE_IN)
@@ -287,14 +287,15 @@ func show_week_two(changes: Array[String]) -> void:
 	lines.append("Здесь прототип первой недели заканчивается.")
 	# Compact and off to the side: the point of this screen is the changed map.
 	_show_overlay("Понедельник, " + sim.date_text(0).substr(3), "Что изменилось за выходные", lines, "Сыграть заново", restart_pressed.emit, true)
-	show_newspaper()
+	show_newspaper(false)
 
 
 func open_card(request_id: String, focus: bool = false, auto: bool = false) -> void:
 	_close_contact_detail()
+	if not auto and request_id != _card_request:
+		_sfx("card_open")
 	if not _card.visible:
 		OfficeMotion.reveal(_card)
-		_sfx("card_open")
 		if play_log != null:
 			play_log.note_card_open(request_id, auto)
 	_card_request = request_id
@@ -703,6 +704,7 @@ func _build_week_panel() -> void:
 	close_button.tooltip_text = "Закрыть папку"
 	close_button.custom_minimum_size = Vector2(38, 38)
 	close_button.pressed.connect(_close_week_panel)
+	close_button.pressed.connect(_sfx.bind("ui_click"))
 	metadata.add_child(close_button)
 	layout.add_child(metadata)
 	var header := HBoxContainer.new()
@@ -733,6 +735,7 @@ func _build_week_panel() -> void:
 	_promises_box = _folder_page("Обещания")
 	_standing_box = _folder_page("Положение")
 	_wire_box = _folder_page("События")
+	_week_tabs.tab_changed.connect(func(_tab): _sfx("ui_click"))
 	layout.add_child(_paper_label("Помощник главы района · личный экземпляр", 12, OfficeTheme.SECONDARY))
 	# An ink-only overlay: it never reserves layout space or receives input.
 	var overlay := Control.new()
@@ -790,7 +793,6 @@ func _show_important_notice(notice: Dictionary) -> void:
 	if newspaper and is_instance_valid(_overlay_panel) and _overlay_panel.visible:
 		_overlay_panel.hide()
 		_notice_hid_overlay = true
-	var dismiss: Callable = _close_important_notice if newspaper else _continue_to_tasks
 	_notice_panel = Newspaper.new() if newspaper else _paper_panel()
 	_notice_panel.set_anchors_preset(Control.PRESET_CENTER)
 	_notice_panel.offset_left = -500
@@ -801,7 +803,7 @@ func _show_important_notice(notice: Dictionary) -> void:
 	OfficeMotion.reveal(_notice_panel)
 	_sync_modal_input()
 	if newspaper:
-		(_notice_panel as Newspaper).build(notice, notice.get("date", sim.date_text()), dismiss)
+		(_notice_panel as Newspaper).build(notice, notice.get("date", sim.date_text()), _dismiss_newspaper)
 		return
 	var layout := VBoxContainer.new()
 	layout.add_theme_constant_override("separation", 18)
@@ -813,7 +815,7 @@ func _show_important_notice(notice: Dictionary) -> void:
 	var close_button := Button.new()
 	close_button.text = "×"
 	close_button.custom_minimum_size = Vector2(38, 38)
-	close_button.pressed.connect(dismiss)
+	close_button.pressed.connect(_continue_to_tasks)
 	header.add_child(close_button)
 	layout.add_child(header)
 	var message := HBoxContainer.new()
@@ -840,13 +842,19 @@ func _show_important_notice(notice: Dictionary) -> void:
 	layout.add_child(HSeparator.new())
 	var continue_button := _primary_button(notice.get("button", "Продолжить →"))
 	continue_button.size_flags_horizontal = Control.SIZE_SHRINK_END
-	continue_button.pressed.connect(dismiss)
+	continue_button.pressed.connect(_continue_to_tasks)
 	layout.add_child(continue_button)
 
 
 func _continue_to_tasks() -> void:
 	_close_important_notice()
 	_show_week_panel()
+
+
+func _dismiss_newspaper() -> void:
+	if _notice_panel is Newspaper:
+		_close_important_notice()
+		_sfx("newspaper_rustle")
 
 
 func _close_important_notice() -> void:
@@ -872,6 +880,7 @@ func _show_week_panel() -> void:
 	_close_card(false)
 	_week_backdrop.visible = true
 	_week_panel.visible = true
+	_sfx("folder_open")
 	OfficeMotion.reveal(_week_panel)
 	OfficeMotion.reveal(_week_backdrop, 0.12)
 	_sync_modal_input()
@@ -882,6 +891,7 @@ func _show_week_panel() -> void:
 
 func _toggle_week_panel() -> void:
 	if _week_panel.visible:
+		_sfx("ui_click")
 		_close_week_panel()
 	else:
 		_show_week_panel()
@@ -1026,6 +1036,7 @@ func _build_contacts_drawer() -> void:
 	close.text = "×"
 	close.tooltip_text = "Закрыть контакты"
 	close.pressed.connect(_close_contacts_drawer)
+	close.pressed.connect(_sfx.bind("ui_click"))
 	header.add_child(close)
 	layout.add_child(header)
 	layout.add_child(HSeparator.new())
@@ -1080,8 +1091,10 @@ func _build_contacts_drawer() -> void:
 
 func _toggle_contacts_drawer() -> void:
 	if _contact_drawer_open:
+		_sfx("ui_click")
 		_close_contacts_drawer()
 		return
+	_sfx("contacts_open")
 	_close_card(false)
 	_close_contact_detail()
 	if _contact_drawer_tween != null and _contact_drawer_tween.is_valid():
@@ -1124,6 +1137,7 @@ func _close_contacts_drawer(animated: bool = true) -> void:
 
 
 func _on_contact_pressed(actor_id: String) -> void:
+	_sfx("ui_click")
 	_close_contacts_drawer()
 	if _contact_detail_actor == actor_id:
 		_close_contact_detail()
@@ -1241,6 +1255,7 @@ func _show_contact_detail(actor_id: String) -> void:
 	close_button.custom_minimum_size = Vector2(36, 36)
 	close_button.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	close_button.pressed.connect(_close_contact_detail)
+	close_button.pressed.connect(_sfx.bind("ui_click"))
 	header.add_child(close_button)
 	layout.add_child(header)
 	var availability := HBoxContainer.new()
@@ -1395,13 +1410,16 @@ func _on_paperwork_pressed() -> void:
 	_close_week_panel()
 	_close_card(false)
 	if sim.actors["me"]["state"] == "paperwork":
+		_sfx("ui_click")
 		sim.pause_paperwork()
 		speed_selected.emit(0.0)
 	elif sim.actors["me"]["lot"] != "office":
+		_sfx("ui_click")
 		sim.return_to_office()
 		speed_selected.emit(1.0)
 	else:
 		sim.start_paperwork()
+		_sfx("paperwork_start")
 		speed_selected.emit(1.0)
 	_refresh_paperwork()
 
@@ -1714,8 +1732,6 @@ func _on_option_pressed(option_id: String) -> void:
 	for candidate in sim.requests[request_id]["data"]["options"]:
 		if candidate["id"] == option_id:
 			option = candidate
-	# Committing to a choice is a tier 2 sound; a promise has its own.
-	_sfx("promise_made" if option.get("actor", "") == "promise" else "option_choose")
 	sim.choose(request_id, option_id)
 	# Promises keep the card open so the player can still send someone.
 	if option.get("actor", "") == "promise":
@@ -2018,7 +2034,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		_close_contacts_drawer()
 	elif _notice_panel != null:
 		if _notice_is_newspaper:
-			_close_important_notice()
+			_dismiss_newspaper()
 		else:
 			_continue_to_tasks()
 	elif _week_panel.visible:
@@ -2150,10 +2166,12 @@ func _sync_modal_input() -> void:
 	map.set_ui_input_blocked(modal_open)
 
 
-func show_newspaper() -> void:
+func show_newspaper(play_sound: bool = true) -> void:
 	var edition := NewspaperIssues.build(sim.week, sim.press_history)
 	if edition.is_empty():
 		return
+	if play_sound:
+		_sfx("newspaper_rustle")
 	edition["date"] = sim.date_text(0)
 	_show_important_notice(edition)
 
