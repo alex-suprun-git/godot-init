@@ -140,7 +140,8 @@ func _finish_batches() -> void:
 func box(at: Vector3, size: Vector3, color := "97998c", yaw := 0.0) -> void:
 	if not _boxes.has(color):
 		_boxes[color] = []
-	_boxes[color].append(Transform3D(Basis(Vector3.UP, yaw).scaled(size), at))
+	# Rotate after scaling: Basis.scaled() is a global scale and would stretch a yawed box along the wrong axis.
+	_boxes[color].append(Transform3D(Basis(Vector3.UP, yaw) * Basis.from_scale(size), at))
 
 func line(a: Vector2, b: Vector2, width := .12, color := "d1cbb7", y := .065) -> void:
 	var delta := b - a
