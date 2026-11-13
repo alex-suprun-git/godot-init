@@ -304,12 +304,6 @@ func _maintenance() -> void:
 	map._vehicle("zil_flatbed", map._ground(truck_at) + Vector3.UP * 0.09,
 		map.VehicleModels.map_length("zil_flatbed"), "x", yard_root)
 	map._occupy(truck_at, Vector2(8, 3))
-	# Pipe store: stacked steel and insulated lengths on timber sleepers.
-	for row in 3:
-		for column in 4 - row:
-			_box(Vector2(40.5 + row * 0.5 + column * 0.62, -17.2), Vector3(0.5, 0.5, 6.4), 0.42 + row * 0.44, Color("4b4e4c") if (row + column) % 2 == 0 else Color("cfc9b6"))
-	for z in [-19.0, -17.2, -15.4]:
-		_box(Vector2(42, z), Vector3(3.2, 0.14, 0.4), 0.07, WOOD_DARK)
 	# Cable drums, a sand heap, pallets and green refuse containers.
 	for at in [Vector2(36.8, -17.4), Vector2(38.0, -16.2)]:
 		_box(at, Vector3(0.12, 1.5, 1.5), 0.78, Color("8c7250"))
