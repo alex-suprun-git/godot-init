@@ -15,3 +15,7 @@ uv run python art/models/residential_cores/draw_projections.py
 ```
 
 The daylight capture is saved to `.local/residential-cores/yards.png`.
+
+## Panel housing details
+
+On 2026-11-13 the user approved the daytime House 5 pilot (`.local/housing-block-details/0_house5_courtyard.png`) as the direction for #49. The live map uses per-building facade tints and one to three instanced roof aerials across the 24 five- and nine-storey panel blocks. Balcony dishes are sparse and the painted river mural stays on one House 5 gable. The mural is native SVG with the panel joints drawn through the artwork.

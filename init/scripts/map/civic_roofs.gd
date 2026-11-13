@@ -4,7 +4,7 @@ extends RefCounted
 static var _box_mesh: BoxMesh
 
 
-static func build(map, parent: Node3D, size: Vector2, height: float, style: String) -> void:
+static func build(map, parent: Node3D, size: Vector2, height: float, style: String, aerials: Array = []) -> void:
 	var roof := Node3D.new()
 	roof.name = "RoofFittings"
 	roof.position.y = height + 0.42
@@ -57,6 +57,14 @@ static func build(map, parent: Node3D, size: Vector2, height: float, style: Stri
 				boxes.append([Vector3(2.1, 0.045, 0.045), shift + Vector3.UP * y, metal])
 				for x in [-0.65, 0.0, 0.65]:
 					boxes.append([Vector3(0.045, 0.045, 0.85), shift + Vector3(x, y, 0), metal])
+	for aerial: Vector3 in aerials:
+		var foot := Vector3(aerial.x, 0, aerial.z)
+		var mast := aerial.y
+		boxes.append([Vector3(0.38, 0.16, 0.38), foot + Vector3.UP * 0.08, concrete])
+		boxes.append([Vector3(0.11, mast, 0.11), foot + Vector3.UP * mast / 2.0, metal])
+		boxes.append([Vector3(0.085, 0.085, 1.95), foot + Vector3.UP * (mast - 0.28), metal])
+		for i in 5:
+			boxes.append([Vector3(1.75 - 0.19 * i, 0.065, 0.065), foot + Vector3(0, mast - 0.28, -0.85 + 0.40 * i), cap])
 	if _box_mesh == null:
 		_box_mesh = BoxMesh.new()
 		_box_mesh.size = Vector3.ONE

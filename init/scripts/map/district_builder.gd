@@ -11,6 +11,7 @@ const OfficeTheme = preload("res://scripts/ui/office_theme.gd")
 const PitchedRoof = preload("res://scripts/map/pitched_roof.gd")
 const CivicFacades = preload("res://scripts/map/civic_facades.gd")
 const CivicRoofs = preload("res://scripts/map/civic_roofs.gd")
+const HousingDetails = preload("res://scripts/map/housing_details.gd")
 const IndustrialSites = preload("res://scripts/map/industrial_sites.gd")
 const VillageSurfaces = preload("res://scripts/map/village_surfaces.gd")
 
@@ -345,6 +346,8 @@ func _building(lot: Dictionary, entry: Dictionary, desired: Vector2, lot_id: Str
 	map.add_child(group)
 	var height: float = entry.get("height", int(entry.get("floors", 1)) * 3.0)
 	var tint: Color = Catalog.CONDITIONS[lot["condition"]]["tint"]
+	var detail: Dictionary = HousingDetails.BLOCKS.get(lot_id, {})
+	tint *= detail.get("tint", Color.WHITE)
 	var color: Color = entry.get("placeholder_color", Color("b3ae9d")) * tint
 	if entry.get("kind", "") == "panel":
 		map._panel_block(size, entry["floors"], color, group)
@@ -364,7 +367,7 @@ func _building(lot: Dictionary, entry: Dictionary, desired: Vector2, lot_id: Str
 		map._roof(Vector2(size.x + 0.6, size.y + 0.6), Vector3(0, height + 0.41, 0), 12.0, roof, group, detailed_roof)
 		if detailed_roof:
 			var roof_style := "tower" if entry.has("tower_variant") else ("store" if lot_id == "department_store" else "housing")
-			CivicRoofs.build(map, group, size, height, roof_style)
+			CivicRoofs.build(map, group, size, height, roof_style, detail.get("aerials", []))
 	if entry.has("tower_variant"):
 		CivicFacades.tower(map, group, size, height, entry["tower_variant"], tint)
 	elif entry.get("civic_facade", false):
@@ -388,6 +391,7 @@ func _building(lot: Dictionary, entry: Dictionary, desired: Vector2, lot_id: Str
 				map._facades(Vector3.ZERO, Vector3(size.x, height, size.y), facade, repeats, tint, group)
 	if entry.get("kind", "") == "panel":
 		map._panel_overlays(entry, size, height, group)
+		HousingDetails.build(map, group, size, height, detail)
 	map._occupy(center, footprint)
 	if entry.get("kind", "") == "panel" or entry.has("tower_variant"):
 		# Residents wear the ground along their blocks, most of all in front of the doors.
