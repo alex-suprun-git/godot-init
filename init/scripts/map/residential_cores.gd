@@ -67,7 +67,7 @@ func _link_to_neighbours(district_builder) -> void:
 	var school: Vector2 = Layout.lot_center("a1_k")
 	var kindergarten: Vector2 = Layout.lot_center("b2_k")
 	# Both yards are fenced and have exactly one gate, so every walk ends outside it.
-	_link_lot("a1", school + Vector2(-11, 44), graph, [Rect2(school + Vector2(-45.5, -39), Vector2(91, 79))])
+	_link_lot("a1", school + Vector2(-14, 44), graph, [Rect2(school + Vector2(-45.5, -39), Vector2(91, 79))])
 	_link_lot("b2", kindergarten + Vector2(36, 13), graph, [Rect2(kindergarten + Vector2(-29, -24), Vector2(58, 54))])
 
 
@@ -126,8 +126,8 @@ func _place_models() -> void:
 	var maintenance: Vector2 = Layout.lot_center("b1_k")
 	var trade: Vector2 = Layout.lot_center("a2_k")
 	var placements := {
-		"school": school + Vector2(-9, -13),
-		"football_pitch": school + Vector2(29, 18),
+		"school": school + Vector2(-12, -13),
+		"football_pitch": school + Vector2(31, 20),
 		"kindergarten": kindergarten + Vector2(0, -8),
 		"maintenance": maintenance + Vector2(26, -24),
 		"repair": trade + Vector2(-21, 12),
@@ -209,36 +209,35 @@ func _clear_old_dressing(rects: Array[Rect2]) -> void:
 
 func _school(lot: Rect2) -> void:
 	_lawn(lot.grow(9.0))
-	_surface(Vector2(-11, 1), Vector2(27, 24), "paving")
-	_surface(Vector2(-11, 24), Vector2(4.0, 25), "paving")
-	_surface(Vector2(9, 18), Vector2(21, 2.8), "paving")
-	_surface(Vector2(-25, 0), Vector2(1.5, 23), "paving")
-	for at in [Vector2(-36, -17), Vector2(-34, 6), Vector2(-32, 25), Vector2(13, -25), Vector2(35, -23)]:
+	_surface(Vector2(-14, 1), Vector2(27, 24), "paving")
+	_surface(Vector2(-14, 24), Vector2(4.0, 25), "paving")
+	_surface(Vector2(8.75, 20), Vector2(23.5, 2.8), "paving")
+	for at in [Vector2(-36, -17), Vector2(-34, 6), Vector2(-32, 25), Vector2(-2, -24), Vector2(35, -23)]:
 		_plant(at, "park_deciduous_tree", 0.68)
 	_plant(Vector2(-39, -27), "park_poplar", 0.70)
-	_plant(Vector2(24, -27), "park_poplar", 0.64)
+	_plant(Vector2(26, -27), "park_poplar", 0.64)
 	_plant(Vector2(39, -16), "park_deciduous_tree", 0.81)
 	_plant(Vector2(-37, 14), "park_deciduous_tree", 0.79)
-	for at in [Vector2(-28, -10), Vector2(-28, -6), Vector2(-26, -2), Vector2(17, -24), Vector2(20, -25)]:
+	for at in [Vector2(24, -24), Vector2(27, -25)]:
 		_plant(at, "park_shrub", 0.85)
-	for at in [Vector2(-39, -8), Vector2(-36, -5), Vector2(-38, 21), Vector2(31, -26), Vector2(37, -12), Vector2(40, -9)]:
+	for at in [Vector2(-38, 21), Vector2(31, -26), Vector2(37, -12), Vector2(40, -9)]:
 		_plant(at, "park_shrub", 1.02)
-	_prop(Bench, Vector2(-23, 5), PI / 2.0)
-	_prop(Bench, Vector2(-23, 10), PI / 2.0)
-	_prop(Bin, Vector2(-22, 12))
+	_prop(Bench, Vector2(-26, 5), PI / 2.0)
+	_prop(Bench, Vector2(-26, 10), PI / 2.0)
+	_prop(Bin, Vector2(-25, 12))
 	# One continuous perimeter fence; the only way in is the south gate, which meets
 	# the existing district walk. Everything inside stays reachable through it.
 	_fence(Vector2(-45.5, -39), Vector2(45.5, -39))
 	_fence(Vector2(-45.5, -39), Vector2(-45.5, 40))
 	_fence(Vector2(45.5, -39), Vector2(45.5, 40))
-	_fence(Vector2(-45.5, 40), Vector2(-14, 40))
-	_fence(Vector2(-8, 40), Vector2(45.5, 40))
-	_gate(Vector2(-11, 40), "x", 6.0)
-	_surface(Vector2(-11, 40.5), Vector2(4.0, 7.0), "paving")
-	_lamp(Vector2(-5.5, 36))
-	_lamp(Vector2(-16.5, 36))
+	_fence(Vector2(-45.5, 40), Vector2(-17, 40))
+	_fence(Vector2(-11, 40), Vector2(45.5, 40))
+	_gate(Vector2(-14, 40), "x", 6.0)
+	_surface(Vector2(-14, 40.5), Vector2(4.0, 7.0), "paving")
+	_lamp(Vector2(-8.5, 36))
+	_lamp(Vector2(-19.5, 36))
 	# Two planted beds break up the assembly court without narrowing the approach.
-	for at in [Vector2(-19, 6), Vector2(-3, 6)]:
+	for at in [Vector2(-22, 6), Vector2(-6, 6)]:
 		_box(at, Vector3(2.5, 0.24, 3.8), 0.19, KERB)
 		_box(at, Vector3(2.24, 0.035, 3.55), 0.32, Color("77664e"))
 		_plant(at, "park_shrub", 0.53, 0.32)
