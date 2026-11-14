@@ -20,7 +20,7 @@ Friday 29 August 1997, evening. The report to the boss is a short task. If the p
 
 [Ресторан, 19:30]
 
-> Conversation, about 2 hours. Backdrop: a private club behind a tall wall: a hall with dark wood, a long table, candles that are clearly for show. The player has seen only the fence from the car on Monday. Tolik waits in the Volga outside; if the camera shows him, the radio is off. Characters: the boss, **Sedov** (about forty-five, quiet, reasonable, an expensive cheap suit), a waiter. No criminals are named or shown.
+> Conversation, about 2 hours. Backdrop: a private club behind a tall wall: a hall with dark wood, a long table, candles that are clearly for show. The player has seen only the fence from the car on Monday. Tolik waits in the official sedan outside; if the camera shows him, the radio is off. Characters: the boss, **Sedov** (about forty-five, quiet, reasonable, an expensive cheap suit), a waiter. No criminals are named or shown.
 
 *Охранник у ворот знает Бориса Саввича в лицо. Вас он не знает и не спрашивает, что говорит о его опыте.*
 

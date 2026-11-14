@@ -170,6 +170,9 @@ var _arrival_meeting: Node3D
 var _arrival_look_ahead := Vector2.ZERO
 var _arrival_focus := Vector2.ZERO
 var _arrival_focus_weight := 0.0
+var _arrival_parked := false
+var _park_t := -1.0
+var _park_from := Vector2.ZERO
 var _arrival_follow_zoom := ZOOM_MIN # The arrival camera never gets closer than the player can zoom.
 var _arrival_subject_zoom := 0.0
 var _tokens := {} # actor id -> Node3D
@@ -439,7 +442,45 @@ func update_arrival(hour: float, focus: Vector2, focus_weight: float, subject_zo
 	_arrival_subject_zoom = subject_zoom
 
 
+# Exception to the traffic rules: at the end of the drive the official car leaves the avenue
+# and pulls up on the forecourt, facing the entrance.
+const PARK_AT := Vector2(24, 72)
+const PARK_SECONDS := 5.0
+signal arrival_parked
+
+
+func park_arrival_car() -> void:
+	if _arrival_car.is_empty():
+		arrival_parked.emit()
+		return
+	_park_from = Vector2(_arrival_car["pos"])
+	_ambient.remove_arrival_car(_arrival_car)
+	_arrival_parked = true
+	_arrival_car["speed"] = 0.0
+	_park_t = 0.0
+
+
+func _advance_parking(delta: float) -> void:
+	_park_t = minf(_park_t + delta / PARK_SECONDS, 1.0)
+	var u := smoothstep(0.0, 1.0, _park_t)
+	var start := _park_from
+	var corner := Vector2(start.x, PARK_AT.y)
+	var at := start.lerp(corner, u).lerp(corner.lerp(PARK_AT, u), u)
+	var heading := ((corner - start) * (1.0 - u) + (PARK_AT - corner) * u).normalized()
+	_arrival_car["pos"] = at
+	_arrival_car["heading"] = heading
+	_hero_car.position = Vector3(at.x, _ground(at).y + 0.14, at.y)
+	_hero_car.rotation.y = atan2(heading.x, heading.y)
+	if _hero_car.has_meta("front_wheels"):
+		_steer_front_wheels(_hero_car, at, heading, delta)
+	if _park_t >= 1.0:
+		_park_t = -1.0
+		arrival_parked.emit()
+
+
 func _follow_arrival(delta: float) -> void:
+	if _park_t >= 0.0:
+		_advance_parking(delta)
 	if _arrival_car.is_empty():
 		return
 	var car := Vector2(_arrival_car["pos"])
@@ -461,8 +502,10 @@ func end_arrival() -> void:
 	get_node("RailwayTraffic").release_commuter()
 	if is_instance_valid(_arrival_meeting):
 		_arrival_meeting.queue_free()
-	if not _arrival_car.is_empty():
+	if not _arrival_car.is_empty() and not _arrival_parked:
 		_ambient.remove_arrival_car(_arrival_car)
+	_arrival_parked = false
+	_park_t = -1.0
 	_arrival_car = {}
 	scenario_traffic = {}
 	ambient_motion_scale = 1.0
@@ -1023,7 +1066,7 @@ func _build_tokens() -> void:
 		var start: Vector2 = sim.actors[id]["pos"]
 		token.position = _ground(start)
 		_tokens[id] = token
-	_hero_car = _vehicle("volga", Vector3.ZERO, VehicleModels.map_length("volga"), "z", null, VehicleModels.PAINT_BLACK)
+	_hero_car = _vehicle("luxury_sedan", Vector3.ZERO, VehicleModels.map_length("luxury_sedan"), "z", null, VehicleModels.PAINT_BLACK)
 	_hero_car.visible = false
 
 

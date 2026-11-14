@@ -126,6 +126,12 @@ func _run_prologue_review() -> void:
 		if shots_dir != "":
 			await _wait(3.0)
 			await _shot("prologue_" + landmark)
+			if landmark == "office":
+				for _i in 300:
+					if main.map._arrival_parked and (main.map._park_t < 0.0 or main.map._park_t > 0.8):
+						break
+					await _wait(0.1)
+				await _shot("prologue_parked")
 	if is_instance_valid(main.arrival):
 		await main.arrival.finished
 	print("prologue handoff: ", main.sim.clock_text(), " / ", main.sim.actors["me"]["lot"],

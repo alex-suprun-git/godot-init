@@ -12,15 +12,15 @@ Moved verbatim from the root `README.md` on 2026-11-07. These are implementation
 
 ## Monday arrival prototype
 
-The normal game launch opens the newspaper on the train, then stages the station meeting with the ER2 at the platform and the Volga by the forecourt. The same Volga follows the traffic itinerary from the forecourt to the executive committee. Dialogue and camera focus use route markers in `scripts/data/arrival.gd`; each line gets reading time based on word count. The scene profile independently tunes cars, pedestrians, the station crowd and the driver's base speed. Normal densities and the gameplay clock resume at the 10:04 briefing. Capture with `--autoplay --only=prologue`.
+The normal game launch opens the newspaper on the train, then stages the station meeting with the ER2 at the platform and the official sedan (the `luxury_sedan` model, black) by the forecourt. The same sedan follows the traffic itinerary from the forecourt to the executive committee. Dialogue and camera focus use route markers in `scripts/data/arrival.gd`; each line gets reading time based on word count. The scene profile independently tunes cars, pedestrians, the station crowd and the driver's base speed. Normal densities and the gameplay clock resume at the 10:04 briefing. Capture with `--autoplay --only=prologue`.
 
 The approved carriage opens with an eyelid reveal. The approved view from the train appears after closing the newspaper. The reception uses the existing summer office illustration and a tighter doorway frame.
 
 Hold Space to skip the current prologue slide, newspaper, station meeting or remaining drive. For map playtests, press F7 during the prologue in a debug build or launch the game with `-- --skip-prologue`. Both enter the normal Monday briefing at 10:04.
 
-The market cue starts as the Volga leaves the forecourt. The dormitory cue starts 65 route metres before the frontage marker. The prologue runs visual traffic and pedestrian motion at 1.5625×, with an additional 1.5× speed limit on the forecourt lanes. Dialogue and camera timing use the regular clock.
+The market cue starts as the sedan leaves the forecourt. The dormitory cue starts 65 route metres before the frontage marker. The prologue runs visual traffic and pedestrian motion at 1.5625×, with an additional 1.5× speed limit on the forecourt lanes. Dialogue and camera timing use the regular clock.
 
-The prologue reserves the Volga's lane and turning envelope ahead of the car and holds green on its approaching signalized junctions. Conflicting ambient cars and walkers are deferred until the handoff. Road speeds, turn curves and the final stop still use the traffic simulation.
+The prologue reserves the sedan's lane and turning envelope ahead of the car and holds green on its approaching signalized junctions. Conflicting ambient cars and walkers are deferred until the handoff. Road speeds, turn curves and the final stop still use the traffic simulation.
 
 ## City Audio (Prototype)
 

@@ -16,13 +16,13 @@ Approved portrait: `init/assets/portraits/tolik.png`. Canonical look: `art/PROMP
 
 ## Voice
 
-Cheerful, talkative, warm, mocks himself, loves the Volga. Long flowing sentences and small jokes. Goes quiet on the one subject he must not discuss.
+Cheerful, talkative, warm, mocks himself, loves his own old Volga, which he keeps at home and drives only for his own errands; the boss's black foreign sedan is the official car he drives at work. Long flowing sentences and small jokes. Goes quiet on the one subject he must not discuss.
 Habits: points at everything with the hand that is not on the wheel; waves at windows without looking at the road.
 Sample: «Вот вокзал, а рядом рынок, тут весь район кормится, вы только кошелёк держите поближе, а то он у нас быстро находит нового хозяина.»
 
 ## Wants
 
-To be liked and to keep the Volga running; no trouble.
+To be liked and to keep the official car and his own Volga running; no trouble.
 
 ## Hides
 
@@ -31,7 +31,7 @@ He knows who eats at the restaurant. He stops talking, switches the radio off an
 ## How the bond grows
 
 Знакомство: the drive, which ends at the boss's door.
-Доверие (week 2 and later): he gives lifts when the Volga is free, and tells what he saw from the driver's seat.
+Доверие (week 2 and later): he gives lifts when the official car is free, and tells what he saw from the driver's seat.
 Долг: he will risk his job once, for the protagonist.
 
 ## Assumptions

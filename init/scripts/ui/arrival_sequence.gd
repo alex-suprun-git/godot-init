@@ -153,8 +153,19 @@ func close_paper() -> void:
 			await _play_drive_beat(index)
 			if _skip_drive:
 				break
-		while not _skip_drive and not _map.reached_arrival_mark(Arrival.DRIVE.size() - 1):
+		var last_wait := 0.0
+		# Within a metre and a half counts as arrived, and a stuck car must not freeze the intro.
+		while not _skip_drive and not _map.reached_arrival_mark(Arrival.DRIVE.size() - 1, 1.5):
 			await _hold(0.1)
+			last_wait += 0.1
+			if last_wait > 25.0:
+				push_warning("Arrival car did not reach the final stop; continuing.")
+				break
+			if OS.get_cmdline_user_args().has("--autoplay") and fmod(last_wait, 5.0) < 0.1:
+				print("arrival waiting for the final stop: %.2f m short" % -_map.arrival_mark_offset(Arrival.DRIVE.size() - 1))
+		if not _skip_drive:
+			_map.park_arrival_car()
+			await _map.arrival_parked
 	if OS.get_cmdline_user_args().has("--autoplay"):
 		print("arrival drive: %.1f seconds at current engine speed" % ((Time.get_ticks_msec() - drive_started) / 1000.0))
 	_set_skip_enabled(false)

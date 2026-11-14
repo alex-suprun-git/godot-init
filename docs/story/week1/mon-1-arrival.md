@@ -26,7 +26,7 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 [Вокзальная площадь, 06:00]
 
-> Hand-off: Tolik's car (the administration Volga) is already at the kerb. The camera starts on the player's arrival and then follows the car for the whole drive. If a car-radio loop is available, it plays quietly from here and cuts out at the restaurant; otherwise ambience is enough.
+> Hand-off: The boss's official black foreign sedan, which Tolik drives, is already at the kerb. Tolik's own Volga is not in the scene. The camera starts on the player's arrival and then follows the car for the whole drive. If a car-radio loop is available, it plays quietly from here and cuts out at the restaurant; otherwise ambience is enough.
 
 ТОЛИК: О, приехали! А я уж думал, опять никто не приедет, мне Борис Саввич говорит, встреть там человека, а какого человека, не сказал, ну я стою и на всех подряд смотрю. Вы ведь помощник, да? Толик я, водитель.
 
