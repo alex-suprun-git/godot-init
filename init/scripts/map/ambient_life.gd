@@ -527,6 +527,12 @@ func _drive(agent: Dictionary, neighbors: Array, delta: float) -> void:
 		heading = (center - _graph.points[agent["from"]]).normalized()
 	var headway := INF
 	var leader: Dictionary = {}
+	# Constant for this car; the neighbour loop below runs once per nearby agent.
+	var agent_half_width := Occupancy.half_width(agent)
+	var agent_half_length := Occupancy.half_length(agent)
+	var agent_changing: bool = agent.get("changing_lane", false)
+	var turn: Dictionary = agent["turn"]
+	var turn_distance := float(turn.get("distance", 0.0))
 	for other in neighbors:
 		if is_same(agent, other):
 			continue
@@ -537,7 +543,7 @@ func _drive(agent: Dictionary, neighbors: Array, delta: float) -> void:
 		var offset: Vector2 = other["pos"] - agent["pos"]
 		var ahead := offset.dot(heading)
 		var other_heading: Vector2 = other["heading"]
-		var width := Occupancy.half_width(agent) + Occupancy.half_width(other)
+		var width := agent_half_width + Occupancy.half_width(other)
 		var side := offset.cross(heading)
 		# Treat a committed merge as occupying the space through to its target.
 		# Drivers in both lanes must see it before the bodies are alongside.
@@ -546,7 +552,7 @@ func _drive(agent: Dictionary, neighbors: Array, delta: float) -> void:
 			var final_side := side
 			if other.get("changing_lane", false):
 				final_side -= float(other["target_lateral"]) - float(other["lateral"])
-			if agent.get("changing_lane", false):
+			if agent_changing:
 				final_side += float(agent["target_lateral"]) - float(agent["lateral"])
 			lane_distance = 0.0 if side * final_side <= 0.0 else minf(lane_distance, absf(final_side))
 		var approaching_crossing := false
@@ -555,18 +561,17 @@ func _drive(agent: Dictionary, neighbors: Array, delta: float) -> void:
 			approaching_crossing = absf(side) < width + (25.0 if zebra else float(other["speed"]))
 		if ahead <= 0.0 or (lane_distance > width + 0.1 and not approaching_crossing):
 			continue
-		if not other["is_car"] and ahead < Occupancy.half_length(agent) and absf(offset.cross(heading)) >= width:
+		if not other["is_car"] and ahead < agent_half_length and absf(offset.cross(heading)) >= width:
 			continue # The walker beside the body can cross after the rear clears.
 		if other["is_car"] and other_heading.dot(heading) < 0.75:
 			continue
-		var turn: Dictionary = agent["turn"]
-		if other["is_car"] and float(turn.get("distance", 0.0)) > 0.0:
+		if other["is_car"] and turn_distance > 0.0:
 			var other_turn: Dictionary = other["turn"]
 			var same_turn: bool = other_turn.get("node", -1) == turn["node"] and other_turn.get("edge", -1) == turn["edge"]
 			var on_exit: bool = other["edge"] == turn["edge"] and other["from"] == turn["node"]
 			if not same_turn and not on_exit:
 				continue # The body tangent can point at a queue on another arm.
-		var gap := ahead - Occupancy.half_length(agent) - Occupancy.half_length(other) - 1.3
+		var gap := ahead - agent_half_length - Occupancy.half_length(other) - 1.3
 		if gap < headway:
 			headway = gap
 			leader = other
