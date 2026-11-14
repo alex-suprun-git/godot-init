@@ -18,7 +18,7 @@ The approved carriage opens with an eyelid reveal. The approved view from the tr
 
 Hold Space to skip the current prologue slide, newspaper, station meeting or remaining drive. For map playtests, press F7 during the prologue in a debug build or launch the game with `-- --skip-prologue`. Both enter the normal Monday briefing at 10:04.
 
-The market cue starts as the Volga leaves the forecourt. The prologue runs visual traffic and pedestrian motion at 1.25×, with an additional 1.5× speed limit on the forecourt lanes. Dialogue and camera timing use the regular clock.
+The market cue starts as the Volga leaves the forecourt. The dormitory cue starts 65 route metres before the frontage marker. The prologue runs visual traffic and pedestrian motion at 1.5625×, with an additional 1.5× speed limit on the forecourt lanes. Dialogue and camera timing use the regular clock.
 
 ## City Audio (Prototype)
 
