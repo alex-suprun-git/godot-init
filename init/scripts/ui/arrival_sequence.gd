@@ -140,7 +140,8 @@ func close_paper() -> void:
 	var drive_started := Time.get_ticks_msec()
 	_driving = true
 	_set_skip_enabled(true)
-	if _map.prepare_arrival_drive(Arrival.DRIVE) and _map.start_arrival_drive():
+	if _map.prepare_arrival_drive(Arrival.DRIVE):
+		_map.start_arrival_drive()
 		_start_radio()
 		for index in Arrival.DRIVE.size():
 			await _play_drive_beat(index)
@@ -339,7 +340,7 @@ func _wait_in_reception() -> void:
 	doorway.atlas = OFFICE
 	doorway.region = Rect2(Vector2(0.39, 0.02) * OFFICE.get_size(), OFFICE.get_size() * 0.60)
 	_slide.texture = doorway
-	_caption.text = "10:04 · Приёмная\nБорис Саввич: Новый? Заходите. Дверь закройте. Разговор есть."
+	_caption.text = "10:04 · Приёмная\nБорис Саввич: А, новый помощник. Здорово. Заходи, дверь закрой."
 	await _fade(0.0, 0.55)
 	_caption_panel.modulate.a = 1.0
 	await _wait_for_reading()

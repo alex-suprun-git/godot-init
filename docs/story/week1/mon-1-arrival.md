@@ -133,7 +133,7 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 [Приёмная исполкома, 08:00]
 
-> The wait from 08:00 to 10:04 is a plain time skip (decided). No secretary character is introduced. The boss's entrance leads straight into the monologue in `mon-2-boss-and-block5.md`.
+> The wait from 08:00 to 10:04 is a time skip from the same seated corridor viewpoint. The newly fitted walnut door opens onto the district head's refurbished office. The greeting leads into the briefing in `mon-2-boss-and-block5.md`.
 
 *Ровно восемь. Вы пришли вовремя. В здании это, кажется, заметили только часы.*
 
@@ -147,7 +147,7 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 *Послышались шаги, тяжёлые и без спешки. Ключ повернулся с первого раза.*
 
-БОРИС САВВИЧ: Новый? Заходите. Дверь закройте. Разговор есть.
+БОРИС САВВИЧ: А, новый помощник. Здорово. Заходи, дверь закрой.
 
 ## Proposed changes to newspaper issue 1
 

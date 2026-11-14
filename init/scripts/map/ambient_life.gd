@@ -58,6 +58,9 @@ var _junctions: Array[Dictionary] = []
 var _routes: TrafficRoutes
 var _scenario_pedestrian_scale := 1.0
 var _scenario_station_speed_scale := 1.0
+var _arrival_corridor := Occupancy.new()
+var _arrival_driver: Dictionary = {}
+var _arrival_signal_approaches := {}
 var _scenario_pedestrian_districts := {}
 
 
@@ -291,26 +294,65 @@ func arrival_itinerary() -> Dictionary:
 	return {"trip": {"path": path, "loop": true, "entry": -1, "exit": -1}, "route_lengths": lengths}
 
 
-func add_arrival_car(speed: float, itinerary: Dictionary, at: float, earliest: float) -> Dictionary:
+func add_arrival_car(speed: float, itinerary: Dictionary, start: float, stop: float) -> Dictionary:
 	var trip: Dictionary = itinerary["trip"]
 	var path: Array = trip["path"]
 	var lengths: Array[float] = itinerary["route_lengths"]
-	var total := lengths[-1]
-	# A cut can open in live traffic. Prefer the authored starting position,
-	# with nearby points on the same itinerary available if the lane is occupied.
-	for offset in [0.0, -6.0, 6.0, -12.0, 12.0, -18.0, 18.0]:
-		var start := clampf(at + offset, 0.0, total)
-		if start < earliest:
+	var agent := _initial_pose(speed, "city", trip, path, lengths, lengths[-1], 0.0, start, "car")
+	agent["arrival"] = true
+	agent["arrival_stop"] = stop
+	agent["route_lengths"] = lengths
+	_arrival_driver = agent
+	for i in path.size():
+		if lengths[i] <= start or lengths[i] >= stop:
 			continue
-		var agent := _initial_pose(speed, "city", trip, path, lengths, total, 0.0, start, "car")
-		if not _space.clear_pose(agent, _space.nearby(agent["pos"], 18.0)):
-			continue
-		agent["arrival"] = true
-		agent["route_lengths"] = lengths
-		agents.append(agent)
+		var leg: Dictionary = path[i]
+		var node: int = _graph.other_end(leg["edge"], leg["from"])
+		for junction in _junctions:
+			if junction["node"] == node and junction["signal"] != null:
+				var direction: Vector2 = junction["center"] - _graph.points[leg["from"]]
+				var approaches: Array = _arrival_signal_approaches.get_or_add(junction["signal"], [])
+				approaches.append({"distance": lengths[i], "horizontal": absf(direction.x) > absf(direction.y)})
+				break
+	# Sample the same lane and turning curves used by the live car, including the bend exits.
+	var preview := agent.duplicate()
+	while true:
+		var distance := arrival_distance(preview)
+		_arrival_corridor.track({"pos": preview["pos"], "heading": preview["heading"],
+			"class": "car", "half_extent": Vector2(1.25, 3.0), "visible": true,
+			"is_car": true, "distance": distance})
+		if distance >= stop - 0.01:
+			break
+		_step_car(preview, 0.05)
+	for other in agents:
+		_clear_arrival_lane(other)
+	agents.append(agent)
+	_space.track(agent)
+	return agent
+
+
+func _arrival_lane_reserved(agent: Dictionary) -> bool:
+	if _arrival_driver.is_empty():
+		return false
+	var distance := arrival_distance(_arrival_driver)
+	for pose in _arrival_corridor.nearby(agent["pos"], 14.0, true):
+		if pose["distance"] >= distance - 12.0 and pose["distance"] <= distance + 85.0 and Occupancy.overlaps(pose, agent):
+			return true
+	return false
+
+
+func _clear_arrival_lane(agent: Dictionary) -> void:
+	if agent["visible"] and _arrival_lane_reserved(agent):
+		agent["arrival_deferred"] = true
+		agent["visible"] = false
 		_space.track(agent)
-		return agent
-	return {}
+		if agent["is_car"]:
+			_release_car_junctions(agent["slot"])
+		else:
+			var crossing: String = agent.get("walk_permit", "")
+			if _crossing_signals.has(crossing):
+				_crossing_signals[crossing].walking -= 1
+			agent.erase("walk_permit")
 
 
 func remove_arrival_car(agent: Dictionary) -> void:
@@ -321,6 +363,25 @@ func remove_arrival_car(agent: Dictionary) -> void:
 			agents.remove_at(index)
 			break
 	_release_car_junctions(agent["slot"])
+	_arrival_driver = {}
+	_arrival_corridor = Occupancy.new()
+	_arrival_signal_approaches.clear()
+	for other in agents:
+		if other.erase("arrival_deferred"):
+			_refresh_agent_visibility(other)
+			if other["visible"] and not other["is_car"]:
+				_record_crossing(other, "")
+
+
+func _hold_arrival_green(controller: SignalController, distance: float) -> bool:
+	for approach in _arrival_signal_approaches.get(controller, []):
+		var ahead: float = approach["distance"] - distance
+		if ahead >= -18.0 and ahead <= 65.0:
+			controller.phase = SignalController.EW_GREEN if approach["horizontal"] else SignalController.NS_GREEN
+			controller.elapsed = 0.0
+			controller.stall_reported = false
+			return true
+	return false
 
 
 func _release_car_junctions(slot: int) -> void:
@@ -366,8 +427,11 @@ func arrival_marker(agent: Dictionary, road_id: String, at: Vector2, after: floa
 
 
 func _tick(delta: float) -> void:
+	var arrival_progress := arrival_distance(_arrival_driver) if not _arrival_driver.is_empty() else -INF
 	for id in signals:
 		var signal_controller: SignalController = signals[id]
+		if _hold_arrival_green(signal_controller, arrival_progress):
+			continue
 		if signal_controller.phase == SignalController.CLEAR_NS:
 			signal_controller.crossings_clear = _crossings_clear(id)
 		signal_controller.advance(delta)
@@ -375,7 +439,14 @@ func _tick(delta: float) -> void:
 			_save_stall(id, signal_controller)
 			signal_controller.stall_reported = true
 	for agent in agents:
-		if agent.get("scenario_deferred", false):
+		if agent.get("arrival", false):
+			agent["limit"] = maxf(0.0, float(agent["arrival_stop"]) - arrival_distance(agent))
+			_step_car(agent, delta)
+			_space.track(agent)
+			continue
+		if not _arrival_driver.is_empty():
+			_clear_arrival_lane(agent)
+		if agent.get("scenario_deferred", false) or agent.get("arrival_deferred", false):
 			continue
 		if agent["state"] == "wait":
 			agent["wait"] -= delta
@@ -393,6 +464,8 @@ func _tick(delta: float) -> void:
 		else:
 			_walk(agent, neighbors, delta)
 			_record_crossing(agent, old_crossing)
+		if not _arrival_driver.is_empty():
+			_clear_arrival_lane(agent)
 		_space.track(agent)
 
 
@@ -699,8 +772,6 @@ func _drive(agent: Dictionary, neighbors: Array, delta: float) -> void:
 		agent["following_gap"] = maxf(headway, 0.0)
 	var junction_limit := _junction_limit(agent, neighbors)
 	agent["limit"] = minf(junction_limit, maxf(0.0, headway))
-	if agent.has("arrival_stop"):
-		agent["limit"] = minf(agent["limit"], maxf(0.0, float(agent["arrival_stop"]) - arrival_distance(agent)))
 	if _traffic_debug:
 		agent["stop_reason"] = "junction" if junction_limit < headway else str("leader ", leader.get("slot","walker"))
 		agent["junction_limit"] = junction_limit
@@ -1194,6 +1265,9 @@ func _stream_class(stream: String, replacing_bus: bool = false) -> String:
 # Cars stay visible for a complete trip or loop. Only gateway waiting hides them;
 # pedestrian district/hour visibility is independent and retains its old behavior.
 func _update_visibility(agent: Dictionary) -> void:
+	if agent.get("arrival_deferred", false):
+		agent["visible"] = false
+		return
 	if agent["is_car"]:
 		agent["visible"] = agent["state"] != "wait" and not agent.get("scenario_deferred", false)
 		return

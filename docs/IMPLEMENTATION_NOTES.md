@@ -20,6 +20,8 @@ Hold Space to skip the current prologue slide, newspaper, station meeting or rem
 
 The market cue starts as the Volga leaves the forecourt. The dormitory cue starts 65 route metres before the frontage marker. The prologue runs visual traffic and pedestrian motion at 1.5625×, with an additional 1.5× speed limit on the forecourt lanes. Dialogue and camera timing use the regular clock.
 
+The prologue reserves the Volga's lane and turning envelope ahead of the car and holds green on its approaching signalized junctions. Conflicting ambient cars and walkers are deferred until the handoff. Road speeds, turn curves and the final stop still use the traffic simulation.
+
 ## City Audio (Prototype)
 
 - `AudioManager.MUSIC_PLAYLIST` plays the two November 13 instrumentals in order, then wraps to the first. Music crossfades over up to three seconds. The quiet city bed loops with a two-second overlap. Both fade in over two seconds and use real time during simulation pauses or speed changes. Initial gains are Music bus 30%, music bed 65% to compensate for the louder recordings, and city bed 50%. F3 adjusts each bed separately. Recording provenance is in `init/assets/audio/ATTRIBUTION.md`.

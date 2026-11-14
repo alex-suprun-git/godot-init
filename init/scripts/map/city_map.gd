@@ -403,22 +403,17 @@ func prepare_arrival_drive(beats: Array) -> bool:
 	return true
 
 
-func start_arrival_drive() -> bool:
+func start_arrival_drive() -> void:
 	var start := _ambient.arrival_marker(_arrival_itinerary, "station_link", Vector2(-70, 348), 0.0)
 	_arrival_car = _ambient.add_arrival_car(float(scenario_traffic.get("driver_speed", 10.0)),
-		_arrival_itinerary, start, 0.0)
-	if _arrival_car.is_empty():
-		push_error("Arrival: no clear departure position at the station")
-		return false
+		_arrival_itinerary, start, _arrival_marks[-1])
 	if is_instance_valid(_arrival_meeting):
 		get_node("RailwayTraffic").release_commuter()
 		_arrival_meeting.queue_free()
 		_arrival_meeting = null
-	_arrival_car["arrival_stop"] = _arrival_marks[-1]
 	_arrival_car["visual"] = _hero_car
 	_arrival_look_ahead = Vector2.ZERO
 	_arrival_focus_weight = 0.0
-	return true
 
 
 func _snap_arrival_camera(at: Vector2, zoom: float) -> void:
