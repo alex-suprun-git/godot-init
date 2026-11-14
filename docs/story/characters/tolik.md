@@ -10,6 +10,8 @@ Scenes: `mon-1-arrival.md`, the ride home in `fri-2-restaurant.md`. Disabled as 
 
 ## Look
 
+Age: about 35, as the portrait reads (user decision; `art/PROMPTS.md` still says "forties", which the portrait overrides). Career: about ten years behind a wheel, first a long-haul driver to the border, then the administration; Boris Savvich is his second boss. A wife (Lyuda, trades at the market) and a daughter in the fourth class.
+
 Approved portrait: `init/assets/portraits/tolik.png`. Canonical look: `art/PROMPTS.md`, "Established looks" (lean, gaunt man in his forties, messy dark hair, light stubble, sly sideways glance, cigarette behind his ear, worn brown leather jacket, car keys).
 
 ## Voice
@@ -35,3 +37,5 @@ He knows who eats at the restaurant. He stops talking, switches the radio off an
 ## Assumptions
 
 - He is not a contact in week 1 and has no request.
+- During the arrival drive he asks questions and answers for the silent protagonist, then carries on; the answers never state anything about the protagonist.
+- The wife, the daughter and the father who is hard of hearing are the narrative partner's invention for the drive (not yet confirmed by the user).

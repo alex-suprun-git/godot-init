@@ -11,15 +11,20 @@ const NewspaperIssues = preload("res://scripts/data/newspaper_issues.gd")
 const FONT = preload("res://assets/fonts/source_serif4_regular.ttf")
 const DistrictLayout = preload("res://scripts/data/district_layout.gd")
 const TRAIN_AUDIO = preload("res://assets/audio/transport/er2_running.mp3")
-const RADIO_TRACK = preload("res://assets/audio/ambience/prologue_car_radio.mp3")
+const RADIO_THEME = preload("res://assets/audio/ambience/prologue_car_theme.mp3") # Opening of the drive.
+const RADIO_SECOND_THEME = preload("res://assets/audio/ambience/prologue_car_theme_after.mp3") # From the restaurant on.
+const RADIO_TUNING = preload("res://assets/audio/ambience/prologue_radio_tuning.mp3")
+const RADIO_INTERFERENCE = preload("res://assets/audio/ambience/prologue_radio_interference.mp3")
 const RADIO_BUS := "ArrivalRadio"
-const RADIO_GAIN := 0.28
-const RADIO_STATIC_GAIN := 0.045
+const RADIO_GAIN := 0.20
+const RADIO_STATIC_GAIN := 0.10
+const RADIO_TUNING_GAIN := 0.55
 const DRIVE_WORLD_GAIN := 0.35
 const RECEPTION_AUDIO = preload("res://assets/audio/ambience/prologue_reception.mp3")
 const TRAIN_WINDOW = preload("res://assets/locations/prologue/train-window-v2.png")
 const TRAIN_CARRIAGE = preload("res://assets/locations/prologue/train-carriage-v4.png")
-const OFFICE = preload("res://assets/locations/summer_day_office_v3.png")
+const CORRIDOR_CLOSED = preload("res://assets/locations/prologue/reception-walnut-closed-v1.png")
+const CORRIDOR_OPEN = preload("res://assets/locations/prologue/reception-walnut-open-v1.png")
 const WAKE_SHADER = preload("res://assets/shaders/prologue_wake.gdshader")
 const FOCUS_SECONDS := 6.5
 const SHOT_PAUSE := 0.55
@@ -60,6 +65,7 @@ var _reveal_delay := 0.0
 var _city_level := 0.0
 var _date: String
 var _radio_bus_created := false
+var _radio_on := false
 
 
 func begin(map, hud, audio, map_audio, date: String) -> void:
@@ -133,7 +139,7 @@ func close_paper() -> void:
 	_audio.remove_layer("arrival_train")
 	_show_drive = true
 	_set_skip_enabled(true)
-	_start_caption(Arrival.MEETING)
+	_start_caption(Arrival.MEETING, _speech_seconds(Arrival.MEETING))
 	landmark_reached.emit("station")
 	await _hold(_caption_seconds + 0.35)
 
@@ -166,15 +172,18 @@ func _play_drive_beat(index: int) -> void:
 		await _hold(0.1)
 	if _skip_drive:
 		return
-	_landmark_rect = beat.get("highlight", DistrictLayout.LOTS[beat["lot"]]["rect"])
+	_landmark_rect = beat.get("highlight", DistrictLayout.LOTS[beat["lot"]]["rect"] if beat.has("lot") else Rect2())
 	_landmark_focus = beat.get("focus", _landmark_rect.get_center())
 	_landmark_zoom = beat.get("focus_zoom", 0.0)
 	_focus_age = -INF
 	_landmark_name.text = beat.get("name", "")
 	_landmark_panel.reset_size()
 	_minute = beat["minute"]
+	if OS.get_cmdline_user_args().has("--autoplay"):
+		print("arrival cue %s: %.1f m past its mark" % [beat["id"], _map.arrival_mark_offset(index)])
 	if approach:
 		_start_caption(beat["approach_caption"], beat["approach_seconds"])
+		_retune_radio()
 		await _hold(_caption_seconds + 0.35)
 		if _skip_drive:
 			return
@@ -182,16 +191,31 @@ func _play_drive_beat(index: int) -> void:
 		await _hold(beat["silence_seconds"])
 		if _skip_drive:
 			return
-	_start_caption(beat["caption"])
+		_start_second_radio()
+	_start_caption(beat["caption"], _speech_seconds(beat["caption"]))
 	_focus_age = 0.0
 	_reveal_delay = beat.get("reveal_delay", 0.0)
 	landmark_reached.emit(beat["id"])
-	await _hold(_caption_seconds + 0.35)
+	var started := Time.get_ticks_msec()
+	await _hold_unless_next_due(index, _caption_seconds + 0.2)
 	if _skip_drive:
 		return
 	if approach:
 		_set_quiet(false)
-	await _hold(SHOT_PAUSE)
+	if OS.get_cmdline_user_args().has("--autoplay"):
+		print("arrival line %s: spoke %.1f of %.1f s" % [beat["id"], (Time.get_ticks_msec() - started) / 1000.0 * Engine.time_scale, _caption_seconds + 0.2])
+	if beat.has("lot"):
+		await _hold_unless_next_due(index, SHOT_PAUSE)
+
+
+# Tolik is cut off by the next cue rather than finishing a line about a place already passed.
+func _hold_unless_next_due(index: int, seconds: float) -> void:
+	var waited := 0.0
+	while waited < seconds and not _skip_drive:
+		if index + 1 < Arrival.DRIVE.size() and _map.reached_arrival_mark(index + 1, Arrival.DRIVE[index + 1].get("lead", 0.0)):
+			return
+		await _hold(0.1)
+		waited += 0.1
 
 
 func _process(delta: float) -> void:
@@ -234,6 +258,11 @@ func _reading_seconds(copy: String) -> float:
 	return maxf(6.0, 2.5 + copy.split(" ", false).size() / 1.9)
 
 
+func _speech_seconds(copy: String) -> float:
+	# Spoken pace for Tolik's monologue; the caption stays up while he talks.
+	return maxf(3.5, 0.6 + copy.split(" ", false).size() / 3.0)
+
+
 func _wait_for_reading() -> void:
 	_set_skip_enabled(true)
 	await _hold(_reading_seconds(_caption.text))
@@ -272,8 +301,8 @@ func _wake_up() -> void:
 func _set_quiet(quiet: bool) -> void:
 	_audio.set_layer_level("city", _city_level * (0.10 if quiet else DRIVE_WORLD_GAIN), 0.4)
 	_map_audio.scene_gain = DRIVE_WORLD_GAIN
-	_audio.set_layer_level("arrival_radio", RADIO_GAIN * 0.55 if quiet else RADIO_GAIN, 0.4)
-	_audio.set_layer_level("arrival_radio_static", RADIO_STATIC_GAIN * 0.55 if quiet else RADIO_STATIC_GAIN, 0.4)
+	if _radio_on:
+		_audio.set_layer_level("arrival_radio", RADIO_GAIN * 0.55 if quiet else RADIO_GAIN, 0.4)
 
 
 func _start_radio() -> void:
@@ -292,28 +321,58 @@ func _start_radio() -> void:
 	low_pass.resonance = 0.5
 	AudioServer.add_bus_effect(index, low_pass)
 
-	_audio.add_layer("arrival_radio", RADIO_TRACK, RADIO_BUS, RADIO_GAIN, 0.65)
-	_audio.add_layer("arrival_radio_static", _radio_static(), RADIO_BUS, RADIO_STATIC_GAIN, 0.25)
+	# Tune in first, then the new theme; light interference returns now and then.
+	_audio.add_layer("arrival_radio", RADIO_THEME, RADIO_BUS, RADIO_GAIN, 0.65, false)
+	_audio.add_layer("arrival_radio_static", RADIO_INTERFERENCE, RADIO_BUS, 0.0, 0.25)
 	_set_quiet(false)
+	_tune_in_theme()
+	_interference_loop()
 
 
-func _radio_static() -> AudioStreamWAV:
-	const RATE := 12000
-	const SAMPLE_COUNT := RATE * 7
-	var samples := PackedByteArray()
-	samples.resize(SAMPLE_COUNT * 2)
-	var rng := RandomNumberGenerator.new()
-	rng.randomize()
-	for i in SAMPLE_COUNT:
-		var seconds := float(i) / RATE
-		var burst := maxf(1.0 - absf(seconds - 1.4) / 0.12, 1.0 - absf(seconds - 5.3) / 0.08)
-		var amplitude := 0.07 + 0.48 * maxf(burst, 0.0)
-		samples.encode_s16(i * 2, roundi(rng.randf_range(-amplitude, amplitude) * 32767.0))
-	var noise := AudioStreamWAV.new()
-	noise.format = AudioStreamWAV.FORMAT_16_BITS
-	noise.mix_rate = RATE
-	noise.data = samples
-	return noise
+func _play_tuning() -> AudioStreamPlayer:
+	var player := AudioStreamPlayer.new()
+	player.stream = RADIO_TUNING
+	player.bus = RADIO_BUS
+	player.volume_linear = RADIO_TUNING_GAIN
+	add_child(player)
+	player.finished.connect(player.queue_free)
+	player.play()
+	return player
+
+
+func _tune_in_theme() -> void:
+	var tuning := _play_tuning()
+	await get_tree().create_timer(maxf(0.5, RADIO_TUNING.get_length() * 0.75)).timeout
+	if _skip_drive or not _driving or not is_instance_valid(tuning):
+		return
+	if not _audio.layers.has("arrival_radio"):
+		return
+	_radio_on = true
+	_audio.layers["arrival_radio"].start_playback()
+
+
+# At the restaurant the station is lost: tuning noise, silence, then the second theme to the end of the drive.
+func _retune_radio() -> void:
+	_radio_on = false
+	_play_tuning()
+	_audio.set_layer_level("arrival_radio", 0.0, 0.4)
+	_audio.set_layer_level("arrival_radio_static", 0.0, 0.3)
+
+
+func _start_second_radio() -> void:
+	_audio.remove_layer("arrival_radio")
+	_audio.add_layer("arrival_radio", RADIO_SECOND_THEME, RADIO_BUS, RADIO_GAIN * 0.55, 0.65)
+	_radio_on = true
+
+
+func _interference_loop() -> void:
+	while _driving and is_inside_tree():
+		await get_tree().create_timer(randf_range(11.0, 22.0)).timeout
+		if not _radio_on or not _driving:
+			continue
+		_audio.set_layer_level("arrival_radio_static", RADIO_STATIC_GAIN, 0.25)
+		await get_tree().create_timer(randf_range(0.9, 1.8)).timeout
+		_audio.set_layer_level("arrival_radio_static", 0.0, 0.35)
 
 
 func _wait_in_reception() -> void:
@@ -327,7 +386,7 @@ func _wait_in_reception() -> void:
 	_map_audio.set_muted(true)
 	_hud.hide()
 	_caption_panel.modulate.a = 0.0
-	_slide.texture = OFFICE
+	_slide.texture = CORRIDOR_CLOSED
 	_slide.show()
 	_caption.text = "08:00 · Приёмная\nРовно восемь. В здании это, кажется, заметили только часы."
 	await _fade(0.0, 0.70)
@@ -335,11 +394,8 @@ func _wait_in_reception() -> void:
 	await _wait_for_reading()
 	_caption_panel.modulate.a = 0.0
 	await _fade(1.0, 0.40)
-	# Reframe the existing illustration toward the open door for the boss's call.
-	var doorway := AtlasTexture.new()
-	doorway.atlas = OFFICE
-	doorway.region = Rect2(Vector2(0.39, 0.02) * OFFICE.get_size(), OFFICE.get_size() * 0.60)
-	_slide.texture = doorway
+	# The seated viewpoint holds while the walnut door opens for the boss's call.
+	_slide.texture = CORRIDOR_OPEN
 	_caption.text = "10:04 · Приёмная\nБорис Саввич: А, новый помощник. Здорово. Заходи, дверь закрой."
 	await _fade(0.0, 0.55)
 	_caption_panel.modulate.a = 1.0
@@ -441,7 +497,7 @@ func _build_caption() -> void:
 	_caption_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	_caption_panel.anchor_left = 0.20
 	_caption_panel.anchor_right = 0.80
-	_caption_panel.offset_top = -132
+	_caption_panel.offset_top = -176
 	_caption_panel.offset_bottom = -32
 	_caption = _paper_label(24)
 	_caption.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

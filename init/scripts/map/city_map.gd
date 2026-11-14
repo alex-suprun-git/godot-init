@@ -170,7 +170,7 @@ var _arrival_meeting: Node3D
 var _arrival_look_ahead := Vector2.ZERO
 var _arrival_focus := Vector2.ZERO
 var _arrival_focus_weight := 0.0
-var _arrival_follow_zoom := 150.0
+var _arrival_follow_zoom := ZOOM_MIN # The arrival camera never gets closer than the player can zoom.
 var _arrival_subject_zoom := 0.0
 var _tokens := {} # actor id -> Node3D
 var _overlays := {} # "lot:name" -> Node3D
@@ -370,7 +370,7 @@ func begin_arrival(profile: Dictionary) -> void:
 	for disc in _token_discs.values():
 		disc.hide()
 	_arrival_hour = 6.0
-	_zoom = 150.0
+	_zoom = ZOOM_MIN
 	_set_goal(Vector3(-97, 0, 346))
 	_camera_target = _camera_goal
 	_update_camera()
@@ -387,7 +387,7 @@ func stage_arrival_meeting() -> void:
 	_hero_car.position = _ground(Vector2(-70, 346)) + Vector3.UP * 0.14
 	_hero_car.rotation = Vector3(0, -PI / 2.0, 0)
 	_hero_car.show()
-	_snap_arrival_camera(Vector2(-72, 358), 118.0)
+	_snap_arrival_camera(Vector2(-72, 358), ZOOM_MIN)
 
 
 func prepare_arrival_drive(beats: Array) -> bool:
@@ -417,7 +417,7 @@ func start_arrival_drive() -> void:
 
 
 func _snap_arrival_camera(at: Vector2, zoom: float) -> void:
-	_zoom = zoom
+	_zoom = maxf(zoom, ZOOM_MIN)
 	_set_goal(Vector3(at.x, 0.0, at.y))
 	_camera_target = _camera_goal
 	_update_camera()
@@ -425,6 +425,11 @@ func _snap_arrival_camera(at: Vector2, zoom: float) -> void:
 
 func reached_arrival_mark(index: int, lead := 0.0) -> bool:
 	return _ambient.arrival_distance(_arrival_car) >= _arrival_marks[index] - lead - 0.05
+
+
+func arrival_mark_offset(index: int) -> float:
+	# Metres the driver is past (positive) or short of (negative) a cue mark.
+	return _ambient.arrival_distance(_arrival_car) - _arrival_marks[index]
 
 
 func update_arrival(hour: float, focus: Vector2, focus_weight: float, subject_zoom: float) -> void:
@@ -448,7 +453,7 @@ func _follow_arrival(delta: float) -> void:
 		target = follow.lerp(_arrival_focus, _arrival_focus_weight)
 	var subject_zoom := _arrival_subject_zoom if _arrival_subject_zoom > 0.0 else _arrival_follow_zoom
 	var zoom_goal := lerpf(_arrival_follow_zoom, subject_zoom, _arrival_focus_weight)
-	_zoom = lerpf(_zoom, zoom_goal, 1.0 - exp(-delta * 3.6))
+	_zoom = maxf(lerpf(_zoom, zoom_goal, 1.0 - exp(-delta * 3.6)), ZOOM_MIN)
 	_set_goal(Vector3(target.x, 0.0, target.y))
 
 

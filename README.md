@@ -249,7 +249,7 @@ The first stretch of the game is built around one concrete 1990s objective: the 
 
 - Setup: late August 1997, about seven weeks before the deadline. The boss, the district head, orders the player to have the district ready for heating by October 15, when a city commission will inspect it. Failing is not an option. This is the first objective with a deadline.
 - Every faction has a stake: residents fear another winter in coats; business wants the fuel oil supply and boiler repair contracts; the mafia steals fuel oil and wants its own contractor; the police protect the fuel depot; the church asks to heat the cathedral or open a shelter.
-- Week 1 itself (the order of days, requests and introductions) is described in "Week 1 Redesign: Arrival and Introductions". The earlier plan of one taught mechanic per request on day one no longer applies; the envelope offer is removed, and the rival's TV appearance is deferred without a date.
+- Week 1 itself (the order of days, requests and introductions) is described in "Week 1 Redesign: Arrival and Introductions". The earlier plan of one taught mechanic per request on day one no longer applies; the envelope offer stays but appears no earlier than 15:00 on Monday, and the rival's TV appearance is deferred without a date.
 - About ten days later, consequences show on the map: repairs at the boiler house or an abandoned construction site; unhappy residents gathering as the promised date nears; a newspaper note hinting that someone is interested in the player's affairs.
 - Early October: the first trial run of the heating system bursts a pipe at Block 5, a crisis (art: `init/assets/events/pipe_burst.png`). Week one needs its own late-summer crisis; it is undecided.
 - Seasons move visibly through the opening: summer greenery with the first yellow leaves in late August, heavy leaf fall by October.
@@ -266,7 +266,7 @@ Week 1 is the player's first week in the district, so the story is rebuilt as "t
   1. 06:00, the player arrives by electric train and reads the opening newspaper on the train (the newspaper is the prologue; it is no longer a morning shortcut).
   2. Tolik, the administration driver, meets them at the station and drives a long scenic route around the district while briefly explaining the situation (narration only), then leaves them at the boss's door. Tolik is introduction-only for now.
   3. Work starts around 10:00. The boss's opening monologue is rewritten for "the new man", keeping its core (heating ready by October 15). The weekly requests are the existing ones, starting later in the game day.
-  4. The envelope offer is removed for now. Gusev (the businessman) is introduced as a person first.
+  4. The envelope offer stays in the game, from 15:00 on Monday. Gusev (the businessman) is introduced as a person first.
   5. Heating complaint arrives (Block 5, no hot water). Mikhalych the plumber is nowhere to be found, so the player talks to the residents; Baba Nina, the most active one, tells them (with a story hint) that he is on a drinking spree. This is the first conversation and the first contact lead.
   6. Evening: going home is itself a quest. The player picks the transport icon and travels to the dormitory, where they meet the young neighbour in a conversation instead of a plain check-in. Romance is a possible later thread.
 - **The neighbour is a journalist,** but neither knows the other's role at the dormitory. On Tuesday, on the way to the executive committee, she turns up in front of the building as the press; the player recognises her.

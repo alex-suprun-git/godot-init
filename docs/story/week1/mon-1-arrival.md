@@ -149,6 +149,18 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 БОРИС САВВИЧ: А, новый помощник. Здорово. Заходи, дверь закрой.
 
+## Drive monologue (draft v4, in the game)
+
+The text of the drive lives in `init/scripts/data/arrival.gd` (`MEETING` and `DRIVE`), not here: it is one continuous speech of about 24 captions, each keyed to a route position and each continuing the last. Tolik asks questions and answers for the silent protagonist, then carries on; the answers never state anything about the protagonist. Landmark beats (market, dormitory, boiler, ATP, border, restaurant, village, executive committee) keep their highlight; the rest is plain talk. A cue that is due cuts off the previous line, so a line never describes a place already passed.
+
+What it plants: the hot-water problem, the wasteland someone is "looking at" (Gusev), the Wednesday meeting at the House of Culture, Mikhalych, Father Georgy, the boss's silence. About himself Tolik gives: about ten years behind a wheel, long-haul to the border before the administration, Boris Savvich as his second boss, a wife at the market, a daughter in the fourth class, a father who is hard of hearing. The break at the restaurant and the over-bright "Вы любите тишину?" after it stay the centre of the sequence.
+
+### Assumptions
+
+- The wife, the daughter and the father are inventions for the drive (see `characters/tolik.md`).
+- The former market and the three towers are Tolik's gossip, not canon.
+- The Wednesday meeting follows the newspaper edition proposed below.
+
 ## Proposed changes to newspaper issue 1
 
 > For the train edition. Fields follow `newspaper_issues.gd`. The `lead`, `side` and `world` items can stay. The changes plant the House of Culture meeting and the border without explaining them.
