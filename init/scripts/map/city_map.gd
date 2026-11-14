@@ -1359,6 +1359,7 @@ func _print_traffic_stats(delta: float) -> void:
 	print("traffic observed road speed factors: ", _ambient.stats["road_speeds"])
 	print("traffic passing: started=", _ambient.stats["passes_started"], " returned=", _ambient.stats["passes_finished"], " vehicles overlapping=", overlaps)
 	print("traffic flows: ", streams, " buses=", buses, " completed_loops=", _ambient.stats["loops"])
+	print("traffic bus halts: ", _ambient.stats["bus_halts"])
 	if cars != AMBIENT_CARS or states["graph"] + states["out"] + states["wait"] + states["in"] != AMBIENT_CARS:
 		print("TRAFFIC INVARIANT BROKEN: ", cars, " cars, states ", states)
 

@@ -40,20 +40,25 @@ const STOPS := [
 ]
 
 
-# Bus routes as ordered stop lists: the stops are the waypoints. A bus drives `bus_point(stop)` to
-# `bus_point(next)` along the stop's road and halts at each point; `loop` routes return from the last
-# stop to the first. Every consecutive pair must follow the traffic direction (see `heading`),
-# which check_data.gd verifies for the stop ids at least. Ambient buses still use the old road loops;
-# switching them to these lists is the next step.
+# Bus routes. `stops` is the list of stops a line serves; the ambient buses (TrafficRoutes builds the
+# trips, AmbientLife halts them) halt at every stop that lies on their trip in their driving direction
+# (see `heading`), for DWELL_SECONDS each.
+#  - `loop` routes (`roads`: the streets in driving order, each pair perpendicular) run clockwise forever.
+#  - open routes run along `roads` between the two gateways in `ends`, once each way: the northbound
+#    bus serves the stops on the east pavement, the southbound bus the ones on the west pavement.
+#    There is no turning circle: the bus leaves the map at one end and comes back in at either end
+#    (the same off-map U-turn every through vehicle makes).
 const ROUTES := {
-	"1": {"name": "Кольцо", "loop": true, "stops": [
+	"1": {"name": "Кольцо", "loop": true,
+		"roads": ["north_street", "village_street", "south_street", "west_street"], "stops": [
 		"north_blocks_south", "village_west", "south_blocks_north", "west_dorm_east",
 	]},
-	"2": {"name": "Проспект", "loop": false, "stops": [
+	"2": {"name": "Проспект", "loop": false, "roads": ["axis"], "ends": ["axis_south", "border_bridge"], "stops": [
 		"avenue_south_east", "avenue_admin_east", "avenue_square_east", "avenue_store_east",
 		"avenue_store_west", "avenue_square_west", "avenue_admin_west", "avenue_south_west",
 	]},
 }
+const DWELL_SECONDS := 8.0 # Time a bus stands at a stop with the doors open.
 const BUS_LANE_OFFSET := 3.0 # Pavement centre to the kerb lane where the bus halts.
 
 
@@ -86,6 +91,10 @@ static func validate() -> PackedStringArray:
 		var stops: Array = ROUTES[route]["stops"]
 		if stops.size() < 2:
 			problems.append("bus route '%s' needs at least two stops" % route)
+		if not ROUTES[route].has("roads"):
+			problems.append("bus route '%s' has no roads" % route)
+		if not ROUTES[route]["loop"] and ROUTES[route].get("ends", []).size() != 2:
+			problems.append("open bus route '%s' needs two gateway ends" % route)
 		for id in stops:
 			if not ids.has(id):
 				problems.append("bus route '%s' names unknown stop '%s'" % [route, id])

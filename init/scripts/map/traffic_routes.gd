@@ -3,6 +3,7 @@ extends RefCounted
 const Layout = preload("res://scripts/data/district_layout.gd")
 const Flows = preload("res://scripts/data/traffic_flows.gd")
 const Rules = preload("res://scripts/map/traffic_rules.gd")
+const BusStops = preload("res://scripts/data/bus_stops.gd")
 var trips := {}
 var _graph
 var _roads := {}
@@ -39,6 +40,8 @@ func _init(graph, gateways: Array[Dictionary]) -> void:
 			for i in range(path.size() - 1, -1, -1):
 				reverse.append({"edge": path[i]["edge"], "from": _graph.other_end(path[i]["edge"], path[i]["from"])})
 			trips[stream].append({"path": reverse, "loop": true, "entry": -1, "exit": -1})
+		if config.has("line"):
+			trips[stream].append_array(_line_trips(config["line"]))
 		for trip in trips[stream]:
 			_validate_trip(stream, trip)
 	assert(slots == Flows.CAR_COUNT, "Traffic stream slots must match the car pool")
@@ -50,6 +53,70 @@ func _open_trip(spec: Dictionary, roads: Array) -> Dictionary:
 	points.append(_gates[spec["exit"]]["point"])
 	return {"path": _path(roads, points), "loop": false,
 		"entry": _gates[spec["entry"]]["index"], "exit": _gates[spec["exit"]]["index"]}
+
+
+# The trips of a scheduled bus line (data/bus_stops.gd ROUTES): one clockwise loop, or one trip each
+# way between the two gateways. Unlike the generic loops there is no reverse copy: a reversed bus
+# would pass every stop on the wrong side of the road.
+func _line_trips(line: String) -> Array[Dictionary]:
+	var route: Dictionary = BusStops.ROUTES[line]
+	var roads: Array = route["roads"]
+	var result: Array[Dictionary] = []
+	if route["loop"]:
+		var points: Array = [_junction(roads[-1], roads[0])]
+		for i in roads.size():
+			points.append(_junction(roads[i], roads[(i + 1) % roads.size()]))
+		result.append({"path": _path(roads, points), "loop": true, "entry": -1, "exit": -1})
+	else:
+		var ends: Array = route["ends"]
+		result.append(_open_trip({"entry": ends[0], "exit": ends[1]}, roads))
+		result.append(_open_trip({"entry": ends[1], "exit": ends[0]}, roads))
+	for trip in result:
+		trip["halts"] = _halts(line, route, trip)
+	return result
+
+
+# Where on the trip each stop is served: the leg (index into `path`) and the distance along its edge.
+# A stop belongs to a trip only when the trip drives past it in the stop's own direction.
+func _halts(line: String, route: Dictionary, trip: Dictionary) -> Array[Dictionary]:
+	var halts: Array[Dictionary] = []
+	var path: Array = trip["path"]
+	for id: String in route["stops"]:
+		var stop := BusStops.stop_by_id(id)
+		var heading := BusStops.heading(stop)
+		var at: Vector2 = stop["at"]
+		var best := {}
+		for cursor in path.size():
+			var edge: Dictionary = _graph.edges[path[cursor]["edge"]]
+			var start: Vector2 = _graph.points[path[cursor]["from"]]
+			var direction: Vector2 = (_graph.points[_graph.other_end(path[cursor]["edge"], path[cursor]["from"])] - start).normalized()
+			var along := (at - start).dot(direction)
+			var off := absf((at - start).cross(direction))
+			if direction.dot(heading) < 0.9 or along < 0.0 or along > float(edge["length"]) or off > float(edge["half"]) + 8.0:
+				continue
+			if best.is_empty() or off < float(best["off"]):
+				best = {"cursor": cursor, "along": along, "off": off, "id": id, "length": float(edge["length"])}
+		if best.is_empty():
+			continue
+		# Every node starts a turn: a real corner needs up to 15 m on either side of it, a straight
+		# continuation (an edge split at an entrance) about 5 m. The bus must stand on the straight part.
+		var cursor: int = best["cursor"]
+		var before: int = (cursor - 1 + path.size()) % path.size()
+		var after: int = (cursor + 1) % path.size()
+		var margin_in := 0.0 if (cursor == 0 and not trip["loop"]) else _turn_margin(path[before], path[cursor])
+		var margin_out := 0.0 if (cursor == path.size() - 1 and not trip["loop"]) else _turn_margin(path[cursor], path[after])
+		assert(float(best["along"]) >= margin_in and float(best["length"]) - float(best["along"]) >= margin_out,
+			"Bus stop '%s' of line %s is too close to a junction on its edge" % [id, line])
+		halts.append(best)
+	halts.sort_custom(func(a, b): return a["cursor"] < b["cursor"] or (a["cursor"] == b["cursor"] and a["along"] < b["along"]))
+	assert(not halts.is_empty(), "Bus line %s: a trip serves no stop" % line)
+	return halts
+
+
+func _turn_margin(first: Dictionary, second: Dictionary) -> float:
+	var a: Vector2 = _graph.points[_graph.other_end(first["edge"], first["from"])] - _graph.points[first["from"]]
+	var b: Vector2 = _graph.points[_graph.other_end(second["edge"], second["from"])] - _graph.points[second["from"]]
+	return 5.0 if a.normalized().dot(b.normalized()) > 0.999 else 16.0
 
 
 func for_model(trip: Dictionary, model: String) -> Dictionary:
