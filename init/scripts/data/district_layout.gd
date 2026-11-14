@@ -117,6 +117,7 @@ const ROADS := [
 	{"id": "west_street", "rect": Rect2(-485, -85, 10, 390), "kind": "asphalt"},
 	{"id": "highway", "rect": Rect2(-450, -197.5, 890, 20), "kind": "asphalt", "walk": 0.0, "look": "highway", "speed": 2.0, "lanes_per_direction": 2},
 	{"id": "north_street", "rect": Rect2(-500, -90, 940, 10), "kind": "asphalt"},
+	{"id": "industrial_link", "rect": Rect2(-444, -187.5, 8, 102.5), "kind": "asphalt", "walk": 0.0, "speed": 0.8},
 	{"id": "south_street", "rect": Rect2(-500, 300, 940, 10), "kind": "asphalt"},
 	{"id": "axis", "rect": Rect2(-17, -330, 24, 885), "kind": "asphalt", "median": 4.0, "lanes_per_direction": 2},
 	{"id": "village_street", "rect": Rect2(140, -80, 10, 380), "kind": "asphalt"},
@@ -181,7 +182,7 @@ const ROADS := [
 	{"id": "store_south_walk", "rect": Rect2(7, 31, 40, 3), "kind": "yard"},
 	{"id": "civic_public_spine", "rect": Rect2(44, -23, 3, 67.5), "kind": "yard"},
 	{"id": "culture_garden_walk", "rect": Rect2(28, -23, 54, 3), "kind": "yard"},
-	{"id": "civic_garden_crosswalk", "rect": Rect2(45.5, 9.5, 99.5, 3), "kind": "yard"},
+	{"id": "civic_garden_crosswalk", "rect": Rect2(45.5, 9.5, 94.5, 3), "kind": "yard"},
 	{"id": "civic_east_garden_walk", "rect": Rect2(79, -23, 3, 35.5), "kind": "yard"},
 	{"id": "culture_walk", "rect": Rect2(7, -43, 29, 4), "kind": "yard"},
 	# Actual graph connections for the shared forecourt. Its custom surface provides
@@ -486,6 +487,7 @@ static func lot_center(id: String) -> Vector2:
 const SKIPPED_CROSSWALKS := [
 	"axis__civic_north_walk__center", "axis__civic_south_walk__center", "axis__store_south_walk__center",
 	"axis__south_infill_access__center", "axis__housing_cross_path__before",
+	"highway__industrial_link__before", "highway__industrial_link__after", "industrial_link__highway__after",
 	"village_street__civic_garden_crosswalk__center", "village_street__civic_north_walk__center",
 	"village_street__civic_south_walk__center", "village_street__square_link__center",
 ]

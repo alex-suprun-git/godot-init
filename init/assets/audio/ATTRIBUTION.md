@@ -39,6 +39,13 @@ The filenames identify ElevenLabs music-v2-5 and sound-effects-v2 respectively. 
 
 - `ambience/dvor.mp3`: supplied by the project owner as `dvor.mp3` and copied without re-encoding.
 
+## Monday prologue
+
+Both recordings were supplied by the project owner on 2026-11-14 and copied without re-encoding.
+
+- `ambience/prologue_car_radio.mp3`: `ElevenLabs_audio_elevenlabs-music-v2-5_Instrumental Sl_2026-11-14T09_10_12.mp3`. Band filtering and static are applied in Godot.
+- `ambience/prologue_reception.mp3`: `priemnaya schefa.mp3`.
+
 ## Train movement recordings (ElevenLabs)
 
 Provided by the project owner on 2026-11-05, copied without re-encoding; originals remain on the Desktop:

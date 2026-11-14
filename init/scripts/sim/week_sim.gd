@@ -93,6 +93,20 @@ func begin() -> void:
 	_open_due_requests()
 
 
+# The prologue supplies Monday's arrival. Start the simulation at its handoff
+# so ordinary morning travel and requests cannot run underneath the cutscene.
+func arrive_after_prologue(hour: float) -> void:
+	var me: Dictionary = actors["me"]
+	me["lot"] = "office"
+	me["pos"] = graph.entrance_position(Week1.LOTS["office"]["layout"])
+	_morning_started = true
+	at_work = true
+	t = hour - Week1.DAY_START_HOUR
+	begin()
+	_record_workday_start()
+	time_changed.emit()
+
+
 func advance(hours: float) -> void:
 	while hours > 0.0 and not ended:
 		_update_morning()
@@ -594,8 +608,12 @@ func _update_morning() -> void:
 		_begin_commute("office")
 	if _morning_started and me["state"] == "idle" and me["lot"] == "office" and clock_hour() >= Week1.WORK_START_HOUR - 0.00001:
 		at_work = true
-		_add_entry("08:00 · Вы в администрации. Рабочий день до 18:00.")
-		workday_started.emit()
+		_record_workday_start()
+
+
+func _record_workday_start() -> void:
+	_add_entry("%s · Вы в администрации. Рабочий день до 18:00." % clock_text())
+	workday_started.emit()
 
 
 func _begin_commute(lot: String) -> void:

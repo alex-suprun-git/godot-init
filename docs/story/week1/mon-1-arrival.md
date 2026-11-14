@@ -26,7 +26,7 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 [Вокзальная площадь, 06:00]
 
-> Hand-off: Tolik's car (the administration Volga) is already at the kerb. The camera starts on the player's arrival and then follows the car for the whole drive. If a car-radio loop is available, it plays quietly from here and cuts out at the restaurant; otherwise ambience is enough.
+> Hand-off: The boss's official black foreign sedan, which Tolik drives, is already at the kerb. Tolik's own Volga is not in the scene. The camera starts on the player's arrival and then follows the car for the whole drive. If a car-radio loop is available, it plays quietly from here and cuts out at the restaurant; otherwise ambience is enough.
 
 ТОЛИК: О, приехали! А я уж думал, опять никто не приедет, мне Борис Саввич говорит, встреть там человека, а какого человека, не сказал, ну я стою и на всех подряд смотрю. Вы ведь помощник, да? Толик я, водитель.
 
@@ -133,7 +133,7 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 [Приёмная исполкома, 08:00]
 
-> The wait from 08:00 to 10:04 is a plain time skip (decided). No secretary character is introduced. The boss's entrance leads straight into the monologue in `mon-2-boss-and-block5.md`.
+> The wait from 08:00 to 10:04 is a time skip from the same seated corridor viewpoint. The newly fitted walnut door opens onto the district head's refurbished office. The greeting leads into the briefing in `mon-2-boss-and-block5.md`.
 
 *Ровно восемь. Вы пришли вовремя. В здании это, кажется, заметили только часы.*
 
@@ -147,7 +147,19 @@ Monday 25 August 1997, 06:00 to about 10:00. Narration only, no mechanics taught
 
 *Послышались шаги, тяжёлые и без спешки. Ключ повернулся с первого раза.*
 
-БОРИС САВВИЧ: Новый? Заходите. Дверь закройте. Разговор есть.
+БОРИС САВВИЧ: А, новый помощник. Здорово. Заходи, дверь закрой.
+
+## Drive monologue (draft v4, in the game)
+
+The text of the drive lives in `init/scripts/data/arrival.gd` (`MEETING` and `DRIVE`), not here: it is one continuous speech of about 24 captions, each keyed to a route position and each continuing the last. Tolik asks questions and answers for the silent protagonist, then carries on; the answers never state anything about the protagonist. Landmark beats (market, dormitory, boiler, ATP, border, restaurant, village, executive committee) keep their highlight; the rest is plain talk. A cue that is due cuts off the previous line, so a line never describes a place already passed.
+
+What it plants: the hot-water problem, the wasteland someone is "looking at" (Gusev), the Wednesday meeting at the House of Culture, Mikhalych, Father Georgy, the boss's silence. About himself Tolik gives: about ten years behind a wheel, long-haul to the border before the administration, Boris Savvich as his second boss, a wife at the market, a daughter in the fourth class, a father who is hard of hearing. The break at the restaurant and the over-bright "Вы любите тишину?" after it stay the centre of the sequence.
+
+### Assumptions
+
+- The wife, the daughter and the father are inventions for the drive (see `characters/tolik.md`).
+- The former market and the three towers are Tolik's gossip, not canon.
+- The Wednesday meeting follows the newspaper edition proposed below.
 
 ## Proposed changes to newspaper issue 1
 

@@ -14,6 +14,7 @@ const SCENARIOS := {
 	"press": "_run_press_review", # authored front page and actual next-week retrospective
 	"ui-motion": "_run_ui_motion", # left drawer motion, availability and quest pictograms
 	"newspaper": "_run_newspaper_review", # front-page layout only
+	"prologue": "_run_prologue_review", # newspaper, Tolik's drive and Monday handoff
 	"ui": "_run_ui_review", # newspaper, modal scroll, assigned markers, contacts drawer
 	"office": "_run_office", # briefing, week tasks, newspaper, contact, request card, planning
 	"map": "_run_map_tour", # overview, lot labels and the district map tour
@@ -107,6 +108,37 @@ func _run(scenarios: Array) -> void:
 	# --keep-open leaves the game running where the last scenario stopped.
 	if not OS.get_cmdline_user_args().has("--keep-open"):
 		get_tree().quit()
+
+
+func _run_prologue_review() -> void:
+	if not is_instance_valid(main.arrival):
+		push_error("autoplay: run prologue as the first scenario")
+		return
+	if not is_instance_valid(main.arrival._paper):
+		await main.arrival.newspaper_opened
+	main.arrival.close_paper()
+	var landmark: String = await main.arrival.landmark_reached
+	for target in ["border", "restaurant", "office"]:
+		while landmark != target:
+			landmark = await main.arrival.landmark_reached
+		var car: Dictionary = main.map._arrival_car
+		print("prologue shot: ", landmark, " / position=", car.get("pos"), " / heading=", car.get("heading"))
+		if shots_dir != "":
+			await _wait(3.0)
+			await _shot("prologue_" + landmark)
+			if landmark == "office":
+				for _i in 300:
+					if main.map._arrival_parked and (main.map._park_t < 0.0 or main.map._park_t > 0.8):
+						break
+					await _wait(0.1)
+				await _shot("prologue_parked")
+	if is_instance_valid(main.arrival):
+		await main.arrival.finished
+	print("prologue handoff: ", main.sim.clock_text(), " / ", main.sim.actors["me"]["lot"],
+		" / briefing=", main.sim.flags.get("boss_briefing_received", false), " / speed=", main.speed,
+		" / normal traffic=", main.map.scenario_traffic.is_empty())
+	main.hud._continue_to_tasks()
+	print("prologue work folder: ", main.hud._week_panel.visible, " / hot water=", main.sim.request_stage("hot_water"))
 
 
 # Gets the start-of-week briefing and task panel out of the way, for scenarios

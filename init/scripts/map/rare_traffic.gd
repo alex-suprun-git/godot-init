@@ -45,7 +45,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	advance(delta)
+	advance(delta * get_parent().ambient_motion_scale)
 
 
 func advance(delta: float) -> void:

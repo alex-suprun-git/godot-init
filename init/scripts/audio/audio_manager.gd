@@ -25,6 +25,7 @@ var _last_played_msec := {} # event id -> when it last actually played
 var _streams := {} # path -> loaded stream
 var _rng := RandomNumberGenerator.new()
 var music
+var defer_music := false
 var layers := {} # Named continuous beds, independent of the event pool.
 var city_ambience
 
@@ -42,6 +43,7 @@ func _ready() -> void:
 	music.bus = "Music"
 	music.level = 0.65
 	music.overlap_seconds = 3.0
+	music.autoplay = not defer_music
 	layers["music"] = music
 	add_child(music)
 	for i in POOL_SIZE:
@@ -142,7 +144,7 @@ func _ensure_buses() -> void:
 				set_channel_level("Music", 0.3)
 
 # Future camera/location controllers can blend named beds without touching UI/SFX.
-func add_layer(id: String, source: AudioStream, bus_name: String, gain: float = 0.0, overlap: float = 2.0) -> Node:
+func add_layer(id: String, source: AudioStream, bus_name: String, gain: float = 0.0, overlap: float = 2.0, autoplay := true) -> Node:
 	if layers.has(id):
 		return layers[id]
 	var layer := AudioLayer.new()
@@ -151,6 +153,7 @@ func add_layer(id: String, source: AudioStream, bus_name: String, gain: float = 
 	layer.bus = bus_name
 	layer.level = clampf(gain, 0.0, 1.0)
 	layer.overlap_seconds = overlap
+	layer.autoplay = autoplay
 	layers[id] = layer
 	add_child(layer)
 	return layer

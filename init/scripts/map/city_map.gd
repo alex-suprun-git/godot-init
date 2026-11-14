@@ -160,6 +160,21 @@ var _camera_goal := DEFAULT_TARGET
 var _zoom := ZOOM_DEFAULT
 var _dragging := false
 var _ui_input_blocked := false
+var _arrival_hour := -1.0
+var scenario_traffic := {}
+var ambient_motion_scale := 1.0
+var _arrival_car := {}
+var _arrival_itinerary := {}
+var _arrival_marks := PackedFloat32Array()
+var _arrival_meeting: Node3D
+var _arrival_look_ahead := Vector2.ZERO
+var _arrival_focus := Vector2.ZERO
+var _arrival_focus_weight := 0.0
+var _arrival_parked := false
+var _park_t := -1.0
+var _park_from := Vector2.ZERO
+var _arrival_follow_zoom := ZOOM_MIN # The arrival camera never gets closer than the player can zoom.
+var _arrival_subject_zoom := 0.0
 var _tokens := {} # actor id -> Node3D
 var _overlays := {} # "lot:name" -> Node3D
 var _location_states := {} # location -> scheduled state controller, with event override.
@@ -258,11 +273,16 @@ func _process(delta: float) -> void:
 	if sim == null:
 		return
 	_pan_with_keys(delta)
-	_camera_target = _camera_target.lerp(_camera_goal, min(1.0, delta * 8.0))
+	if _arrival_hour >= 0.0:
+		_move_ambient(delta * ambient_motion_scale)
+		_follow_arrival(delta)
+	var response := 3.6 if _arrival_hour >= 0.0 else 8.0
+	_camera_target = _camera_target.lerp(_camera_goal, 1.0 - exp(-delta * response))
 	_update_camera()
 	_move_tokens()
 	_update_hero_car(delta)
-	_move_ambient(delta)
+	if _arrival_hour < 0.0:
+		_move_ambient(delta)
 	_update_daylight()
 	if _graph_overlay.visible:
 		_draw_routes()
@@ -271,7 +291,7 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _ui_input_blocked:
+	if _ui_input_blocked or _arrival_hour >= 0.0:
 		return
 	if event is InputEventMagnifyGesture:
 		zoom_by(1.0 / maxf(event.factor, 0.01))
@@ -344,6 +364,159 @@ func focus_on(lot: String) -> void:
 	_set_goal(Vector3(pos.x, 0, pos.y))
 
 
+func begin_arrival(profile: Dictionary) -> void:
+	cancel_camera_drag()
+	scenario_traffic = profile
+	ambient_motion_scale = float(profile.get("motion_scale", 1.0))
+	_ambient.hour = 6.0
+	_ambient.set_scenario_traffic(scenario_traffic)
+	for disc in _token_discs.values():
+		disc.hide()
+	_arrival_hour = 6.0
+	_zoom = ZOOM_MIN
+	_set_goal(Vector3(-97, 0, 346))
+	_camera_target = _camera_goal
+	_update_camera()
+
+
+func stage_arrival_meeting() -> void:
+	get_node("RailwayTraffic").hold_commuter_at_station()
+	_arrival_meeting = Node3D.new()
+	add_child(_arrival_meeting)
+	for index in 2:
+		var person: Dictionary = PEOPLE[0 if index == 0 else 3]
+		var at := Vector2(-69.0 + index * 2.3, 356.0)
+		_sprite(person["texture"], _ground(at) + Vector3.UP * 0.14, person["width"], _arrival_meeting, index == 0)
+	_hero_car.position = _ground(Vector2(-70, 346)) + Vector3.UP * 0.14
+	_hero_car.rotation = Vector3(0, -PI / 2.0, 0)
+	_hero_car.show()
+	_snap_arrival_camera(Vector2(-72, 358), ZOOM_MIN)
+
+
+func prepare_arrival_drive(beats: Array) -> bool:
+	_arrival_itinerary = _ambient.arrival_itinerary()
+	_arrival_marks.clear()
+	var at := 0.0
+	for beat in beats:
+		at = _ambient.arrival_marker(_arrival_itinerary, beat["road"], beat["at"], at)
+		if at < 0.0:
+			push_error("Arrival cue is out of route order: " + String(beat["id"]))
+			return false
+		_arrival_marks.append(at)
+	return true
+
+
+func start_arrival_drive() -> void:
+	var start := _ambient.arrival_marker(_arrival_itinerary, "station_link", Vector2(-70, 348), 0.0)
+	_arrival_car = _ambient.add_arrival_car(float(scenario_traffic.get("driver_speed", 10.0)),
+		_arrival_itinerary, start, _arrival_marks[-1])
+	if is_instance_valid(_arrival_meeting):
+		get_node("RailwayTraffic").release_commuter()
+		_arrival_meeting.queue_free()
+		_arrival_meeting = null
+	_arrival_car["visual"] = _hero_car
+	_arrival_look_ahead = Vector2.ZERO
+	_arrival_focus_weight = 0.0
+
+
+func _snap_arrival_camera(at: Vector2, zoom: float) -> void:
+	_zoom = maxf(zoom, ZOOM_MIN)
+	_set_goal(Vector3(at.x, 0.0, at.y))
+	_camera_target = _camera_goal
+	_update_camera()
+
+
+func reached_arrival_mark(index: int, lead := 0.0) -> bool:
+	return _ambient.arrival_distance(_arrival_car) >= _arrival_marks[index] - lead - 0.05
+
+
+func arrival_mark_offset(index: int) -> float:
+	# Metres the driver is past (positive) or short of (negative) a cue mark.
+	return _ambient.arrival_distance(_arrival_car) - _arrival_marks[index]
+
+
+func update_arrival(hour: float, focus: Vector2, focus_weight: float, subject_zoom: float) -> void:
+	_arrival_hour = hour
+	_arrival_focus = focus
+	_arrival_focus_weight = focus_weight
+	_arrival_subject_zoom = subject_zoom
+
+
+# Exception to the traffic rules: at the end of the drive the official car leaves the avenue
+# and pulls up on the forecourt, facing the entrance.
+const PARK_AT := Vector2(24, 72)
+const PARK_SECONDS := 5.0
+signal arrival_parked
+
+
+func park_arrival_car() -> void:
+	if _arrival_car.is_empty():
+		arrival_parked.emit()
+		return
+	_park_from = Vector2(_arrival_car["pos"])
+	_ambient.remove_arrival_car(_arrival_car)
+	_arrival_parked = true
+	_arrival_car["speed"] = 0.0
+	_park_t = 0.0
+
+
+func _advance_parking(delta: float) -> void:
+	_park_t = minf(_park_t + delta / PARK_SECONDS, 1.0)
+	var u := smoothstep(0.0, 1.0, _park_t)
+	var start := _park_from
+	var corner := Vector2(start.x, PARK_AT.y)
+	var at := start.lerp(corner, u).lerp(corner.lerp(PARK_AT, u), u)
+	var heading := ((corner - start) * (1.0 - u) + (PARK_AT - corner) * u).normalized()
+	_arrival_car["pos"] = at
+	_arrival_car["heading"] = heading
+	_hero_car.position = Vector3(at.x, _ground(at).y + 0.14, at.y)
+	_hero_car.rotation.y = atan2(heading.x, heading.y)
+	if _hero_car.has_meta("front_wheels"):
+		_steer_front_wheels(_hero_car, at, heading, delta)
+	if _park_t >= 1.0:
+		_park_t = -1.0
+		arrival_parked.emit()
+
+
+func _follow_arrival(delta: float) -> void:
+	if _park_t >= 0.0:
+		_advance_parking(delta)
+	if _arrival_car.is_empty():
+		return
+	var car := Vector2(_arrival_car["pos"])
+	var heading := Vector2(_arrival_car["heading"])
+	var lead := heading * minf(9.0, float(_arrival_car["speed"]) * float(_arrival_car["speed_scale"]))
+	_arrival_look_ahead = _arrival_look_ahead.lerp(lead, 1.0 - exp(-delta * 2.8))
+	var follow := car + _arrival_look_ahead
+	var toward_landmark := _arrival_focus - follow
+	var target := follow + toward_landmark.limit_length(64.0) * _arrival_focus_weight * 0.82
+	if _arrival_subject_zoom > 0.0:
+		target = follow.lerp(_arrival_focus, _arrival_focus_weight)
+	var subject_zoom := _arrival_subject_zoom if _arrival_subject_zoom > 0.0 else _arrival_follow_zoom
+	var zoom_goal := lerpf(_arrival_follow_zoom, subject_zoom, _arrival_focus_weight)
+	_zoom = maxf(lerpf(_zoom, zoom_goal, 1.0 - exp(-delta * 3.6)), ZOOM_MIN)
+	_set_goal(Vector3(target.x, 0.0, target.y))
+
+
+func end_arrival() -> void:
+	get_node("RailwayTraffic").release_commuter()
+	if is_instance_valid(_arrival_meeting):
+		_arrival_meeting.queue_free()
+	if not _arrival_car.is_empty() and not _arrival_parked:
+		_ambient.remove_arrival_car(_arrival_car)
+	_arrival_parked = false
+	_park_t = -1.0
+	_arrival_car = {}
+	scenario_traffic = {}
+	ambient_motion_scale = 1.0
+	_ambient.set_scenario_traffic(scenario_traffic)
+	_arrival_hour = -1.0
+	_hero_car.hide()
+	_zoom = ZOOM_DEFAULT
+	for disc in _token_discs.values():
+		disc.show()
+
+
 # --- Camera ------------------------------------------------------------------
 
 func audio_proximity() -> float:
@@ -376,7 +549,7 @@ func show_overview() -> void:
 
 
 func _pan_with_keys(delta: float) -> void:
-	if _ui_input_blocked:
+	if _ui_input_blocked or _arrival_hour >= 0.0:
 		return
 	var direction := Vector3.ZERO
 	if Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP):
@@ -499,6 +672,8 @@ func play_night(seconds: float) -> void:
 
 # The light follows the clock on screen: sun height, warmth, sky and ambient.
 func visual_clock_hour() -> float:
+	if _arrival_hour >= 0.0:
+		return _arrival_hour
 	var hour: float = _debug_hour if _debug_hour >= 0.0 else sim.clock_hour()
 	if _night_hour >= 0.0:
 		hour = _night_hour
@@ -891,13 +1066,15 @@ func _build_tokens() -> void:
 		var start: Vector2 = sim.actors[id]["pos"]
 		token.position = _ground(start)
 		_tokens[id] = token
-	_hero_car = _vehicle("volga", Vector3.ZERO, VehicleModels.map_length("volga"), "z", null, VehicleModels.PAINT_BLACK)
+	_hero_car = _vehicle("luxury_sedan", Vector3.ZERO, VehicleModels.map_length("luxury_sedan"), "z", null, VehicleModels.PAINT_BLACK)
 	_hero_car.visible = false
 
 
 # When you travel with Tolik you sit in the car: it drives the route and the
 # discs under both of you disappear. On foot there is no car.
 func _update_hero_car(delta: float) -> void:
+	if _arrival_hour >= 0.0:
+		return
 	var me: Dictionary = sim.actors["me"]
 	var riding: bool = me["state"] == "travel" and me["driver"]
 	_hero_car.visible = riding
@@ -1248,7 +1425,7 @@ func _move_ambient(delta: float) -> void:
 		profile_visual_ms = 0.0
 		return
 	var started := Time.get_ticks_usec() if profile_ambient else 0
-	_ambient.hour = sim.clock_hour()
+	_ambient.hour = visual_clock_hour() if _arrival_hour >= 0.0 else sim.clock_hour()
 	_ambient.step(delta)
 	for light in _signal_lights:
 		var controller = _ambient.signals[light.binding["intersection_id"]]

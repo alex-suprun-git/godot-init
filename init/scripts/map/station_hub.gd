@@ -69,8 +69,8 @@ func _station() -> void:
 	for i in range(7):
 		var height := .18 + (i + 1) * (1.09 / 7.0)
 		map._box(Vector3(6, height, .5), Vector3(-65, height / 2.0, 366.75 + i * .5), Color("aaa79b"), root)
-	# Clear pedestrian path through the bus-lane crossing to the shelter island.
-	_paving(Rect2(-67, 350, 4, 12), .16)
+	# The paved approach starts at the taxi pocket, beyond the bus crossing.
+	_paving(Rect2(-67, 354, 4, 8), .16)
 	# One clear crossing from station approach to the shelter island, rather than
 	# intersecting auto-generated zebras at every internal route junction.
 	for i in range(13):
@@ -112,6 +112,8 @@ func _square() -> void:
 		for x in [-130.0, -46.0]:
 			map._paint_patch(Vector2(.10, 2.7), Vector2(x, z), .15)
 	for x in range(-123, -49, 8):
+		if x == -67:
+			continue # The crossing occupies this part of the bus lane.
 		map._paint_patch(Vector2(2.7, .1), Vector2(x, 348), .15)
 	# Kiosks are small accessories to the same square, not another terminal.
 	_asset("kiosk", Vector3(-141, .19, 321))

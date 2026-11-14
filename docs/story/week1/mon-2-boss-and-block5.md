@@ -9,12 +9,14 @@ Monday 25 August 1997, 10:04 to the afternoon. Two scenes: the boss's briefing (
 > Format: the existing portrait briefing (`START_BRIEFING` in `init/scripts/data/week1.gd`), then the weekly task board. The core is kept (commission on 15 October, contractor by Thursday, the boss handles fuel oil himself); the voice is rewritten for "the new man", and the meeting at the House of Culture and the first push toward Block 5 are added. The Friday item stays "a report" here; the inspection is announced on Thursday (see the root README).
 >
 > Voice: heavy, unhurried, sardonic. He never raises his voice. He says "ты" to the player.
+>
+> Anya is the young secretary. Boris names her as the person who will orient the new aide.
 
 **БОРИС САВВИЧ ВЫЗЫВАЕТ**
 
 **Закрой дверь. Разговор есть**
 
-Значит, ты и есть новенький. Рекомендации у тебя хорошие, а это либо хорошо, либо подозрительно, вот посмотрим.
+*The boss has just greeted the new aide at the door.*
 
 Слушай один раз, повторять не буду. Пятнадцатого октября приезжает комиссия из области, будут ходить по котельным, по подвалам, по домам и спрашивать, почему батареи холодные, а спрашивать будут с меня, ну а я, соответственно, с тебя.
 
@@ -27,6 +29,8 @@ Monday 25 August 1997, 10:04 to the afternoon. Two scenes: the boss's briefing (
 Вопросы есть? Нет. Вот и хорошо.
 
 И начни с дома пять, там воды нет. Звонили три раза, я трубку не брал, теперь твоя очередь.
+
+Мне пора. Аня, мой секретарь, введёт тебя в курс дела.
 
 **[Понял, Борис Саввич]**
 
