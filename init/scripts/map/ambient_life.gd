@@ -401,9 +401,22 @@ func _outside_junctions(agent: Dictionary) -> bool:
 	return true
 
 
+# Braking only starts well inside this distance (sqrt(2 * SERVICE_BRAKE * 120 m) is far
+# above any car speed), so junctions farther away cannot change the result unless the
+# car owns them or is inside their signal group and must still release them.
+const FAR_JUNCTION := 120.0
+
+
 func _junction_limit(agent: Dictionary, neighbors: Array) -> float:
 	var limit := INF
+	var position: Vector2 = agent["pos"]
+	var slot: int = agent["slot"]
 	for junction in _junctions:
+		var center: Vector2 = junction["center"]
+		if absf(position.x - center.x) > FAR_JUNCTION or absf(position.y - center.y) > FAR_JUNCTION:
+			var signal_group: SignalController = junction["signal"]
+			if junction["owner"] != slot and (signal_group == null or not signal_group.inside.has(slot)):
+				continue
 		var gap := _junction_gap(agent, junction)
 		if junction["signal"] != null:
 			limit = minf(limit, _group_limit(junction["signal"], agent, junction, gap, neighbors))
