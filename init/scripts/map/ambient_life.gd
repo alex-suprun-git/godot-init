@@ -542,6 +542,8 @@ func _drive(agent: Dictionary, neighbors: Array, delta: float) -> void:
 			continue
 		var offset: Vector2 = other["pos"] - agent["pos"]
 		var ahead := offset.dot(heading)
+		if ahead <= 0.0:
+			continue # Behind the body: the full test below would reject it on this alone.
 		var other_heading: Vector2 = other["heading"]
 		var width := agent_half_width + Occupancy.half_width(other)
 		var side := offset.cross(heading)

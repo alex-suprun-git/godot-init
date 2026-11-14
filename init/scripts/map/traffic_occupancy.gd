@@ -89,8 +89,17 @@ static func _separated(axis: Vector2, offset: Vector2, a: Vector2, ar: Vector2, 
 	return absf(offset.dot(axis)) >= reach + 0.08
 
 func clear_pose(agent: Dictionary, neighbors: Array) -> bool:
+	var agent_is_car: bool = agent["is_car"]
+	var at: Vector2 = agent["pos"]
+	# Anything farther than both footprints plus the margin cannot overlap; skip it before
+	# the full separating-axis test, which needs headings and four dot-product rounds.
+	var length_a := half_length(agent)
+	var width_a := half_width(agent)
 	for other in neighbors:
-		if is_same(agent, other) or (not agent["is_car"] and not other["is_car"]):
+		if is_same(agent, other) or (not agent_is_car and not other["is_car"]):
+			continue
+		var broad := length_a + half_length(other) + width_a + half_width(other) + 0.08
+		if (other["pos"] - at).length_squared() > broad * broad:
 			continue
 		if overlaps(agent, other):
 			return false
