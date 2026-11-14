@@ -10,6 +10,7 @@ const Intersections = preload("res://scripts/data/traffic_intersections.gd")
 const Occupancy = preload("res://scripts/map/traffic_occupancy.gd")
 const VehicleModels = preload("res://scripts/map/vehicle_models.gd")
 const TrafficRules = preload("res://scripts/map/traffic_rules.gd")
+const BusStops = preload("res://scripts/data/bus_stops.gd")
 
 const PedestrianGraph = preload("res://scripts/map/pedestrian_graph.gd")
 const WALKER_KINDS := ["pavement"]
@@ -31,12 +32,16 @@ const FOLLOW_SECONDS := 1.4
 const ZEBRA_CLEARANCE := 1.0 # bumper to the near edge of the paint
 const TURN_SAMPLES := 48
 const TURN_APPROACH := 10.0
+# A scheduled bus (a trip with `halts`) walks through these states at its next stop.
+const HALT_APPROACH := 0
+const HALT_DWELL := 1
+const HALT_LEAVE := 2
 
 var agents: Array[Dictionary] = []
 var hour := 12.0 # Clock hour, set by the view; decides who is out and about.
 
 var stats := {"exits": {}, "arrivals": {}, "max_step": 0.0, "max_excess": 0.0, "motion_warnings": 0, "passes_started": 0, "passes_finished": 0, "road_speeds": {},
-	"loops": {"city": 0, "residential": 0}}
+	"loops": {"city": 0, "residential": 0, "bus_ring": 0}, "bus_halts": {}}
 var _hour_override := -1.0
 var _traffic_debug := OS.get_cmdline_user_args().has("--traffic-debug")
 
@@ -222,7 +227,9 @@ func _initial_pose(speed: float, stream: String, trip: Dictionary, path: Array, 
 		"speed_scale": _road_speed(leg["edge"]), "threshold": 0.0, "visible": true, "class": vehicle_class, "slot": _car_slots, "passing": false, "limit": INF, "laps": 0,
 		"state": "graph", "gateway": trip["entry"], "leg_from": Vector2.ZERO, "leg_dir": Vector2.ZERO,
 		"leg_len": 0.0, "wait": 0.0, "respawned": false, "turn": {},
-		"stream": stream, "trip": trip, "route_cursor": cursor}
+		"stream": stream, "trip": trip, "route_cursor": cursor,
+		"next_halt": _halt_ahead(trip, cursor, distance - (lengths[cursor - 1] if cursor > 0 else 0.0)),
+		"halt_state": HALT_APPROACH, "dwell": 0.0}
 	if position < 0.0 or position > total:
 		var arriving := position < 0.0
 		var gate: Dictionary = _gateways[trip["entry"] if arriving else trip["exit"]]
@@ -562,7 +569,7 @@ func _drive(agent: Dictionary, neighbors: Array, delta: float) -> void:
 	if not leader.is_empty() and leader["is_car"]:
 		agent["following_gap"] = maxf(headway, 0.0)
 	var junction_limit := _junction_limit(agent, neighbors)
-	agent["limit"] = minf(junction_limit, maxf(0.0, headway))
+	agent["limit"] = minf(minf(junction_limit, _halt_limit(agent, delta)), maxf(0.0, headway))
 	if _traffic_debug:
 		agent["stop_reason"] = "junction" if junction_limit < headway else str("leader ", leader.get("slot","walker"))
 		agent["junction_limit"] = junction_limit
@@ -600,6 +607,53 @@ func _drive(agent: Dictionary, neighbors: Array, delta: float) -> void:
 		stats["max_excess"] = maxf(stats["max_excess"], moved - expected)
 		if moved > expected + 0.05:
 			stats["motion_warnings"] += 1
+
+
+# Index of the first halt of a trip that lies ahead of the given leg and distance (0 when none).
+func _halt_ahead(trip: Dictionary, cursor: int, along: float) -> int:
+	var halts: Array = trip.get("halts", [])
+	for i in halts.size():
+		if int(halts[i]["cursor"]) > cursor or (int(halts[i]["cursor"]) == cursor and float(halts[i]["along"]) > along + 1.0):
+			return i
+	return 0
+
+
+# A scheduled bus treats its next stop as a stop line: the distance to it caps the drive distance
+# (so the usual braking curve applies), then the bus stands for the dwell time and drives on.
+# Returns INF when nothing is to be served on the current edge.
+func _halt_limit(agent: Dictionary, delta: float) -> float:
+	if agent["class"] != "bus" or agent["state"] != "graph":
+		return INF
+	var halts: Array = agent["trip"].get("halts", [])
+	if halts.is_empty():
+		return INF
+	var halt: Dictionary = halts[agent["next_halt"]]
+	var gap := float(halt["along"]) - float(agent["along"])
+	var here: bool = int(agent["route_cursor"]) == int(halt["cursor"])
+	match int(agent["halt_state"]):
+		HALT_DWELL:
+			agent["dwell"] -= delta
+			if agent["dwell"] > 0.0:
+				return 0.0
+			agent["halt_state"] = HALT_LEAVE
+			return INF
+		HALT_LEAVE:
+			if not here or gap < -0.5:
+				agent["next_halt"] = (int(agent["next_halt"]) + 1) % halts.size()
+				agent["halt_state"] = HALT_APPROACH
+			return INF
+	if not here:
+		return INF
+	if gap > 0.1:
+		return gap
+	if gap < -0.5:
+		agent["next_halt"] = (int(agent["next_halt"]) + 1) % halts.size() # Missed it (spawned past it).
+		return INF
+	agent["halt_state"] = HALT_DWELL
+	agent["dwell"] = BusStops.DWELL_SECONDS
+	var counts: Dictionary = stats["bus_halts"]
+	counts[halt["id"]] = int(counts.get(halt["id"], 0)) + 1
+	return 0.0
 
 
 func _choose_lane(agent: Dictionary, neighbors: Array, leader: Dictionary, gap: float) -> void:
@@ -935,6 +989,9 @@ func _enter(agent: Dictionary) -> void:
 	agent["passing"] = false
 	agent["trip"] = trip
 	agent["route_cursor"] = 0
+	agent["next_halt"] = 0
+	agent["halt_state"] = HALT_APPROACH
+	agent["dwell"] = 0.0
 	agent["turn"] = {}
 	agent["gateway"] = chosen
 	agent["class"] = vehicle_class
@@ -1031,6 +1088,8 @@ func _edge_middle(edge: int) -> Vector2:
 
 func _stream_class(stream: String, replacing_bus: bool = false) -> String:
 	var fleet: Dictionary = TrafficFlows.STREAMS[stream]["fleet"]
+	if TrafficFlows.STREAMS[stream].has("line"):
+		return "bus" # Scheduled buses are not part of the MAX_BUSES pool.
 	var total := 0.0
 	for weight in fleet.values():
 		total += weight
@@ -1042,7 +1101,7 @@ func _stream_class(stream: String, replacing_bus: bool = false) -> String:
 				# Exclude the old bus when this same slot re-enters the map.
 				var bus_count := -1 if replacing_bus else 0
 				for agent in agents:
-					if agent["is_car"] and agent["class"] == "bus":
+					if agent["is_car"] and agent["class"] == "bus" and not TrafficFlows.STREAMS[agent["stream"]].has("line"):
 						bus_count += 1
 				return "bus" if bus_count < MAX_BUSES else "car"
 			return vehicle_class

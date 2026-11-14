@@ -16,12 +16,12 @@ const STREAMS := {
 		{"entry": "border_bridge", "exit": "highway_w", "roads": ["axis", "highway"]},
 		{"entry": "border_bridge", "exit": "highway_e", "roads": ["axis", "highway"]},
 	]},
-	"city": {"slots": 18, "fleet": {"car": 0.8, "bus": 0.2}, "loops": [
+	"city": {"slots": 16, "fleet": {"car": 1.0}, "loops": [
 		["south_street", "station_entry", "station_link", "station_exit"],
 		["north_street", "axis", "south_street", "west_street"],
 		["north_street", "village_street", "south_street", "axis"],
 	]},
-	"residential": {"slots": 16, "fleet": {"car": 0.9, "bus": 0.1}, "loops": [
+	"residential": {"slots": 14, "fleet": {"car": 1.0}, "loops": [
 		["north_street", "housing_spine", "housing_cross_path", "west_street"],
 		["housing_cross_path", "housing_spine", "south_street", "west_street"],
 		["north_street", "axis", "housing_cross_path", "housing_spine"],
@@ -39,4 +39,8 @@ const STREAMS := {
 		{"entry": "border_bridge", "exit": "axis_south", "roads": ["axis"], "semi_roads": ["axis", "north_street", "west_street", "south_street", "axis"]},
 		{"entry": "axis_south", "exit": "border_bridge", "roads": ["axis"], "semi_roads": ["axis", "south_street", "west_street", "north_street", "axis"]},
 	]},
+	# Scheduled buses: the trips and their stops come from data/bus_stops.gd ROUTES. Two buses ring
+	# line 1; line 2 gets one bus per direction (slot order picks the trip, see _add_car).
+	"bus_ring": {"slots": 2, "fleet": {"bus": 1.0}, "line": "1"},
+	"bus_avenue": {"slots": 2, "fleet": {"bus": 1.0}, "line": "2"},
 }
