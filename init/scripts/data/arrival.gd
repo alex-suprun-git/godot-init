@@ -3,6 +3,8 @@ extends RefCounted
 
 const BRIEFING_HOUR := 10.0 + 4.0 / 60.0
 const TRAFFIC := {
+	"motion_scale": 1.25,
+	"station_road_speed_scale": 1.5,
 	"cars": 0.40,
 	"pedestrians": 0.55,
 	"pedestrians_by_district": {"south_hub": 0.75, "village": 0.10},
@@ -12,7 +14,7 @@ const TRAFFIC := {
 const MEETING := "Толик: О, приехали! Вы ведь помощник? Толик я, водитель. Сумку в багажник, и поедем."
 
 const DRIVE := [
-	{"id": "market", "road": "south_street", "at": Vector2(-158, 305), "lead": 5.0, "minute": 364, "lot": "market", "name": "Вокзал и рынок",
+	{"id": "market", "road": "station_link", "at": Vector2(-70, 348), "minute": 364, "lot": "market", "name": "Вокзал и рынок",
 		"focus": Vector2(-103, 370),
 		"caption": "Толик: Вон вокзал, рядом рынок. Тут весь район кормится. Кошелёк держите поближе."},
 	{"id": "dormitory", "road": "west_street", "at": Vector2(-480, 75), "minute": 380, "lot": "dormitory", "name": "Общежитие",

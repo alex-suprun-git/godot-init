@@ -57,6 +57,7 @@ func _walker(from: Vector2, to: Vector2, floor_height: float, kind := -1, hours 
 func _process(delta: float) -> void:
 	if map == null or map.sim == null:
 		return
+	delta *= map.ambient_motion_scale
 	var hour: float = map._debug_hour if map._debug_hour >= 0.0 else map.sim.clock_hour() # --hour pins it for checks
 	if map._debug_hour < 0.0 and not map.scenario_traffic.is_empty():
 		hour = map.visual_clock_hour()

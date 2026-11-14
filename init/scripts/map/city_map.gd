@@ -162,6 +162,7 @@ var _dragging := false
 var _ui_input_blocked := false
 var _arrival_hour := -1.0
 var scenario_traffic := {}
+var ambient_motion_scale := 1.0
 var _arrival_car := {}
 var _arrival_itinerary := {}
 var _arrival_marks := PackedFloat32Array()
@@ -270,7 +271,7 @@ func _process(delta: float) -> void:
 		return
 	_pan_with_keys(delta)
 	if _arrival_hour >= 0.0:
-		_move_ambient(delta)
+		_move_ambient(delta * ambient_motion_scale)
 		_follow_arrival(delta)
 	var response := 3.6 if _arrival_hour >= 0.0 else 8.0
 	_camera_target = _camera_target.lerp(_camera_goal, 1.0 - exp(-delta * response))
@@ -363,6 +364,7 @@ func focus_on(lot: String) -> void:
 func begin_arrival(profile: Dictionary) -> void:
 	cancel_camera_drag()
 	scenario_traffic = profile
+	ambient_motion_scale = float(profile.get("motion_scale", 1.0))
 	_ambient.hour = 6.0
 	_ambient.set_scenario_traffic(scenario_traffic)
 	for disc in _token_discs.values():
@@ -463,6 +465,7 @@ func end_arrival() -> void:
 		_ambient.remove_arrival_car(_arrival_car)
 	_arrival_car = {}
 	scenario_traffic = {}
+	ambient_motion_scale = 1.0
 	_ambient.set_scenario_traffic(scenario_traffic)
 	_arrival_hour = -1.0
 	_hero_car.hide()

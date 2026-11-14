@@ -45,7 +45,7 @@ func _add_train(model: Node3D, track: int, speed: float, direction: int, half_bo
 
 
 func _process(delta: float) -> void:
-	advance(delta)
+	advance(delta * get_parent().ambient_motion_scale)
 
 
 func advance(delta: float) -> void:

@@ -18,6 +18,8 @@ The approved carriage opens with an eyelid reveal. The approved view from the tr
 
 Hold Space to skip the current prologue slide, newspaper, station meeting or remaining drive. For map playtests, press F7 during the prologue in a debug build or launch the game with `-- --skip-prologue`. Both enter the normal Monday briefing at 10:04.
 
+The market cue starts as the Volga leaves the forecourt. The prologue runs visual traffic and pedestrian motion at 1.25×, with an additional 1.5× speed limit on the forecourt lanes. Dialogue and camera timing use the regular clock.
+
 ## City Audio (Prototype)
 
 - `AudioManager.MUSIC_PLAYLIST` plays the two November 13 instrumentals in order, then wraps to the first. Music crossfades over up to three seconds. The quiet city bed loops with a two-second overlap. Both fade in over two seconds and use real time during simulation pauses or speed changes. Initial gains are Music bus 30%, music bed 65% to compensate for the louder recordings, and city bed 50%. F3 adjusts each bed separately. Recording provenance is in `init/assets/audio/ATTRIBUTION.md`.

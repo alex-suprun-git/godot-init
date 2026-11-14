@@ -160,7 +160,8 @@ func close_paper() -> void:
 func _play_drive_beat(index: int) -> void:
 	var beat: Dictionary = Arrival.DRIVE[index]
 	var approach: bool = beat.has("approach_caption")
-	while not _skip_drive and not _map.reached_arrival_mark(index, beat.get("lead", 0.0)):
+	# Start the market introduction with the departure, even if traffic shifts the spawn.
+	while index > 0 and not _skip_drive and not _map.reached_arrival_mark(index, beat.get("lead", 0.0)):
 		await _hold(0.1)
 	if _skip_drive:
 		return

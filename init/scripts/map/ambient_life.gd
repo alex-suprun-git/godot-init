@@ -57,6 +57,7 @@ var _signal_zebras := {}
 var _junctions: Array[Dictionary] = []
 var _routes: TrafficRoutes
 var _scenario_pedestrian_scale := 1.0
+var _scenario_station_speed_scale := 1.0
 var _scenario_pedestrian_districts := {}
 
 
@@ -257,6 +258,7 @@ func set_scenario_traffic(profile: Dictionary) -> void:
 	var car_scale := float(profile.get("cars", 1.0))
 	var car_streams: Dictionary = profile.get("cars_by_stream", {})
 	_scenario_pedestrian_scale = float(profile.get("pedestrians", 1.0))
+	_scenario_station_speed_scale = float(profile.get("station_road_speed_scale", 1.0))
 	_scenario_pedestrian_districts = profile.get("pedestrians_by_district", {})
 	var groups := maxf(1.0, ceilf(float(_car_slots) / 5.0))
 	for agent in agents:
@@ -970,6 +972,8 @@ func _road_speed(edge: int) -> float:
 	if data["kind"] == "dirt":
 		return float(data.get("speed", 0.55))
 	var limit := float(data.get("speed", 1.0))
+	if data.get("hub_surface", false):
+		limit *= _scenario_station_speed_scale
 	if data["kind"] == "asphalt" and data.get("look", "") != "highway":
 		limit *= TrafficRules.CITY_SPEED
 	return limit
