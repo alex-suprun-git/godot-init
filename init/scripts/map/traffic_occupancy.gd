@@ -37,17 +37,19 @@ func nearby(point: Vector2, radius: float, cars_only := false) -> Array:
 	var result := []
 	var first := cell(point - Vector2.ONE * radius)
 	var last := cell(point + Vector2.ONE * radius)
+	var radius_squared := radius * radius
 	for x in range(first.x, last.x + 1):
 		for y in range(first.y, last.y + 1):
 			var key := Vector2i(x, y)
-			_collect(car_cells.get(key, []), point, radius, result)
-			if not cars_only:
-				_collect(cells.get(key, []), point, radius, result)
+			if car_cells.has(key):
+				_collect(car_cells[key], point, radius_squared, result)
+			if not cars_only and cells.has(key):
+				_collect(cells[key], point, radius_squared, result)
 	return result
 
-func _collect(occupants: Array, point: Vector2, radius: float, result: Array) -> void:
+func _collect(occupants: Array, point: Vector2, radius_squared: float, result: Array) -> void:
 	for other in occupants:
-		if point.distance_squared_to(other["pos"]) <= radius * radius:
+		if point.distance_squared_to(other["pos"]) <= radius_squared:
 			result.append(other)
 
 
@@ -68,22 +70,36 @@ static func overlaps(agent: Dictionary, other: Dictionary) -> bool:
 	var length_b := half_length(other)
 	var width_a := half_width(agent)
 	var width_b := half_width(other)
-	if offset.length_squared() > pow(length_a + length_b + width_a + width_b + 0.08, 2):
+	var broad := length_a + length_b + width_a + width_b + 0.08
+	if offset.length_squared() > broad * broad:
 		return false
 	var a: Vector2 = agent["heading"]
 	var b: Vector2 = other["heading"]
 	var ar := a.orthogonal()
 	var br := b.orthogonal()
-	for axis: Vector2 in [a, ar, b, br]:
-		var reach := absf(axis.dot(a)) * length_a + absf(axis.dot(ar)) * width_a
-		reach += absf(axis.dot(b)) * length_b + absf(axis.dot(br)) * width_b
-		if absf(offset.dot(axis)) >= reach + 0.08:
-			return false
-	return true
+	return not (_separated(a, offset, a, ar, b, br, length_a, width_a, length_b, width_b)
+		or _separated(ar, offset, a, ar, b, br, length_a, width_a, length_b, width_b)
+		or _separated(b, offset, a, ar, b, br, length_a, width_a, length_b, width_b)
+		or _separated(br, offset, a, ar, b, br, length_a, width_a, length_b, width_b))
+
+static func _separated(axis: Vector2, offset: Vector2, a: Vector2, ar: Vector2, b: Vector2, br: Vector2,
+		length_a: float, width_a: float, length_b: float, width_b: float) -> bool:
+	var reach := absf(axis.dot(a)) * length_a + absf(axis.dot(ar)) * width_a
+	reach += absf(axis.dot(b)) * length_b + absf(axis.dot(br)) * width_b
+	return absf(offset.dot(axis)) >= reach + 0.08
 
 func clear_pose(agent: Dictionary, neighbors: Array) -> bool:
+	var agent_is_car: bool = agent["is_car"]
+	var at: Vector2 = agent["pos"]
+	# Anything farther than both footprints plus the margin cannot overlap; skip it before
+	# the full separating-axis test, which needs headings and four dot-product rounds.
+	var length_a := half_length(agent)
+	var width_a := half_width(agent)
 	for other in neighbors:
-		if is_same(agent, other) or (not agent["is_car"] and not other["is_car"]):
+		if is_same(agent, other) or (not agent_is_car and not other["is_car"]):
+			continue
+		var broad := length_a + half_length(other) + width_a + half_width(other) + 0.08
+		if (other["pos"] - at).length_squared() > broad * broad:
 			continue
 		if overlaps(agent, other):
 			return false
