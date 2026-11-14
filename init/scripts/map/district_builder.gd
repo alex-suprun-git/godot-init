@@ -123,8 +123,14 @@ func _build_ground() -> void:
 		var highway: bool = road.get("look", "") == "highway"
 		# The highway sits a hair lower so every town street crossing it wins the overlap.
 		var tint: Color = YARD_ROAD_TINT if yard else Color.WHITE
+		var surface_rect := rect
+		if road["id"] == "industrial_link":
+			# The driving route reaches the highway centre; its asphalt stops at the edge.
+			var highway_rect: Rect2 = Layout.road_by_id("highway")["rect"]
+			surface_rect.position.y = highway_rect.end.y
+			surface_rect.size.y = rect.end.y - highway_rect.end.y
 		# Elevated road surfaces replace ground asphalt; leave the railway open below.
-		var patches: Array[Rect2] = [rect]
+		var patches: Array[Rect2] = [surface_rect]
 		for bridge in Layout.BRIDGES:
 			if bridge.get("rail_overpass", false) and rect.intersects(bridge["rect"]):
 				var deck: Rect2 = bridge["rect"]

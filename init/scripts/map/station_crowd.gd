@@ -58,7 +58,10 @@ func _process(delta: float) -> void:
 	if map == null or map.sim == null:
 		return
 	var hour: float = map._debug_hour if map._debug_hour >= 0.0 else map.sim.clock_hour() # --hour pins it for checks
+	if map._debug_hour < 0.0 and not map.scenario_traffic.is_empty():
+		hour = map.visual_clock_hour()
 	var density := .25 if hour < 6.0 or hour >= 22.0 else 1.0
+	density *= float(map.scenario_traffic.get("station_crowd", 1.0))
 	for person in _people:
 		var sprite: Sprite3D = person["sprite"]
 		var hours: Vector2 = person.get("hours", Vector2.ZERO)

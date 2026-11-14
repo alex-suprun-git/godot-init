@@ -10,12 +10,18 @@ void vertex() {
 }
 
 void fragment() {
-	vec2 cell = floor(paint_world.xz * 18.0);
+	vec2 wear_coord = paint_world.xz * 18.0;
+	vec2 footprint = fwidth(wear_coord);
+	float resolved = 1.0 - smoothstep(0.35, 1.25, max(footprint.x, footprint.y));
+	vec2 cell = floor(wear_coord);
 	float wear = fract(sin(dot(cell, vec2(127.1, 311.7))) * 43758.5453);
 	float edge = min(min(UV.x, 1.0 - UV.x), min(UV.y, 1.0 - UV.y));
-	if (wear < 0.07 || edge < 0.012 + wear * 0.018) {
+	// Subpixel chips use their average tone instead of blinking as the camera moves.
+	float erosion = mix(0.021, 0.012 + wear * 0.018, resolved);
+	if ((resolved > 0.95 && wear < 0.07) || edge < erosion) {
 		discard;
 	}
-	ALBEDO = paint_colour.rgb * (0.94 + wear * 0.06);
+	float tone = (0.94 + wear * 0.06) * mix(0.70, 1.0, smoothstep(0.04, 0.16, wear));
+	ALBEDO = paint_colour.rgb * mix(0.93, tone, resolved);
 	ROUGHNESS = 1.0;
 }

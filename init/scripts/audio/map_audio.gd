@@ -3,6 +3,7 @@
 extends Node
 
 const WorldAudio = preload("res://scripts/data/world_audio.gd")
+var scene_gain := 1.0
 var _audio
 var _map
 var _railway
@@ -34,6 +35,11 @@ func _add_source(id: String, profile: Dictionary) -> void:
 	layer.context_gain = 0.0
 	layer._context_smoothed = 0.0
 	_sources[id] = {"layer": layer, "pan": panner, "bus": bus_name}
+
+
+func set_muted(muted: bool) -> void:
+	for source in _sources.values():
+		AudioServer.set_bus_mute(AudioServer.get_bus_index(source["bus"]), muted)
 
 
 func _process(_delta: float) -> void:
@@ -97,7 +103,7 @@ func _area_mix(zones: Array, ground: Vector2, daytime: float) -> Vector3:
 
 
 func _mix_source(source: Dictionary, position: Vector3, gain: float, width: float, pan_weight: float) -> void:
-	source["layer"].context_gain = gain
+	source["layer"].context_gain = gain * scene_gain
 	var target_pan := 0.0
 	if not _map.camera.is_position_behind(position):
 		target_pan = clampf((_map.camera.unproject_position(position).x / width - 0.5) * 1.5, -0.8, 0.8)

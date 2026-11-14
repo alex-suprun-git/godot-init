@@ -56,6 +56,8 @@ var _crossing_signals := {}
 var _signal_zebras := {}
 var _junctions: Array[Dictionary] = []
 var _routes: TrafficRoutes
+var _scenario_pedestrian_scale := 1.0
+var _scenario_pedestrian_districts := {}
 
 
 func _init(graph: RoadGraph, seed_value: int, gateways: Array[Dictionary] = []) -> void:
@@ -251,6 +253,116 @@ func step(delta: float) -> void:
 		delta -= tick
 
 
+func set_scenario_traffic(profile: Dictionary) -> void:
+	var car_scale := float(profile.get("cars", 1.0))
+	var car_streams: Dictionary = profile.get("cars_by_stream", {})
+	_scenario_pedestrian_scale = float(profile.get("pedestrians", 1.0))
+	_scenario_pedestrian_districts = profile.get("pedestrians_by_district", {})
+	var groups := maxf(1.0, ceilf(float(_car_slots) / 5.0))
+	for agent in agents:
+		if not agent["is_car"]:
+			if profile.is_empty():
+				continue
+			_refresh_agent_visibility(agent)
+			continue
+		if agent.get("arrival", false):
+			continue
+		var slot := int(agent["slot"])
+		# Spread retained slots across routes and both directions.
+		var rank := (float(slot % 5) + floorf(slot / 5.0) / groups) / 5.0
+		if rank >= float(car_streams.get(agent["stream"], car_scale)):
+			agent["scenario_deferred"] = true
+			agent["visible"] = false
+			_space.track(agent)
+			_release_car_junctions(slot)
+		else:
+			agent.erase("scenario_deferred")
+
+
+func arrival_itinerary() -> Dictionary:
+	var path := _routes.arrival_path()
+	var lengths: Array[float] = []
+	var total := 0.0
+	for leg in path:
+		total += float(_graph.edges[leg["edge"]]["length"])
+		lengths.append(total)
+	return {"trip": {"path": path, "loop": true, "entry": -1, "exit": -1}, "route_lengths": lengths}
+
+
+func add_arrival_car(speed: float, itinerary: Dictionary, at: float, earliest: float) -> Dictionary:
+	var trip: Dictionary = itinerary["trip"]
+	var path: Array = trip["path"]
+	var lengths: Array[float] = itinerary["route_lengths"]
+	var total := lengths[-1]
+	# A cut can open in live traffic. Prefer the authored starting position,
+	# with nearby points on the same itinerary available if the lane is occupied.
+	for offset in [0.0, -6.0, 6.0, -12.0, 12.0, -18.0, 18.0]:
+		var start := clampf(at + offset, 0.0, total)
+		if start < earliest:
+			continue
+		var agent := _initial_pose(speed, "city", trip, path, lengths, total, 0.0, start, "car")
+		if not _space.clear_pose(agent, _space.nearby(agent["pos"], 18.0)):
+			continue
+		agent["arrival"] = true
+		agent["route_lengths"] = lengths
+		agents.append(agent)
+		_space.track(agent)
+		return agent
+	return {}
+
+
+func remove_arrival_car(agent: Dictionary) -> void:
+	agent["visible"] = false
+	_space.track(agent)
+	for index in agents.size():
+		if is_same(agents[index], agent):
+			agents.remove_at(index)
+			break
+	_release_car_junctions(agent["slot"])
+
+
+func _release_car_junctions(slot: int) -> void:
+	for junction in _junctions:
+		if junction["owner"] == slot:
+			junction["owner"] = -1
+	for controller in signals.values():
+		controller.waiting.erase(slot)
+		if controller.inside.has(slot):
+			controller.release(slot)
+
+
+func arrival_distance(agent: Dictionary) -> float:
+	var cursor: int = agent["route_cursor"]
+	var lengths: Array[float] = agent["route_lengths"]
+	var start := lengths[cursor - 1] if cursor > 0 else 0.0
+	var turn: Dictionary = agent["turn"]
+	if turn.is_empty() or turn["distance"] <= 0.0:
+		return start + float(agent["along"])
+	var fraction := float(turn["distance"]) / float(turn["lengths"][-1])
+	return lerpf(start + float(turn["start"]), lengths[cursor] + float(turn["exit"]), fraction)
+
+
+func arrival_marker(agent: Dictionary, road_id: String, at: Vector2, after: float) -> float:
+	var start := 0.0
+	var best := INF
+	var result := -1.0
+	for leg in agent["trip"]["path"]:
+		var edge: Dictionary = _graph.edges[leg["edge"]]
+		var length: float = edge["length"]
+		if DistrictLayout.ROADS[edge["road"]]["id"] == road_id:
+			var from: Vector2 = _graph.points[leg["from"]]
+			var to: Vector2 = _graph.points[_graph.other_end(leg["edge"], leg["from"])]
+			var along := clampf((at - from).dot(from.direction_to(to)), 0.0, length)
+			var offset := (from + from.direction_to(to) * along).distance_squared_to(at)
+			if start + along > after and offset < 0.01:
+				return start + along
+			if start + along > after and offset < best:
+				best = offset
+				result = start + along
+		start += length
+	return result
+
+
 func _tick(delta: float) -> void:
 	for id in signals:
 		var signal_controller: SignalController = signals[id]
@@ -261,6 +373,8 @@ func _tick(delta: float) -> void:
 			_save_stall(id, signal_controller)
 			signal_controller.stall_reported = true
 	for agent in agents:
+		if agent.get("scenario_deferred", false):
+			continue
 		if agent["state"] == "wait":
 			agent["wait"] -= delta
 			if agent["wait"] <= 0.0:
@@ -583,6 +697,8 @@ func _drive(agent: Dictionary, neighbors: Array, delta: float) -> void:
 		agent["following_gap"] = maxf(headway, 0.0)
 	var junction_limit := _junction_limit(agent, neighbors)
 	agent["limit"] = minf(junction_limit, maxf(0.0, headway))
+	if agent.has("arrival_stop"):
+		agent["limit"] = minf(agent["limit"], maxf(0.0, float(agent["arrival_stop"]) - arrival_distance(agent)))
 	if _traffic_debug:
 		agent["stop_reason"] = "junction" if junction_limit < headway else str("leader ", leader.get("slot","walker"))
 		agent["junction_limit"] = junction_limit
@@ -623,7 +739,7 @@ func _drive(agent: Dictionary, neighbors: Array, delta: float) -> void:
 
 
 func _choose_lane(agent: Dictionary, neighbors: Array, leader: Dictionary, gap: float) -> void:
-	if agent["state"] != "graph" or agent["class"] == "bus" or agent.get("changing_lane", false):
+	if agent["state"] != "graph" or agent["class"] == "bus" or agent.get("changing_lane", false) or agent.get("arrival", false):
 		return
 	var edge: Dictionary = _graph.edges[agent["edge"]]
 	var road: Dictionary = DistrictLayout.ROADS[edge["road"]]
@@ -851,6 +967,8 @@ func _road_speed(edge: int) -> float:
 	if road < 0:
 		return TrafficRules.CITY_SPEED
 	var data: Dictionary = DistrictLayout.ROADS[road]
+	if data["kind"] == "dirt":
+		return float(data.get("speed", 0.55))
 	var limit := float(data.get("speed", 1.0))
 	if data["kind"] == "asphalt" and data.get("look", "") != "highway":
 		limit *= TrafficRules.CITY_SPEED
@@ -1073,13 +1191,16 @@ func _stream_class(stream: String, replacing_bus: bool = false) -> String:
 # pedestrian district/hour visibility is independent and retains its old behavior.
 func _update_visibility(agent: Dictionary) -> void:
 	if agent["is_car"]:
-		agent["visible"] = agent["state"] != "wait"
+		agent["visible"] = agent["state"] != "wait" and not agent.get("scenario_deferred", false)
 		return
 	if agent.get("workday_extra", false) and not DistrictLayout.workday_pedestrians_at(agent["pos"], int(hour)):
 		agent["visible"] = false
 		return
 	var level := DistrictLayout.crowd_at(agent["pos"], int(hour), false) / CROWD_CAP
-	agent["visible"] = agent["threshold"] < level
+	var scale := _scenario_pedestrian_scale
+	if not _scenario_pedestrian_districts.is_empty():
+		scale = float(_scenario_pedestrian_districts.get(DistrictLayout.district_at(agent["pos"]), scale))
+	agent["visible"] = agent["threshold"] < level * scale
 
 # A slice of the pool per frame is plenty: nobody changes district in a frame.
 func _refresh_visibility() -> void:
@@ -1087,9 +1208,13 @@ func _refresh_visibility() -> void:
 		return
 	for i in mini(VISIBILITY_PER_FRAME, agents.size()):
 		var agent := agents[_cursor % agents.size()]
-		var was_visible: bool = agent["visible"]
-		_update_visibility(agent)
-		if not was_visible and agent["visible"] and not _space.clear_pose(agent, _space.nearby(agent["pos"], 10.0)):
-			agent["visible"] = false
-		_space.track(agent)
+		_refresh_agent_visibility(agent)
 		_cursor += 1
+
+
+func _refresh_agent_visibility(agent: Dictionary) -> void:
+	var was_visible: bool = agent["visible"]
+	_update_visibility(agent)
+	if not was_visible and agent["visible"] and not _space.clear_pose(agent, _space.nearby(agent["pos"], 10.0)):
+		agent["visible"] = false
+	_space.track(agent)

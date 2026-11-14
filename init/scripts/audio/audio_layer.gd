@@ -9,6 +9,7 @@ var context_gain := 1.0
 var _context_smoothed := 1.0
 var _last_tick := 0.0
 var overlap_seconds := 2.0
+var autoplay := true
 var _voices: Array[AudioStreamPlayer] = []
 var _active := 0
 var _track := 0
@@ -41,8 +42,18 @@ func _ready() -> void:
 		add_child(voice)
 		_voices.append(voice)
 	_voices[0].stream = stream
-	_voices[0].play()
+	if autoplay:
+		start_playback()
+	else:
+		set_process(false)
+
+
+func start_playback() -> void:
+	if is_processing() and _voices[_active].playing:
+		return
+	_voices[_active].play()
 	set_level(level, 2.0)
+	set_process(true)
 
 
 func set_level(value: float, fade_seconds: float = 0.15) -> void:

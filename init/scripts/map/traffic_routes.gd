@@ -56,6 +56,24 @@ func for_model(trip: Dictionary, model: String) -> Dictionary:
 	return trip.get("semi_trip", trip) if model == "kamaz_semi" else trip
 
 
+func arrival_path() -> Array[Dictionary]:
+	var roads := [
+		"station_link", "station_entry", "south_street", "housing_spine", "housing_cross_path", "west_street", "north_street",
+		"industrial_link", "highway", "axis", "north_street", "village_street",
+		"village_west_link", "village_church", "village_east", "village_south",
+		"village_south_exit", "south_street", "axis", "north_street", "west_street",
+		"south_street", "station_exit",
+	]
+	var points: Array = [_junction(roads[-1], roads[0])]
+	for index in roads.size():
+		if roads[index] == "village_west_link":
+			# These two sections share a centreline at the western village junction.
+			points.append(_junction("village_west_link", "village_west"))
+		else:
+			points.append(_junction(roads[index], roads[(index + 1) % roads.size()]))
+	return _path(roads, points)
+
+
 func _validate_trip(stream: String, trip: Dictionary) -> void:
 	var path: Array = trip["path"]
 	if trip["loop"]:

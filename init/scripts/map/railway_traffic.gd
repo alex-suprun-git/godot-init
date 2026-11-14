@@ -13,6 +13,7 @@ const LENGTH_FACTOR := 1.0359996223651116 * (4.3 / 4.37)
 var _fleet: Array[Dictionary] = []
 var _clock := 0.0
 var _departures := 0
+var _commuter_held := false
 
 
 func _ready() -> void:
@@ -49,8 +50,27 @@ func _process(delta: float) -> void:
 
 func advance(delta: float) -> void:
 	_clock += delta
-	for train in _fleet:
-		_advance_train(train, delta)
+	for i in _fleet.size():
+		if i != 0 or not _commuter_held:
+			_advance_train(_fleet[i], delta)
+
+
+func hold_commuter_at_station() -> void:
+	var commuter: Dictionary = _fleet[0]
+	var platform: Rect2 = Layout.STATION_PLATFORM["rect"]
+	var track: Array = Layout.RAILS[commuter["track"]]
+	var at := Vector3(platform.get_center().x, Route.rail_height(Vector2(platform.get_center().x, track[0].y)), track[0].y)
+	commuter["direction"] = -1 # Arrives from the eastern approach and leaves westbound.
+	commuter["distance"] = commuter["route"].distance_near(at)
+	commuter["model"].show()
+	_commuter_held = true
+	_pose(commuter)
+
+
+func release_commuter() -> void:
+	if _commuter_held:
+		_fleet[0]["running"] = true
+		_commuter_held = false
 
 
 func _start(train: Dictionary) -> void:
@@ -110,7 +130,8 @@ func audio_emitters() -> Array[Dictionary]:
 		var positions: Array[Vector3] = []
 		for car in train["cars"]:
 			positions.append(car["node"].global_position)
-		result.append({"id": "er2" if i == 0 else "freight", "running": train["running"], "positions": positions})
+		result.append({"id": "er2" if i == 0 else "freight",
+			"running": train["running"] and (i != 0 or not _commuter_held), "positions": positions})
 	return result
 
 

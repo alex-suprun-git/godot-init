@@ -210,7 +210,8 @@ func _perimeter_and_pedestrians() -> void:
 		for z in [-55.0,55.0]:
 			site.asset("raised_barrier",Vector3(x,.045,z))
 	s.ground(Rect2(155,-57,8,116),true,.055)
-	s.ground(Rect2(10,-57,153,4),true,.055)
+	# Meet the avenue at its east curb. The apron sits above the asphalt.
+	s.ground(Rect2(12,-57,151,4),true,.055)
 	s.place("pedestrian_control",Vector3(159,.055,33),"PedestrianControl")
 	for x in [154.5,159.0]:
 		s.boundary(Vector2(x,-54),Vector2(x,28))

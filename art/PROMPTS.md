@@ -1314,3 +1314,38 @@ Built-in ImageGen paintover of the current Godot housing capture. Source and exa
 The same frame was extended with a House 5 ZhEK workshop and two states of the kiosk event's wasteland. [Exact prompts](source_images/district_visual_pack/residential-cores-v1.prompt.md).
 
 The school court was revised to a mini-football pitch within the same school parcel. [Exact prompt](source_images/district_visual_pack/residential-cores-football-v1.prompt.md).
+## Monday prologue slides (2026-11-14)
+
+Built-in ImageGen. Review masters are in `art/concepts/prologue/`. The carriage
+is the visual reference for the newspaper and window shots and the painting
+style reference for the reception. Godot will draw the readable newspaper,
+subtitles and time and will handle the slide transitions.
+
+The first window composition (`train-window-v1.png`) was rejected for its
+perspective and invented view of the city. In v2 the train is heading south on
+the eastern embankment and the right window faces west over the reserve field,
+before the track bends toward the station.
+
+### reception-v2.png
+
+> Use case: precise-object-edit. Preserve the entire provided 16:9 hand-painted 1997 district administration reception, exact composition, lighting, door, blank door plaque, furniture, colors and brushwork. Change only the wall clock at 43 percent from the left and 13 percent from the top: remove both clock hands and all shadows of the hands while retaining the clock's exact position, round rim, ivory dial, all minute tick marks and tiny central spindle dot. The empty dial is prepared for game-engine hands drawn later. No new text or objects. Output one full-frame opaque image.
+
+### train-window-v2.png
+
+> Seated eye-level view through the right side window of a southbound ER2 on the eastern embankment. Look west over the reserve wheat field toward village roofs and distant apartment blocks. Keep the window straight and the horizon level. The river bridge and industrial sites are behind the train.
+
+### train-carriage-v1.png
+
+> Use case: illustration-story. Wide 16:9 landscape fullscreen game background, one edge-to-edge image. Fictional Slavic border city in a post-Soviet republic, late August 1997. Grounded hand-painted oil/gouache environment illustration with coherent perspective and lightly visible brushwork, muted natural color, restrained contrast, quiet everyday realism. Clean master artwork: no CRT effects, film grain overlay, vignette, subtitles, UI, readable lettering, graphic borders or watermark. Keep narrative detail clear above the bottom 18%, which is a naturally quiet area for a subtitle. Train interior at 05:40, a modest ER2-type suburban electric carriage, eye-level seated first-person viewpoint near the right window, looking diagonally forward across a facing pair of bench seats and down the aisle. Tobacco-brown vinyl on low-backed simple benches, faded cream painted steel wall panels, subdued gray-green metal trim, squared brushed-aluminum window frames with rounded corners, small ivory ceiling fixtures. Three ordinary passengers well apart in the middle and far distance, quietly minding their business, no view of the protagonist. A single loosely folded inexpensive off-white newspaper rests on the unoccupied brown vinyl bench across from the viewer, near the window-side end; it is small but distinct. The window on the right shows flat fields, mist and a faded cool blue early sky. Pale cool daylight through the right window with a hint of warm cream on the seats; light enough for the bench and paper to read. Well-used but intact and functioning. Lower frame naturally occupied by shadowed seat edge and simple floor. Let the aisle and the first right-hand window give a believable, identifiable layout.
+### train-carriage-v2.png
+
+Gaze correction for `train-carriage-v3.png` (built-in ImageGen, using v2 as the edit target):
+
+> Precise local edit of this full 16:9 painterly train image. Only change the woman whose face is centered at 65.5 percent from left and 38.8 percent from top, brown hair in a ponytail and gray coat, sitting on the right immediately behind the foreground empty bench and beside the wide cream-colored window pillar. In the original she stares into the solid pillar at very close range. Keep her in that seat and preserve identity, clothes, hair and general silhouette. Repose her as a tired Monday commuter: turn her head naturally about 30 degrees TOWARD IMAGE LEFT away from the pillar and tilt her chin clearly DOWN; her eyelids are relaxed, her eyes visibly directed down to her own lap. Lower the raised hand away from her mouth, let the forearm settle naturally into her lap behind the foreground bench, do not show new fingers above the bench. She is sitting comfortably, not pressing into the wall, not looking at the viewer. Keep every other passenger, newspaper, seat, pillar, window, horizon, palette, lighting, perspective, composition and brushwork as close to the original as possible. No text or graphics, opaque full-frame output.
+
+> Use case precise-object-edit and full-screen 1997 game illustration. Edit the provided ER2 carriage master: preserve its wide 16:9 locked seated camera, vanishing point, straight intact train architecture, brown bench seams, cream metal, folded newspaper on the foreground right seat, and restrained painterly brushwork. This is a MONDAY COMMUTER TRAIN, with 12–16 clearly visible ordinary adult passengers, a mix of working men and women, office workers and market-goers in plain late-1990s clothing; fill most rows in mid-ground on BOTH sides, and place 2–3 standing commuters in the far part of the aisle with simple bags, leaving a passable aisle. Varied natural poses, believable body scales and occlusion, commuters quiet or tired, nobody looking at camera. Preserve the empty foreground bench and newspaper exactly, leave the bottom relatively calm for captions. Through right windows show quiet misty flat fields and very distant muted housing with no recognizable church or smoke stack (train southbound on the eastern embankment looking west). Keep window light early morning and subdued. No readable letters, no added text, no watermarks, no modern objects.
+### train-carriage-v4.png
+
+Window-side row correction using `train-carriage-v3.png` as the edit target.
+
+> Precise local edit, use supplied full 16:9 train illustration as edit target. The only editable area is the two drowsy passengers directly behind the big foreground empty brown bench, at x 44–67%, y 30–46%: the sleeping moustached man in brown on the left and the much too large gray-coated woman near the right-hand window pillar. Keep the man as the same scale reference. Make the woman's head and visible shoulders about 23% smaller than in the input, so her head matches or is slightly smaller than his in apparent size. Place her seated slightly deeper and lower, with a natural inclined head, eyes down toward her lap; both adults sit at a coherent comparable depth on the same transverse row, with plausible spacing and a single coherent seat geometry and occlusion behind the same foreground seatback. Preserve their clothes, identities and positions on their respective sides. Keep the blue-jacket passenger and other people in the row behind intact. Strictly preserve all other riders, window and landscape, newspaper, foreground bench, architecture, perspective, palette, light and framing. Opaque full image, no transparency, no text. Do not enlarge the man's head to compensate: correct the woman's scale and seating. Keep appearance distinctly painted.

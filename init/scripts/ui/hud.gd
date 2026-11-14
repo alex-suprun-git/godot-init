@@ -115,7 +115,7 @@ var _card_wait_label: Label # The card's wait line; ticks with the clock.
 var _toast_box: VBoxContainer
 
 
-func setup(week_sim, city_map, audio_manager = null, playtest_log = null) -> void:
+func setup(week_sim, city_map, audio_manager = null, playtest_log = null, open_paper := true) -> void:
 	sim = week_sim
 	map = city_map
 	audio = audio_manager
@@ -159,7 +159,8 @@ func setup(week_sim, city_map, audio_manager = null, playtest_log = null) -> voi
 	_build_toasts()
 	_build_incoming_tray()
 	_build_map_controls()
-	show_newspaper(false)
+	if open_paper:
+		show_newspaper(false)
 
 	sim.request_opened.connect(func(_id): _refresh_markers())
 	sim.request_changed.connect(_on_request_changed)
@@ -308,6 +309,8 @@ func open_card(request_id: String, focus: bool = false, auto: bool = false) -> v
 
 func _process(_delta: float) -> void:
 	_prefetch_upcoming_banners()
+	if not visible:
+		return
 	_sync_modal_input()
 	_update_tokens()
 	_update_markers(_map_area())

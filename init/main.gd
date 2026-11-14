@@ -10,6 +10,8 @@ const AudioSettings = preload("res://scripts/ui/audio_settings.gd")
 const AudioDebug = preload("res://scripts/audio/audio_debug.gd")
 const PlayLog = preload("res://scripts/dev/play_log.gd")
 const Settings = preload("res://scripts/data/settings.gd")
+const Arrival = preload("res://scripts/data/arrival.gd")
+const ArrivalSequence = preload("res://scripts/ui/arrival_sequence.gd")
 
 var sim
 var map
@@ -21,11 +23,18 @@ var phase := "planning"
 var speed := 1.0
 var _resume_speed := 1.0
 var _night := false # Between two days: time is held while the day card shows.
+var arrival: ArrivalSequence
 
 
 func _ready() -> void:
 	sim = WeekSim.new()
 	var args := OS.get_cmdline_user_args()
+	var play_arrival := not args.has("--autoplay")
+	for arg in args:
+		if arg.begins_with("--only="):
+			play_arrival = play_arrival or arg.trim_prefix("--only=").get_slice(",", 0) == "prologue"
+	var skip_arrival := not args.has("--autoplay") and args.has("--skip-prologue")
+	play_arrival = play_arrival and not skip_arrival
 	for arg in args:
 		if arg.begins_with("--season=") and Settings.SEASONS.has(arg.substr("--season=".length())):
 			Settings.season = arg.substr("--season=".length())
@@ -37,13 +46,14 @@ func _ready() -> void:
 		add_child(play_log)
 		play_log.setup(sim, "autoplay" if args.has("--autoplay") else "player")
 	audio = AudioManager.new()
+	audio.defer_music = play_arrival or skip_arrival
 	add_child(audio)
 	map = CityMap.new()
 	add_child(map)
 	map.setup(sim)
 	hud = Hud.new()
 	add_child(hud)
-	hud.setup(sim, map, audio, play_log)
+	hud.setup(sim, map, audio, play_log, not play_arrival and not skip_arrival)
 	audio_debug = AudioDebug.new()
 	add_child(audio_debug)
 	audio_debug.setup(audio)
@@ -68,6 +78,7 @@ func _ready() -> void:
 		if not sim.flags.get("boss_briefing_received", false):
 			sim.flags["boss_briefing_received"] = true
 			hud._show_important_notice(hud.Week1.START_BRIEFING)
+			audio.music.start_playback()
 			sim.state_changed.emit())
 	# Crises pause the game, as in Frostpunk: decide first, then resume.
 	sim.crisis_started.connect(func(_id): set_speed(0.0))
@@ -79,12 +90,28 @@ func _ready() -> void:
 	sim.money_changed.connect(audio.play.bind("money_changed"))
 	sim.promise_resolved.connect(func(status): audio.play("promise_" + status))
 	sim.overlay_changed.connect(_on_overlay_changed)
-	sim.begin()
-	hud.set_phase(phase)
+	if play_arrival:
+		phase = "prologue"
+		hud.hide()
+		arrival = ArrivalSequence.new()
+		add_child(arrival)
+		arrival.finished.connect(_finish_arrival)
+		arrival.begin(map, hud, audio, map_audio, sim.date_text(0))
+	elif skip_arrival:
+		_finish_arrival()
+	else:
+		sim.begin()
+		hud.set_phase(phase)
 
 	if args.has("--autoplay"):
 		var Autoplay = load("res://scripts/dev/autoplay.gd")
 		add_child(Autoplay.new())
+
+
+func _finish_arrival() -> void:
+	hud.show()
+	start_week()
+	sim.arrive_after_prologue(Arrival.BRIEFING_HOUR)
 
 
 func _process(delta: float) -> void:
@@ -94,6 +121,11 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if phase == "prologue" and OS.is_debug_build() and event is InputEventKey and event.keycode == KEY_F7:
+		get_viewport().set_input_as_handled()
+		if event.pressed and not event.echo:
+			arrival.finish()
+		return
 	if phase != "live" or _night or not event is InputEventKey or event.keycode != KEY_SPACE:
 		return
 	var focus := get_viewport().gui_get_focus_owner()
